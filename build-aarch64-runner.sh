@@ -72,8 +72,4 @@ LIBS=(
   "$OUT.generated-ctor.o" \
   "${LIBS[@]}" -o "$OUT.ours"
 
-"$CXX" "${FLAGS[@]}" -c "$ROOT/aarch64_domain_dump.cpp" \
-  -o "$OUT.domain.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.domain.o" \
-  "${LIBS[@]}" -o "$OUT.domain"
-echo "$OUT: official, ours, domain"
+echo "$OUT: official, ours"
