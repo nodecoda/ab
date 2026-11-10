@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "generated": "2026-11-10",
+  "notes": "Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary.",
+  "entries": [
+    {
+      "id": "G/x86",
+      "direction": "G",
+      "target": "x86",
+      "dir": "/tmp/ab-x86/out",
+      "command": "./run-x86-end-to-end.sh TREE BUILD <x86.inc> /tmp/ab-x86/out",
+      "artifacts": {
+        "diff.json": "49ea4bfa855fb47f9a9f93d3b2768bfba634b696c9c97f3df86011643365ad00",
+        "official.answers.jsonl": "976351de97169726012666bd92739bd7f22a3e41c9d5671f132beb756ac467d7",
+        "ours.answers.jsonl": "976351de97169726012666bd92739bd7f22a3e41c9d5671f132beb756ac467d7"
+      },
+      "expect": {
+        "answers_identical": true,
+        "agree": 3021,
+        "disagree": 0,
+        "unanswerable": 0
+      }
+    },
+    {
+      "id": "G/aarch64",
+      "direction": "G",
+      "target": "aarch64",
+      "dir": "/tmp/ab-a64/out",
+      "command": "./run-aarch64-end-to-end.sh TREE BUILD <a64.inc> /tmp/ab-a64/out",
+      "artifacts": {
+        "diff.json": "b60422aac079114ef7f5b3d3cdf21945dc0eb168cf80b5b1c961bbf0721b4a77",
+        "official.answers.jsonl": "c544ab4d6ac34e0f00c920179f025c14f00362e09171d587608b55e4b7787091",
+        "ours.answers.jsonl": "c544ab4d6ac34e0f00c920179f025c14f00362e09171d587608b55e4b7787091"
+      },
+      "expect": {
+        "answers_identical": true,
+        "agree": 12583,
+        "disagree": 0,
+        "unanswerable": 0
+      }
+    },
+    {
+      "id": "G/riscv",
+      "direction": "G",
+      "target": "riscv",
+      "dir": "/tmp/ab-rv/out",
+      "command": "./run-riscv-end-to-end.sh TREE BUILD <rv.inc> /tmp/ab-rv/out",
+      "artifacts": {
+        "diff.json": "8101f60929996c5fcf4c4ce3ab42b13443692a8e82b8ed3faf2717da7d754de6",
+        "official.answers.jsonl": "cbc9b288634f9fae85deef570c132f6a0474daff6ec01540762e6b6271dfdab8",
+        "ours.answers.jsonl": "cbc9b288634f9fae85deef570c132f6a0474daff6ec01540762e6b6271dfdab8"
+      },
+      "expect": {
+        "answers_identical": true,
+        "agree": 6147,
+        "disagree": 0,
+        "unanswerable": 0
+      }
+    },
+    {
+      "id": "U/x86",
+      "direction": "U",
+      "target": "x86",
+      "dir": "/tmp/u-run/x86b",
+      "queries": {
+        "path": "/tmp/u-gen/x86b/queries.jsonl",
+        "sha256": "dabe88a9cf5a0acf4982a7823fd54ce1110bfc2cb53d6b71ba781cfd20ad9968"
+      },
+      "command": "./run-u-end-to-end.sh x86 /tmp/u-gen/x86b/queries.jsonl /tmp/u-run/x86b",
+      "artifacts": {
+        "diff.json": "1577ba8fe1a37d2a72e6ba187ac2b408cb2a3a0a3f3d51f495eea2d9a554cdda",
+        "official.answers.jsonl": "2468f2739367fd1e28cbf5957c4cb937f67a0ebe43d55c81f8b3a286d9f816d4",
+        "ours.answers.jsonl": "2468f2739367fd1e28cbf5957c4cb937f67a0ebe43d55c81f8b3a286d9f816d4"
+      },
+      "expect": {
+        "answers_identical": true,
+        "disagree": 0,
+        "unanswerable": 0
+      }
+    },
+    {
+      "id": "U/aarch64",
+      "direction": "U",
+      "target": "aarch64",
+      "dir": "/tmp/u-run/a64",
+      "queries": {
+        "path": "/tmp/u-gen/aarch64/queries.jsonl",
+        "sha256": "b1951a33f9f04ccbe97cd8d1bb369b52a90c40d72b59ff1ccccd47f0eb3ba288"
+      },
+      "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/aarch64/queries.jsonl /tmp/u-run/a64",
+      "artifacts": {
+        "diff.json": "63b057e366690a158b688bcfbfdea64e85e02093521f682557d1f4a28fa8f06a",
+        "official.answers.jsonl": "b1850eb9caaccf9f87300a79caf26a28d3e85acc48c5d01b8d5ba18475c2c187",
+        "ours.answers.jsonl": "b1850eb9caaccf9f87300a79caf26a28d3e85acc48c5d01b8d5ba18475c2c187"
+      },
+      "expect": {
+        "answers_identical": true,
+        "disagree": 0,
+        "unanswerable": 0
+      }
+    },
+    {
+      "id": "U/riscv",
+      "direction": "U",
+      "target": "riscv",
+      "dir": "/tmp/u-run/rv",
+      "queries": {
+        "path": "/tmp/u-gen/rvb/queries.jsonl",
+        "sha256": "e15c7ccfbe0bccc59e6cece97d085811c0fb1cb21417751cc313469b4a70b755"
+      },
+      "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/u-run/rv",
+      "artifacts": {
+        "diff.json": "9d5504aae5166481e459b15c467541a8c432a9fb71e638549664914f21c4d231",
+        "official.answers.jsonl": "de0b0cc5e5fc42c6104befa1b629f38c75cf5a05ff5b15c0d16afdad043572f4",
+        "ours.answers.jsonl": "de0b0cc5e5fc42c6104befa1b629f38c75cf5a05ff5b15c0d16afdad043572f4"
+      },
+      "expect": {
+        "answers_identical": true,
+        "disagree": 0,
+        "unanswerable": 0
+      }
+    },
+    {
+      "id": "U-neg/x86",
+      "direction": "U-neg",
+      "target": "x86",
+      "dir": "/tmp/u-run/x86b-neg",
+      "command": "./run-u-end-to-end.sh x86 <queries> /tmp/u-run/x86b-neg --drop-opcode G_ADD",
+      "artifacts": {
+        "diff.json": "3c44acdc4c11bf3d4b3d088c7dcc325c2be2c4e487cade4f0a00a91ba22ec710",
+        "attribution.json": "5516d508b445dce554c32c34a1fa53779dcaa27934c9285abe8746bb6227f23b"
+      },
+      "expect": {
+        "min_disagree": 1,
+        "rulesets": [
+          "G_ADD",
+          "G_SUB"
+        ],
+        "unknown_keys": 0
+      }
+    },
+    {
+      "id": "U-neg/aarch64",
+      "direction": "U-neg",
+      "target": "aarch64",
+      "dir": "/tmp/u-run/a64-neg",
+      "command": "./run-u-end-to-end.sh aarch64 <queries> /tmp/u-run/a64-neg --drop-opcode G_ICMP",
+      "artifacts": {
+        "diff.json": "3c5bd05b086e8f39ede4784c664bf36175ce726027ba1c04fff773648a9177d6",
+        "attribution.json": "d08e761f929901dbc03338c8ef30a3dee4c8e6d52ae31629f1e9d6c9e2db5d09"
+      },
+      "expect": {
+        "min_disagree": 1,
+        "rulesets": [
+          "G_ICMP"
+        ],
+        "unknown_keys": 0
+      }
+    },
+    {
+      "id": "U-neg/riscv",
+      "direction": "U-neg",
+      "target": "riscv",
+      "dir": "/tmp/u-run/rv-neg",
+      "command": "./run-u-end-to-end.sh riscv <queries> /tmp/u-run/rv-neg --drop-opcode G_ADD",
+      "artifacts": {
+        "diff.json": "5039d5c85a2cbd6c99714ce4144257400b0f4a7029b2a4f8ed0482725f1ac2e5",
+        "attribution.json": "81b161b0871b8c5d9c506df07b17f3b2b303039ec9595678f547f5156e49b93b"
+      },
+      "expect": {
+        "min_disagree": 1,
+        "rulesets": [
+          "G_ADD",
+          "G_SUB"
+        ],
+        "unknown_keys": 0
+      }
+    }
+  ]
+}
