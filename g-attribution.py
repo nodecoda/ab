@@ -38,7 +38,8 @@ def main(argv) -> int:
     queries = {}
     for line in queries_path.read_text().splitlines():
         row = json.loads(line)
-        queries[ua.query_key(row)] = row.get("ruleset", row["name"])
+        for key in ua._expand_pointer_widths(ua.query_key(row)):
+            queries[key] = row.get("ruleset", row["name"])
 
     injected = set(expect["opcodes"])
     allowed = {rs for key, rs in queries.items() if key[1] in injected}

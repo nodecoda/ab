@@ -55,6 +55,47 @@ def query_key(fields) -> tuple:
     return (config, name, types, mem, imms)
 
 
+def _expand_pointer_widths(key):
+    """Duplicate a key for every concrete width a `p0:*` query may mean.
+
+    `cases` writes a pointer with an unknown width as `p0:*`; the runner echoes
+    the target's actual width (`p0:32`/`p0:64`).  Without this expansion the
+    join silently loses every wildcard-pointer disagreement (the baseline had
+    none, so it only showed up under a widened predicate).
+    """
+    variants = [key]
+    parts = list(key)
+    for index in (2, 3):
+        if parts[index] is None:
+            continue
+        if index == 2:
+            types = list(parts[index])
+            slots = range(len(types))
+            get = lambda i: types[i]
+        else:
+            slots = [0]
+            types = [parts[index][0]]
+            get = lambda i: types[i]
+        for i in slots:
+            t = get(i)
+            if not (isinstance(t, tuple) and t and t[0] == "pointer"
+                    and len(t) >= 3 and t[2] == "*"):
+                continue
+            out = []
+            for value in variants:
+                for width in (32, 64):
+                    p = list(value)
+                    if index == 2:
+                        tys = list(p[2]); tys[i] = ("pointer", t[1], width)
+                        p[2] = tuple(tys)
+                    else:
+                        mem = list(p[3]); mem[0] = ("pointer", t[1], width)
+                        p[3] = tuple(mem)
+                    out.append(tuple(p))
+            variants = out
+    return variants
+
+
 def load_queries(path) -> dict:
     out = {}
     with open(path, "r", encoding="utf-8") as handle:
@@ -66,9 +107,11 @@ def load_queries(path) -> dict:
             fields = {"config": row["config"], "name": row["name"],
                       "types": row["types"], "mem": row.get("mem"),
                       "imms": row.get("imms", [])}
-            out[query_key(fields)] = {"ruleset": row.get("ruleset", row["name"]),
-                                      "rule": row.get("rule"),
-                                      "origin": row.get("origin", "unknown")}
+            info = {"ruleset": row.get("ruleset", row["name"]),
+                    "rule": row.get("rule"),
+                    "origin": row.get("origin", "unknown")}
+            for key in _expand_pointer_widths(query_key(fields)):
+                out[key] = info
     return out
 
 

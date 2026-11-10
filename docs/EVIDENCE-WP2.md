@@ -117,5 +117,6 @@ cd /home/ubuntu/llvm/ab
 ```
 
 SPIR-V 的查询数从 5,136 变成 5,734：`gisel cases` 在此之后开始拒绝 MIR 装不下的
-类型元组（`9e59c9d`、`77bcb7b`）。新集合已复核：无重复 key、两遍 SHA 相同、
-规则仍全部 witness；契约数字随之更新。
+类型元组（`9e59c9d`、`77bcb7b`）。新集合已复核：无重复 key、两遍 SHA 相同。
+规则见证是 343/353（10 条 unexercised），不是“全部 witness”；数字见
+`gisel/docs/REPORT-cases.md`。
