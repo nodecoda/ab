@@ -173,6 +173,30 @@ baseline 实测（`/tmp/ab-domain/a64-domain-r5`，9 个配置的分布相同）
 `getKnownMinValue() > 64`，于是多走了一步 `narrowScalarIf`。两边都没有给出
 动作，所以不进 `disagree`；它被单列，见 `gisel/spec/contract.md` §4。
 
+### 契约对账（可复算）
+
+```sh
+cd /home/ubuntu/llvm/gisel
+python3 tools/reconcile-contract.py \
+  /tmp/ab-domain/a64-domain-r5/baseline/queries.jsonl \
+  /tmp/ab-domain/a64-domain-r5/baseline/ours.answers.jsonl
+```
+
+```text
+observed unanswerable  39056
+predicted (verifier)  227875
+predicted (crash)      38416
+crash - observed           0
+observed - crash         640
+verifier - observed   188819
+```
+
+`predicted_crash`（带 `"sound": true` 的检查，实测零误伤）是
+`observed` 的子集，差 0；`observed - crash` 就是下表除 `:511` 以外的 640 条；
+`verifier - observed` 说明“verifier 会拒绝”远不等于“legalizer 答不了”——
+18.9 万条这样的题上游照样给出动作（多为 `Unsupported`）。这条差集就是
+`spec/contract.md` §3 里 C8 口径被修正的原因。
+
 `LowLevelType.h:511` 那 38,416 条同时说明一件事：**`unanswerable` 的主体
 不是上游缺陷，是一条缺失的形状规则**——`G_EXTRACT_VECTOR_ELT` 的源必须是
 向量（`MachineVerifier.cpp:2020`），域里没有这条过滤。补上它，每配置的
