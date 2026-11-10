@@ -22,9 +22,13 @@ OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
 STATE=${5:-$ROOT/.ab/aarch64-domain}
 CONFIGS=${CONFIGS:-baseline small-cm fullfp16 sve bf16 cssc rcpc3 lse outline-atomics}
-EXPECTED_PER_CONFIG=960480
-EXPECTED_UNANSWERABLE=${EXPECTED_UNANSWERABLE:-}
-EXPECTED_REF_ASSERTS=${EXPECTED_REF_ASSERTS:-}
+# 2026-11-11: the slot table now follows `class G_ATOMICRMW_OP` into its
+# body, so the address slot is a pointer instead of any of the 24 types.
+# Ten atomicrmw opcodes lose 2,352 invalid points per config: 960,480 to
+# 936,960.
+EXPECTED_PER_CONFIG=936960
+EXPECTED_UNANSWERABLE=${EXPECTED_UNANSWERABLE:-39056}
+EXPECTED_REF_ASSERTS=${EXPECTED_REF_ASSERTS:-1696}
 EXPECTED_UNANSWERABLE_MAP=${EXPECTED_UNANSWERABLE_MAP:-}
 FORCE=${FORCE:-0}
 mkdir -p "$OUT" "$STATE"

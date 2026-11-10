@@ -108,36 +108,41 @@ Those are the U direction and the strict-coverage numbers.
 ## AArch64 domain：9 个配置，全量 A/B
 
 ```sh
-EXPECTED_UNANSWERABLE=39056 EXPECTED_REF_ASSERTS=1696 \
-  ./run-aarch64-domain.sh TREE BUILD \
-    /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r3
+./run-aarch64-domain.sh TREE BUILD \
+  /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r4
 ```
+
+两个钉数（`EXPECTED_UNANSWERABLE=39056`、`EXPECTED_REF_ASSERTS=1696`）已写进
+脚本默认值，环境变量仍可覆盖。
 
 快照：
 
 ```text
-gisel    a90b091
+gisel    a90b091（含 2026-11-11 的 atomicrmw ptype 修复）
 tree     700e551714cc
 inc      c02de72a…（117 rule sets, 741 rules）
 runner   official 685a0239… / ours c2052969…
-题面     9 配置 × 960,480 = 8,644,320 条
+runtime  libLLVMAArch64CodeGen.so sha256 e49c03ec…
+题面     9 配置 × 936,960 = 8,432,640 条
 耗时     约 87 s/配置（两个 runner 并行），9 配置约 13 分钟
 ```
 
 | 配置 | queries | agree | 其中双端断言 | 官方断言/我方作答 | disagree |
 |---|---:|---:|---:|---:|---:|
-| baseline | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| small-cm | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| fullfp16 | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| sve | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| bf16 | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| cssc | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| rcpc3 | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| lse | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| outline-atomics | 960,480 | 958,784 | 39,056 | 1,696 | 0 |
-| **合计** | **8,644,320** | **8,629,056** | **351,504** | **15,264** | **0** |
+| baseline | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| small-cm | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| fullfp16 | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| sve | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| bf16 | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| cssc | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| rcpc3 | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| lse | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| outline-atomics | 936,960 | 935,264 | 39,056 | 1,696 | 0 |
+| **合计** | **8,432,640** | **8,417,376** | **351,504** | **15,264** | **0** |
 
-`agree` 含双端断言：958,784 = 919,728 条真的答了且一致 + 39,056 条两边都断言。
+`agree` 含双端断言：935,264 = 896,208 条真的答了且一致 + 39,056 条两边都断言。
+（2026-11-11：atomicrmw 的地址槽改为固定指针后，每配置少 23,520 条非法点；
+这 23,520 条原先都是答了且一致的，所以 unanswerable / ref_asserted 不变。）
 
 ### 那 1,696 条是什么
 
@@ -198,34 +203,38 @@ runner）时才可达；从 IR 编译过来的 MIR 不会出现它们。
 ## RISC-V domain：8 个配置，全量 A/B
 
 ```sh
-EXPECTED_UNANSWERABLE_MAP='{"rv64gc":1074,"rv32gc":1074,"rv64gcv":1074,
- "rv32gcv":1074,"rv64zbb":642,"rv64zfh":1074,"ristretto":642,"rv32zilsd":1074}' \
-  ./run-riscv-domain.sh TREE BUILD \
-    /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r5
+./run-riscv-domain.sh TREE BUILD \
+  /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6
 ```
+
+按配置钉的 `EXPECTED_UNANSWERABLE_MAP` 与 `EXPECTED_PER_CONFIG=253747` 已写进
+脚本默认值。
 
 快照：
 
 ```text
-gisel    a90b091
+gisel    a90b091（含 2026-11-11 的 atomicrmw ptype 修复）
 tree     700e551714cc
 inc      0c993e10…（96 rule sets, 402 rules）
 runner   official b363f146… / ours f2040222…
-题面     8 配置 × 270,967 = 2,167,736 条
+runtime  libLLVMRISCVCodeGen.so sha256 f32be744…
+题面     8 配置 × 253,747 = 2,029,976 条
 耗时     约 21 s/配置
 ```
 
 | 配置 | queries | agree | 其中双端断言 | ref_asserted | disagree |
 |---|---:|---:|---:|---:|---:|
-| rv64gc | 270,967 | 270,967 | 1,074 | 0 | 0 |
-| rv32gc | 270,967 | 270,967 | 1,074 | 0 | 0 |
-| rv64gcv | 270,967 | 270,967 | 1,074 | 0 | 0 |
-| rv32gcv | 270,967 | 270,967 | 1,074 | 0 | 0 |
-| rv64zbb | 270,967 | 270,967 | 642 | 0 | 0 |
-| rv64zfh | 270,967 | 270,967 | 1,074 | 0 | 0 |
-| ristretto | 270,967 | 270,967 | 642 | 0 | 0 |
-| rv32zilsd | 270,967 | 270,967 | 1,074 | 0 | 0 |
-| **合计** | **2,167,736** | **2,167,736** | **7,728** | **0** | **0** |
+| rv64gc | 253,747 | 253,747 | 1,074 | 0 | 0 |
+| rv32gc | 253,747 | 253,747 | 1,074 | 0 | 0 |
+| rv64gcv | 253,747 | 253,747 | 1,074 | 0 | 0 |
+| rv32gcv | 253,747 | 253,747 | 1,074 | 0 | 0 |
+| rv64zbb | 253,747 | 253,747 | 642 | 0 | 0 |
+| rv64zfh | 253,747 | 253,747 | 1,074 | 0 | 0 |
+| ristretto | 253,747 | 253,747 | 642 | 0 | 0 |
+| rv32zilsd | 253,747 | 253,747 | 1,074 | 0 | 0 |
+| **合计** | **2,029,976** | **2,029,976** | **7,728** | **0** | **0** |
+
+每配置少 17,220 条：同样是 atomicrmw 地址槽从 24 类型收窄成 `p0`，被删掉的都是答了且一致的点。
 
 两个 `642` 配置是 `rv64zbb` 和 `ristretto`：feature 改变了哪些形状会走到断言，
 所以 `unanswerable` 按配置钉，而不是钉一个总数。两边答案文件在这 8 个配置上

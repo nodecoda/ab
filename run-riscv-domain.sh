@@ -22,10 +22,12 @@ OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
 STATE=${5:-$ROOT/.ab/riscv-domain}
 CONFIGS=${CONFIGS:-rv64gc rv32gc rv64gcv rv32gcv rv64zbb rv64zfh ristretto rv32zilsd}
-EXPECTED_PER_CONFIG=270967
+# 2026-11-11: same atomicrmw pointer-slot fix as AArch64; ten opcodes lose
+# 1,722 invalid points per config: 270,967 to 253,747.
+EXPECTED_PER_CONFIG=253747
 EXPECTED_UNANSWERABLE=${EXPECTED_UNANSWERABLE:-}
 EXPECTED_REF_ASSERTS=${EXPECTED_REF_ASSERTS:-}
-EXPECTED_UNANSWERABLE_MAP=${EXPECTED_UNANSWERABLE_MAP:-}
+EXPECTED_UNANSWERABLE_MAP=${EXPECTED_UNANSWERABLE_MAP:-'{"rv64gc":1074,"rv32gc":1074,"rv64gcv":1074,"rv32gcv":1074,"rv64zbb":642,"rv64zfh":1074,"ristretto":642,"rv32zilsd":1074}'}
 FORCE=${FORCE:-0}
 mkdir -p "$OUT" "$STATE"
 

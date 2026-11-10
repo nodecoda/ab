@@ -824,61 +824,69 @@
    "id": "D/aarch64",
    "direction": "D",
    "target": "aarch64",
-   "dir": "/tmp/ab-domain/a64-domain-r3",
+   "dir": "/tmp/ab-domain/a64-domain-r4",
    "queries": {
-    "path": "/tmp/ab-domain/a64-domain-r3/baseline/queries.jsonl",
-    "sha256": "e16307371eeeedf40569a510ef68a45ed8a59f9bffc684185eba522c2126eeb7"
+    "path": "/tmp/ab-domain/a64-domain-r4/baseline/queries.jsonl",
+    "sha256": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
    },
-   "command": "EXPECTED_UNANSWERABLE=39056 EXPECTED_REF_ASSERTS=1696 ./run-aarch64-domain.sh TREE BUILD /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r3",
+   "command": "./run-aarch64-domain.sh TREE BUILD /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r4",
    "artifacts": {
-    "summary.json": "b6b1991c55adc2a108fb9e8468e3fc87f8b14253189f7645c39f68ece950538f",
-    "manifest.txt": "31000a51f58b5f6eb8266bd92abe3e75abf7951eede4434893854a9a620b44d2",
-    "baseline/diff.json": "5eab70bc60c75f94bb2c62dbb1a1c68b4eab1bd0777a8794f73e0f2b8cdc6793",
-    "baseline/official.answers.jsonl": "a9b4373ebbd8754fbd0d4fcf1745f25c4d6f574e65b2042d86ccab6470f4f873",
-    "baseline/ours.answers.jsonl": "02b2f7562ad1d89a0e741ed1f03b4225fba0f9e35ebb0a5955dcdfb227cfe8f3"
+    "summary.json": "8c866e16e5f0117798b3045c4f4cc0595fbb90c2471178d443e4e67638f46c90",
+    "manifest.txt": "001c6242bbe350a5e1d56424656b58ad85982baddf708040638a366283057de9",
+    "baseline/diff.json": "0c434b636328166f7b9ea3b349c94b236fc26fccdff0151c02381651c93a964a",
+    "baseline/official.answers.jsonl": "042bff5092fba13b15a0ce51a06a5fe9919968e637179e7463d176f053442b3b",
+    "baseline/ours.answers.jsonl": "c856429163c55c89c24030ec82a0ee1fadd6f445f0eb2f7f13b982e88659b92a"
    },
    "expect": {
     "summary": {
      "configs": 9,
-     "queries": 8644320,
-     "agree": 8629056,
+     "queries": 8432640,
+     "agree": 8417376,
      "disagree": 0,
      "unanswerable": 351504,
      "ref_asserted": 15264,
      "errors": 0
     }
    },
-   "diff": "baseline/diff.json"
+   "diff": "baseline/diff.json",
+   "runtime": {
+    "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMAArch64CodeGen.so.24.0git",
+    "sha256": "e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02"
+   }
   },
   {
    "id": "D/riscv",
    "direction": "D",
    "target": "riscv",
-   "dir": "/tmp/ab-domain/rv-domain-r5",
+   "dir": "/tmp/ab-domain/rv-domain-r6",
    "queries": {
-    "path": "/tmp/ab-domain/rv-domain-r5/rv64gc/queries.jsonl",
-    "sha256": "e5094a3fc2cf5f45c8f88288bac4bd01bc869c5b3bc115cae5ce846fe2ad2a15"
+    "path": "/tmp/ab-domain/rv-domain-r6/rv64gc/queries.jsonl",
+    "sha256": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
    },
-   "command": "EXPECTED_UNANSWERABLE_MAP='{...}' ./run-riscv-domain.sh TREE BUILD /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r5",
+   "command": "./run-riscv-domain.sh TREE BUILD /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6",
    "artifacts": {
-    "summary.json": "666d0dda49901d194d05fb51c522151ca79e148a7716cce39c765248d6dcb0e1",
-    "manifest.txt": "3698141fa53cb8fc7cc42279d2d3ffbaaa3f4786d92e9eb468c8ca8331d0c3f6",
-    "rv64gc/diff.json": "d09dcdba9b4e1d6974450bfbf96dc2c437a8bd55055f4e15e63e6d16c83c60f5",
-    "rv64gc/official.answers.jsonl": "c5d350b8bfe9f2291b8f432b3901db118f89abfd13d213ff7b858c581c913bcd",
-    "rv64gc/ours.answers.jsonl": "c5d350b8bfe9f2291b8f432b3901db118f89abfd13d213ff7b858c581c913bcd"
+    "summary.json": "fd45ae3682e7d080cced6dc6bd3f785b29e9f01d6f37a86c1f50e5416db0c2c7",
+    "manifest.txt": "e12c2baa4702a522b306803882088222f6fdd853d8f01e8bd3eeb7c15c954cd2",
+    "rv64gc/diff.json": "067ed79057e6112c5d55e1552ff34897fee583bf6bd1d576914d9a60182b9a23",
+    "rv64gc/official.answers.jsonl": "65ca2954c2b93592d340f7bb4d4e7b6853b283338659339493b3552213d64a16",
+    "rv64gc/ours.answers.jsonl": "65ca2954c2b93592d340f7bb4d4e7b6853b283338659339493b3552213d64a16"
    },
    "expect": {
     "summary": {
      "configs": 8,
-     "queries": 2167736,
-     "agree": 2167736,
+     "queries": 2029976,
+     "agree": 2029976,
      "disagree": 0,
      "unanswerable": 7728,
      "ref_asserted": 0,
      "errors": 0
     }
    },
-   "diff": "rv64gc/diff.json"
+   "diff": "rv64gc/diff.json",
+   "runtime": {
+    "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMRISCVCodeGen.so.24.0git",
+    "sha256": "f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4"
+   }
   }
  ]
 }
