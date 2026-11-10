@@ -1,0 +1,70 @@
+# WP2 evidence: the harness runs from its own checkout
+
+日期：2026-11-10。这是迁移后的**第一次端到端对拍**，不是历史数字的转抄。
+
+## 输入
+
+| 项 | 值 |
+|---|---|
+| gisel | `3421d75`（WP2：移出 ab，保留指针） |
+| upstream-source | `7f9ae6f`（WP1：importer + pin） |
+| ab | `46cc6b7`（WP2：迁移 + `gisel.jsonl` 绑定） |
+| LLVM 树 | `/home/ubuntu/llvm/trees/explore` @ `57587b095ee7` |
+| pin | `9bfc850b9940` + 5 patches（`check-pin.sh` rc=0） |
+| LLVM 构建 | `/home/ubuntu/llvm/builds/explore` |
+
+## 结果（`--compare full`）
+
+| target | queries | keys | agree | disagree | missing | unanswerable |
+|---|---:|---:|---:|---:|---:|---:|
+| X86 | 3,027 | 3,021 | 3,021 | 0 | 0 | 0 |
+| AArch64 | 12,583 | 12,583 | 12,583 | 0 | 0 | 0 |
+| RISC-V | 6,149 | 6,147 | 6,147 | 0 | 0 | 0 |
+
+X86 的 3,027 → 3,021 与 RISC-V 的 6,149 → 6,147 是重复 key 合并（相同答案），
+不是丢查询：`diff.json` 的 `ref`/`ours` 都是合并后的 key 数。
+
+## 命令
+
+```sh
+cd /home/ubuntu/llvm/ab
+./build-inc.sh <gisel>/tests/corpus/X86LegalizerInfo.gisel /tmp/ab-x86/x86.inc
+./build-inc.sh <gisel>/tests/corpus/AArch64LegalizerInfo.gisel /tmp/ab-a64/a64.inc
+./build-inc.sh <gisel>/tests/corpus/RISCVLegalizerInfo.gisel /tmp/ab-rv/rv.inc
+
+./run-x86-end-to-end.sh     TREE BUILD /tmp/ab-x86/x86.inc /tmp/ab-x86/out
+./run-aarch64-end-to-end.sh TREE BUILD /tmp/ab-a64/a64.inc /tmp/ab-a64/out
+./run-riscv-end-to-end.sh   TREE BUILD /tmp/ab-rv/rv.inc   /tmp/ab-rv/out
+```
+
+## SHA256
+
+| 产物 | sha256 |
+|---|---|
+| `x86.inc` | `c9b39260bb0e4cd69c36eb8846ad36d7d1628f09fd36cc06db4995b29f3df794` |
+| `a64.inc` | `c02de72ab08d2e58588b776ecd0c2855c85e8e9d0b775999fa0309a7ee5c6ddb` |
+| `rv.inc` | `0c993e1005c5c859577f00bdd6f5f98f7684f90496475aebb30cc8f095309c44` |
+| `x86 diff.json` | `49ea4bfa855fb47f9a9f93d3b2768bfba634b696c9c97f3df86011643365ad00` |
+| `a64 diff.json` | `b60422aac079114ef7f5b3d3cdf21945dc0eb168cf80b5b1c961bbf0721b4a77` |
+| `rv diff.json` | `8101f60929996c5fcf4c4ce3ab42b13443692a8e82b8ed3faf2717da7d754de6` |
+
+## 干净安装（gisel wheel）
+
+本机默认 setuptools 59.6 / pip 22 太旧，直接 `pip wheel` 会得到空的
+`UNKNOWN-0.0.0`。用隔离构建环境（setuptools 77）得到 `gisel-0.3.0`，装进
+venv 后：
+
+```sh
+/tmp/gisel-venv/bin/python -c "from gisel import jsonl; print(jsonl.llt_text(('scalar',32)))"
+# s32
+GISEL_SRC=<venv site-packages> /tmp/gisel-venv/bin/python diff.py a.jsonl a.jsonl --json
+# agree=1, disagree=0
+```
+
+wheel sha256：`604f53b3d3b24c53c68585aab6a4935fac63c1866680f2ca9a7064aa3669d449`。
+
+## 未覆盖
+
+- 只跑了 X86 / AArch64 / RISC-V；ARM、Mips、PPC、M68k、WebAssembly、SPIR-V 的
+  runner 已迁入但本轮没有重跑。
+- 负控（注入错规则/错动作）属于 WP4，本轮未做。
