@@ -19,6 +19,15 @@ import tempfile
 from pathlib import Path
 
 
+def _is_json(line):
+    """True when a runner line is a complete JSON object."""
+    try:
+        json.loads(line)
+    except ValueError:
+        return False
+    return True
+
+
 def run(runner, queries, out, report=None):
     lines = [line for line in queries.read_text().splitlines() if line.strip()]
     answers, aborted = [], []
@@ -32,14 +41,21 @@ def run(runner, queries, out, report=None):
                               capture_output=True, text=True)
         Path(chunk).unlink()
         got = [line for line in proc.stdout.splitlines() if line.strip()]
-        answers.extend(got)
         if proc.returncode == 0:
+            answers.extend(got)
             break
         if proc.returncode not in (-6, -11, 134, 139):   # SIGABRT/SIGSEGV
             print("%s: exit %d on query %d:\n%s"
                   % (runner, proc.returncode, start + len(got) + 1,
                      proc.stderr.strip()), file=sys.stderr)
             return aborted
+        # A signal can land while the runner is writing its current answer,
+        # leaving half a JSON object in stdout.  That partial line belongs to
+        # the query that killed the process; it is not an answer for it, and
+        # keeping it would shift every later answer by one.
+        if got and not _is_json(got[-1]):
+            got.pop()
+        answers.extend(got)
         bad = start + len(got)
         if bad >= len(lines):
             bad = start        # the runner died before answering anything
