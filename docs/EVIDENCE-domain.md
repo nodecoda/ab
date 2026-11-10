@@ -75,3 +75,17 @@ Does not prove: that the domain covers types the upstream verifier accepts but
 the domain never enumerates (e.g. widths not in the type universe), nor
 anything about the reverse direction (upstream rules missing from `.gisel`).
 Those are the U direction and the strict-coverage numbers.
+
+## AArch64 / RISC-V 的 domain 规模（未跑 A/B）
+
+同一命令生成、不跑 runner，只看题面规模：
+
+| target | configs | 每配置 | 总点 | JSONL 大小 |
+|---|---:|---:|---:|---:|
+| AArch64 | 9 | 960,480 | 8,644,320 | 936 MB |
+| RISC-V | 8 | 270,967 | 2,167,736 | 237 MB |
+
+X86 是 91,340 点；AArch64 是它的 95 倍，RISC-V 是 24 倍。全量 A/B 会把
+runner 时间、答案文件和磁盘 IO 同时放大到不可接受，所以本轮**没有跑**，也不能
+拿 `cases` 的数字冒充 `domain`。若要做，先按 config 分块（baseline / rv64gc
+单配置分别是 960,480 / 270,967 点），并把 `unanswerable` 单独钉数。
