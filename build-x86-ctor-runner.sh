@@ -55,13 +55,13 @@ LIBS=(
 
 "$CXX" "${FLAGS[@]}" -c "$ROOT/query_runner.cpp" \
   -o "$OUT.official.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.official.o" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.official.o" \
   "${LIBS[@]}" -o "$OUT.official"
 
 "$CXX" "${FLAGS[@]}" -c "$ROOT/query_runner.cpp" \
   -o "$OUT.ours.o"
 "$CXX" "${FLAGS[@]}" -c "$ROOT/x86_generated_ctor.cpp" \
   -o "$OUT.generated-ctor.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.ours.o" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.ours.o" \
   "$OUT.generated-ctor.o" "${LIBS[@]}" -o "$OUT.ours"
 echo "$OUT: official, ours"

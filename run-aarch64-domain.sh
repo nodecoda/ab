@@ -102,8 +102,11 @@ run_config() {
   if [[ -n "$EXPECTED_REF_ASSERTS" ]]; then
     extra+=(--allow-ref-asserts "$EXPECTED_REF_ASSERTS")
   fi
+  # --assert-sites adds where each unanswerable query died; the comparison
+  # itself still runs on status only, so this cannot change a verdict.
   if ! python3 "$ROOT/diff.py" "$dir/official.answers.jsonl" \
-      "$dir/ours.answers.jsonl" --json "${extra[@]}" | tee "$dir/diff.json"; then
+      "$dir/ours.answers.jsonl" --json --assert-sites "${extra[@]}" \
+      | tee "$dir/diff.json"; then
     echo "$cfg: diff failed (see $dir/diff.json)" >&2
     return 1
   fi
@@ -123,6 +126,8 @@ out = Path(sys.argv[1])
 configs = sys.argv[2:]
 rows, totals = [], {"queries": 0, "agree": 0, "disagree": 0,
                     "unanswerable": 0, "ref_asserted": 0, "errors": 0}
+sites_total = {"same": 0, "mismatch": 0, "missing": 0}
+sites_top, per_config_sites = {}, {}
 for cfg in configs:
     d = json.load(open(out / cfg / "diff.json"))
     rows.append({"config": cfg, **{k: d[k] for k in
@@ -131,9 +136,24 @@ for cfg in configs:
     totals["queries"] += d["ref"]
     for k in ("agree", "disagree", "unanswerable", "ref_asserted", "errors"):
         totals[k] += d[k]
+    sites = d.get("assert_sites")
+    if sites:
+        for key in ("same", "mismatch", "missing"):
+            sites_total[key] += sites[key]
+        for site, count in sites["top"]:
+            sites_top[site] = sites_top.get(site, 0) + count
+        per_config_sites[cfg] = {k: sites[k] for k in
+                                 ("same", "mismatch", "missing")}
 summary = {"target": "aarch64", "configs": len(configs), **totals,
-           "per_config": rows}
+           "per_config": rows, "assert_sites": sites_total}
 (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
+if any(sites_total.values()):
+    (out / "sites.json").write_text(json.dumps({
+        "assert_sites": {**sites_total,
+                         "top": sorted(sites_top.items(),
+                                       key=lambda kv: (-kv[1], kv[0]))},
+        "per_config": per_config_sites,
+    }, indent=1) + "\n")
 print("\nconfig      queries   agree  unanswerable  ref_assert  disagree  errors")
 for r in rows:
     print("%-11s %7d %7d %13d %11d %9d %7d"

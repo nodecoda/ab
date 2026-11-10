@@ -86,6 +86,34 @@ class Diff(unittest.TestCase):
         self.assertEqual(r["answered_equal"], 1)
         self.assertEqual(r["unanswerable"], 1)
 
+    def test_assert_sites_are_compared_when_asked(self):
+        a = [row("G_CTPOP", ["f128", "p0:64"])]
+        a[0].update(status="unanswerable", reason="asserted",
+                    assert_site="LowLevelType.h:429")
+        b = [dict(a[0])]
+        rc, r = self.run_diff(a, b, "--assert-sites")
+        self.assertEqual(rc, 0)
+        self.assertEqual(r["disagree"], 0)
+        self.assertEqual(r["assert_sites"]["same"], 1)
+        self.assertEqual(r["assert_sites"]["mismatch"], 0)
+        self.assertEqual(r["assert_sites"]["top"][0][0], "LowLevelType.h:429")
+
+    def test_a_different_site_is_reported_not_counted_as_disagree(self):
+        """A site difference is a finding about the *reason*, not the answer.
+
+        Both sides still return "no action", so the diff stays agree; the
+        mismatch is surfaced separately and must be explained.
+        """
+        a = [row("G_CTPOP", ["f128", "p0:64"])]
+        a[0].update(status="unanswerable", reason="asserted",
+                    assert_site="LowLevelType.h:429")
+        b = [dict(a[0], assert_site="LowLevelType.h:151")]
+        rc, r = self.run_diff(a, b, "--assert-sites")
+        self.assertEqual(rc, 0)
+        self.assertEqual(r["disagree"], 0)
+        self.assertEqual(r["assert_sites"]["same"], 0)
+        self.assertEqual(r["assert_sites"]["mismatch"], 1)
+
     def test_answerable_and_unanswerable_disagree(self):
         a = [row("G_CTLZ", ["p0:32", "s32"])]
         b = [dict(a[0], status="unanswerable", reason="asserted")]

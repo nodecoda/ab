@@ -90,6 +90,10 @@
 - 对完整 key 集合做 join；分类：
   `agree / disagree / unanswerable(both) / missing_ref / missing_ours / error`。
 - `disagree` 再分：`action`、`type_idx`、`new_type`。
+- `unanswerable` 行带 `assert_site`（`file:line`，来自 `__assert_fail` /
+  `llvm_unreachable_internal` / fatal-error handler）。`--assert-sites` 把双端
+  断言再分成 `same / mismatch / missing`；站点不同**不改变结论**，只说明两边
+  崩在不同路径，单列计数。
 - Phase 1 只比 `action`；Phase 2 比三元组。
 - 输出 `diff.json` + 前 N 条人类可读差异。
 

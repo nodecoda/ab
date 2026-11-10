@@ -824,18 +824,19 @@
    "id": "D/aarch64",
    "direction": "D",
    "target": "aarch64",
-   "dir": "/tmp/ab-domain/a64-domain-r4",
+   "dir": "/tmp/ab-domain/a64-domain-r5",
    "queries": {
-    "path": "/tmp/ab-domain/a64-domain-r4/baseline/queries.jsonl",
+    "path": "/tmp/ab-domain/a64-domain-r5/baseline/queries.jsonl",
     "sha256": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
    },
-   "command": "./run-aarch64-domain.sh TREE BUILD /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r4",
+   "command": "./run-aarch64-domain.sh TREE BUILD /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r5",
    "artifacts": {
-    "summary.json": "8c866e16e5f0117798b3045c4f4cc0595fbb90c2471178d443e4e67638f46c90",
-    "manifest.txt": "001c6242bbe350a5e1d56424656b58ad85982baddf708040638a366283057de9",
-    "baseline/diff.json": "0c434b636328166f7b9ea3b349c94b236fc26fccdff0151c02381651c93a964a",
-    "baseline/official.answers.jsonl": "042bff5092fba13b15a0ce51a06a5fe9919968e637179e7463d176f053442b3b",
-    "baseline/ours.answers.jsonl": "c856429163c55c89c24030ec82a0ee1fadd6f445f0eb2f7f13b982e88659b92a"
+    "summary.json": "730fa6184e0a092a521d36ea2bd9d92eb5bf422c8a9a466a943aa15154b86802",
+    "manifest.txt": "79f832edcc9bd3490c8878182f2776e1b92f2a5967952ee57075283f8831eb38",
+    "baseline/diff.json": "b9f40fdb1a236fa9769d12492c260ce45d254e9438f7393d5eb40909dc24ded5",
+    "baseline/official.answers.jsonl": "dc26ac3403865818f9f657fc540d3b8751fd4f28741aa6501da31e02eb5517d5",
+    "baseline/ours.answers.jsonl": "f5045718a9b3ab5eaf93af693f129228e2d8a5a9b6f041c29c3a6088f8dc6f44",
+    "sites.json": "6e1624bea862e7b5c8df54285dcb83fa056eb76e8938d08e537de5af6f699533"
    },
    "expect": {
     "summary": {
@@ -845,14 +846,25 @@
      "disagree": 0,
      "unanswerable": 351504,
      "ref_asserted": 15264,
-     "errors": 0
+     "errors": 0,
+     "assert_sites": {
+      "same": 351216,
+      "mismatch": 288,
+      "missing": 0
+     }
+    },
+    "assert_sites": {
+     "same": 351216,
+     "mismatch": 288,
+     "missing": 0
     }
    },
    "diff": "baseline/diff.json",
    "runtime": {
     "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMAArch64CodeGen.so.24.0git",
     "sha256": "e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02"
-   }
+   },
+   "sites": "sites.json"
   },
   {
    "id": "D/riscv",

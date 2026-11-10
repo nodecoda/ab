@@ -127,6 +127,46 @@ def compare(ref, ours, mode="full", details_limit=100,
     }
 
 
+def collect_sites(path):
+    """key -> assert_site for an answer file, read without the strict loader.
+
+    The site is provenance, not part of the answer: the comparison stays on
+    (status, reason).  This is a separate pass so a run that never records a
+    site costs nothing.
+    """
+    sites = {}
+    with open(path) as f:
+        for line in f:
+            if '"assert_site"' not in line:
+                continue
+            row = json.loads(line)
+            sites[J.key(row)] = row["assert_site"]
+    return sites
+
+
+def compare_sites(ref_sites, ours_sites, keys):
+    same = {}
+    mismatch = []
+    missing = 0
+    for k in keys:
+        a = ref_sites.get(k)
+        b = ours_sites.get(k)
+        if a is None or b is None:
+            missing += 1
+            continue
+        if a == b:
+            same[a] = same.get(a, 0) + 1
+        else:
+            mismatch.append((k, a, b))
+    return {
+        "same": sum(same.values()),
+        "mismatch": len(mismatch),
+        "missing": missing,
+        "top": sorted(same.items(), key=lambda kv: (-kv[1], kv[0]))[:10],
+        "first_mismatch": [list(x) for x in mismatch[:10]],
+    }
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(
         prog="diff.py",
@@ -143,6 +183,9 @@ def main(argv=None):
                     help="count the queries whose reference answer is "
                          "'asserted' as a known class, not a difference; the "
                          "run fails unless exactly N of them are found")
+    ap.add_argument("--assert-sites", action="store_true",
+                    help="also compare where the two sides asserted "
+                         "(needs answer files that carry assert_site)")
     ap.add_argument("--expect-unanswerable", type=int, default=None,
                     metavar="N",
                     help="fail unless exactly N queries are unanswerable on "
@@ -155,6 +198,11 @@ def main(argv=None):
     result = compare(ref, ours, args.compare, args.details,
                      args.allow_ref_asserts)
     result["errors"] = e1 + e2
+    if args.assert_sites:
+        both = [k for k in ref if k in ours and ref[k][0] == "unanswerable"
+                and ours[k][0] == "unanswerable"]
+        result["assert_sites"] = compare_sites(
+            collect_sites(args.ref), collect_sites(args.ours), both)
     if args.json:
         print(json.dumps(result, indent=1, sort_keys=True))
     else:
@@ -168,6 +216,12 @@ def main(argv=None):
                  result["missing_ours"], result["errors"]))
         for key, a, b in result["first"]:
             print("MISMATCH %r: ref=%r ours=%r" % (key, a, b))
+        if "assert_sites" in result:
+            sites = result["assert_sites"]
+            print("assert_sites same=%d mismatch=%d missing=%d"
+                  % (sites["same"], sites["mismatch"], sites["missing"]))
+            for site, count in sites["top"][:5]:
+                print("  %6d  %s" % (count, site))
         for key in result["missing_ref_keys"][:5]:
             print("MISSING in ref: %r" % (key,))
         for key in result["missing_ours_keys"][:5]:

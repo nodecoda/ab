@@ -60,6 +60,6 @@ LIBS=(
 )
 
 "$CXX" "${FLAGS[@]}" "${DEFS[@]}" -c "$SRC" -o "$OUT.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.o" "${OBJS[@]}" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.o" "${OBJS[@]}" \
   "${LIBS[@]}" -o "$OUT"
 echo "$OUT: $MODE"

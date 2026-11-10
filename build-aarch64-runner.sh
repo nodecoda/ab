@@ -60,7 +60,7 @@ LIBS=(
 
 "$CXX" "${FLAGS[@]}" -DAB_OFFICIAL -c "$ROOT/aarch64_query_runner.cpp" \
   -o "$OUT.official.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.official.o" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.official.o" \
   "${LIBS[@]}" -o "$OUT.official"
 
 "$CXX" "${FLAGS[@]}" -DAB_OURS -c "$ROOT/aarch64_query_runner.cpp" \
@@ -68,7 +68,7 @@ LIBS=(
 
 "$CXX" "${FLAGS[@]}" -c "$ROOT/aarch64_generated_ctor.cpp" \
   -o "$OUT.generated-ctor.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.ours.o" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.ours.o" \
   "$OUT.generated-ctor.o" \
   "${LIBS[@]}" -o "$OUT.ours"
 

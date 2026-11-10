@@ -109,7 +109,7 @@ Those are the U direction and the strict-coverage numbers.
 
 ```sh
 ./run-aarch64-domain.sh TREE BUILD \
-  /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r4
+  /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r5
 ```
 
 两个钉数（`EXPECTED_UNANSWERABLE=39056`、`EXPECTED_REF_ASSERTS=1696`）已写进
@@ -118,13 +118,14 @@ Those are the U direction and the strict-coverage numbers.
 快照：
 
 ```text
-gisel    a90b091（含 2026-11-11 的 atomicrmw ptype 修复）
+gisel    c90f3c3（含 atomicrmw ptype 修复；形状表随后迁到 be22962，题面不变）
 tree     700e551714cc
 inc      c02de72a…（117 rule sets, 741 rules）
-runner   official 685a0239… / ours c2052969…
+runner   official e6925965… / ours 07c459f1…（带 assert_site）
 runtime  libLLVMAArch64CodeGen.so sha256 e49c03ec…
-题面     9 配置 × 936,960 = 8,432,640 条
-耗时     约 87 s/配置（两个 runner 并行），9 配置约 13 分钟
+题面     9 配置 × 936,960 = 8,432,640 条（queries sha 8f03a48d…，与 r4 相同）
+耗时     约 91 s/配置（两个 runner 并行），9 配置约 14 分钟
+站点      每个配置 39,024 same + 32 mismatch + 0 missing
 ```
 
 | 配置 | queries | agree | 其中双端断言 | 官方断言/我方作答 | disagree |
@@ -143,6 +144,39 @@ runtime  libLLVMAArch64CodeGen.so sha256 e49c03ec…
 `agree` 含双端断言：935,264 = 896,208 条真的答了且一致 + 39,056 条两边都断言。
 （2026-11-11：atomicrmw 的地址槽改为固定指针后，每配置少 23,520 条非法点；
 这 23,520 条原先都是答了且一致的，所以 unanswerable / ref_asserted 不变。）
+
+### 39,056 条双端断言，崩在哪里
+
+2026-11-11 起 runner 记录每次 abort 的 `file:line`：`__assert_fail` 和
+`llvm_unreachable_internal` 用 `-rdynamic` 接管，`report_fatal_error` 走
+fatal-error handler；答案行多一个 `"assert_site"` 字段。`diff.py
+--assert-sites` 把“两边都不可答”细分成“崩在同一处 / 崩在不同处 / 没有站点”。
+
+baseline 实测（`/tmp/ab-domain/a64-domain-r5`，9 个配置的分布相同）：
+
+| assert_site | 条数 | 说明 |
+|---|---:|---|
+| `LowLevelType.h:511` | 38,416 | 全部是 `G_EXTRACT_VECTOR_ELT` 的三个槽都是标量：`getElementType()` 的 `assert(isVector())` |
+| `LowLevelType.h:151` | 322 | `G_CTPOP/CTLZ/CTTZ/CTLS` 与移位的浮点/指针操作数：`UNREACHABLE Wrong SizeInBits for IEEE Floating point!` |
+| `LowLevelType.h:429` | 234 | 同一批 opcode，mutation 对指针调用 `changeElementSize`：`invalid to directly change element size for pointers` |
+| `LegalizerInfo.cpp:200` | 52 | `G_FPTOSI/FPTOUI`：规则给出 `mutationIsSane` 不接受的 mutation |
+| 两侧不同（见下） | 32 | `G_FPTOSI/FPTOUI` 可伸缩向量：官方 `report_fatal_error`，我方 `LegalizerInfo.cpp:200` |
+| 没有站点 | 0 | 接管后不再有“崩了但不知道在哪”的行 |
+
+即 **39,024 / 39,056（99.92%）两边崩在同一个 `file:line`**。这比“两边都没答”
+强：同一套规则、同一条断言路径。
+
+32 条“不同站点”全部是 `G_FPTOSI`/`G_FPTOUI`（各 16 条，可伸缩向量目标）。
+官方死在 `TypeSize::operator ScalarTy()` 的隐式转换（`report_fatal_error`），
+我方死在 `assert(mutationIsSane(...))`。根因在生成谓词：上游写
+`Query.Types[0].getSizeInBits() > 64`，我方 `bits_of()` 落成
+`getKnownMinValue() > 64`，于是多走了一步 `narrowScalarIf`。两边都没有给出
+动作，所以不进 `disagree`；它被单列，见 `gisel/spec/contract.md` §4。
+
+`LowLevelType.h:511` 那 38,416 条同时说明一件事：**`unanswerable` 的主体
+不是上游缺陷，是一条缺失的形状规则**——`G_EXTRACT_VECTOR_ELT` 的源必须是
+向量（`MachineVerifier.cpp:2020`），域里没有这条过滤。补上它，每配置的
+`unanswerable` 会从 39,056 降到 640；因为这改变所有分母，本轮只测量、不改表。
 
 ### 那 1,696 条是什么
 
@@ -245,7 +279,7 @@ runtime  libLLVMRISCVCodeGen.so sha256 f32be744…
 ### 1. `run-queries.py` 是 O(n²)
 
 旧实现每次 runner 断言，就把“剩余全部查询”重写进临时文件再重启。AArch64
-baseline 的 960,480 条里有 39,056 次断言，重写量随断言数线性增长、总成本二次。
+baseline 的 960,480 条里有 39,056 次断言（当时的题面；atomicrmw 收窄后是 936,960），重写量随断言数线性增长、总成本二次。
 改成 2,000 行一块 + 流式答案文件后，50k 样本从 60.8 s 降到 55.3 s（答案逐字节
 相同）；分块本身不是瓶颈，但先把二次项拿掉了。
 
@@ -269,14 +303,14 @@ runner 启动要加载共享库并为全部配置建 subtarget/legalizer。AArch
 
 旧 runner 用 `lltStr(parsed)` 回写 `types`。RISC-V 没有开 extended LLT，
 `f16` 和 `s16` 在 LLVM 侧都是 `scalar(16)`，于是两个不同查询写成同一个答案
-key：270,967 条查询只剩 255,313 个 key，15,654 条被 `diff.py` 静默合并。
+key：270,967 条查询只剩 255,313 个 key，15,654 条被 `diff.py` 静默合并（那时的题面；收窄后是 253,747）。
 修法是答案行原样回显查询的类型/内存拼写，只让 `new_type` 用 LLVM 拼写。
-修后每个配置都是 270,967 个 key；这也是上表 `queries` 与 `agree` 能对齐的原因。
+修后每个配置都是 270,967 个 key（现在 253,747）；这也是上表 `queries` 与 `agree` 能对齐的原因。
 
 ## 结论
 
-- AArch64：8,644,320 个声明点，`disagree=0`；351,504 条双端断言，
+- AArch64：8,432,640 个声明点，`disagree=0`；351,504 条双端断言，
   15,264 条上游断言/我方作答，全部按配置钉死。
-- RISC-V：2,167,736 个声明点，`disagree=0`；7,728 条双端断言，0 条单边断言。
+- RISC-V：2,029,976 个声明点，`disagree=0`；7,728 条双端断言，0 条单边断言。
 - 两个 target 的全量 domain 都不需要拿 `cases` 的数字冒充：题面、答案、
   钉数、sha 都在这里。

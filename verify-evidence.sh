@@ -114,6 +114,18 @@ def check(entry):
         if key in expect and diff.get(key) != expect[key]:
             bad += fail(entry, "%s=%r, expected %r" % (key, diff.get(key), expect[key]))
 
+    sites_expect = expect.get("assert_sites")
+    if sites_expect:
+        sites_path = resolve(entry, entry.get("sites", "sites.json"))
+        if sites_path is None:
+            bad += fail(entry, "missing assert-site summary")
+        else:
+            sites = json.loads(read(sites_path).decode()).get("assert_sites", {})
+            for key, value in sites_expect.items():
+                if sites.get(key) != value:
+                    bad += fail(entry, "assert_sites %s=%r, expected %r"
+                                % (key, sites.get(key), value))
+
     summary_expect = expect.get("summary")
     if summary_expect:
         summary = json.loads(read(resolve(entry, "summary.json")).decode())

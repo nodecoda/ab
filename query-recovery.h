@@ -3,9 +3,9 @@
 // A legalizer query can trip an LLVM assertion (report_fatal_error, or a bare
 // assert), which aborts the process.  The obvious recovery -- restart the
 // runner after the offending query -- costs a process start (load the shared
-// libraries, build every subtarget and legalizer) per abort.  A full AArch64
-// domain aborts on a large fraction of its 960,480 points, and restarting
-// there drops throughput from ~4,500 queries/s to ~380 queries/s.
+// libraries, build every subtarget and legalizer) per abort.  The AArch64
+// domain aborts on ~4% of its 936,960 points per config, and restarting there
+// drops throughput from ~4,500 queries/s to ~380 queries/s.
 //
 // The runner is single threaded and builds its legalizers before it answers,
 // so an aborted getAction() can only leak memory allocated during that call.
@@ -22,11 +22,16 @@
 #define AB_QUERY_RECOVERY_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
 
+#include <cctype>
 #include <csetjmp>
 #include <csignal>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <dlfcn.h>
 
 #if defined(__linux__)
 #include <sys/prctl.h>
@@ -43,6 +48,73 @@ inline void disableCoreDumps() {
 namespace detail {
 inline sigjmp_buf Jump;
 inline volatile sig_atomic_t InQuery = 0;
+// Where the last aborted query died.  `writeUnanswerable` puts this in the
+// answer row, so "both sides assert" becomes "both sides assert at the same
+// place" -- otherwise two different upstream bugs look like one class.
+inline char Site[256] = {0};
+
+inline const char *baseName(const char *Path) {
+  const char *Slash = std::strrchr(Path, '/');
+  return Slash ? Slash + 1 : Path;
+}
+
+inline void recordSite(const char *File, unsigned Line) {
+  if (!InQuery || !File)
+    return;
+  std::snprintf(Site, sizeof(Site), "%s:%u", baseName(File), Line);
+}
+
+// `llvm_unreachable` / `report_fatal_error` reach us as
+// "UNREACHABLE executed at /path/LowLevelType.h:151!" (or "LLVM ERROR: ...").
+// Keep the trailing file:line candidate.
+inline void recordFatal(const char *Reason) {
+  Site[0] = 0;
+  if (!InQuery || !Reason)
+    return;
+  size_t Len = std::strlen(Reason);
+  for (size_t P = Len; P-- > 2;) {
+    if (Reason[P] != ':' || !std::isdigit((unsigned char)Reason[P + 1]))
+      continue;
+    size_t B = P;
+    while (B > 0 && P - B < 64 && Reason[B - 1] != '/' && Reason[B - 1] != ' ' &&
+           Reason[B - 1] != '(' && Reason[B - 1] != '\'' )
+      --B;
+    size_t E = P + 1;
+    while (E < Len && std::isdigit((unsigned char)Reason[E]))
+      ++E;
+    if (E > P + 1) {
+      std::snprintf(Site, sizeof(Site), "%.*s", (int)(E - B), Reason + B);
+      return;
+    }
+  }
+  // `report_fatal_error("...")` carries no location.  Keep a short, stable
+  // prefix of the message instead, so two different calls stay distinguishable
+  // and the answer row never loses the class of failure.
+  char Text[64] = {0};
+  size_t N = 0;
+  for (const char *P = Reason; *P && N + 1 < sizeof(Text); ++P) {
+    unsigned char C = (unsigned char)*P;
+    if (std::isalnum(C) || C == ' ' || C == '_' || C == '-')
+      Text[N++] = (char)C;
+    else if (N && Text[N - 1] != ' ')
+      Text[N++] = ' ';
+  }
+  while (N && Text[N - 1] == ' ')
+    --N;
+  Text[N] = 0;
+  std::snprintf(Site, sizeof(Site), "fatal:%s", Text);
+}
+
+inline void onFatalError(void *, const char *Reason, bool) {
+  const char *Text = Reason ? Reason : "fatal error";
+  if (InQuery)
+    recordFatal(Text);
+  // Installing a handler supersedes LLVM's default printer, so print the same
+  // shape ourselves: one "LLVM ERROR: ..." line on stderr.
+  std::fprintf(stderr, "LLVM ERROR: %s%s", Text,
+               (Text[0] && Text[std::strlen(Text) - 1] == '\n') ? "" : "\n");
+  std::fflush(stderr);
+}
 
 inline void onAbort(int Sig) {
   if (InQuery) {
@@ -61,6 +133,7 @@ inline void install() {
     return;
   Done = true;
   std::signal(SIGABRT, onAbort);
+  llvm::install_fatal_error_handler(onFatalError);
 }
 } // namespace detail
 
@@ -73,6 +146,7 @@ inline void install() {
 template <typename Fn>
 inline bool runQuery(Fn &&Query) {
   detail::install();
+  detail::Site[0] = 0;
   detail::InQuery = 1;
   if (sigsetjmp(detail::Jump, 1) == 0) {
     Query();
@@ -85,18 +159,71 @@ inline bool runQuery(Fn &&Query) {
 
 inline void leaveQuery() { detail::InQuery = 0; }
 
+inline void writeJsonString(llvm::raw_ostream &Out, const char *Text) {
+  Out << '"';
+  for (const char *P = Text; *P; ++P) {
+    if (*P == '"' || *P == '\\')
+      Out << '\\';
+    Out << *P;
+  }
+  Out << '"';
+}
+
 /// One answer row for a query that died: the query itself, plus the same
-/// status/reason fields run-queries.py writes when it recovers from a crash.
+/// status/reason fields run-queries.py writes, plus where it died when the
+/// abort carried a file:line.
 inline void writeUnanswerable(llvm::StringRef Line, llvm::raw_ostream &Out) {
   size_t End = Line.rfind('}');
   if (End == llvm::StringRef::npos) {
-    Out << "{\"status\":\"unanswerable\",\"reason\":\"asserted\"}\n";
-    return;
+    Out << "{\"status\":\"unanswerable\",\"reason\":\"asserted\"";
+  } else {
+    Out << Line.substr(0, End)
+        << ",\"status\":\"unanswerable\",\"reason\":\"asserted\"";
   }
-  Out << Line.substr(0, End)
-      << ",\"status\":\"unanswerable\",\"reason\":\"asserted\"}\n";
+  if (detail::Site[0]) {
+    Out << ",\"assert_site\":";
+    writeJsonString(Out, detail::Site);
+  }
+  Out << "}\n";
 }
 
+// Overriding `__assert_fail` is what turns a bare `assert()` into a site we
+// can report.  The runner is linked with -rdynamic so this definition
+// interposes calls made from the LLVM shared libraries.
 } // namespace ab
+
+// `llvm_unreachable` does not go through the fatal-error handler: it prints
+// "UNREACHABLE executed at file:line!" and calls abort() itself.  Taking the
+// symbol over is the only way to keep that location; same -rdynamic rule.
+namespace llvm {
+[[noreturn]] void llvm_unreachable_internal(const char *Msg, const char *File,
+                                            unsigned Line) {
+  ab::detail::recordSite(File, Line);
+  if (Msg)
+    std::fprintf(stderr, "%s\n", Msg);
+  if (File)
+    std::fprintf(stderr, "UNREACHABLE executed at %s:%u!\n", File, Line);
+  else
+    std::fprintf(stderr, "UNREACHABLE executed!\n");
+  std::fflush(stderr);
+  std::abort();
+}
+} // namespace llvm
+
+extern "C" void __assert_fail(const char *Assertion, const char *File,
+                              unsigned Line, const char *Function)
+    __attribute__((noreturn, visibility("default")));
+
+extern "C" void __assert_fail(const char *Assertion, const char *File,
+                              unsigned Line, const char *Function) {
+  ab::detail::recordSite(File, Line);
+  using Fn = void (*)(const char *, const char *, unsigned, const char *);
+  static Fn Real = reinterpret_cast<Fn>(dlsym(RTLD_NEXT, "__assert_fail"));
+  if (Real)
+    Real(Assertion, File, Line, Function);
+  std::fprintf(stderr, "%s:%u: Assertion `%s' failed.\n",
+               File ? File : "?", Line, Assertion ? Assertion : "?");
+  std::abort();
+}
 
 #endif

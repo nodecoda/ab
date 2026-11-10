@@ -66,12 +66,12 @@ LIBS=(
 )
 
 "$CXX" "${FLAGS[@]}" -DAB_OFFICIAL -c "$RUNNER" -o "$OUT.official.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.official.o" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.official.o" \
   "${LIBS[@]}" -o "$OUT.official"
 
 "$CXX" "${FLAGS[@]}" -DAB_OURS -c "$RUNNER" -o "$OUT.ours.o"
 "$CXX" "${FLAGS[@]}" -c "$CTOR" -o "$OUT.generated-ctor.o"
-"$CXX" -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.ours.o" \
+"$CXX" -rdynamic -fuse-ld=lld -Wl,-rpath,"$BUILD/lib" "$OUT.ours.o" \
   "$OUT.generated-ctor.o" "${LIBS[@]}" -o "$OUT.ours"
 
 echo "$OUT: official, ours"
