@@ -16,6 +16,7 @@ set -euo pipefail
 
 HERE=$(cd "$(dirname "$0")" && pwd)
 exec python3 - "$HERE/EVIDENCE.json" "${1:-all}" <<'PY'
+import gzip
 import hashlib
 import json
 import pathlib
@@ -23,21 +24,46 @@ import sys
 
 manifest_path, want = sys.argv[1], sys.argv[2]
 manifest = json.loads(pathlib.Path(manifest_path).read_text())
+oracle_root = pathlib.Path(manifest_path).parent / "oracle"
 
 def fail(entry, message):
     print("FAIL %-16s %s" % (entry["id"], message))
     return 1
+
+def resolve(entry, name, path=None):
+    """The live artifact, else the frozen .gz, else None.
+
+    `ab/freeze-oracle.sh` writes `oracle/<id>/<name>.gz`; the fallback keeps the
+    same sha256 because verify reads the decompressed bytes.
+    """
+    d = pathlib.Path(entry["dir"])
+    candidates = []
+    if path is not None:
+        candidates.append(pathlib.Path(path))
+    candidates.append(d / name)
+    candidates.append(d / (name + ".gz"))
+    frozen = oracle_root / entry["id"]
+    candidates.append(frozen / name)
+    candidates.append(frozen / (name + ".gz"))
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
+
+def read(path):
+    data = path.read_bytes()
+    return gzip.decompress(data) if path.suffix == ".gz" else data
 
 def check(entry):
     d = pathlib.Path(entry["dir"])
     bad = 0
 
     for name, expected in entry["artifacts"].items():
-        path = d / name
-        if not path.exists():
-            bad += fail(entry, "missing %s (re-run: %s)" % (path, entry["command"]))
+        path = resolve(entry, name)
+        if path is None:
+            bad += fail(entry, "missing %s (re-run: %s)" % (d / name, entry["command"]))
             continue
-        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        got = hashlib.sha256(read(path)).hexdigest()
         if got != expected:
             bad += fail(entry, "%s sha256 %s != %s" % (name, got[:16], expected[:16]))
     if bad:
@@ -45,11 +71,12 @@ def check(entry):
 
     queries = entry.get("queries")
     if queries:
-        path = pathlib.Path(queries["path"])
-        if not path.exists():
-            bad += fail(entry, "missing queries %s" % path)
+        path = resolve(entry, pathlib.Path(queries["path"]).name,
+                       queries["path"])
+        if path is None:
+            bad += fail(entry, "missing queries %s" % queries["path"])
         else:
-            got = hashlib.sha256(path.read_bytes()).hexdigest()
+            got = hashlib.sha256(read(path)).hexdigest()
             if got != queries["sha256"]:
                 bad += fail(entry, "queries sha256 %s != %s"
                             % (got[:16], queries["sha256"][:16]))
@@ -57,11 +84,12 @@ def check(entry):
         return bad
 
     expect = entry["expect"]
-    diff = json.loads((d / "diff.json").read_text())
+    diff_path = resolve(entry, "diff.json")
+    diff = json.loads(read(diff_path).decode())
 
     if expect.get("answers_identical"):
-        a = (d / "official.answers.jsonl").read_bytes()
-        b = (d / "ours.answers.jsonl").read_bytes()
+        a = read(resolve(entry, "official.answers.jsonl"))
+        b = read(resolve(entry, "ours.answers.jsonl"))
         if a != b:
             bad += fail(entry, "answer files differ (diff.json alone is not enough)")
 
@@ -74,7 +102,7 @@ def check(entry):
         if diff.get("disagree", 0) < minimum:
             bad += fail(entry, "disagree=%r, expected >= %d"
                         % (diff.get("disagree"), minimum))
-        attribution = json.loads((d / "attribution.json").read_text())
+        attribution = json.loads(read(resolve(entry, "attribution.json")).decode())
         if attribution.get("disagree") != diff.get("disagree"):
             bad += fail(entry, "attribution covers %r of %r disagreements"
                         % (attribution.get("disagree"), diff.get("disagree")))
@@ -91,7 +119,8 @@ def check(entry):
             bad += fail(entry, "attributed to %r, injected %r" % (sorted(seen), sorted(injected)))
 
     if not bad:
-        print("PASS %-16s %s" % (entry["id"], d))
+        print("PASS %-16s %s" % (entry["id"], d if d.exists()
+                                 else oracle_root / entry["id"]))
     return bad
 
 total = failures = 0
