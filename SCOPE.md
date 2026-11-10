@@ -28,7 +28,13 @@
 - 不比 MIR，不跑 `llc`，不比机器码。
 - `--compare action`：粗门，只比动作名。
 - `--compare full`：验收门，动作 + `type_idx` + `new_type`。
-- `unanswerable` 单列，不计入 `agree`，也不算通过。
+- `agree` = **可观测状态相同**：两边都答且答案相同，或者两边都在返回前断言。
+  `unanswerable` 是这个集合的子集计数，单独输出，不混进 `disagree`。
+- `answered_equal = agree - unanswerable`：真正给出答案且一致的对数。
+- 恒等式：`agree + ref_asserted + disagree == matched`（只有对称断言计入
+  `agree`；单边断言必须由 `--allow-ref-asserts N` 钉住，否则算差异）。
+- “通过”不等于“agree 很大”：对称断言的数量由 `--expect-unanswerable N`
+  钉死，数变了就是失败。
 - 一侧缺失 key 即失败；不允许“取交集”冒充全量。
 
 ## 4 退出码

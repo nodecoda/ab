@@ -7,7 +7,9 @@ set -euo pipefail
 # every query `gisel domain` enumerates.  This is the G-side completeness
 # check; `cases` only asks the points a rule witness justifies.
 #
-# The unanswerable count is part of the contract.  It is dominated by four
+# The unanswerable count is part of the contract.  Every one of them is
+# observed: the runner calls getAction(), the abort is caught in-process, and
+# the row is written as `unanswerable/asserted`.  It is dominated by four
 # opcodes whose result type is checked before the value type (G_CTLZ, G_CTPOP,
 # G_CTTZ, G_CTTZ_ZERO_POISON, 288 assertions each on the four configs) plus a
 # tail of memory-shape asserts.  A new class of assertion moves the count and
@@ -19,7 +21,11 @@ OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
 STATE=${5:-$ROOT/.ab/x86-domain}
 EXPECTED_QUERIES=91340
-EXPECTED_UNANSWERABLE=1418
+# 648 = 624 (G_CTLZ/CTPOP/CTTZ/CTTZ_ZERO_POISON, 156 each) + 24
+#       (G_CONSTANT_FOLD_BARRIER/FREEZE/G_IMPLICIT_DEF/G_PHI, 6 each).
+# The old 1,418 came from a table that classified by slot 0 alone; 528 of the
+# 1,152 shapes it matched are answered (see docs/EVIDENCE-domain.md).
+EXPECTED_UNANSWERABLE=648
 mkdir -p "$OUT" "$STATE"
 
 restore() {

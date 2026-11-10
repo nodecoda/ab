@@ -7,63 +7,92 @@ space enumerates, including combinations no rule mentions.
 ## Command
 
 ```sh
-./run-x86-domain.sh TREE BUILD /tmp/g/x86.inc /tmp/g/x86-domain
+./run-x86-domain.sh TREE BUILD /tmp/ab-domain/x86-r2/X86LegalizerInfo.inc \
+  /tmp/ab-domain/x86-r2/out
 ```
 
 The script pins two numbers. A run that changes either fails instead of
 quietly absorbing a new class:
 
 - `EXPECTED_QUERIES=91340`
-- `EXPECTED_UNANSWERABLE=1418`
+- `EXPECTED_UNANSWERABLE=648`
 
 ## Snapshot
 
 ```text
-gisel    5a19746
-ab       6fb6114
-pin      (trees/explore @ 700e551)
-queries  sha256 9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363  91,340 lines
-answers  sha256 eab1a282ef0a5ced8b4de05b08dd35e0774deca28626eb1bb86f140e663928eb
-         official and ours are byte-identical
+gisel     a90b091
+ab        (this commit)
+pin       (trees/explore @ 700e551)
+queries   sha256 9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363  91,340 lines
+answers   sha256 20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34
+          official and ours are byte-identical
+runtime   libLLVMX86CodeGen.so.24.0git sha256 24bf2a52...
 ```
 
+`runtime` is part of the provenance: the runner links the CodeGen library
+dynamically, so the answer file is a function of that object too.
+`verify-evidence.sh` prints a `WARN` when it no longer matches.
+
 ```json
-{"agree": 91340, "disagree": 0, "errors": 0, "matched": 91340,
- "missing_ref": 0, "missing_ours": 0, "unanswerable": 1418, "ref_asserted": 0}
+{"agree": 91340, "answered_equal": 90692, "disagree": 0, "errors": 0,
+ "matched": 91340, "missing_ref": 0, "missing_ours": 0,
+ "unanswerable": 648, "ref_asserted": 0}
 ```
+
+`agree` is "same observable result": 90,692 answered-and-equal plus 648 where
+both sides assert. `answered_equal` is the strict count.
 
 Domain shape: 4 configs × 113 opcodes × 24 types × 23 memory types = 95,172
 points; the verifier-shape filter drops 3,832 of them (including every comparison
-result that is not an integer), leaving 91,340. 1,418 of the survivors assert on
+result that is not an integer), leaving 91,340. 648 of the survivors assert on
 both sides before returning an action.
 
-## The 1,418 unanswerable, by opcode
+## The 648 unanswerable, by opcode
 
 Both sides raise the same assertion, so these are not disagreements; they are
 the part of the declared space where neither implementation can produce an
-answer. They are pinned, not ignored.
+answer. They are pinned, not ignored. Every one of them was **observed**: the
+runner called `getAction()`, the abort was caught in-process
+(`query-recovery.h`), and the row was written as `unanswerable/asserted`.
 
 | opcode | count | why |
 |---|---:|---|
-| `G_CTLZ` | 288 | value type checked after result type; the declared space contains type pairs the verifier rejects |
-| `G_CTPOP` | 288 | same |
-| `G_CTTZ` | 288 | same |
-| `G_CTTZ_ZERO_POISON` | 288 | same |
-| `G_OR` | 40 | vector/scalar shape assertion |
-| `G_CONSTANT_FOLD_BARRIER` | 34 | memory-shape assertion |
-| `G_FREEZE` | 34 | memory-shape assertion |
-| `G_IMPLICIT_DEF` | 34 | memory-shape assertion |
-| `G_PHI` | 34 | memory-shape assertion |
-| `G_ICMP` | 32 | result-type assertion |
-| `G_FPTRUNCSTORE` | 33 | memory-shape assertion |
-| `G_CONSTANT` | 23 | memory-shape assertion |
-| `G_FRAME_INDEX` | 2 | memory-shape assertion |
-| **total** | **1,418** | |
+| `G_CTLZ` | 156 | a rule matches (slot 1 is a scalar) and mutates slot 0, a pointer |
+| `G_CTPOP` | 156 | same |
+| `G_CTTZ` | 156 | same |
+| `G_CTTZ_ZERO_POISON` | 156 | same |
+| `G_CONSTANT_FOLD_BARRIER` | 6 | memory-shape assertion |
+| `G_FREEZE` | 6 | memory-shape assertion |
+| `G_IMPLICIT_DEF` | 6 | memory-shape assertion |
+| `G_PHI` | 6 | memory-shape assertion |
+| **total** | **648** | |
 
-The four 288s are the only systematic class: the domain enumerates every type
-for every slot, and these four opcodes assert on pairs the verifier forbids
-before the legalizer can answer. That is a property of asking the full domain,
-not a gap in the rules.
+## Why this used to say 1,418
+
+Until 2026-11-11 the runner carried `isKnownUnanswerable()`, a table that wrote
+`unanswerable` for `G_CTLZ/CTPOP/CTTZ/CTTZ_ZERO_POISON` whenever **slot 0** was
+a pointer or pointer vector, without calling `getAction()`. It matched 1,152
+shapes (288 per opcode). Replacing it with the real call splits that set in two:
+
+| slot 1 | outcome | count |
+|---|---|---:|
+| scalar | abort (a rule fires and mutates slot 0) | 624 |
+| scalar | `Unsupported` (no rule for that width/shape) | 168 |
+| scalar | `WidenScalar` / `NarrowScalar` on slot 1 | 216 |
+| pointer / pointer vector | `Unsupported` (no rule) | 144 |
+| **matched by the old table** | | **1,152** |
+
+So 528 of the 1,152 were **answerable**; the table's predicate was an
+over-approximation of "this aborts". Those 528 points had never actually been
+compared in this run — both sides were written as `unanswerable` by the same
+table, which made a blind spot look like agreement.
+
+The remaining 770 − 528 = 242 of the old 1,418 came from answers that today's
+build does not reproduce (e.g. `G_CONSTANT`, `G_OR`, `G_ICMP` used to assert and
+now return an action). The query set is unchanged (same sha256), so this is
+build drift: the runner links `libLLVMX86CodeGen.so` from the build directory,
+and that object was rebuilt after the old answers were written. That is why
+`runtime` is now recorded.
 
 ## What this does and does not prove
 

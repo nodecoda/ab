@@ -69,6 +69,23 @@ def check(entry):
     if bad:
         return bad
 
+    # A runner links the target's CodeGen library at run time, so the answer
+    # file is a function of that object as much as of the source.  A changed
+    # library is not a hash failure (the artifacts still match what was
+    # recorded), but it means the evidence no longer reproduces from the
+    # current build: say so instead of staying silent.
+    runtime = entry.get("runtime")
+    if runtime:
+        path = pathlib.Path(runtime["path"])
+        if not path.exists():
+            print("WARN %-16s runtime missing: %s" % (entry["id"], path))
+        else:
+            got = hashlib.sha256(path.read_bytes()).hexdigest()
+            if got != runtime["sha256"]:
+                print("WARN %-16s runtime %s changed (%s != %s)"
+                      % (entry["id"], path.name, got[:16],
+                         runtime["sha256"][:16]))
+
     queries = entry.get("queries")
     if queries:
         path = resolve(entry, pathlib.Path(queries["path"]).name,

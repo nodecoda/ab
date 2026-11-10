@@ -58,14 +58,33 @@ class Diff(unittest.TestCase):
         self.assertEqual(r["missing_ours"], 1)  # G_ADD s64 only in ref
 
     def test_symmetric_unanswerable_is_agree(self):
+        """agree means "same observable result", not "answered".
+
+        Both sides aborting is an observation: they are in the same state.
+        The strict count is carried separately as answered_equal.
+        """
         a = [row("G_CTLZ", ["p0:32", "s32"])]
         a[0].update(status="unanswerable", reason="asserted")
         b = [dict(a[0])]
         rc, r = self.run_diff(a, b)
         self.assertEqual(rc, 0)
         self.assertEqual(r["agree"], 1)
+        self.assertEqual(r["answered_equal"], 0)
         self.assertEqual(r["unanswerable"], 1)
         self.assertEqual(r["disagree"], 0)
+        self.assertEqual(r["agree"] + r["ref_asserted"] + r["disagree"],
+                         r["matched"])
+
+    def test_answered_equal_subtracts_the_symmetric_asserts(self):
+        answered = row("G_ADD", ["s32"])
+        dead = dict(row("G_CTLZ", ["p0:32", "s32"]),
+                    status="unanswerable", reason="asserted")
+        rc, r = self.run_diff([answered, dead], [answered, dead])
+        self.assertEqual(rc, 0)
+        self.assertEqual(r["matched"], 2)
+        self.assertEqual(r["agree"], 2)
+        self.assertEqual(r["answered_equal"], 1)
+        self.assertEqual(r["unanswerable"], 1)
 
     def test_answerable_and_unanswerable_disagree(self):
         a = [row("G_CTLZ", ["p0:32", "s32"])]

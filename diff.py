@@ -96,12 +96,24 @@ def compare(ref, ours, mode="full", details_limit=100,
          "ref": list(a), "ours": list(b)}
         for k, a, b in disagree[:details_limit]
     ]
+    # ``agree`` is "same observable result": answered-and-equal plus
+    # both-unanswerable.  ``answered_equal`` is the strict count, so a reader
+    # never has to subtract by hand.  The identity is the definition of
+    # ``matched``; assert it here instead of trusting the loop above.
+    answered_equal = agree - unanswerable
+    accounted = agree + len(ref_asserted) + len(disagree)
+    if accounted != len(matched):
+        raise AssertionError(
+            "answer accounting: agree(%d) + ref_asserted(%d) + disagree(%d)"
+            " != matched(%d)" % (agree, len(ref_asserted), len(disagree),
+                                 len(matched)))
     return {
         "mode": mode,
         "ref": len(ref),
         "ours": len(ours),
         "matched": len(matched),
         "agree": agree,
+        "answered_equal": answered_equal,
         "unanswerable": unanswerable,
         "disagree": len(disagree),
         "ref_asserted": len(ref_asserted),
@@ -146,10 +158,12 @@ def main(argv=None):
     if args.json:
         print(json.dumps(result, indent=1, sort_keys=True))
     else:
-        print("mode=%s ref=%d ours=%d matched=%d agree=%d unanswerable=%d "
+        print("mode=%s ref=%d ours=%d matched=%d agree=%d "
+              "(answered_equal=%d unanswerable=%d) "
               "disagree=%d missing_ref=%d missing_ours=%d errors=%d"
               % (result["mode"], result["ref"], result["ours"],
-                 result["matched"], result["agree"], result["unanswerable"],
+                 result["matched"], result["agree"],
+                 result["answered_equal"], result["unanswerable"],
                  result["disagree"], result["missing_ref"],
                  result["missing_ours"], result["errors"]))
         for key, a, b in result["first"]:

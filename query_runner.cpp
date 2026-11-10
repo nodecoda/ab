@@ -134,25 +134,6 @@ static const char *actionName(LegalizeAction A) {
   }
 }
 
-static bool isPointerLike(LLT Ty) {
-  return Ty.isPointer() ||
-         (Ty.isVector() && isPointerLike(Ty.getElementType()));
-}
-
-// These malformed queries currently trip an assertion inside LLVM's X86
-// legalizer while it tries to change the element size of a pointer result.
-// They are part of the answerless Cartesian domain, so keep them in the A/B
-// stream with an explicit, symmetric status instead of aborting either side.
-static bool isKnownUnanswerable(StringRef Name, ArrayRef<LLT> Types) {
-  bool Opcode = StringSwitch<bool>(Name)
-                    .Case("G_CTLZ", true)
-                    .Case("G_CTPOP", true)
-                    .Case("G_CTTZ", true)
-                    .Case("G_CTTZ_ZERO_POISON", true)
-                    .Default(false);
-  return Opcode && !Types.empty() && isPointerLike(Types.front());
-}
-
 static unsigned opcodeFor(StringRef Name) {
   return StringSwitch<unsigned>(Name)
 #undef HANDLE_TARGET_OPCODE
@@ -360,16 +341,6 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
     Tj += jsonString(TypeText[I]);
   }
   Tj += "]";
-
-  if (isKnownUnanswerable(*Name, Types)) {
-    Out << "{\"config\":" << jsonString(*ConfigName)
-        << ",\"name\":" << jsonString(*Name)
-        << ",\"types\":" << Tj
-        << ",\"mem\":" << MemText
-        << ",\"imms\":" << ImmsText
-        << ",\"status\":\"unanswerable\",\"reason\":\"asserted\"}\n";
-    return 0;
-  }
 
   LegalityQuery Q(Opcode, Types, MMOs, Imms);
   LegalizeActionStep Step = S.L->getAction(Q);

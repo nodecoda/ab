@@ -798,22 +798,26 @@
    "id": "D/x86",
    "direction": "D",
    "target": "x86",
-   "dir": "/tmp/ab-x86-domain/out",
+   "dir": "/tmp/ab-domain/x86-r2/out",
    "queries": {
-    "path": "/tmp/ab-x86-domain/out/queries.jsonl",
+    "path": "/tmp/ab-domain/x86-r2/out/queries.jsonl",
     "sha256": "9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363"
    },
-   "command": "./run-x86-domain.sh TREE BUILD /tmp/ab-x86-domain/X86LegalizerInfo.inc /tmp/ab-x86-domain/out",
+   "command": "./run-x86-domain.sh TREE BUILD /tmp/ab-domain/x86-r2/X86LegalizerInfo.inc /tmp/ab-domain/x86-r2/out",
    "artifacts": {
-    "diff.json": "718a5d69a2f23912e12e65c30ab3e90e84d1aaeba8efee7a1b985cd21f592734",
-    "official.answers.jsonl": "eab1a282ef0a5ced8b4de05b08dd35e0774deca28626eb1bb86f140e663928eb",
-    "ours.answers.jsonl": "eab1a282ef0a5ced8b4de05b08dd35e0774deca28626eb1bb86f140e663928eb"
+    "diff.json": "720d1334b940dca64f60f1b55291aa9e6e45db6c692be5f3c46ab3180bda74cb",
+    "official.answers.jsonl": "20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34",
+    "ours.answers.jsonl": "20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34"
    },
    "expect": {
     "answers_identical": true,
     "agree": 91340,
     "disagree": 0,
-    "unanswerable": 1418
+    "unanswerable": 648
+   },
+   "runtime": {
+    "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMX86CodeGen.so.24.0git",
+    "sha256": "24bf2a5254dc042e6e1145e926ee42a4dd4d613e3947694b6628f2871b4fe357"
    }
   },
   {
