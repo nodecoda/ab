@@ -30,14 +30,17 @@ from gisel import jsonl as J  # noqa: E402
 
 
 def _runner_type(t):
-    """LLT has no float kind: the runners echo `f32` as `s32`.
+    """LLT has no float kind: the runners echo `f32` as `s32`, `bf16` as `s16`.
 
     The comparison is symmetric (both sides go through the same parser), but the
     join with the query file must apply the same collapse or float-typed
-    witnesses look like keys nobody asked about.
+    witnesses look like keys nobody asked about.  `bf16` is a one-element tuple
+    in gisel's key model (`('bf16',)`), and LLT's bfloat16 is a 16-bit scalar.
     """
     if t[0] == "float":
         return ("scalar", t[1])
+    if t[0] == "bf16":
+        return ("scalar", 16)
     if t[0] == "vector":
         return ("vector", t[1], t[2], _runner_type(t[3]))
     return t

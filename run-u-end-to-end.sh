@@ -9,7 +9,7 @@ set -euo pipefail
 # generated include.  This is the direction that proves gisel does not miss an
 # upstream rule.
 #
-#   TARGET   x86 | aarch64 | riscv
+#   TARGET   x86 | aarch64 | riscv | arm | mips | ppc | m68k | wasm | spirv
 #   QUERIES  queries.jsonl from gen-u.sh
 #   OUT      artifacts (runners, answers, diff.json, attribution.json)
 #
@@ -50,6 +50,24 @@ case "$TARGET" in
   riscv)   BUILDER=$ROOT/build-riscv-runner.sh
            CORPUS=$GISEL/tests/corpus/RISCVLegalizerInfo.gisel
            INC_NAME=RISCVLegalizerInfo.inc ;;
+  arm)     BUILDER=$ROOT/build-arm-runner.sh
+           CORPUS=$GISEL/tests/corpus/ARMLegalizerInfo.gisel
+           INC_NAME=ARMLegalizerInfo.inc ;;
+  mips)    BUILDER=$ROOT/build-mips-runner.sh
+           CORPUS=$GISEL/tests/corpus/MipsLegalizerInfo.gisel
+           INC_NAME=MipsLegalizerInfo.inc ;;
+  ppc)     BUILDER=$ROOT/build-ppc-runner.sh
+           CORPUS=$GISEL/tests/corpus/PowerPCLegalizerInfo.gisel
+           INC_NAME=PowerPCLegalizerInfo.inc ;;
+  m68k)    BUILDER=$ROOT/build-m68k-runner.sh
+           CORPUS=$GISEL/tests/corpus/M68kLegalizerInfo.gisel
+           INC_NAME=M68kLegalizerInfo.inc ;;
+  wasm)    BUILDER=$ROOT/build-wasm-runner.sh
+           CORPUS=$GISEL/tests/corpus/WebAssemblyLegalizerInfo.gisel
+           INC_NAME=WebAssemblyLegalizerInfo.inc ;;
+  spirv)   BUILDER=$ROOT/build-spirv-runner.sh
+           CORPUS=$GISEL/tests/corpus/SPIRVLegalizerInfo.gisel
+           INC_NAME=SPIRVLegalizerInfo.inc ;;
   *) echo "unsupported target: $TARGET" >&2; exit 2 ;;
 esac
 
