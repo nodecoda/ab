@@ -134,6 +134,35 @@ ours:     Legal
 `ref_asserted`，并用 `--allow-ref-asserts 1696` 逐配置钉死：**数量变了就失败**，
 不会把新的单边断言混进 `agree`。
 
+### 这些点为什幺进不来（IR 侧证据）
+
+`CastInst::castIsValid`（`llvm/lib/IR/Instructions.cpp:3481`）对
+`trunc`/`zext`/`sext` 的要求是：
+
+```text
+SrcEC == DstEC                  // 标量不能转向量，元素数必须相同
+两侧都是 integer / int-vector   // bf16、f16、f32、f64 不是
+元素位宽严格变小（trunc）/ 变大（ext）
+```
+
+1,696 条逐条分类（baseline；另外 8 个配置的形状集合与它相同）：
+
+| opcode | 源不是整数 | 目标不是整数 | 元素数/kind 不一致 | 位宽方向不对 | 合计 |
+|---|---:|---:|---:|---:|---:|
+| `G_ANYEXT` | 40 | 112 | 328 | 16 | 496 |
+| `G_SEXT` | 40 | 112 | 328 | 16 | 496 |
+| `G_ZEXT` | 40 | 112 | 328 | 16 | 496 |
+| `G_TRUNC` | 40 | 0 | 136 | 16 | 192 |
+| `G_UNMERGE_VALUES` | — | — | — | 16（可伸缩源，已知最小值无法求和） | 16 |
+
+`G_ANYEXT` 不来自 IR：IR 没有 `anyext` 指令。它只来自 call lowering 的
+`extendOpFromFlags` 和 legalizer 的 `widenScalarSrc`；两者都从源形状派生目标
+（标量→标量、向量→同 lane 向量），同样造不出上面的形状。`IRTranslator` 里没有
+任何 `G_ANYEXT` 的产生点。
+
+所以这 1,696 条只有在**手写 MIR** 或**直接调 `getAction()`**（也就是我们的
+runner）时才可达；从 IR 编译过来的 MIR 不会出现它们。
+
 这条差异不是规则翻译错误，也不能算“我们比上游对”：它只说明两边对非法形状的
 崩溃面不同。真正要守的是它必须恒定。
 
