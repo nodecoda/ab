@@ -13,29 +13,31 @@ space enumerates, including combinations no rule mentions.
 The script pins two numbers. A run that changes either fails instead of
 quietly absorbing a new class:
 
-- `EXPECTED_QUERIES=95172`
-- `EXPECTED_UNANSWERABLE=1414`
+- `EXPECTED_QUERIES=91340`
+- `EXPECTED_UNANSWERABLE=1418`
 
 ## Snapshot
 
 ```text
-gisel    799968c
-ab       754d203
+gisel    5a19746
+ab       6fb6114
 pin      (trees/explore @ 700e551)
-queries  sha256 923e92016d330b4a7fef66aa938334962c45d400c15c914ad787e0289dd31f45  95,172 lines
-answers  sha256 c03015b5734a702d3950c2369f75bddc1277241200b3d25057cf13c57e9b940e
+queries  sha256 9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363  91,340 lines
+answers  sha256 eab1a282ef0a5ced8b4de05b08dd35e0774deca28626eb1bb86f140e663928eb
          official and ours are byte-identical
 ```
 
 ```json
-{"agree": 95172, "disagree": 0, "errors": 0, "matched": 95172,
- "missing_ref": 0, "missing_ours": 0, "unanswerable": 1414, "ref_asserted": 0}
+{"agree": 91340, "disagree": 0, "errors": 0, "matched": 91340,
+ "missing_ref": 0, "missing_ours": 0, "unanswerable": 1418, "ref_asserted": 0}
 ```
 
 Domain shape: 4 configs × 113 opcodes × 24 types × 23 memory types = 95,172
-points. 1,414 of them assert on both sides before returning an action.
+points; the verifier-shape filter drops 3,832 of them (including every comparison
+result that is not an integer), leaving 91,340. 1,418 of the survivors assert on
+both sides before returning an action.
 
-## The 1,414 unanswerable, by opcode
+## The 1,418 unanswerable, by opcode
 
 Both sides raise the same assertion, so these are not disagreements; they are
 the part of the declared space where neither implementation can produce an
@@ -53,10 +55,10 @@ answer. They are pinned, not ignored.
 | `G_IMPLICIT_DEF` | 34 | memory-shape assertion |
 | `G_PHI` | 34 | memory-shape assertion |
 | `G_ICMP` | 32 | result-type assertion |
-| `G_FPTRUNCSTORE` | 30 | memory-shape assertion |
-| `G_CONSTANT` | 22 | memory-shape assertion |
+| `G_FPTRUNCSTORE` | 33 | memory-shape assertion |
+| `G_CONSTANT` | 23 | memory-shape assertion |
 | `G_FRAME_INDEX` | 2 | memory-shape assertion |
-| **total** | **1,414** | |
+| **total** | **1,418** | |
 
 The four 288s are the only systematic class: the domain enumerates every type
 for every slot, and these four opcodes assert on pairs the verifier forbids

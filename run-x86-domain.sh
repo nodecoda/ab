@@ -18,8 +18,8 @@ INC=${3:?}
 OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
 STATE=${5:-$ROOT/.ab/x86-domain}
-EXPECTED_QUERIES=95172
-EXPECTED_UNANSWERABLE=1414
+EXPECTED_QUERIES=91340
+EXPECTED_UNANSWERABLE=1418
 mkdir -p "$OUT" "$STATE"
 
 restore() {

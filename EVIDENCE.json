@@ -29,20 +29,20 @@
    "id": "G/aarch64",
    "direction": "G",
    "target": "aarch64",
-   "dir": "/tmp/g-run/a64/out",
+   "dir": "/tmp/g-run/a64-new/out",
    "queries": {
-    "path": "/tmp/g-run/a64/out/queries.jsonl",
-    "sha256": "22c894e5be68f494b9534a4479ea1b310bc451c18f3583e17b8d8f02958d874d"
+    "path": "/tmp/g-run/a64-new/out/queries.jsonl",
+    "sha256": "ed3d20ec2deed06089d001bdff1b0249a1e5e4b12cdec9eaa9fb9311be101b39"
    },
-   "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64/AArch64LegalizerInfo.inc /tmp/g-run/a64/out",
+   "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64-new/AArch64LegalizerInfo.inc /tmp/g-run/a64-new/out",
    "artifacts": {
-    "diff.json": "b60422aac079114ef7f5b3d3cdf21945dc0eb168cf80b5b1c961bbf0721b4a77",
-    "official.answers.jsonl": "c544ab4d6ac34e0f00c920179f025c14f00362e09171d587608b55e4b7787091",
-    "ours.answers.jsonl": "c544ab4d6ac34e0f00c920179f025c14f00362e09171d587608b55e4b7787091"
+    "diff.json": "2d166febbc496c80ef73041271d1da2b058ed4b866f82e6ea567d11a2756f1d9",
+    "official.answers.jsonl": "b957633ed96cc2e3990ddb7cd3df385c06a6ec2e54e343aef7c9c0fc0f3eb5bd",
+    "ours.answers.jsonl": "b957633ed96cc2e3990ddb7cd3df385c06a6ec2e54e343aef7c9c0fc0f3eb5bd"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 12583,
+    "agree": 12595,
     "disagree": 0,
     "unanswerable": 0
    }
@@ -793,6 +793,28 @@
    },
    "injected_opcode": "G_TRUNC",
    "observed_disagree": 83
+  },
+  {
+   "id": "D/x86",
+   "direction": "D",
+   "target": "x86",
+   "dir": "/tmp/ab-x86-domain/out",
+   "queries": {
+    "path": "/tmp/ab-x86-domain/out/queries.jsonl",
+    "sha256": "9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363"
+   },
+   "command": "./run-x86-domain.sh TREE BUILD /tmp/ab-x86-domain/X86LegalizerInfo.inc /tmp/ab-x86-domain/out",
+   "artifacts": {
+    "diff.json": "718a5d69a2f23912e12e65c30ab3e90e84d1aaeba8efee7a1b985cd21f592734",
+    "official.answers.jsonl": "eab1a282ef0a5ced8b4de05b08dd35e0774deca28626eb1bb86f140e663928eb",
+    "ours.answers.jsonl": "eab1a282ef0a5ced8b4de05b08dd35e0774deca28626eb1bb86f140e663928eb"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 91340,
+    "disagree": 0,
+    "unanswerable": 1418
+   }
   }
  ]
 }
