@@ -65,9 +65,12 @@ STATE/baseline/           baseline inc + library + provenance
 STATE/ledger.jsonl        one line per run (input hashes, counts, rc)
 ```
 
-Assertions do not kill the run: `run-queries.py` restarts the runner and writes
-`status:"unanswerable"` for the query that aborted.  A one-sided assertion is a
-difference, not agreement.
+Assertions do not kill the batch: the runner arms a `sigsetjmp` recovery point
+around `getAction()`, writes `status:"unanswerable"` for a query that aborts,
+and keeps answering (AArch64's full domain aborts 39,056 times per config).
+`run-queries.py` still restarts on a real crash (SIGSEGV) and marks that query
+the same way, so the answer file stays parallel to the query file.  A one-sided
+assertion is a difference (`ref_asserted`), not agreement.
 
 ## Triage
 

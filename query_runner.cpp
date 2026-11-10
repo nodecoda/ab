@@ -34,6 +34,7 @@
 #include <optional>
 #include <vector>
 
+#include "query-recovery.h"
 using namespace llvm;
 
 static std::optional<AtomicOrdering> parseOrdering(StringRef Text) {
@@ -267,6 +268,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
   Sigma &S = *It->second;
   unsigned PtrBits = S.STI->isTarget64BitLP64() ? 64 : 32;
   SmallVector<LLT, 4> Types;
+  SmallVector<std::string, 4> TypeText;
   for (const json::Value &V : *TypeArr) {
     auto Text = V.getAsString();
     if (!Text) {
@@ -279,6 +281,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
       return 2;
     }
     Types.push_back(*Ty);
+    TypeText.push_back(Text->str());
   }
 
   // Immediate operands are part of the query: a rule may read Q.Immediates
@@ -338,7 +341,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
       Failure = *ParsedFailure;
     }
     MMOs.push_back(LegalityQuery::MemDesc(*Ty, *Align, Ordering, Failure));
-    MemText = "[" + jsonString(lltStr(*Ty)) + "," + std::to_string(*Align);
+    MemText = "[" + jsonString(*TyText) + "," + std::to_string(*Align);
     if (Mem->size() == 4)
       MemText += "," + jsonString(*OrderingText) + "," +
                  jsonString(*FailureText);
@@ -354,7 +357,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
   for (size_t I = 0; I != Types.size(); ++I) {
     if (I)
       Tj += ",";
-    Tj += jsonString(lltStr(Types[I]));
+    Tj += jsonString(TypeText[I]);
   }
   Tj += "]";
 
@@ -386,6 +389,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
 } // namespace
 
 int main(int Argc, char **Argv) {
+  ab::disableCoreDumps();
   StringRef Queries;
   for (int I = 1; I < Argc; ++I) {
     StringRef A(Argv[I]);
@@ -428,7 +432,14 @@ int main(int Argc, char **Argv) {
   while (std::getline(In, Line)) {
     if (Line.empty())
       continue;
-    if (int Rc = answerLine(Line, Sigmas, outs()))
+    int Rc = 0;
+    if (!ab::runQuery([&] { Rc = answerLine(Line, Sigmas, outs()); })) {
+      ab::writeUnanswerable(Line, outs());
+      outs().flush();
+      ++N;
+      continue;
+    }
+    if (Rc)
       return Rc;
     ++N;
   }

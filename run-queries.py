@@ -7,6 +7,14 @@ A query that trips an LLVM assertion kills the process, and a buffered tail
 would be lost.  The runner flushes per answer, so we restart after the query
 that aborted and mark it `unanswerable` in the output.  The answer file stays
 parallel to the query file, which is what `diff.py` needs.
+
+The query file is fed in fixed-size chunks instead of re-writing "every
+remaining line" on each abort.  A 960k-line domain aborts thousands of times;
+rewriting the tail made that quadratic.  With chunks the write cost stays
+O(lines) and each restart replays at most one chunk.
+
+Neither the queries nor the answers are held in memory: both are streamed, so
+peak RSS does not scale with the domain size.
 """
 
 from __future__ import annotations
@@ -16,7 +24,13 @@ import json
 import subprocess
 import sys
 import tempfile
+from itertools import islice
 from pathlib import Path
+
+# A chunk is the unit of restart, not of semantics.  Large enough that the
+# temp-file write is amortised, small enough that replaying the tail of a
+# chunk after an abort is cheap.
+CHUNK = 2000
 
 
 def _is_json(line):
@@ -28,58 +42,96 @@ def _is_json(line):
     return True
 
 
-def run(runner, queries, out, report=None):
-    lines = [line for line in queries.read_text().splitlines() if line.strip()]
-    answers, aborted = [], []
-    start = 0
-    while start < len(lines):
-        with tempfile.NamedTemporaryFile("w", suffix=".jsonl",
-                                         delete=False) as handle:
-            handle.write("\n".join(lines[start:]) + "\n")
-            chunk = handle.name
-        proc = subprocess.run([str(runner), "--queries", chunk],
-                              capture_output=True, text=True)
-        Path(chunk).unlink()
-        got = [line for line in proc.stdout.splitlines() if line.strip()]
-        if proc.returncode == 0:
-            answers.extend(got)
-            break
-        if proc.returncode not in (-6, -11, 134, 139):   # SIGABRT/SIGSEGV
-            print("%s: exit %d on query %d:\n%s"
-                  % (runner, proc.returncode, start + len(got) + 1,
-                     proc.stderr.strip()), file=sys.stderr)
-            return aborted
-        # A signal can land while the runner is writing its current answer,
-        # leaving half a JSON object in stdout.  That partial line belongs to
-        # the query that killed the process; it is not an answer for it, and
-        # keeping it would shift every later answer by one.
-        if got and not _is_json(got[-1]):
-            got.pop()
-        answers.extend(got)
-        bad = start + len(got)
-        if bad >= len(lines):
-            bad = start        # the runner died before answering anything
-        aborted.append(bad)
-        start = bad + 1
+def _lines(path):
+    """Non-blank lines of a JSONL file, without their newline."""
+    with path.open() as stream:
+        for line in stream:
+            if line.strip():
+                yield line.rstrip("\n")
 
-    rows = []
-    for index, line in enumerate(lines):
-        if index in set(aborted):
-            record = json.loads(line)
-            record["status"] = "unanswerable"
-            record["reason"] = "asserted"
-            rows.append(json.dumps(record))
-        else:
-            rows.append(answers.pop(0) if answers else line)
-    out.write_text("\n".join(rows) + "\n")
+
+def run(runner, queries, out, report=None):
+    total = sum(1 for _ in _lines(queries))
+    aborted = bytearray(total)
+    aborted_lines = []
+
+    raw_answers = tempfile.NamedTemporaryFile(
+        "w", suffix=".answers", delete=False)
+    try:
+        base = 0
+        stream = _lines(queries)
+        chunk_lines = list(islice(stream, CHUNK))
+        while chunk_lines:
+            offset = 0
+            while True:
+                chunk_path = None
+                try:
+                    with tempfile.NamedTemporaryFile(
+                            "w", suffix=".jsonl", delete=False) as handle:
+                        chunk_path = handle.name
+                        handle.write("\n".join(chunk_lines[offset:]) + "\n")
+                    proc = subprocess.run(
+                        [str(runner), "--queries", chunk_path],
+                        capture_output=True, text=True)
+                finally:
+                    if chunk_path is not None:
+                        Path(chunk_path).unlink()
+                got = [line for line in proc.stdout.splitlines() if line.strip()]
+                if proc.returncode == 0:
+                    raw_answers.write("".join(line + "\n" for line in got))
+                    break
+                if proc.returncode not in (-6, -11, 134, 139):
+                    # SIGABRT/SIGSEGV are the expected assertion deaths.
+                    print("%s: exit %d on query %d:\n%s"
+                          % (runner, proc.returncode, base + offset + len(got) + 1,
+                             proc.stderr.strip()), file=sys.stderr)
+                    return aborted_lines
+                # A signal can land while the runner is writing its current
+                # answer, leaving half a JSON object in stdout.  That partial
+                # line belongs to the query that killed the process; it is not
+                # an answer for it, and keeping it would shift every later
+                # answer by one.
+                if got and not _is_json(got[-1]):
+                    got.pop()
+                raw_answers.write("".join(line + "\n" for line in got))
+                bad = base + offset + len(got)
+                if bad >= base + len(chunk_lines):
+                    bad = base + offset  # died before answering anything
+                aborted[bad] = 1
+                aborted_lines.append(bad)
+                offset = bad - base + 1
+                if offset >= len(chunk_lines):
+                    break
+            base += len(chunk_lines)
+            chunk_lines = list(islice(stream, CHUNK))
+        raw_answers.flush()
+
+        with out.open("w") as answer_stream, \
+                open(raw_answers.name) as answered:
+            for index, line in enumerate(_lines(queries)):
+                if aborted[index]:
+                    record = json.loads(line)
+                    record["status"] = "unanswerable"
+                    record["reason"] = "asserted"
+                    answer_stream.write(json.dumps(record) + "\n")
+                    continue
+                answer = answered.readline()
+                # A short answer file leaves the query itself as the row; that
+                # keeps the correspondence visible instead of silently
+                # shifting every later row.
+                answer_stream.write(answer if answer else line + "\n")
+    finally:
+        raw_answers.close()
+        Path(raw_answers.name).unlink(missing_ok=True)
+
     if report is not None:
         report.write_text(json.dumps(
-            {"queries": len(lines), "answered": len(lines) - len(aborted),
-             "unanswerable": len(aborted),
-             "lines": [index + 1 for index in aborted]}, indent=1) + "\n")
+            {"queries": total, "answered": total - len(aborted_lines),
+             "unanswerable": len(aborted_lines),
+             "lines": [index + 1 for index in aborted_lines]}, indent=1) + "\n")
     print("%s: %d queries, %d unanswerable"
-          % (runner, len(lines), len(aborted)), file=sys.stderr)
-    return aborted
+          % (runner, total, len(aborted_lines)), file=sys.stderr)
+    return aborted_lines
 
 
 def main(argv=None):

@@ -48,6 +48,7 @@
 #include <string>
 #include <vector>
 
+#include "query-recovery.h"
 using namespace llvm;
 using namespace TargetOpcode;
 using namespace LegalizeActions;
@@ -267,6 +268,10 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
   Sigma &S = *It->second;
   unsigned PtrBits = S.TM->createDataLayout().getPointerSizeInBits(0);
   SmallVector<LLT, 4> Types;
+  // Keep the caller's spelling: a target without extended LLT (RISC-V) maps
+  // `f16` and `s16` to the same scalar(16), so re-spelling the parsed type
+  // would collapse two distinct query keys in the answer file.
+  SmallVector<std::string, 4> TypeText;
   for (const json::Value &V : *TypeArr) {
     auto Text = V.getAsString();
     if (!Text)
@@ -275,6 +280,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
     if (!Ty)
       return 2;
     Types.push_back(*Ty);
+    TypeText.push_back(Text->str());
   }
 
   // Immediate operands are part of the query: a rule may read Q.Immediates
@@ -325,7 +331,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
       Failure = *ParsedFailure;
     }
     MMOs.push_back(LegalityQuery::MemDesc(*Ty, *Align, Ordering, Failure));
-    MemText = "[" + jsonString(lltStr(*Ty)) + "," + std::to_string(*Align);
+    MemText = "[" + jsonString(*TyText) + "," + std::to_string(*Align);
     if (Mem->size() == 4)
       MemText += "," + jsonString(*OrderingText) + "," +
                  jsonString(*FailureText);
@@ -342,7 +348,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
   for (size_t I = 0; I != Types.size(); ++I) {
     if (I)
       Out << ',';
-    Out << jsonString(lltStr(Types[I]));
+    Out << jsonString(TypeText[I]);
   }
   Out << "],\"mem\":" << MemText << ",\"imms\":" << ImmsText
       << ",\"action\":" << jsonString(actionName(Step.Action))
@@ -354,6 +360,7 @@ static int answerLine(StringRef Line, const StringMap<Sigma *> &Sigmas,
 } // namespace
 
 int main(int Argc, char **Argv) {
+  ab::disableCoreDumps();
   StringRef Queries;
   for (int I = 1; I < Argc; ++I) {
     StringRef A(Argv[I]);
@@ -387,10 +394,19 @@ int main(int Argc, char **Argv) {
   while (std::getline(In, Line)) {
     if (Line.empty())
       continue;
-    if (int Rc = answerLine(Line, Sigmas, outs()))
+    int Rc = 0;
+    if (!ab::runQuery([&] { Rc = answerLine(Line, Sigmas, outs()); })) {
+      // The query aborted inside LLVM.  The legalizer is built and const, so
+      // the only loss is memory allocated by the abandoned call.
+      ab::writeUnanswerable(Line, outs());
+      outs().flush();
+      ++N;
+      continue;
+    }
+    if (Rc)
       return Rc;
-    // Flush per answer: a query that makes LLVM assert aborts the process,
-    // and a buffered tail would be lost.  Answers before the crash stay.
+    // Flush per answer: a real crash would still lose a buffered tail, and
+    // run-queries.py restarts after it.
     outs().flush();
     ++N;
   }

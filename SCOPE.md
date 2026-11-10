@@ -5,7 +5,7 @@
 | 功能 | 输入 | 输出 |
 |---|---|---|
 | runner 构建 | 目标源 + 我们的 `.inc` | 可执行 runner + 构建元数据 |
-| 跑查询 | query JSONL | answer JSONL（逐行 flush，崩溃后标记 `unanswerable`） |
+| 跑查询 | query JSONL | answer JSONL（逐行 flush；断言在进程内标记，崩溃后由 run-queries 标记） |
 | 全量比较 | 两份 answer JSONL | `agree/disagree/missing/unanswerable` + 退出码 |
 | 归因 | 差异 key + 两侧答案 + 规则标注 | 分类报告（status/action/type_idx/new_type） |
 | 负控 | 注入错规则/错动作 | 必须被抓到的证据 |

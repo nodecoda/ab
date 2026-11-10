@@ -50,8 +50,10 @@
 - `type_idx`：被改写的 slot 下标；无改写为 `0`。
 - `new_type`：改写后的 LLT；无新类型写哨兵 `"LLT_invalid"`。
 - `status:"unanswerable"`：双方都拒绝回答；不计入 `agree`，也不算通过。
-- 外部 runner 崩溃（SIGABRT/SIGSEGV）由 `run-queries.py` 转成
-  `status:"unanswerable", reason:"asserted"`，并保留已答行。
+- 断言（SIGABRT）由 runner 自己转成
+  `status:"unanswerable", reason:"asserted"`：runner 在 `getAction()` 外包了
+  `sigsetjmp` 恢复点，进程内继续答下一题。真正的崩溃（SIGSEGV）仍由
+  `run-queries.py` 重启并标记，已答行保留。
 
 ## 4 runner 协议
 

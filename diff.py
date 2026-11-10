@@ -163,12 +163,14 @@ def main(argv=None):
     if (args.expect_unanswerable is not None
             and result["unanswerable"] != args.expect_unanswerable):
         print("both sides unanswerable on %d queries, expected %d"
-              % (result["unanswerable"], args.expect_unanswerable))
+              % (result["unanswerable"], args.expect_unanswerable),
+              file=sys.stderr)
         return 1
     if (args.allow_ref_asserts is not None
             and result["ref_asserted"] != args.allow_ref_asserts):
         print("ref asserted on %d queries, expected %d"
-              % (result["ref_asserted"], args.allow_ref_asserts))
+              % (result["ref_asserted"], args.allow_ref_asserts),
+              file=sys.stderr)
         return 1
     if (result["missing_ref"] or result["missing_ours"]
             or result["disagree"]):

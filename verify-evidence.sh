@@ -84,7 +84,7 @@ def check(entry):
         return bad
 
     expect = entry["expect"]
-    diff_path = resolve(entry, "diff.json")
+    diff_path = resolve(entry, entry.get("diff", "diff.json"))
     diff = json.loads(read(diff_path).decode())
 
     if expect.get("answers_identical"):
@@ -96,6 +96,14 @@ def check(entry):
     for key in ("agree", "disagree", "unanswerable", "ref_asserted"):
         if key in expect and diff.get(key) != expect[key]:
             bad += fail(entry, "%s=%r, expected %r" % (key, diff.get(key), expect[key]))
+
+    summary_expect = expect.get("summary")
+    if summary_expect:
+        summary = json.loads(read(resolve(entry, "summary.json")).decode())
+        for key, value in summary_expect.items():
+            if summary.get(key) != value:
+                bad += fail(entry, "summary %s=%r, expected %r"
+                            % (key, summary.get(key), value))
 
     minimum = expect.get("min_disagree")
     if minimum is not None:
