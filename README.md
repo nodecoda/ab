@@ -1,50 +1,86 @@
-# ab
+# AB harness
 
-对拍工作台：任意 query JSONL + 两个 runner（官方 / 我们）→ answers → diff →
-归因 → 负控。它不生成题面、不翻译规则、不修改 gisel。
+This is the workbench entry point for the LLVM legalizer differential loop.
+It is **not** part of gisel; the boundary is `docs/SCOPE.md`.  It consumes a
+`.gisel` source (or a prebuilt `.inc`) and an answerless query JSONL, and
+compares the official legalizer with one that includes the generated fragment.
 
-```text
-query JSONL ──> official runner ──> official answers ─┐
-     │                                                 ├─> diff ─> verdict/attribution
-     └─────────> ours runner ─────> ours answers ──────┘
+## One command
+
+```sh
+python3 tools/ab/ab.py run --target x86-ctor \
+  --tree /home/ubuntu/llvm/trees/explore \
+  --build /home/ubuntu/llvm/builds/explore \
+  --queries /tmp/x86.domain.jsonl \
+  --out /tmp/ab-x86 --state /tmp/ab-state-x86 \
+  --compare full
 ```
 
-输入题面由两个上游方提供，ab 只消费：
+`tools/ab/run-x86-end-to-end.sh TREE BUILD x86.inc OUT STATE` does the same
+without the ledger: official from the pinned constructor, ours after swapping
+the body, then `diff.json`.
 
-- `gisel cases` / `gisel domain` → G 题面；
-- `upstream-source oracle` → U 题面。
+`--compare action` is the coarse smoke gate; `full` (default) compares
+`(action, type_idx, new_type)`.  `--dry-run` validates the adapter, query file
+and baseline without touching the build.  `ab.py verify` checks that the build
+is back on the baseline include.
 
-## 状态
+## Targets
 
-| WP | 内容 | 状态 |
+| adapter | strategy | notes |
 |---|---|---|
-| WP0 | 骨架、`SCOPE.md`、`CONTRACTS.md` | 完成 |
-| WP2 | `tools/ab/*` 从 gisel 迁入，抽 key 契约，改 `test_scope.py` | 待做 |
-| WP4 | G/U 组合、负控、`EVIDENCE.json`、`verify-evidence.sh` | 待做 |
+| `x86` | swap the constructor body for `#include` and rebuild | official is the pinned hand-written constructor |
+| `x86-ctor` | generated constructor object | retired with the `.td` path; kept only for old logs |
+| `aarch64` | generated constructor object | does not modify the build |
+| `m68k` | generated constructor object | 41-query smoke target; single `default` config |
+| `ppc` | generated constructor object | 94 queries; one `default` config; 1 query asserts on both sides (upstream `bitcastIf`) |
+| `wasm` | generated constructor object | 886 queries; `wasm32|wasm64` × `±sign-ext` |
+| `arm` | generated constructor object | 1,614 queries; 7 configs across soft-float / VFP2 / VFP4 / NEON / V5T / hardware divide / AEABI; Thumb1 excluded (constructor registers no rule) |
+| `mips` | generated constructor object | 1,656 queries; 5 configs across MSA / MIPS32r2 / unaligned access; 9 queries abort upstream (`--allow-ref-asserts 9`) |
+| `spirv` | generated constructor object | 5,136 queries; 6 configs across kernel/shader × spirv32/64 × extension sets; 4 queries abort on both sides (`--expect-unanswerable 4`, upstream `changeElementSizeTo` overload) |
 
-## 布局（WP2 迁入后，保持扁平，不改文件名）
+Adapters live in `tools/ab/targets/*.json`: include path, library, ninja
+target, runner builder, feature table, optional axes, query-count contract.
+
+A new target's runner is a ~30 line file: include its subtarget and legalizer
+headers, alias `TargetSubtarget`/`TargetLegalizer`, include
+`query_runner_common.h`, then return the config table, the target
+initializers, and the legalizer constructor.  `build-query-runner.sh` derives
+the include paths and the `libLLVM<TARGET>{CodeGen,Desc,Info}` list from the
+target name; `build-m68k-runner.sh` is the thin per-target wrapper the adapter
+names.
+
+## Artifacts
 
 ```text
-CONTRACTS.md            与 gisel / upstream-source 的接口契约
-SCOPE.md                做什么、不做什么
-diff.py                 比较两个答案文件（0/1/2）
-attribute.py            差异归因
-ab.py                   编排：构建、跑、diff、报告
-run-queries.py          runner 的崩溃恢复（asserted -> unanswerable）
-query_runner_common.h   runner 公共实现
-*_query_runner.cpp      各 target 入口
-*_generated_ctor.cpp    各 target 的测试构造器
-build-*.sh              runner 构建
-run-*-end-to-end.sh     端到端一条命令
-targets/*.json          target 适配器（strategy、inc 名、query 数）
-tests/                  key 契约测试、diff 单测
+OUT/official.answers.jsonl
+OUT/ours.answers.jsonl
+OUT/diff.json
+STATE/baseline/           baseline inc + library + provenance
+STATE/ledger.jsonl        one line per run (input hashes, counts, rc)
 ```
 
-## 依赖方向
+Assertions do not kill the run: `run-queries.py` restarts the runner and writes
+`status:"unanswerable"` for the query that aborted.  A one-sided assertion is a
+difference, not agreement.
 
-```text
-ab -> gisel CLI (gen/eval)         允许
-ab -> gisel.answers (key 契约)     允许，必须有契约测试
-ab -> gisel.cases / gisel.eval     迁移时抽掉；不得成为长期依赖
-gisel -> ab                        禁止
-```
+## Triage
+
+`bundle.json` groups differences by `owner`:
+
+| owner | meaning | action |
+|---|---|---|
+| `ours` | translation / ours assertion / evaluator | fix the rule, importer, emitter or evaluator |
+| `ours-or-upstream` | rule answer differs | check the source revision before deciding |
+| `llvm-or-query` | official asserts, a rule did fire | validate the query first, then record upstream |
+| `query` | official asserts, no rule fired | fix the generator/axes |
+
+A confirmed LLVM defect is recorded under
+`/home/ubuntu/admin/upstream-issues/` first, per `admin/AGENTS.md` §4.1; do not
+open a GitHub issue directly.
+
+## Status
+
+First smoke (2026-11-08): X86 400 queries, full compare, 0 disagreements;
+AArch64 10,271 queries, 52 differences (45 one-sided assertions, 7 `type_idx`)
+awaiting three-way attribution.  See `docs/REPORT-ab.md` §3.
