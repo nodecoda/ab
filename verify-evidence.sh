@@ -8,7 +8,7 @@ set -euo pipefail
 # negative control still attributes all of its disagreements to the rulesets it
 # injected.
 #
-#   DIRECTION   G | U | U-neg   (default: all)
+#   DIRECTION   G | G-neg | U | U-neg   (default: all)
 #
 # The artifacts themselves live under /tmp and are not committed.  A missing
 # artifact is a failure, not a skip: the manifest records the command that
@@ -65,7 +65,7 @@ def check(entry):
         if a != b:
             bad += fail(entry, "answer files differ (diff.json alone is not enough)")
 
-    for key in ("agree", "disagree", "unanswerable"):
+    for key in ("agree", "disagree", "unanswerable", "ref_asserted"):
         if key in expect and diff.get(key) != expect[key]:
             bad += fail(entry, "%s=%r, expected %r" % (key, diff.get(key), expect[key]))
 

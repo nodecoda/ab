@@ -7,6 +7,9 @@ set -euo pipefail
 # fixed query set, answer it twice, and diff.  The query count is a contract:
 # if the corpus changes it, stop and review the new questions.
 #
+# 5,136 -> 5,734 on 2026-11-10: the case generator started rejecting type
+# tuples MIR cannot hold (`9e59c9d`, `77bcb7b`), so the set was regenerated and
+# re-reviewed (unique keys, deterministic, every rule still witnessed).
 # The four unanswerable queries are a shared assert: SPIRVLegalizerInfo.cpp
 # passes `MaxVectorSize` where `changeElementSizeTo` expects a type index
 # (`changeElementCountTo(0, ElementCount::getFixed(...))` was meant), so both
@@ -18,7 +21,7 @@ BUILD=${2:?}
 INC=${3:?}
 OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-EXPECTED_QUERIES=5136
+EXPECTED_QUERIES=5734
 mkdir -p "$OUT"
 
 "$ROOT/build-spirv-runner.sh" "$TREE" "$BUILD" "$INC" "$OUT/runner"

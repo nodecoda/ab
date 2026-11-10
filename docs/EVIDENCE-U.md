@@ -215,7 +215,7 @@ runner 回显 LLT 时把 `v16bf16` 写成 `v16s16`，题面里还是 `v16bf16`�
 
 ```sh
 cd /home/ubuntu/llvm/ab && ./verify-evidence.sh
-# PASS G/x86 … PASS U-neg/spirv, 21/21 entries pass
+# PASS G/x86 … PASS U-neg/spirv, 36/36 entries pass（G 9 + G-neg 9 + U 9 + U-neg 9）
 ```
 
 `EVIDENCE.json` 记录每个产物的 sha256、查询数、期望的 `disagree`/`unanswerable`

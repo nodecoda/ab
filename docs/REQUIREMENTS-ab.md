@@ -140,7 +140,7 @@
 
 | # | 需求 |
 |---|---|
-| FR1 | **target adapter**：X86/AArch64/RISC-V 各一份配置，声明 include 路径、库名、重建目标、构造函数、config 表；核心流程不含 `if target == ...` |
+| FR1 | **target adapter**：九个 target 各一份配置（X86/AArch64/RISC-V/ARM/Mips/PPC/M68k/WebAssembly/SPIR-V），声明 include 路径、库名、重建目标、构造函数、config 表；核心流程不含 `if target == ...` |
 | FR2 | **baseline 隔离**：复制 baseline inc/库；`runner.official` 绑定副本，不依赖 build 当前状态 |
 | FR3 | **查询契约**：按 `spec/cases-format.md`；查询行不得带答案字段；重复 key 冲突报错 |
 | FR4 | **答案契约**：答案行原样回显 key；`unanswerable` 单列；`LLT_invalid` 哨兵 |

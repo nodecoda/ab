@@ -45,3 +45,49 @@ cd /home/ubuntu/llvm/ab
 结论：harness 能区分“语法能生成”和“规则正确”。G 侧的负控成立；负控不能
 只证明 diff 会报错，还要证明它报在**预期的那条**规则上——这里是 `G_ADD s16`，
 与注入位置一致。
+
+## 九 target 的负控（2026-11-10）
+
+上面那条是 X86 的手工变异。为了让九个 target 都有同样的负控，新增
+`run-g-negative.sh TARGET OPCODE OUT`：用 `inject-missing-opcode.py` 把该
+opcode 的整条 builder 链换成 `.unsupported()`，再调用该 target 的
+`run-<target>-end-to-end.sh`（题面仍由**未变异**的语料生成，只有我们这一侧的
+inc 变了）。归因用 `g-attribution.py`：G 题面的 `ruleset` 是语料里的 builder 名
+（`X_G_ADD`），所以“期望集合”由带该 opcode 的查询反推。
+
+| target | 注入 opcode | disagree | `by_ruleset` | unknown | outside | rc |
+|---|---|---:|---|---:|---:|---:|
+| X86 | `G_ADD` | 127 | `X_G_ADD 127` | 0 | 空 | 1 |
+| AArch64 | `G_ZEXT` | 315 | `A_G_ZEXT 315` | 0 | 空 | 1 |
+| RISC-V | `G_FPTOSI` | 140 | `R_G_FPTOSI 140` | 0 | 空 | 1 |
+| ARM | `G_LOAD` | 71 | `A_G_LOAD 71` | 0 | 空 | 1 |
+| Mips | `G_UITOFP` | 15 | `Mips_G_UITOFP 15` | 0 | 空 | 1 |
+| PPC | `G_ZEXT` | 3 | `P_G_ZEXT 3` | 0 | 空 | 1 |
+| M68k | `G_MUL` | 7 | `M68k_G_ADD 7` | 0 | 空 | 1 |
+| WebAssembly | `G_CTLZ` | 56 | `Wasm_G_CTLZ 56` | 0 | 空 | 1 |
+| SPIR-V | `G_TRUNC` | 83 | `Spv_G_TRUNC 83` | 0 | 空 | 1 |
+
+两条口径说明：
+
+- `disagree` 可能大于 `by_ruleset` 的总和：`diff.py` 默认只保留前 100 条明细。
+  第一版就踩了这个坑（X86 127 条只归因了 100 条）。现在 helper 用
+  `--details 200000` 重跑 diff，`g-attribution.py` 也会在明细不足时直接报错，
+  不允许“看起来全归因了”。
+- M68k 的查询属于语料里的 `M68k_G_ADD` builder（一个 builder 建多条算术），
+  所以注入 `G_MUL` 后差异记在 `M68k_G_ADD` 名下。
+
+复跑：
+
+```sh
+cd /home/ubuntu/llvm/ab
+./run-g-negative.sh x86     G_ADD     /tmp/g-neg/x86
+./run-g-negative.sh aarch64 G_ZEXT    /tmp/g-neg/a64
+./run-g-negative.sh riscv   G_FPTOSI  /tmp/g-neg/rv
+./run-g-negative.sh arm     G_LOAD    /tmp/g-neg/arm
+./run-g-negative.sh mips    G_UITOFP  /tmp/g-neg/mips
+./run-g-negative.sh ppc     G_ZEXT    /tmp/g-neg/ppc
+./run-g-negative.sh m68k    G_MUL     /tmp/g-neg/m68k
+./run-g-negative.sh wasm    G_CTLZ    /tmp/g-neg/wasm
+./run-g-negative.sh spirv   G_TRUNC   /tmp/g-neg/spirv
+./verify-evidence.sh G-neg   # 9/9
+```
