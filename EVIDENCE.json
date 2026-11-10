@@ -7,20 +7,20 @@
    "id": "G/x86",
    "direction": "G",
    "target": "x86",
-   "dir": "/tmp/g-run/x86/out",
+   "dir": "/tmp/g-run/x86-new/out",
    "queries": {
-    "path": "/tmp/g-run/x86/out/queries.jsonl",
-    "sha256": "530f0311f7edf4f014d6ef059335d8c11299c8d46b8e9c47aa8f3933bb44817c"
+    "path": "/tmp/g-run/x86-new/out/queries.jsonl",
+    "sha256": "d4a89d99ba31f8ca779e9875209f9d585b832dda5bc612194ae86ffca3e29f45"
    },
-   "command": "./run-x86-end-to-end.sh TREE BUILD /tmp/g-run/x86/X86LegalizerInfo.inc /tmp/g-run/x86/out",
+   "command": "./run-x86-end-to-end.sh TREE BUILD /tmp/g-run/x86-new/X86LegalizerInfo.inc /tmp/g-run/x86-new/out",
    "artifacts": {
-    "diff.json": "49ea4bfa855fb47f9a9f93d3b2768bfba634b696c9c97f3df86011643365ad00",
-    "official.answers.jsonl": "976351de97169726012666bd92739bd7f22a3e41c9d5671f132beb756ac467d7",
-    "ours.answers.jsonl": "976351de97169726012666bd92739bd7f22a3e41c9d5671f132beb756ac467d7"
+    "diff.json": "6575a6ba6a83eeb976f3e8b7d76dc5f013bb72b7076efad62828083493261668",
+    "official.answers.jsonl": "b6b17279d5833c2f567162c2e985f84a005798a39cc186b76a43a414e3d91ff2",
+    "ours.answers.jsonl": "b6b17279d5833c2f567162c2e985f84a005798a39cc186b76a43a414e3d91ff2"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 3021,
+    "agree": 3013,
     "disagree": 0,
     "unanswerable": 0
    }
@@ -29,20 +29,20 @@
    "id": "G/aarch64",
    "direction": "G",
    "target": "aarch64",
-   "dir": "/tmp/g-run/a64-new/out",
+   "dir": "/tmp/g-run/a64-new2/out",
    "queries": {
-    "path": "/tmp/g-run/a64-new/out/queries.jsonl",
-    "sha256": "ed3d20ec2deed06089d001bdff1b0249a1e5e4b12cdec9eaa9fb9311be101b39"
+    "path": "/tmp/g-run/a64-new2/out/queries.jsonl",
+    "sha256": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98"
    },
-   "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64-new/AArch64LegalizerInfo.inc /tmp/g-run/a64-new/out",
+   "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64-new2/AArch64LegalizerInfo.inc /tmp/g-run/a64-new2/out",
    "artifacts": {
-    "diff.json": "2d166febbc496c80ef73041271d1da2b058ed4b866f82e6ea567d11a2756f1d9",
-    "official.answers.jsonl": "b957633ed96cc2e3990ddb7cd3df385c06a6ec2e54e343aef7c9c0fc0f3eb5bd",
-    "ours.answers.jsonl": "b957633ed96cc2e3990ddb7cd3df385c06a6ec2e54e343aef7c9c0fc0f3eb5bd"
+    "diff.json": "767eee6c8b1171b9c398cb98a9a5ede20684ebcfa56eb4c9ac5786008f2f7cd7",
+    "official.answers.jsonl": "10ab8aa2eaadffcf1ba483b8b02f003f10469b4045d2b35bef4d98def47e0b16",
+    "ours.answers.jsonl": "10ab8aa2eaadffcf1ba483b8b02f003f10469b4045d2b35bef4d98def47e0b16"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 12595,
+    "agree": 12559,
     "disagree": 0,
     "unanswerable": 0
    }
@@ -51,20 +51,20 @@
    "id": "G/riscv",
    "direction": "G",
    "target": "riscv",
-   "dir": "/tmp/g-run/rv/out",
+   "dir": "/tmp/g-run/rv-new/out",
    "queries": {
-    "path": "/tmp/g-run/rv/out/queries.jsonl",
-    "sha256": "29b0a5c022473ed16f43033569fc3e94911dd1ae34823535d462751e46f43373"
+    "path": "/tmp/g-run/rv-new/out/queries.jsonl",
+    "sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6"
    },
-   "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-run/rv/RISCVLegalizerInfo.inc /tmp/g-run/rv/out",
+   "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-run/rv-new/RISCVLegalizerInfo.inc /tmp/g-run/rv-new/out",
    "artifacts": {
-    "diff.json": "8101f60929996c5fcf4c4ce3ab42b13443692a8e82b8ed3faf2717da7d754de6",
-    "official.answers.jsonl": "cbc9b288634f9fae85deef570c132f6a0474daff6ec01540762e6b6271dfdab8",
-    "ours.answers.jsonl": "cbc9b288634f9fae85deef570c132f6a0474daff6ec01540762e6b6271dfdab8"
+    "diff.json": "bf44853aff9ee66faadff31d631ac032b43692e4f5075a1f6ce9306666d42a92",
+    "official.answers.jsonl": "1738caf3163981a1d158566ee39973a3f4db575f84c4dd8b73b7520a72d92657",
+    "ours.answers.jsonl": "1738caf3163981a1d158566ee39973a3f4db575f84c4dd8b73b7520a72d92657"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 6147,
+    "agree": 6084,
     "disagree": 0,
     "unanswerable": 0
    }

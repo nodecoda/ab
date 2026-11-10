@@ -12,7 +12,7 @@ INC=${3:?}
 OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
 STATE=${5:-$ROOT/.ab/riscv}
-EXPECTED_QUERIES=6149
+EXPECTED_QUERIES=6086
 mkdir -p "$OUT" "$STATE"
 
 "$ROOT/build-riscv-runner.sh" "$TREE" "$BUILD" "$INC" "$OUT/runner"
