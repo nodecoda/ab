@@ -31,7 +31,7 @@ jobs:
           GISEL_SRC="$GITHUB_WORKSPACE/gisel" python3 -m pytest tests -q
       - name: frozen evidence still matches
         working-directory: ab
-        run: ./verify-evidence.sh
+        run: VERIFY_FROZEN=1 ./verify-evidence.sh
       - name: RISC-V vertical slice from frozen artifacts
         working-directory: ab
         run: |

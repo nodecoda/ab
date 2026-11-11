@@ -48,6 +48,9 @@ python3 riscv_vertical.py --out /tmp/rv --verify-only [--l3]
 python3 riscv_vertical.py --out /tmp/rv --verify-only --frozen
 ```
 
+`VERIFY_FROZEN=1 ./verify-evidence.sh` reads only the committed `oracle/`
+copies, so CI proves the repo alone replays the recorded evidence.
+
 `--frozen` rebuilds the artifact layout from the committed copies under
 `oracle/` (G/U and both negative controls come from `oracle/<id>/`, the domain
 summary and the two MIR reports from `oracle/riscv-vertical/`). It needs no

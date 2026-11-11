@@ -35,6 +35,7 @@ for entry in entries:
     for name in entry["artifacts"]:
         source = src / name
         target = dst / (name + ".gz")
+        target.parent.mkdir(parents=True, exist_ok=True)
         with source.open("rb") as fh, target.open("wb") as raw:
             with gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as out:
                 shutil.copyfileobj(fh, out)

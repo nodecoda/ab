@@ -842,7 +842,9 @@
       "artifacts": {
         "summary.json": "730fa6184e0a092a521d36ea2bd9d92eb5bf422c8a9a466a943aa15154b86802",
         "manifest.txt": "79f832edcc9bd3490c8878182f2776e1b92f2a5967952ee57075283f8831eb38",
-        "sites.json": "6e1624bea862e7b5c8df54285dcb83fa056eb76e8938d08e537de5af6f699533"
+        "sites.json": "6e1624bea862e7b5c8df54285dcb83fa056eb76e8938d08e537de5af6f699533",
+        "baseline/diff.json": "b9f40fdb1a236fa9769d12492c260ce45d254e9438f7393d5eb40909dc24ded5",
+        "baseline/queries.jsonl": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
       },
       "expect": {
         "summary": {
@@ -884,7 +886,9 @@
       "command": "./run-riscv-domain.sh TREE BUILD /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6",
       "artifacts": {
         "summary.json": "fd45ae3682e7d080cced6dc6bd3f785b29e9f01d6f37a86c1f50e5416db0c2c7",
-        "manifest.txt": "aaa179dae82f4c24177f346f5c0f6dc21f0e59b7e9dc077457eeca63545202a0"
+        "manifest.txt": "aaa179dae82f4c24177f346f5c0f6dc21f0e59b7e9dc077457eeca63545202a0",
+        "rv64gc/diff.json": "067ed79057e6112c5d55e1552ff34897fee583bf6bd1d576914d9a60182b9a23",
+        "rv64gc/queries.jsonl": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
       },
       "expect": {
         "summary": {

@@ -8,21 +8,25 @@ set -euo pipefail
 # negative control still attributes all of its disagreements to the rulesets it
 # injected.
 #
-#   DIRECTION   G | G-neg | U | U-neg   (default: all)
+#   DIRECTION   G | G-neg | U | U-neg | D   (default: all)
+#
+# VERIFY_FROZEN=1 ignores the live /tmp artifacts and reads only the committed
+# copies under oracle/.  That is what CI uses: it proves the repo alone can
+# replay the evidence, without the build tree or the original run directories.
 #
 # The artifacts themselves live under /tmp and are not committed.  A missing
 # artifact is a failure, not a skip: the manifest records the command that
 # regenerates it.  Exit 1 on the first failing entry (after reporting all).
 
 HERE=$(cd "$(dirname "$0")" && pwd)
-exec python3 - "$HERE/EVIDENCE.json" "${1:-all}" <<'PY'
+exec python3 - "$HERE/EVIDENCE.json" "${1:-all}" "${VERIFY_FROZEN:-0}" <<'PY'
 import gzip
 import hashlib
 import json
 import pathlib
 import sys
 
-manifest_path, want = sys.argv[1], sys.argv[2]
+manifest_path, want, frozen = sys.argv[1], sys.argv[2], sys.argv[3] == "1"
 manifest = json.loads(pathlib.Path(manifest_path).read_text())
 oracle_root = pathlib.Path(manifest_path).parent / "oracle"
 
@@ -38,13 +42,14 @@ def resolve(entry, name, path=None):
     """
     d = pathlib.Path(entry["dir"])
     candidates = []
-    if path is not None:
-        candidates.append(pathlib.Path(path))
-    candidates.append(d / name)
-    candidates.append(d / (name + ".gz"))
-    frozen = oracle_root / entry["id"]
-    candidates.append(frozen / name)
-    candidates.append(frozen / (name + ".gz"))
+    if not frozen:
+        if path is not None:
+            candidates.append(pathlib.Path(path))
+        candidates.append(d / name)
+        candidates.append(d / (name + ".gz"))
+    frozen_dir = oracle_root / entry["id"]
+    candidates.append(frozen_dir / name)
+    candidates.append(frozen_dir / (name + ".gz"))
     for candidate in candidates:
         if candidate.exists():
             return candidate
@@ -102,11 +107,17 @@ def check(entry):
 
     expect = entry["expect"]
     diff_path = resolve(entry, entry.get("diff", "diff.json"))
+    if diff_path is None:
+        return bad + fail(entry, "missing %s" % entry.get("diff", "diff.json"))
     diff = json.loads(read(diff_path).decode())
 
     if expect.get("answers_identical"):
-        a = read(resolve(entry, "official.answers.jsonl"))
-        b = read(resolve(entry, "ours.answers.jsonl"))
+        pa = resolve(entry, "official.answers.jsonl")
+        pb = resolve(entry, "ours.answers.jsonl")
+        if pa is None or pb is None:
+            return bad + fail(entry, "missing answer files")
+        a = read(pa)
+        b = read(pb)
         if a != b:
             bad += fail(entry, "answer files differ (diff.json alone is not enough)")
 
@@ -128,7 +139,10 @@ def check(entry):
 
     summary_expect = expect.get("summary")
     if summary_expect:
-        summary = json.loads(read(resolve(entry, "summary.json")).decode())
+        path = resolve(entry, "summary.json")
+        if path is None:
+            return bad + fail(entry, "missing summary.json")
+        summary = json.loads(read(path).decode())
         for key, value in summary_expect.items():
             if summary.get(key) != value:
                 bad += fail(entry, "summary %s=%r, expected %r"
@@ -139,7 +153,10 @@ def check(entry):
         if diff.get("disagree", 0) < minimum:
             bad += fail(entry, "disagree=%r, expected >= %d"
                         % (diff.get("disagree"), minimum))
-        attribution = json.loads(read(resolve(entry, "attribution.json")).decode())
+        path = resolve(entry, "attribution.json")
+        if path is None:
+            return bad + fail(entry, "missing attribution.json")
+        attribution = json.loads(read(path).decode())
         if attribution.get("disagree") != diff.get("disagree"):
             bad += fail(entry, "attribution covers %r of %r disagreements"
                         % (attribution.get("disagree"), diff.get("disagree")))
