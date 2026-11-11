@@ -118,3 +118,29 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 - 不往源码树写产物；所有报告在 `--out`。
 - 换源/构建必须持锁，`restore` + 重建基线库是收工硬门。
 - `0 diff` 只说明“两侧一致”，不说明“规则正确”。
+
+## 7 覆盖范围（哪些 target 跑到哪一层）
+
+不是每个 target 都跑满了所有层。分母不同，结论就不同；引用时按层说，别把 3
+个 target 的结果说成 9 个。
+
+| 层 | 内容 | target | 题面规模（实测） | 证据位置 |
+|---|---|---|---|---|
+| L0 G | gisel 出题，两侧答 `getAction()` | 9 个 | x86 3,014 / aarch64 12,559 / riscv 6,086 / arm 1,614 / mips 1,647 / ppc 94 / m68k 35 / wasm 894 / spirv 5,734 | `EVIDENCE.json` `G/*` |
+| L0 U | upstream-source 出题（采样） | 9 个 | x86 10,027 / aarch64 29,561 / riscv 20,445 / arm 15,695 / mips 11,396 / ppc 2,177 / m68k 2,182 / wasm 9,290 / spirv 15,580 | `EVIDENCE.json` `U/*` |
+| L0 负控 | 注入错 opcode / 错谓词 | 9 个 | 每个 target 一组 | `EVIDENCE.json` `G-neg/*`、`U-neg/*` |
+| D | 规则无关的声明值域全量对拍 | x86, aarch64, riscv | x86 91,340 / aarch64 8,432,640 / riscv 2,029,976（agree；unanswerable 另计） | `EVIDENCE.json` `D/*` |
+| U-full | 上游题面按全部配置展开 | x86, aarch64, riscv | x86 1,121,728 / aarch64 3,505,608 / riscv 3,028,496 | `EVIDENCE.json` `U-full/*` |
+| MIR L1 | 上游 `-run-pass=legalizer` MIR 回放 | x86, aarch64, riscv | 624 条 RUN（611 same + 13 双端 abort，diff 0） | `docs/REPORT-mir.md` §2 |
+| MIR L2 | 由查询合成 MIR 回放 | x86, aarch64, riscv | 15,367 建成（14,298 same + 1,004 双端 abort + 65 timeout，diff 0） | `docs/REPORT-mir.md` §3、`data/riscv-contract.json` |
+| MIR L3 | `ninja check-llvm` 全量 | x86, aarch64, riscv 组合 | 80,655 个 lit 测试 | `docs/REPORT-mir.md` §6 |
+
+约束：
+
+- 剩余 6 个 target 只有 L0（G/U/负控）。说“9 个 target 都对拍过”只能指 L0；
+  说“domain / MIR 也覆盖”时主语必须是 x86、aarch64、riscv。
+- `targets/*.json` 的 `query_count` 是**当前生成器的输出**，由
+  `./refresh-counts.py --check` 校验；它不等于 `EVIDENCE.json` 里某次冻结运行
+  的条数（证据绑定的是它自己的 queries 文件与 sha）。
+- MIR 层证据目前只写在 `docs/REPORT-mir.md` 与 `data/riscv-contract.json`，
+  尚未进 `EVIDENCE.json`；不要把 `verify-evidence.sh` 全绿读成“MIR 也验过了”。
