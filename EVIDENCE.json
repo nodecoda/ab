@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "generated": "2026-11-11",
-  "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary.",
+  "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte.",
   "entries": [
     {
       "id": "G/x86",
@@ -905,6 +905,57 @@
       "runtime": {
         "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMRISCVCodeGen.so.24.0git",
         "sha256": "f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4"
+      }
+    },
+    {
+      "id": "U-full/x86",
+      "direction": "U",
+      "target": "x86",
+      "dir": "/tmp/u-run/full2-x86",
+      "command": "./run-u-end-to-end.sh x86 /tmp/u-full2/x86-full.jsonl /tmp/u-run/full2-x86 --allow-unanswerable 1272",
+      "artifacts": {
+        "diff.json": "0b33032b76d5340f5745e4df6415e219329a7a5bf908655b9087a64fe8d10526",
+        "universe.jsonl": "39f095cca1cfc6ff08a08e60628911c936bd6d798951dcde37daebff4b809da6"
+      },
+      "expect": {
+        "agree": 1121728,
+        "disagree": 0,
+        "unanswerable": 1272,
+        "ref_asserted": 0
+      }
+    },
+    {
+      "id": "U-full/aarch64",
+      "direction": "U",
+      "target": "aarch64",
+      "dir": "/tmp/u-run/full2-a64",
+      "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full2/aarch64-full.jsonl /tmp/u-run/full2-a64 --allow-ref-asserts 30150 --allow-unanswerable 35316",
+      "artifacts": {
+        "diff.json": "1bc25a855cf054544644653dcdb26194ffea83949056ea4c8bc42c67f0704546",
+        "universe.jsonl": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
+      },
+      "expect": {
+        "agree": 3475458,
+        "disagree": 0,
+        "unanswerable": 35316,
+        "ref_asserted": 30150
+      }
+    },
+    {
+      "id": "U-full/riscv",
+      "direction": "U",
+      "target": "riscv",
+      "dir": "/tmp/u-run/full2-rv",
+      "command": "./run-u-end-to-end.sh riscv /tmp/u-full2/riscv-full.jsonl /tmp/u-run/full2-rv --allow-unanswerable 6008",
+      "artifacts": {
+        "diff.json": "1c53c0d99c2c10082191bea5a898501734d29da918678ef246fb76a687c38baa",
+        "universe.jsonl": "b756c962695b0af6cbbf42ac4ab8dc542ca4890e287e1be7a135975c66705abb"
+      },
+      "expect": {
+        "agree": 3028496,
+        "disagree": 0,
+        "unanswerable": 6008,
+        "ref_asserted": 0
       }
     }
   ]

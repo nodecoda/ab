@@ -21,16 +21,23 @@ set -euo pipefail
 # --drop-opcode OP runs the negative control: OP's rules are replaced with
 # `.unsupported()` in the include, and the run passes only if the diff sees
 # disagreements and every one of them is attributed to that builder's rulesets.
+#
+# --allow-ref-asserts N pins the number of queries where the *reference* asserts
+# before answering and ours answers (diff.py's `ref_asserted` class).  Those are
+# upstream defects in the query's own type, not a rule translation gap; pinning
+# the count keeps them out of `disagree` without letting the number drift.
 TARGET=${1:?usage: run-u-end-to-end.sh TARGET QUERIES OUT [--drop-opcode OP]}
 QUERIES=${2:?}
 OUT=${3:?}
 shift 3
 DROP=""
 ALLOW_UNANSWERABLE=0
+ALLOW_REF_ASSERTS=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --drop-opcode) DROP=${2:?}; shift 2 ;;
     --allow-unanswerable) ALLOW_UNANSWERABLE=${2:?}; shift 2 ;;
+    --allow-ref-asserts) ALLOW_REF_ASSERTS=${2:?}; shift 2 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -105,6 +112,7 @@ echo "[4/4] diff + attribution" >&2
 set +e
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
   "$OUT/ours.answers.jsonl" --json --details 200000 \
+  ${ALLOW_REF_ASSERTS:+--allow-ref-asserts "$ALLOW_REF_ASSERTS"} \
   > "$OUT/diff.json"
 DIFF_RC=$?
 set -e

@@ -217,12 +217,114 @@ runner 回显 LLT 时把 `v16bf16` 写成 `v16s16`，题面里还是 `v16bf16`�
 `tests/test_attribution.py` 锁住 `f32` / `bf16` / 指针三种折叠。修后重跑六个负控，
 全部 `unknown_keys=0`。
 
+## 全量题面（`oracle universe --limit 0`，2026-11-11）
+
+前面每轮 U 都是限额题面（AArch64 2,400 个候选）。这一轮把候选宇宙整个展开，专门
+回答“gisel 有没有漏接上游规则”：题面只由上游规则字面量生成，gisel 不参与。
+
+```sh
+cd /home/ubuntu/llvm/upstream-source
+python3 -m oracle universe --arity /tmp/u-gen/a64d/arity.jsonl \
+    --out /tmp/u-full2/aarch64-all.jsonl --target aarch64 --limit 0
+python3 -m oracle expand --universe /tmp/u-full2/aarch64-all.jsonl \
+    --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve \
+    --out /tmp/u-full2/aarch64-full.jsonl
+cd /home/ubuntu/llvm/ab
+./run-u-end-to-end.sh aarch64 /tmp/u-full2/aarch64-full.jsonl /tmp/u-run/full2-a64 \
+    --allow-ref-asserts 30150 --allow-unanswerable 35316
+```
+
+X86 用 `C0,C1,C2,C3`，RISC-V 用 `rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,
+ristretto,rv32zilsd`；`gen-u.sh --full` 一条命令产出同一份 `universe.full.jsonl`。
+
+| target | universe | queries | agree | `ref_asserted` | disagree | 两侧都断言 | `diff.json` sha256 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| X86 | 280,432 | 1,121,728 | 1,121,728 | 0 | 0 | 1,272 | `0b33032b76d5340f…` |
+| AArch64 | 389,512 | 3,505,608 | 3,475,458 | 30,150 | 0 | 35,316 | `1bc25a855cf05454…` |
+| RISC-V | 378,562 | 3,028,496 | 3,028,496 | 0 | 0 | 6,008 | `1c53c0d99c2c1008…` |
+
+| target | `queries.full.jsonl` sha256 | 生成 inc sha256 | 两侧答案文件 |
+|---|---|---|---|
+| X86 | `843060d986ff2da0…` | `38b278dd2a10fe42…` | 逐字节相同 |
+| AArch64 | `963e2403e07d9282…` | `0f6dcf0a6b91f105…` | 不同（30,150 行是 `ref_asserted`） |
+| RISC-V | `226aa1fff262a542…` | `fe6427bdf480143c…` | 逐字节相同 |
+
+`agree` 含“两侧都断言”的点（diff 的 accounting 是 `agree + ref_asserted +
+disagree == matched`）。`--allow-ref-asserts N` 把“上游先断言、我们答出”单独
+计类，`--allow-unanswerable N` 锁住“两侧都断言”的条数；两个数都按实测值钉死，
+漂了就 rc=1。
+
+### 上游为什么会断言（65,466 条，全部在 AArch64）
+
+| 断言点 | 条数 | 形状 |
+|---|---:|---|
+| `fatal: cannot implicitly convert a scalable size to a fixed-width size` | 29,151 | `G_ANYEXT/G_SEXT/G_ZEXT`（各 5,535）、`G_MERGE_VALUES` 4,932、`G_UNMERGE_VALUES` 4,788、`G_TRUNC` 1,215 |
+| `LowLevelType.h:511`（`getElementType` 用在非向量上） | 18,405 | `G_EXTRACT_VECTOR_ELT` 15,057、`G_FCMP` 1,755、`G_ICMP` 1,602 |
+| `LowLevelType.h:429`（`changeElementSize` 用在指针向量上） | 9,999 | `G_CTPOP/G_CTTZ/G_CTLZ/G_CTLS`、`G_PTR_ADD`、移位三条 |
+| `LegalizerInfo.cpp:200`（`mutationIsSane`） | 6,291 | `G_SHUFFLE_VECTOR` 6,111、`G_CONCAT_VECTORS` 72、`G_FPTOSI*` 27 |
+| `LLT::getNumElements()` on scalable | 1,260 | `G_VECREDUCE_SMAX/SMIN/UMAX/UMIN` |
+| `LowLevelType.h:151` / `:470` | 333 / 27 | 移位与 `G_VECREDUCE_AND/OR/XOR` |
+
+其中 35,316 条两侧都断言（计入 `unanswerable`），30,150 条上游断言、我方答出
+（`ref_asserted`）。这些形状大多不是合法 MIR（`anyext` 两侧位宽不等、指针向量做
+标量位宽操作），所以不进入分母；两类都单独计数，不混进 `agree`。已记录在
+`/home/ubuntu/admin/upstream-issues/`（#12、#13、#18）。
+
+### 发现一：题面生成器给了 3 槽 opcode 2 个类型（已修）
+
+第一版全量 AArch64 有 4,344 条 `ArrayRef.h:247`：`_coherent_combos` 的向量对
+分支直接 append 2 元组，没有按 `type_slots` 补长。3 槽 opcode 收到 2 个类型，
+上游规则读 `Query.Types[2]` 就越界。
+
+修法（`upstream-source/oracle/src/universe.py`）：三处向量对分支改成按槽数补长，
+并在函数末尾加一道 `len(c) == type_slots` 兜底；`oracle/tests/test_universe.py`
+新增两条回归（每个 target × 1–4 槽，combo 长度必须等于槽数）。修后 AArch64 的
+`unanswerable` 从 39,660 降到 35,316，题面里不再有畸形查询。
+
+### 发现二：`vec_of(num_elems(scalable))` 丢了 scalable（已修）
+
+全量题面第一次跑出 **30,159** 条 AArch64 差异：30,150 条是上面的上游断言，
+**9 条是真 bug**（9 个配置各一条）：
+
+```text
+G_SHUFFLE_VECTOR types=["nxv2p0:64","nxv2p0:64"]
+官方: Bitcast        → nxv2s64
+我方: assert         LegalizerInfo.cpp:200 (mutationIsSane)
+```
+
+上游（`AArch64LegalizerInfo.cpp:1369`）写的是
+`LLT::vector(DstTy.getElementCount(), LLT::integer(64))`，保留 scalable。语料把它
+导成了 `vec_of(num_elems(slot(0)), ty(A_i64))`，而 `vec_of` 渲染成
+`LLT::fixed_vector`，于是 `nxv2p0` 变成 `v2s64`（位宽减半），`mutationIsSane`
+直接断言。
+
+修法不需要扩语法：`elt_type_to(slot(0), ty(A_i64))` 渲染成
+`changeElementType`，与上游表达式逐字等价。改动落在三处：
+
+- `gisel/tests/corpus/AArch64LegalizerInfo.gisel:900` 换成 `elt_type_to`；
+- `upstream-source/import/import-cxx.py`：`LLT::vector(X.getElementCount(), T)`
+  一律导成 `elt_type_to`，不再落 `vec_of(num_elems(X), T)`；
+- `gisel/tests/test_artifacts.py` 两条回归：求值保持 scalable；生成的 inc 必须出现
+  `changeElementType` 且该行没有 `fixed_vector`。
+
+先把 9 个形状单独抽出来验证（每个配置一条，共 9 条）：
+
+```sh
+./run-u-end-to-end.sh aarch64 /tmp/a64-nine-queries.jsonl /tmp/u-run/a64-nine
+# disagree=0 unanswerable=0, rc=0
+```
+
+再跑全量：`disagree` 30,159 → 0。`AArch64LegalizerInfo.inc` 现在 SHA 是
+`0f6dcf0a6b91f105…`（本文前面表格里的 `aea61ab5…` 是修复前的快照）。G 方向与
+D 方向的 AArch64 题面都不含 `nxv2p0` 的 `G_SHUFFLE_VECTOR`，所以那两批冻结证据的
+答案不变。
+
 ## 复核
 
 ```sh
 cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./verify-evidence.sh
-# PASS G/x86 … PASS D/riscv, 39/39 entries pass
-# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 3）
+# PASS G/x86 … PASS U-full/riscv, 42/42 entries pass
+# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 3 + U-full 3）
 ```
 
 `VERIFY_FROZEN=1` 只读仓库里的 `oracle/`，不读 /tmp。CI 跑的就是这一条
