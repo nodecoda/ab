@@ -87,9 +87,15 @@ diff.py REF.jsonl OURS.jsonl [--json] [--compare action|full]
 | `unanswerable` | 两侧都 `unanswerable` 且理由相同 |
 | `disagree` | 答案不同 |
 | `missing_ref` / `missing_ours` | 单侧缺失的 key |
-| `ref_asserted` | 官方侧断言、我方有答案；只有显式 `--allow-ref-asserts N` 才计为已知类 |
+| `ref_asserted` | 官方侧断言、我方有答案；只有显式 `--allow-ref-asserts` 才计为已知类 |
+| `ref_asserted_by_site` | 上面这批的 `file:line`（fatal 消息则记消息）分布 |
+| `ref_asserted_by_opcode` | 同一批按 opcode 的分布 |
 
 归因分类固定为：`status` → `action` → `type_idx` → `new_type`（最粗优先）。
+
+`--allow-ref-asserts` 接受三种形式：`N` 钉总数；`site=count,...` 钉每个站点；
+`@file.json` 从 JSON 对象读站点表。钉站点是默认建议：总数不变、站点重排
+（一个旧断言消失、一个新断言顶上）在只钉总数时看不出来。
 
 ## 6 负控
 

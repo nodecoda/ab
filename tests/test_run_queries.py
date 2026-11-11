@@ -28,6 +28,8 @@ for index, query in enumerate(queries):
     if query["types"][0] == crash_on:
         sys.stdout.write(partial)
         sys.stdout.flush()
+        sys.stderr.write(os.environ.get("ASSERT_TEXT", ""))
+        sys.stderr.flush()
         os.kill(os.getpid(), signal.SIGABRT)
     answer = dict(query)
     answer.update({"action": "Legal", "type_idx": 0,
@@ -49,9 +51,9 @@ class RunQueries(unittest.TestCase):
         self.queries.write_text("".join(json.dumps(r) + "\n" for r in rows))
         self.rows = rows
 
-    def invoke(self, crash_on):
+    def invoke(self, crash_on, assert_text=""):
         out = self.dir / "out.jsonl"
-        env = dict(os.environ, CRASH_ON=crash_on)
+        env = dict(os.environ, CRASH_ON=crash_on, ASSERT_TEXT=assert_text)
         subprocess.run([sys.executable, str(RUN), str(self.runner),
                         str(self.queries), str(out)], check=True, env=env,
                        capture_output=True)
@@ -79,6 +81,19 @@ class RunQueries(unittest.TestCase):
         self.assertEqual(rows[0].get("status"), "unanswerable")
         self.assertEqual(rows[1]["types"], ["s2"])
         self.assertEqual(rows[1]["action"], "Legal")
+
+    def test_the_assert_site_survives_the_restart(self):
+        """A crash the in-process handler never saw still names its site."""
+        rows = self.invoke(
+            crash_on="s3",
+            assert_text="llc: /t/llvm/lib/X/Foo.cpp:42: Assertion `p' failed.\n")
+        self.assertEqual(rows[2]["assert_site"], "Foo.cpp:42")
+
+    def test_an_unreachable_is_recorded_too(self):
+        rows = self.invoke(
+            crash_on="s3",
+            assert_text="UNREACHABLE executed at /t/llvm/lib/Y/Bar.h:151!\n")
+        self.assertEqual(rows[2]["assert_site"], "Bar.h:151")
 
     def test_a_complete_answer_before_the_crash_is_kept(self):
         rows = self.invoke(crash_on="s5")

@@ -118,6 +118,7 @@ def compare(ref, ours, mode="full", details_limit=100,
         "disagree": len(disagree),
         "ref_asserted": len(ref_asserted),
         "ref_asserted_keys": [repr(k) for k, _, _ in ref_asserted[:20]],
+        "_ref_asserted_all": [k for k, _, _ in ref_asserted],
         "missing_ref": len(set(ours) - set(ref)),
         "missing_ours": len(set(ref) - set(ours)),
         "first": disagree[:20],
@@ -167,6 +168,42 @@ def compare_sites(ref_sites, ours_sites, keys):
     }
 
 
+def _parse_assert_pin(value):
+    """Parse ``--allow-ref-asserts``.
+
+    ``N`` pins the total (the original form).  Anything else pins each site:
+
+    ``A.h:12=3,B.cpp:200=18``  inline, comma separated, ``=`` splits count
+    ``@file.json``             a JSON object ``{site: count}``
+
+    Pinning by site is the point: a total of 30,150 can hide a new assert
+    class that replaced an old one, because the number did not move.
+    """
+    if value is None:
+        return None, None
+    text = str(value).strip()
+    if text.isdigit():
+        return "total", int(text)
+    if text.startswith("@"):
+        with open(text[1:]) as handle:
+            data = json.load(handle)
+        if not isinstance(data, dict):
+            raise SystemExit("assert-site pin must be a JSON object of site: count")
+        return "sites", {str(k): int(v) for k, v in data.items()
+                         if not str(k).startswith("_")}
+    pins = {}
+    for item in text.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        site, sep, count = item.rpartition("=")
+        if not sep or not site or not count.isdigit():
+            raise SystemExit(
+                "cannot parse assert-site pin %r; use site=count" % item)
+        pins[site] = int(count)
+    return "sites", pins
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(
         prog="diff.py",
@@ -178,11 +215,12 @@ def main(argv=None):
                     help="action: coarse smoke gate; full: acceptance")
     ap.add_argument("--details", type=int, default=100,
                     help="maximum first_details entries (default 100)")
-    ap.add_argument("--allow-ref-asserts", type=int, default=None,
-                    metavar="N",
+    ap.add_argument("--allow-ref-asserts", default=None, metavar="N|SITES",
                     help="count the queries whose reference answer is "
-                         "'asserted' as a known class, not a difference; the "
-                         "run fails unless exactly N of them are found")
+                         "'asserted' as a known class, not a difference. "
+                         "N pins the total; 'site=count,...' or '@file.json' "
+                         "pins each assert site, so a new assert class cannot "
+                         "hide behind an unchanged total")
     ap.add_argument("--assert-sites", action="store_true",
                     help="also compare where the two sides asserted "
                          "(needs answer files that carry assert_site)")
@@ -198,11 +236,24 @@ def main(argv=None):
     result = compare(ref, ours, args.compare, args.details,
                      args.allow_ref_asserts)
     result["errors"] = e1 + e2
+    pin_mode, pin_value = _parse_assert_pin(args.allow_ref_asserts)
+    ref_asserted_all = result.pop("_ref_asserted_all", [])
+    ref_sites = collect_sites(args.ref) if (args.assert_sites or ref_asserted_all) else {}
+    if ref_asserted_all:
+        by_site, by_opcode = {}, {}
+        for key in ref_asserted_all:
+            site = ref_sites.get(key) or "<no-site>"
+            by_site[site] = by_site.get(site, 0) + 1
+            by_opcode[key[1]] = by_opcode.get(key[1], 0) + 1
+        result["ref_asserted_by_site"] = dict(
+            sorted(by_site.items(), key=lambda kv: (-kv[1], kv[0])))
+        result["ref_asserted_by_opcode"] = dict(
+            sorted(by_opcode.items(), key=lambda kv: (-kv[1], kv[0])))
     if args.assert_sites:
         both = [k for k in ref if k in ours and ref[k][0] == "unanswerable"
                 and ours[k][0] == "unanswerable"]
         result["assert_sites"] = compare_sites(
-            collect_sites(args.ref), collect_sites(args.ours), both)
+            ref_sites, collect_sites(args.ours), both)
     if args.json:
         print(json.dumps(result, indent=1, sort_keys=True))
     else:
@@ -216,6 +267,10 @@ def main(argv=None):
                  result["missing_ours"], result["errors"]))
         for key, a, b in result["first"]:
             print("MISMATCH %r: ref=%r ours=%r" % (key, a, b))
+        if result.get("ref_asserted_by_site"):
+            print("ref_asserted_by_site total=%d" % result["ref_asserted"])
+            for site, count in list(result["ref_asserted_by_site"].items())[:5]:
+                print("  %6d  %s" % (count, site))
         if "assert_sites" in result:
             sites = result["assert_sites"]
             print("assert_sites same=%d mismatch=%d missing=%d"
@@ -234,12 +289,28 @@ def main(argv=None):
               % (result["unanswerable"], args.expect_unanswerable),
               file=sys.stderr)
         return 1
-    if (args.allow_ref_asserts is not None
-            and result["ref_asserted"] != args.allow_ref_asserts):
+    if pin_mode == "total" and result["ref_asserted"] != pin_value:
         print("ref asserted on %d queries, expected %d"
-              % (result["ref_asserted"], args.allow_ref_asserts),
-              file=sys.stderr)
+              % (result["ref_asserted"], pin_value), file=sys.stderr)
         return 1
+    if pin_mode == "sites":
+        got = result.get("ref_asserted_by_site", {})
+        missing = {k: v for k, v in pin_value.items() if k not in got}
+        extra = {k: v for k, v in got.items() if k not in pin_value}
+        moved = {k: (pin_value[k], got[k]) for k in pin_value
+                 if k in got and pin_value[k] != got[k]}
+        if missing or extra or moved:
+            print("ref assert sites do not match the pin", file=sys.stderr)
+            for site, count in sorted(missing.items()):
+                print("  missing  %-48s expected %d, seen 0" % (site, count),
+                      file=sys.stderr)
+            for site, count in sorted(extra.items()):
+                print("  new      %-48s expected 0, seen %d" % (site, count),
+                      file=sys.stderr)
+            for site, (want, seen) in sorted(moved.items()):
+                print("  moved    %-48s expected %d, seen %d"
+                      % (site, want, seen), file=sys.stderr)
+            return 1
     if (result["missing_ref"] or result["missing_ours"]
             or result["disagree"]):
         return 1

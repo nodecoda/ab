@@ -122,6 +122,77 @@ class Diff(unittest.TestCase):
         self.assertEqual(r["disagree"], 1)
 
 
+class RefAssertSites(unittest.TestCase):
+    """ref_asserted is classified by where the reference died, not just how
+    many times: a total can stay flat while one assert class replaces another.
+    """
+
+    def run_diff(self, a, b, *flags):
+        pa, pb = write(a), write(b)
+        r = subprocess.run(
+            [sys.executable, str(DIFF), pa, pb, "--json", *flags],
+            capture_output=True, text=True)
+        self.assertIn(r.returncode, (0, 1, 2), r.stderr)
+        return r.returncode, json.loads(r.stdout)
+
+    def rows(self):
+        dead = {"config": "C0", "name": "G_ICMP", "types": ["s1", "p0"],
+                "mem": None, "imms": [], "status": "unanswerable",
+                "reason": "asserted"}
+        a = [dict(dead, assert_site="LegalizerInfo.cpp:200", types=["s1", "p0"]),
+             dict(dead, assert_site="LegalizerInfo.cpp:200", types=["s2", "p0"]),
+             dict(dead, name="G_FPTOSI", assert_site="LowLevelType.h:429",
+                  types=["s32"])]
+        b = [row("G_ICMP", ["s1", "p0"]), row("G_ICMP", ["s2", "p0"]),
+             row("G_FPTOSI", ["s32"])]
+        return a, b
+
+    def test_sites_and_opcodes_are_counted(self):
+        a, b = self.rows()
+        rc, r = self.run_diff(a, b, "--allow-ref-asserts", "3")
+        self.assertEqual(rc, 0)
+        self.assertEqual(r["ref_asserted"], 3)
+        self.assertEqual(r["ref_asserted_by_site"],
+                         {"LegalizerInfo.cpp:200": 2, "LowLevelType.h:429": 1})
+        self.assertEqual(r["ref_asserted_by_opcode"],
+                         {"G_ICMP": 2, "G_FPTOSI": 1})
+
+    def test_a_matching_site_pin_passes(self):
+        a, b = self.rows()
+        rc, _ = self.run_diff(
+            a, b, "--allow-ref-asserts",
+            "LegalizerInfo.cpp:200=2,LowLevelType.h:429=1")
+        self.assertEqual(rc, 0)
+
+    def test_a_new_site_fails_even_when_the_total_is_unchanged(self):
+        a, b = self.rows()
+        rc, r = self.run_diff(
+            a, b, "--allow-ref-asserts",
+            "LegalizerInfo.cpp:200=3,LowLevelType.h:429=0")
+        self.assertEqual(rc, 1)
+        self.assertEqual(r["ref_asserted_by_site"]["LowLevelType.h:429"], 1)
+
+    def test_a_count_that_moved_fails(self):
+        a, b = self.rows()
+        rc, _ = self.run_diff(
+            a, b, "--allow-ref-asserts",
+            "LegalizerInfo.cpp:200=1,LowLevelType.h:429=2")
+        self.assertEqual(rc, 1)
+
+    def test_a_json_pin_file_works(self):
+        a, b = self.rows()
+        pin = Path(write([]))
+        pin = pin.with_suffix(".json")
+        pin.write_text(json.dumps({"LegalizerInfo.cpp:200": 2,
+                                   "LowLevelType.h:429": 1}))
+        pa, pb = write(a), write(b)
+        r = subprocess.run(
+            [sys.executable, str(DIFF), pa, pb, "--json",
+             "--allow-ref-asserts", "@" + str(pin)],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+
 class Command(unittest.TestCase):
     """The workbench verb's human-readable output and its exit codes."""
 

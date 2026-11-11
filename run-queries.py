@@ -21,6 +21,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -31,6 +33,24 @@ from pathlib import Path
 # temp-file write is amortised, small enough that replaying the tail of a
 # chunk after an abort is cheap.
 CHUNK = 2000
+
+# The runner recovers from most asserts in-process and writes `assert_site`
+# itself.  These patterns cover the restart path: a hard crash that never
+# reached the in-process handler still tells us where it died, and without the
+# site a whole assert class collapses into one anonymous count.
+_SITE_PATTERNS = (
+    re.compile(r"UNREACHABLE executed at ([^:\s]+):(\d+)"),
+    re.compile(r"([^\s:]+\.[A-Za-z]+):(\d+): (?:Assertion|assert)"),
+)
+
+
+def _assert_site(stderr):
+    """`file:line` of the first assert/unreachable in a crashed runner."""
+    for pattern in _SITE_PATTERNS:
+        match = pattern.search(stderr or "")
+        if match:
+            return "%s:%s" % (os.path.basename(match.group(1)), match.group(2))
+    return None
 
 
 def _is_json(line):
@@ -54,6 +74,7 @@ def run(runner, queries, out, report=None):
     total = sum(1 for _ in _lines(queries))
     aborted = bytearray(total)
     aborted_lines = []
+    aborted_sites = {}
 
     raw_answers = tempfile.NamedTemporaryFile(
         "w", suffix=".answers", delete=False)
@@ -99,6 +120,9 @@ def run(runner, queries, out, report=None):
                     bad = base + offset  # died before answering anything
                 aborted[bad] = 1
                 aborted_lines.append(bad)
+                site = _assert_site(proc.stderr)
+                if site:
+                    aborted_sites[bad] = site
                 offset = bad - base + 1
                 if offset >= len(chunk_lines):
                     break
@@ -113,6 +137,9 @@ def run(runner, queries, out, report=None):
                     record = json.loads(line)
                     record["status"] = "unanswerable"
                     record["reason"] = "asserted"
+                    site = aborted_sites.get(index)
+                    if site:
+                        record["assert_site"] = site
                     answer_stream.write(json.dumps(record) + "\n")
                     continue
                 answer = answered.readline()

@@ -22,10 +22,11 @@ set -euo pipefail
 # `.unsupported()` in the include, and the run passes only if the diff sees
 # disagreements and every one of them is attributed to that builder's rulesets.
 #
-# --allow-ref-asserts N pins the number of queries where the *reference* asserts
-# before answering and ours answers (diff.py's `ref_asserted` class).  Those are
-# upstream defects in the query's own type, not a rule translation gap; pinning
-# the count keeps them out of `disagree` without letting the number drift.
+# --allow-ref-asserts pins the queries where the *reference* asserts before
+# answering and ours answers (diff.py's `ref_asserted` class).  They are
+# upstream defects in the query's own type, not a rule translation gap.
+# `N` pins the total; `file:line=count,...` or `@file.json` pins each assert
+# site, so a new assert class cannot hide behind an unchanged total.
 TARGET=${1:?usage: run-u-end-to-end.sh TARGET QUERIES OUT [--drop-opcode OP]}
 QUERIES=${2:?}
 OUT=${3:?}
@@ -110,10 +111,12 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.ours" "$QUERIES" \
 
 echo "[4/4] diff + attribution" >&2
 set +e
+DIFF_ARGS=(--json --details 200000)
+if [[ -n $ALLOW_REF_ASSERTS ]]; then
+  DIFF_ARGS+=(--allow-ref-asserts "$ALLOW_REF_ASSERTS")
+fi
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" --json --details 200000 \
-  ${ALLOW_REF_ASSERTS:+--allow-ref-asserts "$ALLOW_REF_ASSERTS"} \
-  > "$OUT/diff.json"
+  "$OUT/ours.answers.jsonl" "${DIFF_ARGS[@]}" > "$OUT/diff.json"
 DIFF_RC=$?
 set -e
 

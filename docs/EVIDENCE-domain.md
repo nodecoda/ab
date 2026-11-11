@@ -173,6 +173,26 @@ baseline 实测（`/tmp/ab-domain/a64-domain-r5`，9 个配置的分布相同）
 `getKnownMinValue() > 64`，于是多走了一步 `narrowScalarIf`。两边都没有给出
 动作，所以不进 `disagree`；它被单列，见 `gisel/spec/contract.md` §4。
 
+### 1,696 条官方单侧断言（我方有答案）
+
+2026-11-11 复跑 baseline（936,960 条，`/tmp/site-demo/out/baseline`），`diff.json`
+新增的 `ref_asserted_by_site` / `ref_asserted_by_opcode` 把它归成一类：
+
+| ref assert_site | 条数 |
+|---|---:|
+| `fatal:cannot implicitly convert a scalable size to a fixed-width size` | 1,696 |
+
+| opcode | 条数 |
+|---|---:|
+| `G_ANYEXT` / `G_SEXT` / `G_ZEXT` | 各 496 |
+| `G_TRUNC` | 192 |
+| `G_UNMERGE_VALUES` | 16 |
+
+这些点本身不是合法 IR（anyext 两侧总位宽不等），官方死在 `TypeSize` 的
+可伸缩隐式转换，我方答 `Legal`。它不是规则翻译差异，所以不进 `disagree`；
+现在用站点钉死：`--allow-ref-asserts 'fatal:cannot implicitly convert a scalable size to a fixed-width size=1696'`，改一个数就 rc=1
+（实测 `=1600` → `moved ... expected 1600, seen 1696`）。
+
 ### 契约对账（可复算）
 
 ```sh

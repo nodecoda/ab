@@ -29,6 +29,10 @@ CONFIGS=${CONFIGS:-baseline small-cm fullfp16 sve bf16 cssc rcpc3 lse outline-at
 EXPECTED_PER_CONFIG=936960
 EXPECTED_UNANSWERABLE=${EXPECTED_UNANSWERABLE:-39056}
 EXPECTED_REF_ASSERTS=${EXPECTED_REF_ASSERTS:-1696}
+# 2026-11-11: the 1,696 reference asserts are one class, not a bag.  Pin the
+# site and its count; a resharded total can no longer pass.  Measured on
+# baseline (936,960 queries, ab/docs/EVIDENCE-domain.md).
+EXPECTED_REF_ASSERT_SITES=${EXPECTED_REF_ASSERT_SITES:-'fatal:cannot implicitly convert a scalable size to a fixed-width size=1696'}
 EXPECTED_UNANSWERABLE_MAP=${EXPECTED_UNANSWERABLE_MAP:-}
 FORCE=${FORCE:-0}
 mkdir -p "$OUT" "$STATE"
@@ -101,7 +105,9 @@ run_config() {
   if [[ -n "$expect_unanswerable" ]]; then
     extra+=(--expect-unanswerable "$expect_unanswerable")
   fi
-  if [[ -n "$EXPECTED_REF_ASSERTS" ]]; then
+  if [[ -n "$EXPECTED_REF_ASSERT_SITES" ]]; then
+    extra+=(--allow-ref-asserts "$EXPECTED_REF_ASSERT_SITES")
+  elif [[ -n "$EXPECTED_REF_ASSERTS" ]]; then
     extra+=(--allow-ref-asserts "$EXPECTED_REF_ASSERTS")
   fi
   # --assert-sites adds where each unanswerable query died; the comparison
