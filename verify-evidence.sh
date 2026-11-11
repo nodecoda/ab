@@ -155,10 +155,16 @@ def check(entry):
             ok(entry)
         return bad
 
-    diff_path = resolve(entry, entry.get("diff", "diff.json"))
-    if diff_path is None:
-        return bad + fail(entry, "missing %s" % entry.get("diff", "diff.json"))
-    diff = json.loads(read(diff_path).decode())
+    if entry.get("kind") == "summary":
+        # A per-config domain run has one diff per config, not one file.  The
+        # aggregate it does have is summary.json, checked below.
+        diff = {}
+    else:
+        diff_path = resolve(entry, entry.get("diff", "diff.json"))
+        if diff_path is None:
+            return bad + fail(entry, "missing %s"
+                              % entry.get("diff", "diff.json"))
+        diff = json.loads(read(diff_path).decode())
 
     if expect.get("answers_identical"):
         pa = resolve(entry, "official.answers.jsonl")

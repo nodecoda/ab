@@ -1152,6 +1152,203 @@
     },
     "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
    }
+  },
+  {
+   "id": "D/m68k",
+   "direction": "D",
+   "target": "m68k",
+   "dir": "/tmp/ab-domain/m68k",
+   "command": "./run-domain.sh m68k /home/ubuntu/llvm/trees/explore /home/ubuntu/llvm/builds/explore /tmp/dom-inc/M68kLegalizerInfo.inc /tmp/ab-domain/m68k",
+   "inc": {
+    "name": "M68kLegalizerInfo.inc",
+    "sha256": "8d843f4f5775e63e91fc24fac1e19906577c961ee43b7d6350141bf5e58a37c4",
+    "command": "python3 -m gisel gen tests/corpus/M68kLegalizerInfo.gisel --emit=inc"
+   },
+   "artifacts": {
+    "summary.json": "9a61df018f8115f514c905b931ad25f29631b7f81bdf13739f27d1dcfb619494"
+   },
+   "expect": {
+    "summary": {
+     "configs": 1,
+     "queries": 112,
+     "agree": 112,
+     "disagree": 0,
+     "unanswerable": 0,
+     "ref_asserted": 0,
+     "errors": 0
+    }
+   },
+   "kind": "summary"
+  },
+  {
+   "id": "D/ppc",
+   "direction": "D",
+   "target": "ppc",
+   "dir": "/tmp/ab-domain/ppc",
+   "command": "./run-domain.sh ppc /home/ubuntu/llvm/trees/explore /home/ubuntu/llvm/builds/explore /tmp/dom-inc/PowerPCLegalizerInfo.inc /tmp/ab-domain/ppc",
+   "inc": {
+    "name": "PowerPCLegalizerInfo.inc",
+    "sha256": "c15f766bd2a167614a4bba3fabc8124c86f57d01cdca41b80d83e18173981dcd",
+    "command": "python3 -m gisel gen tests/corpus/PowerPCLegalizerInfo.gisel --emit=inc"
+   },
+   "artifacts": {
+    "summary.json": "f87339cf564130c90c14e776e3061ec384512e4e8c2fc310c6a63a1270e98f11",
+    "sites.json": "96858ede3de5c6e244f46b65b8298dc759de7e7eed3a3e34e71656966c8ede3c"
+   },
+   "expect": {
+    "summary": {
+     "configs": 1,
+     "queries": 1005,
+     "agree": 1005,
+     "disagree": 0,
+     "unanswerable": 3,
+     "ref_asserted": 0,
+     "errors": 0
+    },
+    "assert_sites": {
+     "same": 3,
+     "mismatch": 0,
+     "missing": 0,
+     "top": [
+      [
+       "LegalizerInfo.cpp:200",
+       3
+      ]
+     ]
+    }
+   },
+   "kind": "summary"
+  },
+  {
+   "id": "D/arm",
+   "direction": "D",
+   "target": "arm",
+   "dir": "/tmp/ab-domain/arm",
+   "command": "./run-domain.sh arm /home/ubuntu/llvm/trees/explore /home/ubuntu/llvm/builds/explore /tmp/dom-inc/ARMLegalizerInfo.inc /tmp/ab-domain/arm",
+   "inc": {
+    "name": "ARMLegalizerInfo.inc",
+    "sha256": "021a84797085030f4dac203a04cd54ec14c770db581bf7bf1e16002155f15b9e",
+    "command": "python3 -m gisel gen tests/corpus/ARMLegalizerInfo.gisel --emit=inc"
+   },
+   "artifacts": {
+    "summary.json": "10ba9a3170b31ad98f6a31aa8b8a1f1bb27baecbe8fe968d74e841e6c8565316"
+   },
+   "expect": {
+    "summary": {
+     "configs": 7,
+     "queries": 9296,
+     "agree": 9296,
+     "disagree": 0,
+     "unanswerable": 0,
+     "ref_asserted": 0,
+     "errors": 0
+    }
+   },
+   "kind": "summary"
+  },
+  {
+   "id": "D/mips",
+   "direction": "D",
+   "target": "mips",
+   "dir": "/tmp/ab-domain/mips",
+   "command": "./run-domain.sh mips /home/ubuntu/llvm/trees/explore /home/ubuntu/llvm/builds/explore /tmp/dom-inc/MipsLegalizerInfo.inc /tmp/ab-domain/mips",
+   "inc": {
+    "name": "MipsLegalizerInfo.inc",
+    "sha256": "fd4a51d952b822d67342a0b3464f5f2ff125fd818404a7e0e210a7d4aa4b578f",
+    "command": "python3 -m gisel gen tests/corpus/MipsLegalizerInfo.gisel --emit=inc"
+   },
+   "artifacts": {
+    "summary.json": "dfe03537563eb2ce7aafbd4fbbf7dd1bd9dc36598467f28c5d2804cb9c0ec130"
+   },
+   "expect": {
+    "summary": {
+     "configs": 5,
+     "queries": 18745,
+     "agree": 18745,
+     "disagree": 0,
+     "unanswerable": 0,
+     "ref_asserted": 0,
+     "errors": 0
+    }
+   },
+   "kind": "summary"
+  },
+  {
+   "id": "D/wasm",
+   "direction": "D",
+   "target": "wasm",
+   "dir": "/tmp/ab-domain/wasm",
+   "command": "./run-domain.sh wasm /home/ubuntu/llvm/trees/explore /home/ubuntu/llvm/builds/explore /tmp/dom-inc/WebAssemblyLegalizerInfo.inc /tmp/ab-domain/wasm",
+   "inc": {
+    "name": "WebAssemblyLegalizerInfo.inc",
+    "sha256": "1293d7a53ab9a74361e66e9a6008f2142c9b4d6e693352c7b3b8bb4e371c52c8",
+    "command": "python3 -m gisel gen tests/corpus/WebAssemblyLegalizerInfo.gisel --emit=inc"
+   },
+   "artifacts": {
+    "summary.json": "9bda1ce17a8f9de406162414ab51711d3fbde9a87f8393aa7fb17855bbe7aa8e",
+    "sites.json": "3db1c1561c570499d6ea87350fdd05397a52c9b49165dfd1a70130cfc716921b"
+   },
+   "expect": {
+    "summary": {
+     "configs": 4,
+     "queries": 11996,
+     "agree": 11996,
+     "disagree": 0,
+     "unanswerable": 132,
+     "ref_asserted": 0,
+     "errors": 0
+    },
+    "assert_sites": {
+     "same": 132,
+     "mismatch": 0,
+     "missing": 0,
+     "top": [
+      [
+       "LowLevelType.h:429",
+       116
+      ],
+      [
+       "LowLevelType.h:151",
+       16
+      ]
+     ]
+    }
+   },
+   "kind": "summary"
+  },
+  {
+   "id": "D/spirv",
+   "direction": "D",
+   "target": "spirv",
+   "dir": "/tmp/ab-domain/spirv",
+   "command": "./run-domain.sh spirv /home/ubuntu/llvm/trees/explore /home/ubuntu/llvm/builds/explore /tmp/dom-inc/SPIRVLegalizerInfo.inc /tmp/ab-domain/spirv",
+   "inc": {
+    "name": "SPIRVLegalizerInfo.inc",
+    "sha256": "a9037d2c63426a1a594d4086b448aca6c2537b86c821df335ff7abffba95550a",
+    "command": "python3 -m gisel gen tests/corpus/SPIRVLegalizerInfo.gisel --emit=inc"
+   },
+   "artifacts": {
+    "summary.json": "c55b2d0e98c06e5116188a0626a006212ef1bff1c8a502f247bc82df5e73c22b",
+    "sites.json": "460c9efa56bb4820763494d2cbbdd404578d622cc0c59466c2e891b537c4be6a"
+   },
+   "expect": {
+    "summary": {
+     "configs": 6,
+     "queries": 3472080,
+     "agree": 3472080,
+     "disagree": 0,
+     "unanswerable": 900,
+     "ref_asserted": 0,
+     "errors": 0
+    },
+    "assert_sites": {
+     "same": 0,
+     "mismatch": 900,
+     "missing": 0,
+     "top": []
+    }
+   },
+   "kind": "summary"
   }
  ],
  "official_build": {

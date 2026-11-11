@@ -358,3 +358,56 @@ key：270,967 条查询只剩 255,313 个 key，15,654 条被 `diff.py` 静默�
 - RISC-V：2,029,976 个声明点，`disagree=0`；7,728 条双端断言，0 条单边断言。
 - 两个 target 的全量 domain 都不需要拿 `cases` 的数字冒充：题面、答案、
   钉数、sha 都在这里。
+
+## 5 其余六个 target（`run-domain.sh`）
+
+x86 / aarch64 / riscv 各有自己的脚本；其余六个用统一的
+`run-domain.sh TARGET TREE BUILD INC OUT`，契约在 `data/domain.json`
+（每个 target 每个 config 的题面条数、双端断言数、单边断言数）。
+缺失一个 target 的 section 时脚本只报数、不钉数；审过之后再写进去。
+
+```sh
+python3 -m gisel gen tests/corpus/<T>LegalizerInfo.gisel --emit=inc \
+  --out /tmp/dom-inc/<T>LegalizerInfo.inc
+./run-domain.sh <target> /home/ubuntu/llvm/trees/explore \
+  /home/ubuntu/llvm/builds/explore /tmp/dom-inc/<T>LegalizerInfo.inc \
+  /tmp/ab-domain/<target>
+```
+
+实测（冻结树 `700e551714cc`、构建 `builds/explore`、gisel `312a9a6`；
+`FORCE=1` 复跑一遍以证明钉数与题面对得上）：
+
+| target | configs | 查询 | agree | 双端断言 | 单边断言 | disagree | 证据 |
+|---|---:|---:|---:|---:|---:|---:|---|
+| m68k | 1 | 112 | 112 | 0 | 0 | 0 | `D/m68k` |
+| ppc | 1 | 1,005 | 1,005 | 3 | 0 | 0 | `D/ppc` |
+| arm | 7 | 9,296 | 9,296 | 0 | 0 | 0 | `D/arm` |
+| mips | 5 | 18,745 | 18,745 | 0 | 0 | 0 | `D/mips` |
+| wasm | 4 | 11,996 | 11,996 | 132 | 0 | 0 | `D/wasm` |
+| spirv | 6 | 3,472,080 | 3,472,080 | 900 | 0 | 0 | `D/spirv` |
+
+SPIR-V 的 3.47M 条一开始看着像跑不动，实测不是：runner 进程内答 5,000 条只要
+0.19 s（约 26k 条/秒），一个 config 578,680 条约 22 s；慢的是构建 runner 和
+`gisel domain` 本身，不是对拍。
+
+### 5.1 三类双端断言
+
+- **m68k / arm / mips：没有**。声明值域里每一点两侧都给出相同答案。
+- **ppc 3 条、wasm 132 条：两侧死在同一个断言点**。wasm 的 132 条是
+  `LowLevelType.h:429`（116）和 `LowLevelType.h:151`（16）——可伸缩/位宽
+  转换的既有断言，双侧一致，属于“题目本身触发上游断言”。
+- **spirv 900 条：两侧都断言，但不在同一个点**（`spirv64-shader` 与
+  `spirv32-shader` 各 450）。上游死在 `ArrayRef.h:247`，我们的 `.inc` 死在
+  `LegalizerInfo.cpp:200`。原因是上游
+  `SPIRVLegalizerInfo.cpp` 把 `MaxVectorSize` 当成类型下标传给
+  `changeElementSizeTo`，先用它索引 `ArrayRef` 就越界；生成的 `.inc` 走的是
+  同一个错误调用，但在 `LegalizerInfo` 的下标检查处先断言。两边都没有返回
+  答案，所以不进 `disagree`，但“死法不同”必须写出来，不能当成同一条证据。
+  上游缺陷记在 `admin/upstream-issues/2026-11-09-17-*`。
+
+### 5.2 这一轮改掉的脚本错误
+
+第一版 `run-domain.sh` 把 `assert_sites`（双端断言的**位置**）当成
+`--allow-ref-asserts`（单边断言的**条数**）传下去，于是 ppc / wasm 明明
+`disagree=0` 也判失败。两个概念现在分开：`unanswerable` → `--expect-unanswerable`，
+`ref_asserts` → `--allow-ref-asserts`，`assert_sites` 只写进证据供人看。

@@ -20,7 +20,7 @@ A pass in one is not a pass in the other; the contracts are `SCOPE.md` §3 and
 ## One command
 
 ```sh
-python3 tools/ab/ab.py run --target x86-ctor \
+python3 ab.py run --target x86-ctor \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore \
   --queries /tmp/x86.domain.jsonl \
@@ -31,6 +31,14 @@ python3 tools/ab/ab.py run --target x86-ctor \
 `tools/ab/run-x86-end-to-end.sh TREE BUILD x86.inc OUT STATE` does the same
 without the ledger: official from the pinned constructor, ours after swapping
 the body, then `diff.json`.
+
+## Full domain
+
+`run-domain.sh TARGET TREE BUILD INC OUT` asks every point the declared value
+space enumerates, per config, for the six adapters without a dedicated script
+(x86, aarch64 and riscv keep their own).  The shape is pinned in
+`data/domain.json`: per config, how many queries, how many both sides refuse,
+how many only the reference refuses.  A drift fails; it does not absorb.
 
 `run-g-negative.sh TARGET OPCODE OUT` is the G-side negative control:
 replace one builder chain with `.unsupported()`, run the target script, and

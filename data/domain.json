@@ -1,0 +1,139 @@
+{
+ "schema": 1,
+ "comment": "Full-domain contract consumed by run-domain.sh: how many queries each config should enumerate, and how many of them both sides refuse (an assert) or only the reference refuses. Pinned after a reviewed run; a drift means the declared value space changed and the new questions must be looked at.",
+ "targets": {
+  "m68k": {
+   "configs": {
+    "default": 112
+   },
+   "unanswerable": {
+    "default": 0
+   },
+   "ref_asserts": {
+    "default": 0
+   },
+   "assert_sites": {}
+  },
+  "ppc": {
+   "configs": {
+    "default": 1005
+   },
+   "unanswerable": {
+    "default": 3
+   },
+   "ref_asserts": {
+    "default": 0
+   },
+   "assert_sites": {
+    "default": "LegalizerInfo.cpp:200=3"
+   }
+  },
+  "arm": {
+   "configs": {
+    "armv7a-neon": 1328,
+    "armv7a-nodiv": 1328,
+    "armv7a-a5": 1328,
+    "armv6-arm1176": 1328,
+    "armv4t": 1328,
+    "thumbv7m": 1328,
+    "armv7-soft": 1328
+   },
+   "unanswerable": {
+    "armv7a-neon": 0,
+    "armv7a-nodiv": 0,
+    "armv7a-a5": 0,
+    "armv6-arm1176": 0,
+    "armv4t": 0,
+    "thumbv7m": 0,
+    "armv7-soft": 0
+   },
+   "ref_asserts": {
+    "armv7a-neon": 0,
+    "armv7a-nodiv": 0,
+    "armv7a-a5": 0,
+    "armv6-arm1176": 0,
+    "armv4t": 0,
+    "thumbv7m": 0,
+    "armv7-soft": 0
+   },
+   "assert_sites": {}
+  },
+  "mips": {
+   "configs": {
+    "mips32": 3749,
+    "mips32r2": 3749,
+    "mips32r6": 3749,
+    "mips32r5-msa": 3749,
+    "mips32r6-msa": 3749
+   },
+   "unanswerable": {
+    "mips32": 0,
+    "mips32r2": 0,
+    "mips32r6": 0,
+    "mips32r5-msa": 0,
+    "mips32r6-msa": 0
+   },
+   "ref_asserts": {
+    "mips32": 0,
+    "mips32r2": 0,
+    "mips32r6": 0,
+    "mips32r5-msa": 0,
+    "mips32r6-msa": 0
+   },
+   "assert_sites": {}
+  },
+  "wasm": {
+   "configs": {
+    "wasm32": 2999,
+    "wasm32-signext": 2999,
+    "wasm64": 2999,
+    "wasm64-signext": 2999
+   },
+   "unanswerable": {
+    "wasm32": 33,
+    "wasm32-signext": 33,
+    "wasm64": 33,
+    "wasm64-signext": 33
+   },
+   "ref_asserts": {
+    "wasm32": 0,
+    "wasm32-signext": 0,
+    "wasm64": 0,
+    "wasm64-signext": 0
+   },
+   "assert_sites": {
+    "wasm32": "LowLevelType.h:151=4,LowLevelType.h:429=29",
+    "wasm32-signext": "LowLevelType.h:151=4,LowLevelType.h:429=29",
+    "wasm64": "LowLevelType.h:151=4,LowLevelType.h:429=29",
+    "wasm64-signext": "LowLevelType.h:151=4,LowLevelType.h:429=29"
+   }
+  },
+  "spirv": {
+   "configs": {
+    "spirv64-kernel": 578680,
+    "spirv32-kernel": 578680,
+    "spirv64-shader": 578680,
+    "spirv32-shader": 578680,
+    "spirv64-kernel-ext": 578680,
+    "spirv32-shader-ext": 578680
+   },
+   "unanswerable": {
+    "spirv64-kernel": 0,
+    "spirv32-kernel": 0,
+    "spirv64-shader": 450,
+    "spirv32-shader": 450,
+    "spirv64-kernel-ext": 0,
+    "spirv32-shader-ext": 0
+   },
+   "ref_asserts": {
+    "spirv64-kernel": 0,
+    "spirv32-kernel": 0,
+    "spirv64-shader": 0,
+    "spirv32-shader": 0,
+    "spirv64-kernel-ext": 0,
+    "spirv32-shader-ext": 0
+   },
+   "assert_sites": {}
+  }
+ }
+}
