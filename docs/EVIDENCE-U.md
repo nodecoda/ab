@@ -8,8 +8,8 @@
 
 | 项 | 值 |
 |---|---|
-| gisel | `de8dbbf`（AArch64 / RISC-V 行）；`ff04df1`（X86 及其余 target 行） |
-| upstream-source | `a725a7e`（AArch64）；`7b39841`（RISC-V）；`6d242cb`（X86 与其余） |
+| gisel | `de8dbbf`（X86 / AArch64 / RISC-V 行）；`ff04df1`（其余 target 行） |
+| upstream-source | `a725a7e`（X86 / AArch64）；`7b39841`（RISC-V）；`6d242cb`（其余） |
 | ab | 本次 AArch64 提交 |
 | LLVM 树 | `/home/ubuntu/llvm/trees/explore` @ `57587b0` → `700e551`（见“发现”） |
 | pin | `9bfc850b` + 5 patches（`check-pin.sh` rc=0） |
@@ -19,14 +19,14 @@
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-./oracle/scripts/gen-u.sh x86     /tmp/u-gen/x86b
+./oracle/scripts/gen-u.sh x86     /tmp/u-gen/x86d
 ./oracle/scripts/gen-u.sh aarch64 /tmp/u-gen/a64d
 ./oracle/scripts/gen-u.sh riscv   /tmp/u-gen/rvb2
 ```
 
 | target | raw | kept | dropped | `queries.jsonl` sha256 |
 |---|---:|---:|---:|---|
-| X86 | 10,100 | 10,100 | 0 | `dabe88a9cf5a0acf…` |
+| X86 | 10,059 | 10,027 | 32 | `bb5d041ab5c0b4a3…` |
 | AArch64 | 30,126 | 29,561 | 565 | `260728bb73cf4db3…` |
 | RISC-V | 20,533 | 20,445 | 88 | `14a196f5b25d5652…` |
 
@@ -38,14 +38,14 @@ cd /home/ubuntu/llvm/upstream-source
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./run-u-end-to-end.sh x86     /tmp/u-gen/x86b/queries.jsonl     /tmp/u-run/x86b
+./run-u-end-to-end.sh x86     /tmp/u-gen/x86d/queries.jsonl     /tmp/u-run/x86d
 ./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl  /tmp/u-run/a64d
 ./run-u-end-to-end.sh riscv   /tmp/u-gen/rvb2/queries.jsonl     /tmp/rv-vertical4/u
 ```
 
 | target | queries | agree | disagree | unanswerable | 两侧答案文件 |
 |---|---:|---:|---:|---:|---|
-| X86 | 10,100 | 10,100 | 0 | 0 | 逐字节相同 |
+| X86 | 10,027 | 10,027 | 0 | 0 | 逐字节相同 |
 | AArch64 | 29,561 | 29,561 | 0 | 0 | 逐字节相同 |
 | RISC-V | 20,445 | 20,445 | 0 | 0 | 逐字节相同 |
 
@@ -55,17 +55,17 @@ cd /home/ubuntu/llvm/ab
 
 | 产物 | sha256 |
 |---|---|
-| X86 `diff.json` | `1577ba8fe1a37d2a…` |
+| X86 `diff.json` | `e6913f4250537b66…` |
 | AArch64 `diff.json` | `89d3fd10273e5f2d…` |
 | RISC-V `diff.json` | `a149257031db7285…` |
-| X86 `X86LegalizerInfo.inc` | `c9b39260bb0e4cd6…` |
+| X86 `X86LegalizerInfo.inc` | `38b278dd2a10fe42…` |
 | AArch64 `AArch64LegalizerInfo.inc` | `aea61ab511987a0c…` |
 | RISC-V `RISCVLegalizerInfo.inc` | `0c993e1005c5c859…` |
 
-X86 的 inc SHA 与 `EVIDENCE-WP2.md` 相同：那一行是 2026-11-10 的快照。AArch64 /
-RISC-V 两行在 2026-11-11 用 gisel `de8dbbf` 重新生成，inc SHA 因此变了——再往前的
-`076c622` 把“带 `when` 的 `same_as`”改成上游自己的 `minScalarEltSameAsIf` 拼写，
-三个 target 的 inc 都随之改变。这两行的 A/B 用的是新 inc，`disagree=0` 照旧。
+三行都在 2026-11-11 用 gisel `de8dbbf` 重新生成了 inc，SHA 与
+`EVIDENCE-WP2.md` 的 2026-11-10 快照不同：`076c622` 把“带 `when` 的
+`same_as`”改成上游自己的 `minScalarEltSameAsIf` 拼写，三个 target 的 inc 都随之
+改变。A/B 用的是新 inc，`disagree=0` 照旧。
 
 ## 负控（必须有）
 
@@ -75,7 +75,7 @@ RISC-V 两行在 2026-11-11 用 gisel `de8dbbf` 重新生成，inc SHA 因此变
 
 | target | 注入 | disagree | `by_ruleset` | `unknown_keys` | rc |
 |---|---|---:|---|---:|---:|
-| X86 | `G_SUB`（该 builder 同时建 `G_ADD`） | 166 | `G_ADD 83 / G_SUB 83` | 0 | 1 |
+| X86 | `G_SUB`（该 builder 同时建 `G_ADD`） | 164 | `G_ADD 82 / G_SUB 82` | 0 | 1 |
 | AArch64 | `G_ICMP` | 216 | `G_ICMP 216` | 0 | 1 |
 | RISC-V | `G_ADD`（同时建 `G_SUB`） | 140 | `G_ADD 70 / G_SUB 70` | 0 | 1 |
 
