@@ -15,5 +15,5 @@
     "mode": "dual"
   },
   "features": "tests/cases/spirv-features.json",
-  "query_count": 5136
+  "query_count": 5689
 }

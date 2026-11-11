@@ -111,17 +111,22 @@ is back on the baseline include.
 |---|---|---|
 | `x86` | swap the constructor body for `#include` and rebuild | official is the pinned hand-written constructor |
 | `x86-ctor` | generated constructor object | retired with the `.td` path; kept only for old logs |
-| `aarch64` | generated constructor object | 12,583 queries; 9 configs; does not modify the build |
+| `aarch64` | generated constructor object | 12,559 queries; 9 configs; does not modify the build |
 | `m68k` | generated constructor object | 35 queries; single `default` config |
 | `ppc` | generated constructor object | 94 queries; one `default` config; 1 query asserts on both sides (upstream `bitcastIf`) |
-| `riscv` | generated constructor object | 6,149 queries; 8 configs; 2 duplicate keys collapse to 6,147 |
-| `wasm` | generated constructor object | 886 queries; `wasm32|wasm64` × `±sign-ext` |
+| `riscv` | generated constructor object | 6,086 queries; 8 configs |
+| `wasm` | generated constructor object | 894 queries; `wasm32|wasm64` × `±sign-ext` |
 | `arm` | generated constructor object | 1,614 queries; 7 configs across soft-float / VFP2 / VFP4 / NEON / V5T / hardware divide / AEABI; Thumb1 excluded (constructor registers no rule) |
 | `mips` | generated constructor object | 1,656 queries; 5 configs across MSA / MIPS32r2 / unaligned access; 9 queries abort upstream (`--allow-ref-asserts 9`) |
-| `spirv` | generated constructor object | 5,734 queries; 6 configs across kernel/shader × spirv32/64 × extension sets; 4 queries abort on both sides (`--expect-unanswerable 4`, upstream `changeElementSizeTo` overload) |
+| `spirv` | generated constructor object | 5,689 queries; 6 configs across kernel/shader × spirv32/64 × extension sets; 4 queries abort on both sides (`--expect-unanswerable 4`, upstream `changeElementSizeTo` overload) |
 
 Adapters live in `targets/*.json`: include path, library, ninja
 target, runner builder, feature table, optional axes, query-count contract.
+
+`query_count` is the current generator's output, not a hand-written constant:
+`./refresh-counts.py --check` recomputes every adapter and exits 1 on drift.
+A frozen `EVIDENCE.json` entry keeps the count of *its own* query file, so the
+two can differ after the corpus changes and both are still correct.
 
 A new target's runner is a ~30 line file: include its subtarget and legalizer
 headers, alias `TargetSubtarget`/`TargetLegalizer`, include
