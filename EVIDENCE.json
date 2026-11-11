@@ -248,22 +248,23 @@
    "id": "U/riscv",
    "direction": "U",
    "target": "riscv",
-   "dir": "/tmp/rv-vertical2/u",
+   "dir": "/tmp/rv-vertical4/u",
    "queries": {
-    "path": "/tmp/rv-vertical2/u/queries.jsonl",
-    "sha256": "e15c7ccfbe0bccc59e6cece97d085811c0fb1cb21417751cc313469b4a70b755"
+    "path": "/tmp/rv-vertical4/u/queries.jsonl",
+    "sha256": "14a196f5b25d5652cfd53d9522982d8b7c8646777691922a96685f9951049609"
    },
-   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/u-run/rv",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u",
    "artifacts": {
-    "diff.json": "5a8fc2e0ad561063dff01293d45e1700846020e0e47f7a4ec969233a840d4119",
-    "official.answers.jsonl": "f50995fbdbc63362bf4f5487eed80798f059c391d73ec635307780a7806fe1a2",
-    "ours.answers.jsonl": "f50995fbdbc63362bf4f5487eed80798f059c391d73ec635307780a7806fe1a2",
+    "diff.json": "a149257031db728593be139fb960f713a199b14b7db8c4e6d88c25e9507001aa",
+    "official.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
+    "ours.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
     "answers_identical": true,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "agree": 20445
    }
   },
   {
@@ -439,11 +440,11 @@
    "id": "U-neg/riscv",
    "direction": "U-neg",
    "target": "riscv",
-   "dir": "/tmp/rv-vertical2/u-neg",
-   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/rv-vertical2/u-neg --drop-opcode G_ADD",
+   "dir": "/tmp/rv-vertical4/u-neg",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u-neg --drop-opcode G_ADD",
    "artifacts": {
-    "diff.json": "cef260271e516cd8fa8f0be71c6b593a961c534a3a813e85fdff3d5f35b4723b",
-    "attribution.json": "81b161b0871b8c5d9c506df07b17f3b2b303039ec9595678f547f5156e49b93b"
+    "diff.json": "9ee7d0d80f2746ff4126a5451cb1f640618bc2a6601127669c896a36c1b1b787",
+    "attribution.json": "9ca91203b2da24c577a2c7b117b36990e1f47014dda0ad8ea956e83b3f5ae13b"
    },
    "expect": {
     "min_disagree": 1,
@@ -453,7 +454,7 @@
     ],
     "unknown_keys": 0
    },
-   "observed_disagree": 140
+   "observed_disagree": 152
   },
   {
    "id": "U-neg/arm",

@@ -47,8 +47,8 @@ answers      byte-identical
 ### U: upstream questions, both sides
 
 ```text
-queries      20,239
-agree        20,239
+queries      20,445
+agree        20,445
 disagree     0
 unanswerable 0
 answers      byte-identical
@@ -60,7 +60,7 @@ attribution  unknown_keys=0
 | direction | injection | disagree | attribution | unknown keys |
 |---|---|---:|---|---:|
 | G | `G_FPTOSI` builder → `.unsupported()` | 140 | `R_G_FPTOSI` 140 | 0 |
-| U | `G_ADD` builder → `.unsupported()` | 140 | `G_ADD` 70 + `G_SUB` 70 | 0 |
+| U | `G_ADD` builder → `.unsupported()` | 152 | `G_ADD` 76 + `G_SUB` 76 | 0 |
 
 Both controls are required: without them, `disagree=0` only means "nothing was
 compared".
@@ -124,17 +124,20 @@ the CodeGen library is back to `f32be744…`.
 Proves, for this snapshot:
 
 - Every RISC-V G question (6,086) gets the same answer from both sides.
-- Every U question (20,239) gets the same answer from both sides.
+- Every U question (20,445) gets the same answer from both sides.
 - The full declared domain (2,029,976 points) gets the same answer, including
   symmetric assertions.
 - Real MIR and the whole `check-llvm` suite show no observable difference.
 
 Does not prove:
 
-- **U coverage is still a lower bound.** `upstream-source/oracle/known-gaps/riscv.json`
-  has 28 rules that never become the first match: 13 were never matched by the
-  universe, 15 matched but were shadowed. They need targeted shapes or a
-  dead-rule proof before U can claim "every upstream rule was asked".
+- **U coverage still has dead rules.** `upstream-source/oracle/known-gaps/riscv.json`
+  now lists 13 rules that can never become the first match. They are redundant
+  clauses behind a broader earlier rule (Zfa-legal behind libcall, `{s64,s32}`
+  behind `legalFor(D)`, `widenScalarIf` ordering), not missing questions. The
+  16 shape gaps that the previous universe could not reach (scalable `nxv*`
+  vectors, mask vectors, `slot 2 = p0`, `s128` pairs) are now witnessed in the
+  V/Zfa configurations and therefore removed from the gap file.
 - **L2 cannot spell every question.** 732 shapes and 66 types are not
   buildable as MIR, and `ristretto` has no LLVM subtarget spelling (1,085).
 - **Two-sided agreement is not semantic correctness.** If both implementations
@@ -144,7 +147,7 @@ Does not prove:
 
 ## Artifacts
 
-`/tmp/rv-vertical2/` contains:
+`/tmp/rv-vertical3/` contains:
 
 | path | content |
 |---|---|

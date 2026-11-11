@@ -21,14 +21,14 @@ JSONL。
 cd /home/ubuntu/llvm/upstream-source
 ./oracle/scripts/gen-u.sh x86     /tmp/u-gen/x86b
 ./oracle/scripts/gen-u.sh aarch64 /tmp/u-gen/aarch64
-./oracle/scripts/gen-u.sh riscv   /tmp/u-gen/rvb
+./oracle/scripts/gen-u.sh riscv   /tmp/u-gen/rvb2
 ```
 
 | target | raw | kept | dropped | `queries.jsonl` sha256 |
 |---|---:|---:|---:|---|
 | X86 | 10,100 | 10,100 | 0 | `dabe88a9cf5a0acf…` |
 | AArch64 | 29,708 | 29,359 | 349 | `b1951a33f9f04ccb…` |
-| RISC-V | 20,277 | 20,239 | 38 | `e15c7ccfbe0bccc5…` |
+| RISC-V | 20,533 | 20,445 | 88 | `14a196f5b25d5652…` |
 
 `dropped` 是上游自己就不能作答的形状（`known-unanswerable` / `parse-error` /
 `asserted`，逐条带 reason）。它们两边都不作答，所以不进入分母，也不计入
@@ -40,14 +40,14 @@ cd /home/ubuntu/llvm/upstream-source
 cd /home/ubuntu/llvm/ab
 ./run-u-end-to-end.sh x86     /tmp/u-gen/x86b/queries.jsonl     /tmp/u-run/x86b
 ./run-u-end-to-end.sh aarch64 /tmp/u-gen/aarch64/queries.jsonl  /tmp/u-run/a64
-./run-u-end-to-end.sh riscv   /tmp/u-gen/rvb/queries.jsonl      /tmp/u-run/rv
+./run-u-end-to-end.sh riscv   /tmp/u-gen/rvb2/queries.jsonl     /tmp/rv-vertical4/u
 ```
 
 | target | queries | agree | disagree | unanswerable | 两侧答案文件 |
 |---|---:|---:|---:|---:|---|
 | X86 | 10,100 | 10,100 | 0 | 0 | 逐字节相同 |
 | AArch64 | 29,359 | 29,359 | 0 | 0 | 逐字节相同 |
-| RISC-V | 20,239 | 20,239 | 0 | 0 | 逐字节相同 |
+| RISC-V | 20,445 | 20,445 | 0 | 0 | 逐字节相同 |
 
 “答案文件逐字节相同”比 `disagree=0` 更强：`diff.json` 只比 key → action，
 `official.answers.jsonl` 与 `ours.answers.jsonl` 全文件相同说明两边连答案行的
@@ -57,7 +57,7 @@ cd /home/ubuntu/llvm/ab
 |---|---|
 | X86 `diff.json` | `1577ba8fe1a37d2a…` |
 | AArch64 `diff.json` | `63b057e366690a15…` |
-| RISC-V `diff.json` | `9d5504aae5166481…` |
+| RISC-V `diff.json` | `a149257031db7285…` |
 | X86 `X86LegalizerInfo.inc` | `c9b39260bb0e4cd6…` |
 | AArch64 `AArch64LegalizerInfo.inc` | `c02de72ab08d2e58…` |
 | RISC-V `RISCVLegalizerInfo.inc` | `0c993e1005c5c859…` |

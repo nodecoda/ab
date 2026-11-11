@@ -51,7 +51,7 @@ class Contract(unittest.TestCase):
         self.assertEqual(c["target"], "riscv")
         self.assertEqual(len(c["snapshot"]["inc_sha256"]), 64)
         self.assertEqual(c["g"]["queries"], 6086)
-        self.assertEqual(c["u"]["queries"], 20239)
+        self.assertEqual(c["u"]["queries"], 20445)
         self.assertEqual(c["domain"]["configs"], 8)
         self.assertEqual(c["mir_l2"]["runs"], 4203)
         self.assertEqual(c["l3"]["failed"], 0)
