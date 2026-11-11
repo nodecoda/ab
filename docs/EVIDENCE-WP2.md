@@ -75,7 +75,7 @@ wheel sha256：`604f53b3d3b24c53c68585aab6a4935fac63c1866680f2ca9a7064aa3669d449
 
 WP2 当时只记录 X86 / AArch64 / RISC-V。语料补齐到九份以后，`run-<target>-end-to-end.sh`
 已经能覆盖全部 target；这一轮把它们全部跑了一遍，并纳入 `EVIDENCE.json`
-（`G/*` 九条；全清单 37 条：G 9 + G-neg 9 + U 9 + U-neg 9 + D/x86）。
+（`G/*` 九条；全清单 39 条：G 9 + G-neg 9 + U 9 + U-neg 9 + D 3）。
 X86 / AArch64 / RISC-V 的三行已按 2026-11-10 的新查询集重跑；其余六条沿用
 WP2 记录。
 
@@ -117,7 +117,7 @@ cd /home/ubuntu/llvm/ab
 ./run-m68k-end-to-end.sh    TREE BUILD /tmp/g-run/m68k/M68kLegalizerInfo.inc /tmp/g-run/m68k/out
 ./run-wasm-end-to-end.sh    TREE BUILD /tmp/g-run/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-run/wasm/out
 ./run-spirv-end-to-end.sh   TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out
-./verify-evidence.sh        # 36/36 entries pass
+VERIFY_FROZEN=1 ./verify-evidence.sh   # 39/39 entries pass
 ```
 
 ## 2026-11-11 G 侧刷新（gisel `de8dbbf`）

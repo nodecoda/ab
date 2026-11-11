@@ -220,9 +220,13 @@ runner 回显 LLT 时把 `v16bf16` 写成 `v16s16`，题面里还是 `v16bf16`�
 ## 复核
 
 ```sh
-cd /home/ubuntu/llvm/ab && ./verify-evidence.sh
-# PASS G/x86 … PASS U-neg/spirv, 36/36 entries pass（G 9 + G-neg 9 + U 9 + U-neg 9）
+cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./verify-evidence.sh
+# PASS G/x86 … PASS D/riscv, 39/39 entries pass
+# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 3）
 ```
+
+`VERIFY_FROZEN=1` 只读仓库里的 `oracle/`，不读 /tmp。CI 跑的就是这一条
+（`.github/workflows/ci.yml`），所以冻结物和 manifest 一旦对不上，push 就会红。
 
 `EVIDENCE.json` 记录每个产物的 sha256、查询数、期望的 `disagree`/`unanswerable`
 以及重跑命令；`verify-evidence.sh` 逐项复核，缺产物按失败处理。
