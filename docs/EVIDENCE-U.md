@@ -1,16 +1,16 @@
 # U 方向证据：上游出题，两边作答
 
-日期：2026-11-10。这是 `U ⊆ G` 方向的第一份端到端证据：题面由 **上游规则表**
-生成（`upstream-source/oracle`），官方 runner 与 include 后的生成 runner 读同一份
-JSONL。
+日期：2026-11-10；AArch64 / RISC-V 两行于 2026-11-11 随新题面刷新。这是
+`U ⊆ G` 方向的端到端证据：题面由 **上游规则表**生成（`upstream-source/oracle`），
+官方 runner 与 include 后的生成 runner 读同一份 JSONL。
 
 ## 输入
 
 | 项 | 值 |
 |---|---|
-| gisel | `ff04df1`（本方向未改 gisel 库代码；inc 与 G 证据逐字节相同） |
-| upstream-source | `6d242cb`（U4 为 `1f3edff`+filter；U5 加 6 个 runner 与题面） |
-| ab | `d2742c2` + 本次 U5 提交 |
+| gisel | `de8dbbf`（AArch64 / RISC-V 行）；`ff04df1`（X86 及其余 target 行） |
+| upstream-source | `a725a7e`（AArch64）；`7b39841`（RISC-V）；`6d242cb`（X86 与其余） |
+| ab | 本次 AArch64 提交 |
 | LLVM 树 | `/home/ubuntu/llvm/trees/explore` @ `57587b0` → `700e551`（见“发现”） |
 | pin | `9bfc850b` + 5 patches（`check-pin.sh` rc=0） |
 | LLVM 构建 | `/home/ubuntu/llvm/builds/explore` |
@@ -20,14 +20,14 @@ JSONL。
 ```sh
 cd /home/ubuntu/llvm/upstream-source
 ./oracle/scripts/gen-u.sh x86     /tmp/u-gen/x86b
-./oracle/scripts/gen-u.sh aarch64 /tmp/u-gen/aarch64
+./oracle/scripts/gen-u.sh aarch64 /tmp/u-gen/a64d
 ./oracle/scripts/gen-u.sh riscv   /tmp/u-gen/rvb2
 ```
 
 | target | raw | kept | dropped | `queries.jsonl` sha256 |
 |---|---:|---:|---:|---|
 | X86 | 10,100 | 10,100 | 0 | `dabe88a9cf5a0acf…` |
-| AArch64 | 29,708 | 29,359 | 349 | `b1951a33f9f04ccb…` |
+| AArch64 | 30,126 | 29,561 | 565 | `260728bb73cf4db3…` |
 | RISC-V | 20,533 | 20,445 | 88 | `14a196f5b25d5652…` |
 
 `dropped` 是上游自己就不能作答的形状（`known-unanswerable` / `parse-error` /
@@ -39,14 +39,14 @@ cd /home/ubuntu/llvm/upstream-source
 ```sh
 cd /home/ubuntu/llvm/ab
 ./run-u-end-to-end.sh x86     /tmp/u-gen/x86b/queries.jsonl     /tmp/u-run/x86b
-./run-u-end-to-end.sh aarch64 /tmp/u-gen/aarch64/queries.jsonl  /tmp/u-run/a64
+./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl  /tmp/u-run/a64d
 ./run-u-end-to-end.sh riscv   /tmp/u-gen/rvb2/queries.jsonl     /tmp/rv-vertical4/u
 ```
 
 | target | queries | agree | disagree | unanswerable | 两侧答案文件 |
 |---|---:|---:|---:|---:|---|
 | X86 | 10,100 | 10,100 | 0 | 0 | 逐字节相同 |
-| AArch64 | 29,359 | 29,359 | 0 | 0 | 逐字节相同 |
+| AArch64 | 29,561 | 29,561 | 0 | 0 | 逐字节相同 |
 | RISC-V | 20,445 | 20,445 | 0 | 0 | 逐字节相同 |
 
 “答案文件逐字节相同”比 `disagree=0` 更强：`diff.json` 只比 key → action，
@@ -56,14 +56,16 @@ cd /home/ubuntu/llvm/ab
 | 产物 | sha256 |
 |---|---|
 | X86 `diff.json` | `1577ba8fe1a37d2a…` |
-| AArch64 `diff.json` | `63b057e366690a15…` |
+| AArch64 `diff.json` | `89d3fd10273e5f2d…` |
 | RISC-V `diff.json` | `a149257031db7285…` |
 | X86 `X86LegalizerInfo.inc` | `c9b39260bb0e4cd6…` |
-| AArch64 `AArch64LegalizerInfo.inc` | `c02de72ab08d2e58…` |
+| AArch64 `AArch64LegalizerInfo.inc` | `aea61ab511987a0c…` |
 | RISC-V `RISCVLegalizerInfo.inc` | `0c993e1005c5c859…` |
 
-inc 的 SHA 与 `EVIDENCE-WP2.md` 完全相同：本方向只改了 runner 的读入侧，没有
-动生成器。
+X86 的 inc SHA 与 `EVIDENCE-WP2.md` 相同：那一行是 2026-11-10 的快照。AArch64 /
+RISC-V 两行在 2026-11-11 用 gisel `de8dbbf` 重新生成，inc SHA 因此变了——再往前的
+`076c622` 把“带 `when` 的 `same_as`”改成上游自己的 `minScalarEltSameAsIf` 拼写，
+三个 target 的 inc 都随之改变。这两行的 A/B 用的是新 inc，`disagree=0` 照旧。
 
 ## 负控（必须有）
 
@@ -74,7 +76,7 @@ inc 的 SHA 与 `EVIDENCE-WP2.md` 完全相同：本方向只改了 runner 的�
 | target | 注入 | disagree | `by_ruleset` | `unknown_keys` | rc |
 |---|---|---:|---|---:|---:|
 | X86 | `G_SUB`（该 builder 同时建 `G_ADD`） | 166 | `G_ADD 83 / G_SUB 83` | 0 | 1 |
-| AArch64 | `G_ICMP` | 225 | `G_ICMP 225` | 0 | 1 |
+| AArch64 | `G_ICMP` | 216 | `G_ICMP 216` | 0 | 1 |
 | RISC-V | `G_ADD`（同时建 `G_SUB`） | 140 | `G_ADD 70 / G_SUB 70` | 0 | 1 |
 
 `attribution.json` 的 `outside_expected` 三项都为空。
@@ -96,10 +98,12 @@ shim `coreMinScalarSameAs` 把顺序写反了。两个形状里两侧位宽相�
 
 修法在 shim 层（`trees/explore` @ `700e551`）：`coreMinScalarSameAs` /
 `coreMaxScalarSameAs` 改成与上游同序，并加单测锁住“守卫必须在结构条件之后”。
-`.gisel` 语法、语料、emitter 都没动，inc SHA 不变，所以 G 侧证据仍然有效。
+那次修改没有动 emitter，所以当时的 inc SHA 不变，G 侧证据仍然有效。后来的
+`076c622` 换成了上游 `minScalarEltSameAsIf` 拼写，inc SHA 才变（见上表）。
 
-修后 AArch64 29,359 条 → `disagree=0`，0 unanswerable。这条差异是 U 方向
-**自己抓到的**：G 方向的题面由 gisel 生成，永远不会问到这个形状。
+修后 AArch64 29,359 条 → `disagree=0`，0 unanswerable；2026-11-11 用新题面扩到
+29,561 条，复跑仍是 0。这条差异是 U 方向**自己抓到的**：G 方向的题面由 gisel
+生成，永远不会问到这个形状。
 
 ## U5：其余六个 target（2026-11-10）
 
@@ -227,6 +231,6 @@ cd /home/ubuntu/llvm/ab && ./verify-evidence.sh
   WebAssembly / SPIR-V（U5）。AMDGPU 按决定不接。
 - 覆盖门禁是跨配置口径，`(opcode, rule_index)` 并集是覆盖下界；逐条 gap 在
   `upstream-source/oracle/known-gaps/<target>.json`（X86 6 条 shadowed，
-  AArch64 88、RISC-V 28 条 unexercised/shadowed）。
+  AArch64 59、RISC-V 13 条 unexercised/shadowed）。
 - U 方向证明“上游规则 gisel 没漏”，不证明“gisel 每题都答对”；后者由 G 方向
   与 `disagree=0` 共同承担。
