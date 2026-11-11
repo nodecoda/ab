@@ -918,10 +918,16 @@
     "universe.jsonl": "39f095cca1cfc6ff08a08e60628911c936bd6d798951dcde37daebff4b809da6"
    },
    "expect": {
+    "ref": 1121728,
     "agree": 1121728,
     "disagree": 0,
     "unanswerable": 1272,
     "ref_asserted": 0
+   },
+   "queries": {
+    "path": "/tmp/u-full-new/x86/queries.jsonl",
+    "sha256": "843060d986ff2da0d847104e779c2f6b985ebe1fc538c0f51597f184a0265a1e",
+    "derived_from": "universe.jsonl (sha 39f095cca1cfc6ff) expanded by `python3 -m oracle expand --configs C0,C1,C2,C3`"
    }
   },
   {
@@ -963,10 +969,16 @@
     "universe.jsonl": "b756c962695b0af6cbbf42ac4ab8dc542ca4890e287e1be7a135975c66705abb"
    },
    "expect": {
+    "ref": 3028496,
     "agree": 3028496,
     "disagree": 0,
     "unanswerable": 6008,
     "ref_asserted": 0
+   },
+   "queries": {
+    "path": "/tmp/u-full-new/riscv/queries.jsonl",
+    "sha256": "226aa1fff262a542e1c4ca9468e42e920e3a5f7d1c655fd402f9d6f9f21fd28f",
+    "derived_from": "universe.jsonl (sha b756c962695b0af6) expanded by `python3 -m oracle expand --configs rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,ristretto,rv32zilsd`"
    }
   }
  ],

@@ -27,6 +27,11 @@ set -euo pipefail
 # upstream defects in the query's own type, not a rule translation gap.
 # `N` pins the total; `file:line=count,...` or `@file.json` pins each assert
 # site, so a new assert class cannot hide behind an unchanged total.
+#
+# The diff always compares where the two sides died (`--assert-sites`).  A site
+# difference is provenance, not an answer difference, so it is reported and
+# does not change the exit code; but a run that cannot say "both sides assert
+# at the same place" has not explained its unanswerable count.
 TARGET=${1:?usage: run-u-end-to-end.sh TARGET QUERIES OUT [--drop-opcode OP]}
 QUERIES=${2:?}
 OUT=${3:?}
@@ -111,7 +116,7 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.ours" "$QUERIES" \
 
 echo "[4/4] diff + attribution" >&2
 set +e
-DIFF_ARGS=(--json --details 200000)
+DIFF_ARGS=(--json --details 200000 --assert-sites)
 if [[ -n $ALLOW_REF_ASSERTS ]]; then
   DIFF_ARGS+=(--allow-ref-asserts "$ALLOW_REF_ASSERTS")
 fi
