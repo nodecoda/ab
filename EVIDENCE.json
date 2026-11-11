@@ -947,15 +947,9 @@
     }
    },
    "queries": {
-    "path": "/tmp/u-run/full4-a64/universe.jsonl",
-    "sha256": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
-   },
-   "expanded_queries": {
-    "path": "/tmp/u-full-new/aarch64-full-expanded.jsonl",
+    "path": "/tmp/u-full-new/queries.jsonl",
     "sha256": "963e2403e07d92821ea04c58cb1664d0d870e1ae7147e8d789681818977c0ef2",
-    "rows": 3505608,
-    "from": "python3 -m oracle expand --universe /tmp/u-run/full4-a64/universe.jsonl --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve --out aarch64-full-expanded.jsonl",
-    "note": "The expanded file is 500 MB and is not frozen; it is deterministic from the frozen universe and the config list, and `ref` pins its row count."
+    "derived_from": "universe.jsonl (389,512 rows, sha 933514ca\u2026) expanded by `python3 -m oracle expand --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve`"
    }
   },
   {
