@@ -45,6 +45,10 @@ sha256；`ab/check-pin.sh TREE` 按内容逐个比对，任何一个字节不同
 
 ## 复现
 
+证据也钉在同一个构建上：`EVIDENCE.json` 的 `official_build` 记录 9 个
+`libLLVM*CodeGen.so` 的 sha256，`verify-evidence.sh` 会逐个校验；构建被重编就
+直接 FAIL，逼你重跑而不是继承旧结论。
+
 ```sh
 ab/check-pin.sh /home/ubuntu/llvm/trees/explore      # 应 rc=0 且打印冻结点
 python3 ../upstream-source/import/import-cxx.py --all \

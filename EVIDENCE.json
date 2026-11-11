@@ -1,962 +1,979 @@
 {
-  "schema": 1,
-  "generated": "2026-11-11",
-  "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte.",
-  "entries": [
-    {
-      "id": "G/x86",
-      "direction": "G",
-      "target": "x86",
-      "dir": "/tmp/g-now/x86/out",
-      "queries": {
-        "path": "/tmp/g-now/x86/out/queries.jsonl",
-        "sha256": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
-      },
-      "command": "./run-x86-end-to-end.sh TREE BUILD /tmp/g-now/x86/X86LegalizerInfo.inc /tmp/g-now/x86/out",
-      "artifacts": {
-        "diff.json": "f68594349dbecf942aeb7e9371cec83c662828b8764967754611af42f937fe6c",
-        "official.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
-        "ours.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 3014,
-        "disagree": 0,
-        "unanswerable": 0
-      }
+ "schema": 1,
+ "generated": "2026-11-11",
+ "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte.",
+ "entries": [
+  {
+   "id": "G/x86",
+   "direction": "G",
+   "target": "x86",
+   "dir": "/tmp/g-now/x86/out",
+   "queries": {
+    "path": "/tmp/g-now/x86/out/queries.jsonl",
+    "sha256": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
+   },
+   "command": "./run-x86-end-to-end.sh TREE BUILD /tmp/g-now/x86/X86LegalizerInfo.inc /tmp/g-now/x86/out",
+   "artifacts": {
+    "diff.json": "f68594349dbecf942aeb7e9371cec83c662828b8764967754611af42f937fe6c",
+    "official.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
+    "ours.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 3014,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "G/aarch64",
+   "direction": "G",
+   "target": "aarch64",
+   "dir": "/tmp/g-now/a64/out",
+   "queries": {
+    "path": "/tmp/g-now/a64/out/queries.jsonl",
+    "sha256": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98"
+   },
+   "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-now/a64/AArch64LegalizerInfo.inc /tmp/g-now/a64/out",
+   "artifacts": {
+    "diff.json": "d0654f8ee5a956f5fb8431d66c3376dc6cbb36b73aeb2dd6c4c8aaf9eac96b79",
+    "official.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
+    "ours.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 12559,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "G/riscv",
+   "direction": "G",
+   "target": "riscv",
+   "dir": "/tmp/g-now/rv/out",
+   "queries": {
+    "path": "/tmp/g-now/rv/out/queries.jsonl",
+    "sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6"
+   },
+   "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-now/rv/RISCVLegalizerInfo.inc /tmp/g-now/rv/out",
+   "artifacts": {
+    "diff.json": "a6fc55aed0e4e437eb141abbb9d2e84ffdf295074a65a814a06ddc5b17c064dc",
+    "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
+    "ours.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 6086,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "G/arm",
+   "direction": "G",
+   "target": "arm",
+   "dir": "/tmp/g-run/arm/out",
+   "queries": {
+    "path": "/tmp/g-run/arm/out/queries.jsonl",
+    "sha256": "9fcccfb5e8125c067c6a9367d5704aea9805ffe23c794d08ec6899e192c9a606"
+   },
+   "command": "./run-arm-end-to-end.sh TREE BUILD /tmp/g-run/arm/ARMLegalizerInfo.inc /tmp/g-run/arm/out",
+   "artifacts": {
+    "diff.json": "495feea26c62ed894854316c2f2ae95244abd3af618b2451fd3483450d67055e",
+    "official.answers.jsonl": "615123a27714bda555f9dc12a8e11355ec4db8ff39954e1e7c55ff208ee2ea5b",
+    "ours.answers.jsonl": "615123a27714bda555f9dc12a8e11355ec4db8ff39954e1e7c55ff208ee2ea5b"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 1614,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "G/mips",
+   "direction": "G",
+   "target": "mips",
+   "dir": "/tmp/g-run/mips/out",
+   "queries": {
+    "path": "/tmp/g-run/mips/out/queries.jsonl",
+    "sha256": "8405f772d77de0c7c916f9f8b8d0d637d635b0e32e92e3177bda11c358f2e85a"
+   },
+   "command": "./run-mips-end-to-end.sh TREE BUILD /tmp/g-run/mips/MipsLegalizerInfo.inc /tmp/g-run/mips/out",
+   "artifacts": {
+    "diff.json": "19794f933483fd615b8d2ac06557549eaf3f963f35e0ba368400c4ba73a3a744",
+    "official.answers.jsonl": "d81f89d7dfb1fbb9178c3da2f0d649acd9585177a53c2ce5e942679a0adf6b15",
+    "ours.answers.jsonl": "966f16354f328516398a9592eacb214d35f9ebff238f8278da25e835fa73acbb"
+   },
+   "expect": {
+    "answers_identical": false,
+    "agree": 1647,
+    "disagree": 0,
+    "unanswerable": 0,
+    "ref_asserted": 9
+   }
+  },
+  {
+   "id": "G/ppc",
+   "direction": "G",
+   "target": "ppc",
+   "dir": "/tmp/g-run/ppc/out",
+   "queries": {
+    "path": "/tmp/g-run/ppc/out/queries.jsonl",
+    "sha256": "675e59e9e632fa96e1bb02251e59c9f4438cbd3968c7d5f2ef3af4a74214ca83"
+   },
+   "command": "./run-ppc-end-to-end.sh TREE BUILD /tmp/g-run/ppc/PowerPCLegalizerInfo.inc /tmp/g-run/ppc/out",
+   "artifacts": {
+    "diff.json": "77526d37f0e5a0013960c3df9a6f41f3ab3a306e0f75db7f371781a200aa3b0e",
+    "official.answers.jsonl": "d94d2a64c592fa209363146b9006677fb6e9067b9e2af39f6004f6cad53386a2",
+    "ours.answers.jsonl": "d94d2a64c592fa209363146b9006677fb6e9067b9e2af39f6004f6cad53386a2"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 94,
+    "disagree": 0,
+    "unanswerable": 1
+   }
+  },
+  {
+   "id": "G/m68k",
+   "direction": "G",
+   "target": "m68k",
+   "dir": "/tmp/g-run/m68k/out",
+   "queries": {
+    "path": "/tmp/g-run/m68k/out/queries.jsonl",
+    "sha256": "e765e396ca57cd3f179bb3e44235705674e9f33cfa30ce9ac7dda23684be8e3f"
+   },
+   "command": "./run-m68k-end-to-end.sh TREE BUILD /tmp/g-run/m68k/M68kLegalizerInfo.inc /tmp/g-run/m68k/out",
+   "artifacts": {
+    "diff.json": "866a8844198a56f9b412b404fc227b14887c901a8eae1604ea0f149394f572a6",
+    "official.answers.jsonl": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b",
+    "ours.answers.jsonl": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 35,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "G/wasm",
+   "direction": "G",
+   "target": "wasm",
+   "dir": "/tmp/g-now/wasm/out",
+   "queries": {
+    "path": "/tmp/g-now/wasm/out/queries.jsonl",
+    "sha256": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c"
+   },
+   "command": "./run-wasm-end-to-end.sh TREE BUILD /tmp/g-now/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-now/wasm/out",
+   "artifacts": {
+    "diff.json": "65762a7a09c59b65aad0d14d3f940ff9da038d094d187fd553e021e2bb0186de",
+    "official.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b",
+    "ours.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 894,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "G/spirv",
+   "direction": "G",
+   "target": "spirv",
+   "dir": "/tmp/g-run/spirv/out",
+   "queries": {
+    "path": "/tmp/g-run/spirv/out/queries.jsonl",
+    "sha256": "c251e7a19120fb52e122b9a8a19861d389ebbfecf00207d3403a7ca6798ac366"
+   },
+   "command": "./run-spirv-end-to-end.sh TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out",
+   "artifacts": {
+    "diff.json": "062afd656768a7d4b3dd2c00e4aa89d56a563c32690e1dde6e2c1a8511751042",
+    "official.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989",
+    "ours.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 5734,
+    "disagree": 0,
+    "unanswerable": 4
+   }
+  },
+  {
+   "id": "U/x86",
+   "direction": "U",
+   "target": "x86",
+   "dir": "/tmp/u-run/x86d",
+   "queries": {
+    "path": "/tmp/u-gen/x86d/queries.jsonl",
+    "sha256": "bb5d041ab5c0b4a3c847fc82fd9f35b2dcdea87e8aa20e009621229552bfe548"
+   },
+   "command": "./run-u-end-to-end.sh x86 /tmp/u-gen/x86d/queries.jsonl /tmp/u-run/x86d",
+   "artifacts": {
+    "diff.json": "e6913f4250537b66d1df87535f1f77e6d687e5a56e8dcaccaa37ab2f19836369",
+    "official.answers.jsonl": "ead0fef3cfb6b62d75bd3c5825cc68d370194b64cfdbb2a6129b2c164153da78",
+    "ours.answers.jsonl": "ead0fef3cfb6b62d75bd3c5825cc68d370194b64cfdbb2a6129b2c164153da78",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 10027,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/aarch64",
+   "direction": "U",
+   "target": "aarch64",
+   "dir": "/tmp/u-run/a64d",
+   "queries": {
+    "path": "/tmp/u-gen/a64d/queries.jsonl",
+    "sha256": "260728bb73cf4db308dea37970ede7b3a22cb2e4f6b1913721c280fa133b8fe5"
+   },
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl /tmp/u-run/a64d",
+   "artifacts": {
+    "diff.json": "89d3fd10273e5f2de03c9b05d073b2910be30432f85942945254b170f63fe28c",
+    "official.answers.jsonl": "821d0237161e5a1144ed2a8c1174bb56a3e299c8b9c39fad11e1c428bb8bb305",
+    "ours.answers.jsonl": "821d0237161e5a1144ed2a8c1174bb56a3e299c8b9c39fad11e1c428bb8bb305",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 29561,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/riscv",
+   "direction": "U",
+   "target": "riscv",
+   "dir": "/tmp/rv-vertical4/u",
+   "queries": {
+    "path": "/tmp/rv-vertical4/u/queries.jsonl",
+    "sha256": "14a196f5b25d5652cfd53d9522982d8b7c8646777691922a96685f9951049609"
+   },
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u",
+   "artifacts": {
+    "diff.json": "a149257031db728593be139fb960f713a199b14b7db8c4e6d88c25e9507001aa",
+    "official.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
+    "ours.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "disagree": 0,
+    "unanswerable": 0,
+    "agree": 20445
+   }
+  },
+  {
+   "id": "U/arm",
+   "direction": "U",
+   "target": "arm",
+   "dir": "/tmp/u-run/armd",
+   "queries": {
+    "path": "/tmp/u-gen/armd/queries.jsonl",
+    "sha256": "513988b78d814e34d488936e57dbaf08cfd87d3d80341b5b72ebd8285c1c61f4"
+   },
+   "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd",
+   "artifacts": {
+    "diff.json": "343b2af6ced87311daf525d795b64da127d437f61ead5d4111cda5b280b60f91",
+    "official.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
+    "ours.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 15695,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/mips",
+   "direction": "U",
+   "target": "mips",
+   "dir": "/tmp/u-run/mipsd",
+   "queries": {
+    "path": "/tmp/u-gen/mipsd/queries.jsonl",
+    "sha256": "83c4c42543a678568123d8d5df742ab5b10247d126c7e6a8dd31f8687acc3acb"
+   },
+   "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd",
+   "artifacts": {
+    "diff.json": "3cf0017bb54068523167c4fed4652013a27ccfca0c755a5fc9d7f120d6076afd",
+    "official.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
+    "ours.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 11396,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/ppc",
+   "direction": "U",
+   "target": "ppc",
+   "dir": "/tmp/u-run/ppcd",
+   "queries": {
+    "path": "/tmp/u-gen/ppcd/queries.jsonl",
+    "sha256": "8bac7868d2999f3f0619ae5853d5a5eecf18bbb158f602cb1a4511809f0725d1"
+   },
+   "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd",
+   "artifacts": {
+    "diff.json": "12ce6309a3d1791f3135c8dc36527c096f0b6e6c224b06f53fece0f767c2ee5d",
+    "official.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
+    "ours.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 2177,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/m68k",
+   "direction": "U",
+   "target": "m68k",
+   "dir": "/tmp/u-run/m68kd",
+   "queries": {
+    "path": "/tmp/u-gen/m68kd/queries.jsonl",
+    "sha256": "63456e3502ba8e63abc98ffec8498d06d9a9f248c447feac8243394fa2868e2e"
+   },
+   "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd",
+   "artifacts": {
+    "diff.json": "7fde218ddf37faa5361110fb2b8cefe8cd3d3d8209126bdbb670483ef317c8b1",
+    "official.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
+    "ours.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 2182,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/wasm",
+   "direction": "U",
+   "target": "wasm",
+   "dir": "/tmp/u-run/wasmd",
+   "queries": {
+    "path": "/tmp/u-gen/wasmd/queries.jsonl",
+    "sha256": "9324c30ae1ef593b59007fe5c2c4396a708f3ed8e68d01ceb48ab0300e1492eb"
+   },
+   "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd",
+   "artifacts": {
+    "diff.json": "183d96b449d260b8f08ea9f827068545b007b5b3d6237b57bbd3a5d15d1c95a4",
+    "official.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
+    "ours.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 9290,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U/spirv",
+   "direction": "U",
+   "target": "spirv",
+   "dir": "/tmp/u-run/spirvd",
+   "queries": {
+    "path": "/tmp/u-gen/spirvd/queries.jsonl",
+    "sha256": "9f2156afc668e418fecac9bf584c757effd14f35d67ab5d6adc90ae9c183207d"
+   },
+   "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd",
+   "artifacts": {
+    "diff.json": "9078a76da68b9af9d3f753d57e7dc2010162971d0febc6376d26eb0b083d576a",
+    "official.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
+    "ours.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 15580,
+    "disagree": 0,
+    "unanswerable": 0
+   }
+  },
+  {
+   "id": "U-neg/x86",
+   "direction": "U-neg",
+   "target": "x86",
+   "dir": "/tmp/u-run/x86d-neg",
+   "command": "./run-u-end-to-end.sh x86 /tmp/u-gen/x86d/queries.jsonl /tmp/u-run/x86d-neg --drop-opcode G_SUB",
+   "artifacts": {
+    "diff.json": "b66c12c03eeef71d8caf8a4ad8b43e0b2814b2aeb8ec7effb106d30af61aa845",
+    "attribution.json": "fe8a7c32e4ae7cdcf7bf85446aef4316bb260163db204b8e24fb32c69b8ac44e"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_ADD",
+     "G_SUB"
+    ],
+    "unknown_keys": 0
+   },
+   "observed_disagree": 164
+  },
+  {
+   "id": "U-neg/aarch64",
+   "direction": "U-neg",
+   "target": "aarch64",
+   "dir": "/tmp/u-run/a64d-neg",
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl /tmp/u-run/a64d-neg --drop-opcode G_ICMP",
+   "artifacts": {
+    "diff.json": "2136a2a23aea2f0b95482cc0fcf525871727eed9228220127b73323d56c7d427",
+    "attribution.json": "441c66a71bd824f10d67423f16cfcede124445ba86b25c1e36283b82f2620c11"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_ICMP"
+    ],
+    "unknown_keys": 0
+   },
+   "observed_disagree": 216
+  },
+  {
+   "id": "U-neg/riscv",
+   "direction": "U-neg",
+   "target": "riscv",
+   "dir": "/tmp/rv-vertical4/u-neg",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u-neg --drop-opcode G_ADD",
+   "artifacts": {
+    "diff.json": "9ee7d0d80f2746ff4126a5451cb1f640618bc2a6601127669c896a36c1b1b787",
+    "attribution.json": "9ca91203b2da24c577a2c7b117b36990e1f47014dda0ad8ea956e83b3f5ae13b"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_ADD",
+     "G_SUB"
+    ],
+    "unknown_keys": 0
+   },
+   "observed_disagree": 152
+  },
+  {
+   "id": "U-neg/arm",
+   "direction": "U-neg",
+   "target": "arm",
+   "dir": "/tmp/u-run/armd-neg",
+   "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd-neg --drop-opcode G_LOAD",
+   "artifacts": {
+    "diff.json": "7441e88a41826330be5b4f2ddd6c2b394ccda83ce113838e53d81a13f620e025",
+    "attribution.json": "ff684ee624576fe7aa2aff078135e371f48f436e678b356fea3a3d2e4d1a690a"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_LOAD",
+     "G_STORE"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_LOAD",
+   "observed_disagree": 148
+  },
+  {
+   "id": "U-neg/mips",
+   "direction": "U-neg",
+   "target": "mips",
+   "dir": "/tmp/u-run/mipsd-neg",
+   "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd-neg --drop-opcode G_CTPOP",
+   "artifacts": {
+    "diff.json": "54b8467667c0c01a395e0cbc7bb1e5caafbf45fc4f5841c7f9ee04f6426a39ea",
+    "attribution.json": "dd0ad729817e400cf4fd3132ef4e31294a99898b5d5c3604b8aac55af806725f"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_CTPOP"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_CTPOP",
+   "observed_disagree": 40
+  },
+  {
+   "id": "U-neg/ppc",
+   "direction": "U-neg",
+   "target": "ppc",
+   "dir": "/tmp/u-run/ppcd-neg",
+   "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd-neg --drop-opcode G_SUB",
+   "artifacts": {
+    "diff.json": "6242ca7269cc2c5ae74a3f6da07ef3f780348ebfcdbf95e3373d4d5b51864dc6",
+    "attribution.json": "f43efef8ea0561e32fbf514ce633ae1bae3ac6d90d3329ebf8c2c7af39975cfa"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_ADD",
+     "G_SUB"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_SUB",
+   "observed_disagree": 12
+  },
+  {
+   "id": "U-neg/m68k",
+   "direction": "U-neg",
+   "target": "m68k",
+   "dir": "/tmp/u-run/m68kd-neg",
+   "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd-neg --drop-opcode G_MUL",
+   "artifacts": {
+    "diff.json": "430b6c96fd9cbd9baa55d629e9b0a178fbd38fd9048c6a9fb2f0ccab6b5a9af4",
+    "attribution.json": "a79b7446880b258f226a2f901de2bae2dce0b52ad22be291543aadecec8da379"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_ADD",
+     "G_AND",
+     "G_MUL",
+     "G_SUB",
+     "G_UDIV"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_MUL",
+   "observed_disagree": 35
+  },
+  {
+   "id": "U-neg/wasm",
+   "direction": "U-neg",
+   "target": "wasm",
+   "dir": "/tmp/u-run/wasmd-neg",
+   "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd-neg --drop-opcode G_SELECT",
+   "artifacts": {
+    "diff.json": "28edd50f0835f3b43d97c3705b6e62fc70d97cbe200f370d34ac0880835978f1",
+    "attribution.json": "08a33e9e5bd69ff70f585ac6ab84b98c7536a777c27c796c777d79c561a94cd8"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_SELECT"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_SELECT",
+   "observed_disagree": 36
+  },
+  {
+   "id": "U-neg/spirv",
+   "direction": "U-neg",
+   "target": "spirv",
+   "dir": "/tmp/u-run/spirvd-neg",
+   "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd-neg --drop-opcode G_UMIN",
+   "artifacts": {
+    "diff.json": "8e7c035ae24c779e14c5fb597d04e798fadeb44591f04eb67ac057a79904b322",
+    "attribution.json": "fd4cbc27bfdd10079564d9323d966cfed023caef71858c1d390c4b4e5024222e"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "G_ABS",
+     "G_BITREVERSE",
+     "G_SADDSAT",
+     "G_SCMP",
+     "G_SMAX",
+     "G_SMIN",
+     "G_SSUBSAT",
+     "G_UADDSAT",
+     "G_UCMP",
+     "G_UMAX",
+     "G_UMIN",
+     "G_USUBSAT"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_UMIN",
+   "observed_disagree": 784
+  },
+  {
+   "id": "G-neg/x86",
+   "direction": "G-neg",
+   "target": "x86",
+   "dir": "/tmp/g-neg2/x86/run",
+   "command": "./run-g-negative.sh x86 G_ADD /tmp/g-neg/x86",
+   "artifacts": {
+    "diff.json": "16d8e63b3d7a6c97240276f08118358bb1f82390c02ee2e2dc443415c3d58867",
+    "attribution.json": "88c5f1cb98b6b54b74d7f59e9ea31206c87800ca1c911c5057435d424654c18e",
+    "official.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
+    "ours.answers.jsonl": "da678155ea3504f0101442006bec3827e7f913129fd2678eaa9b1a3234155638"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "X_G_ADD"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_ADD",
+   "observed_disagree": 127
+  },
+  {
+   "id": "G-neg/aarch64",
+   "direction": "G-neg",
+   "target": "aarch64",
+   "dir": "/tmp/g-neg2/aarch64/run",
+   "command": "./run-g-negative.sh aarch64 G_ZEXT /tmp/g-neg/a64",
+   "artifacts": {
+    "diff.json": "227fe1ce1c8e75c02417b4cbd346d221b4076ddeecc9484a76d8d53c0b3c4b88",
+    "attribution.json": "53ff18514041e80ed8c38ec6f5daa6a051aacb8290deb937f3f91a782802d188",
+    "official.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
+    "ours.answers.jsonl": "64ea64b7ad2a19b587d525541f6f0f4bfd4009369bb504ef83e973dde2f88001"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "A_G_ZEXT"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_ZEXT",
+   "observed_disagree": 315
+  },
+  {
+   "id": "G-neg/riscv",
+   "direction": "G-neg",
+   "target": "riscv",
+   "dir": "/tmp/g-neg2/riscv/run",
+   "command": "./run-g-negative.sh riscv G_FPTOSI /tmp/rv-vertical2/g-neg",
+   "artifacts": {
+    "diff.json": "105e6f4e3246cc4b2655f0a3c79841ca2db9917d0786f8b3c68728d10bc07f22",
+    "attribution.json": "56d96fdaaa6ca3e3afe42930901acdf3e03920e7f507ec2e3b2545b2c6c01392",
+    "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
+    "ours.answers.jsonl": "e2f892ac2771697c89d5049055477282f163230ecc334c3f796ca5bbf7792614"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "R_G_FPTOSI"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_FPTOSI",
+   "observed_disagree": 140
+  },
+  {
+   "id": "G-neg/arm",
+   "direction": "G-neg",
+   "target": "arm",
+   "dir": "/tmp/g-neg/arm/run",
+   "command": "./run-g-negative.sh arm G_LOAD /tmp/g-neg/arm",
+   "artifacts": {
+    "diff.json": "aa6d8e651fa0afab33403ba824c810dac28a287772e5af49f1c3741033ed2de8",
+    "attribution.json": "22d8476a00f77ffc9dd1a85484ceef5f306d1b1efb843fa2c8b430208c9c029e",
+    "official.answers.jsonl": "615123a27714bda555f9dc12a8e11355ec4db8ff39954e1e7c55ff208ee2ea5b",
+    "ours.answers.jsonl": "94ac8c085ef9dff94e385c06e6d019aa16790c3f4aa3d33b8aaa00c951a99e7e"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "A_G_LOAD"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_LOAD",
+   "observed_disagree": 71
+  },
+  {
+   "id": "G-neg/mips",
+   "direction": "G-neg",
+   "target": "mips",
+   "dir": "/tmp/g-neg/mips/run",
+   "command": "./run-g-negative.sh mips G_UITOFP /tmp/g-neg/mips",
+   "artifacts": {
+    "diff.json": "be61de02a177f1a408eeb83b0db2bbcfb59eb12566b72d104e5ad35c82ca496a",
+    "attribution.json": "4015a24efea28051b53da88f1adffad5336680a5567fd8c53fe8b4468fd24a29",
+    "official.answers.jsonl": "d81f89d7dfb1fbb9178c3da2f0d649acd9585177a53c2ce5e942679a0adf6b15",
+    "ours.answers.jsonl": "e9d04f5f3b4883d150c843acc1f46f7077ea2d35baffbb536ca14f347a001f6f"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "Mips_G_UITOFP"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_UITOFP",
+   "observed_disagree": 15
+  },
+  {
+   "id": "G-neg/ppc",
+   "direction": "G-neg",
+   "target": "ppc",
+   "dir": "/tmp/g-neg/ppc/run",
+   "command": "./run-g-negative.sh ppc G_ZEXT /tmp/g-neg/ppc",
+   "artifacts": {
+    "diff.json": "31542411a4f92a4e8801b3afa4222c3f7622285322dc607419ff449034a2f666",
+    "attribution.json": "73ec8b7914cae497bbbec7e6018f9881448aa2ee523d86447f84e56d57d02670",
+    "official.answers.jsonl": "d94d2a64c592fa209363146b9006677fb6e9067b9e2af39f6004f6cad53386a2",
+    "ours.answers.jsonl": "48e924790541b1c287bb422504fe0bcb0604eb8b59599f2fe26d8c75df08a430"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "P_G_ZEXT"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_ZEXT",
+   "observed_disagree": 3
+  },
+  {
+   "id": "G-neg/m68k",
+   "direction": "G-neg",
+   "target": "m68k",
+   "dir": "/tmp/g-neg/m68k/run",
+   "command": "./run-g-negative.sh m68k G_MUL /tmp/g-neg/m68k",
+   "artifacts": {
+    "diff.json": "94a2f877c4b52f08467423d2efce1fc5faa9839650ed22869c09aca53711f57c",
+    "attribution.json": "7b1b701577b9d31f5de3c4c53cb78c1259f30f0c8598570abb2f24c2d4a17f6c",
+    "official.answers.jsonl": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b",
+    "ours.answers.jsonl": "401d3977c5ae823264bf7ea7f0ec1511cc9a41beb0f18bb972e5448e11fcffa1"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "M68k_G_ADD"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_MUL",
+   "observed_disagree": 7
+  },
+  {
+   "id": "G-neg/wasm",
+   "direction": "G-neg",
+   "target": "wasm",
+   "dir": "/tmp/g-neg2/wasm/run",
+   "command": "./run-g-negative.sh wasm G_CTLZ /tmp/g-neg/wasm",
+   "artifacts": {
+    "diff.json": "46d87c5148730aa999c1e3502079487eb4d48f08546bcefb26450fe7fdd59583",
+    "attribution.json": "225e131c778a00ef8def7933e9d52b5d3e83c76f8bfe233f521d9dcf747871ac",
+    "official.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b",
+    "ours.answers.jsonl": "a498fc0f2a6c2870e363e2768eb08698c84c4795075d4051f1449935b88cce7e"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "Wasm_G_CTLZ"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_CTLZ",
+   "observed_disagree": 56
+  },
+  {
+   "id": "G-neg/spirv",
+   "direction": "G-neg",
+   "target": "spirv",
+   "dir": "/tmp/g-neg/spirv/run",
+   "command": "./run-g-negative.sh spirv G_TRUNC /tmp/g-neg/spirv",
+   "artifacts": {
+    "diff.json": "a54987ee1069e6a91402a9119986baa7ab6ef604e20a955a248c2bd44470d1ff",
+    "attribution.json": "88e76bd6c1efd1e35ead0a5f824b0fa36895bc61a57bdb56354775610a887682",
+    "official.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989",
+    "ours.answers.jsonl": "9762ccfc55300e8ca54760d737de2801586693f14f20c74ab71fb07dba8e1f7a"
+   },
+   "expect": {
+    "min_disagree": 1,
+    "rulesets": [
+     "Spv_G_TRUNC"
+    ],
+    "unknown_keys": 0
+   },
+   "injected_opcode": "G_TRUNC",
+   "observed_disagree": 83
+  },
+  {
+   "id": "D/x86",
+   "direction": "D",
+   "target": "x86",
+   "dir": "/tmp/ab-domain/x86-r2/out",
+   "queries": {
+    "path": "/tmp/ab-domain/x86-r2/out/queries.jsonl",
+    "sha256": "9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363"
+   },
+   "command": "./run-x86-domain.sh TREE BUILD /tmp/ab-domain/x86-r2/X86LegalizerInfo.inc /tmp/ab-domain/x86-r2/out",
+   "artifacts": {
+    "diff.json": "720d1334b940dca64f60f1b55291aa9e6e45db6c692be5f3c46ab3180bda74cb",
+    "official.answers.jsonl": "20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34",
+    "ours.answers.jsonl": "20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34"
+   },
+   "expect": {
+    "answers_identical": true,
+    "agree": 91340,
+    "disagree": 0,
+    "unanswerable": 648
+   },
+   "runtime": {
+    "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMX86CodeGen.so.24.0git",
+    "sha256": "24bf2a5254dc042e6e1145e926ee42a4dd4d613e3947694b6628f2871b4fe357"
+   }
+  },
+  {
+   "id": "D/aarch64",
+   "direction": "D",
+   "target": "aarch64",
+   "dir": "/tmp/ab-domain/a64-domain-r5",
+   "queries": {
+    "path": "/tmp/ab-domain/a64-domain-r5/baseline/queries.jsonl",
+    "sha256": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
+   },
+   "command": "./run-aarch64-domain.sh TREE BUILD /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r5",
+   "artifacts": {
+    "summary.json": "730fa6184e0a092a521d36ea2bd9d92eb5bf422c8a9a466a943aa15154b86802",
+    "manifest.txt": "79f832edcc9bd3490c8878182f2776e1b92f2a5967952ee57075283f8831eb38",
+    "sites.json": "6e1624bea862e7b5c8df54285dcb83fa056eb76e8938d08e537de5af6f699533",
+    "baseline/diff.json": "b9f40fdb1a236fa9769d12492c260ce45d254e9438f7393d5eb40909dc24ded5",
+    "baseline/queries.jsonl": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
+   },
+   "expect": {
+    "summary": {
+     "configs": 9,
+     "queries": 8432640,
+     "agree": 8417376,
+     "disagree": 0,
+     "unanswerable": 351504,
+     "ref_asserted": 15264,
+     "errors": 0,
+     "assert_sites": {
+      "same": 351216,
+      "mismatch": 288,
+      "missing": 0
+     }
     },
-    {
-      "id": "G/aarch64",
-      "direction": "G",
-      "target": "aarch64",
-      "dir": "/tmp/g-now/a64/out",
-      "queries": {
-        "path": "/tmp/g-now/a64/out/queries.jsonl",
-        "sha256": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98"
-      },
-      "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-now/a64/AArch64LegalizerInfo.inc /tmp/g-now/a64/out",
-      "artifacts": {
-        "diff.json": "d0654f8ee5a956f5fb8431d66c3376dc6cbb36b73aeb2dd6c4c8aaf9eac96b79",
-        "official.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
-        "ours.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 12559,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "G/riscv",
-      "direction": "G",
-      "target": "riscv",
-      "dir": "/tmp/g-now/rv/out",
-      "queries": {
-        "path": "/tmp/g-now/rv/out/queries.jsonl",
-        "sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6"
-      },
-      "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-now/rv/RISCVLegalizerInfo.inc /tmp/g-now/rv/out",
-      "artifacts": {
-        "diff.json": "a6fc55aed0e4e437eb141abbb9d2e84ffdf295074a65a814a06ddc5b17c064dc",
-        "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
-        "ours.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 6086,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "G/arm",
-      "direction": "G",
-      "target": "arm",
-      "dir": "/tmp/g-run/arm/out",
-      "queries": {
-        "path": "/tmp/g-run/arm/out/queries.jsonl",
-        "sha256": "9fcccfb5e8125c067c6a9367d5704aea9805ffe23c794d08ec6899e192c9a606"
-      },
-      "command": "./run-arm-end-to-end.sh TREE BUILD /tmp/g-run/arm/ARMLegalizerInfo.inc /tmp/g-run/arm/out",
-      "artifacts": {
-        "diff.json": "495feea26c62ed894854316c2f2ae95244abd3af618b2451fd3483450d67055e",
-        "official.answers.jsonl": "615123a27714bda555f9dc12a8e11355ec4db8ff39954e1e7c55ff208ee2ea5b",
-        "ours.answers.jsonl": "615123a27714bda555f9dc12a8e11355ec4db8ff39954e1e7c55ff208ee2ea5b"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 1614,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "G/mips",
-      "direction": "G",
-      "target": "mips",
-      "dir": "/tmp/g-run/mips/out",
-      "queries": {
-        "path": "/tmp/g-run/mips/out/queries.jsonl",
-        "sha256": "8405f772d77de0c7c916f9f8b8d0d637d635b0e32e92e3177bda11c358f2e85a"
-      },
-      "command": "./run-mips-end-to-end.sh TREE BUILD /tmp/g-run/mips/MipsLegalizerInfo.inc /tmp/g-run/mips/out",
-      "artifacts": {
-        "diff.json": "19794f933483fd615b8d2ac06557549eaf3f963f35e0ba368400c4ba73a3a744",
-        "official.answers.jsonl": "d81f89d7dfb1fbb9178c3da2f0d649acd9585177a53c2ce5e942679a0adf6b15",
-        "ours.answers.jsonl": "966f16354f328516398a9592eacb214d35f9ebff238f8278da25e835fa73acbb"
-      },
-      "expect": {
-        "answers_identical": false,
-        "agree": 1647,
-        "disagree": 0,
-        "unanswerable": 0,
-        "ref_asserted": 9
-      }
-    },
-    {
-      "id": "G/ppc",
-      "direction": "G",
-      "target": "ppc",
-      "dir": "/tmp/g-run/ppc/out",
-      "queries": {
-        "path": "/tmp/g-run/ppc/out/queries.jsonl",
-        "sha256": "675e59e9e632fa96e1bb02251e59c9f4438cbd3968c7d5f2ef3af4a74214ca83"
-      },
-      "command": "./run-ppc-end-to-end.sh TREE BUILD /tmp/g-run/ppc/PowerPCLegalizerInfo.inc /tmp/g-run/ppc/out",
-      "artifacts": {
-        "diff.json": "77526d37f0e5a0013960c3df9a6f41f3ab3a306e0f75db7f371781a200aa3b0e",
-        "official.answers.jsonl": "d94d2a64c592fa209363146b9006677fb6e9067b9e2af39f6004f6cad53386a2",
-        "ours.answers.jsonl": "d94d2a64c592fa209363146b9006677fb6e9067b9e2af39f6004f6cad53386a2"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 94,
-        "disagree": 0,
-        "unanswerable": 1
-      }
-    },
-    {
-      "id": "G/m68k",
-      "direction": "G",
-      "target": "m68k",
-      "dir": "/tmp/g-run/m68k/out",
-      "queries": {
-        "path": "/tmp/g-run/m68k/out/queries.jsonl",
-        "sha256": "e765e396ca57cd3f179bb3e44235705674e9f33cfa30ce9ac7dda23684be8e3f"
-      },
-      "command": "./run-m68k-end-to-end.sh TREE BUILD /tmp/g-run/m68k/M68kLegalizerInfo.inc /tmp/g-run/m68k/out",
-      "artifacts": {
-        "diff.json": "866a8844198a56f9b412b404fc227b14887c901a8eae1604ea0f149394f572a6",
-        "official.answers.jsonl": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b",
-        "ours.answers.jsonl": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 35,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "G/wasm",
-      "direction": "G",
-      "target": "wasm",
-      "dir": "/tmp/g-now/wasm/out",
-      "queries": {
-        "path": "/tmp/g-now/wasm/out/queries.jsonl",
-        "sha256": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c"
-      },
-      "command": "./run-wasm-end-to-end.sh TREE BUILD /tmp/g-now/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-now/wasm/out",
-      "artifacts": {
-        "diff.json": "65762a7a09c59b65aad0d14d3f940ff9da038d094d187fd553e021e2bb0186de",
-        "official.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b",
-        "ours.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 894,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "G/spirv",
-      "direction": "G",
-      "target": "spirv",
-      "dir": "/tmp/g-run/spirv/out",
-      "queries": {
-        "path": "/tmp/g-run/spirv/out/queries.jsonl",
-        "sha256": "c251e7a19120fb52e122b9a8a19861d389ebbfecf00207d3403a7ca6798ac366"
-      },
-      "command": "./run-spirv-end-to-end.sh TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out",
-      "artifacts": {
-        "diff.json": "062afd656768a7d4b3dd2c00e4aa89d56a563c32690e1dde6e2c1a8511751042",
-        "official.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989",
-        "ours.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 5734,
-        "disagree": 0,
-        "unanswerable": 4
-      }
-    },
-    {
-      "id": "U/x86",
-      "direction": "U",
-      "target": "x86",
-      "dir": "/tmp/u-run/x86d",
-      "queries": {
-        "path": "/tmp/u-gen/x86d/queries.jsonl",
-        "sha256": "bb5d041ab5c0b4a3c847fc82fd9f35b2dcdea87e8aa20e009621229552bfe548"
-      },
-      "command": "./run-u-end-to-end.sh x86 /tmp/u-gen/x86d/queries.jsonl /tmp/u-run/x86d",
-      "artifacts": {
-        "diff.json": "e6913f4250537b66d1df87535f1f77e6d687e5a56e8dcaccaa37ab2f19836369",
-        "official.answers.jsonl": "ead0fef3cfb6b62d75bd3c5825cc68d370194b64cfdbb2a6129b2c164153da78",
-        "ours.answers.jsonl": "ead0fef3cfb6b62d75bd3c5825cc68d370194b64cfdbb2a6129b2c164153da78",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 10027,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/aarch64",
-      "direction": "U",
-      "target": "aarch64",
-      "dir": "/tmp/u-run/a64d",
-      "queries": {
-        "path": "/tmp/u-gen/a64d/queries.jsonl",
-        "sha256": "260728bb73cf4db308dea37970ede7b3a22cb2e4f6b1913721c280fa133b8fe5"
-      },
-      "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl /tmp/u-run/a64d",
-      "artifacts": {
-        "diff.json": "89d3fd10273e5f2de03c9b05d073b2910be30432f85942945254b170f63fe28c",
-        "official.answers.jsonl": "821d0237161e5a1144ed2a8c1174bb56a3e299c8b9c39fad11e1c428bb8bb305",
-        "ours.answers.jsonl": "821d0237161e5a1144ed2a8c1174bb56a3e299c8b9c39fad11e1c428bb8bb305",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 29561,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/riscv",
-      "direction": "U",
-      "target": "riscv",
-      "dir": "/tmp/rv-vertical4/u",
-      "queries": {
-        "path": "/tmp/rv-vertical4/u/queries.jsonl",
-        "sha256": "14a196f5b25d5652cfd53d9522982d8b7c8646777691922a96685f9951049609"
-      },
-      "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u",
-      "artifacts": {
-        "diff.json": "a149257031db728593be139fb960f713a199b14b7db8c4e6d88c25e9507001aa",
-        "official.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
-        "ours.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "disagree": 0,
-        "unanswerable": 0,
-        "agree": 20445
-      }
-    },
-    {
-      "id": "U/arm",
-      "direction": "U",
-      "target": "arm",
-      "dir": "/tmp/u-run/armd",
-      "queries": {
-        "path": "/tmp/u-gen/armd/queries.jsonl",
-        "sha256": "513988b78d814e34d488936e57dbaf08cfd87d3d80341b5b72ebd8285c1c61f4"
-      },
-      "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd",
-      "artifacts": {
-        "diff.json": "343b2af6ced87311daf525d795b64da127d437f61ead5d4111cda5b280b60f91",
-        "official.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
-        "ours.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 15695,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/mips",
-      "direction": "U",
-      "target": "mips",
-      "dir": "/tmp/u-run/mipsd",
-      "queries": {
-        "path": "/tmp/u-gen/mipsd/queries.jsonl",
-        "sha256": "83c4c42543a678568123d8d5df742ab5b10247d126c7e6a8dd31f8687acc3acb"
-      },
-      "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd",
-      "artifacts": {
-        "diff.json": "3cf0017bb54068523167c4fed4652013a27ccfca0c755a5fc9d7f120d6076afd",
-        "official.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
-        "ours.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 11396,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/ppc",
-      "direction": "U",
-      "target": "ppc",
-      "dir": "/tmp/u-run/ppcd",
-      "queries": {
-        "path": "/tmp/u-gen/ppcd/queries.jsonl",
-        "sha256": "8bac7868d2999f3f0619ae5853d5a5eecf18bbb158f602cb1a4511809f0725d1"
-      },
-      "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd",
-      "artifacts": {
-        "diff.json": "12ce6309a3d1791f3135c8dc36527c096f0b6e6c224b06f53fece0f767c2ee5d",
-        "official.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
-        "ours.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 2177,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/m68k",
-      "direction": "U",
-      "target": "m68k",
-      "dir": "/tmp/u-run/m68kd",
-      "queries": {
-        "path": "/tmp/u-gen/m68kd/queries.jsonl",
-        "sha256": "63456e3502ba8e63abc98ffec8498d06d9a9f248c447feac8243394fa2868e2e"
-      },
-      "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd",
-      "artifacts": {
-        "diff.json": "7fde218ddf37faa5361110fb2b8cefe8cd3d3d8209126bdbb670483ef317c8b1",
-        "official.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
-        "ours.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 2182,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/wasm",
-      "direction": "U",
-      "target": "wasm",
-      "dir": "/tmp/u-run/wasmd",
-      "queries": {
-        "path": "/tmp/u-gen/wasmd/queries.jsonl",
-        "sha256": "9324c30ae1ef593b59007fe5c2c4396a708f3ed8e68d01ceb48ab0300e1492eb"
-      },
-      "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd",
-      "artifacts": {
-        "diff.json": "183d96b449d260b8f08ea9f827068545b007b5b3d6237b57bbd3a5d15d1c95a4",
-        "official.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
-        "ours.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 9290,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U/spirv",
-      "direction": "U",
-      "target": "spirv",
-      "dir": "/tmp/u-run/spirvd",
-      "queries": {
-        "path": "/tmp/u-gen/spirvd/queries.jsonl",
-        "sha256": "9f2156afc668e418fecac9bf584c757effd14f35d67ab5d6adc90ae9c183207d"
-      },
-      "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd",
-      "artifacts": {
-        "diff.json": "9078a76da68b9af9d3f753d57e7dc2010162971d0febc6376d26eb0b083d576a",
-        "official.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
-        "ours.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
-        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 15580,
-        "disagree": 0,
-        "unanswerable": 0
-      }
-    },
-    {
-      "id": "U-neg/x86",
-      "direction": "U-neg",
-      "target": "x86",
-      "dir": "/tmp/u-run/x86d-neg",
-      "command": "./run-u-end-to-end.sh x86 /tmp/u-gen/x86d/queries.jsonl /tmp/u-run/x86d-neg --drop-opcode G_SUB",
-      "artifacts": {
-        "diff.json": "b66c12c03eeef71d8caf8a4ad8b43e0b2814b2aeb8ec7effb106d30af61aa845",
-        "attribution.json": "fe8a7c32e4ae7cdcf7bf85446aef4316bb260163db204b8e24fb32c69b8ac44e"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_ADD",
-          "G_SUB"
-        ],
-        "unknown_keys": 0
-      },
-      "observed_disagree": 164
-    },
-    {
-      "id": "U-neg/aarch64",
-      "direction": "U-neg",
-      "target": "aarch64",
-      "dir": "/tmp/u-run/a64d-neg",
-      "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl /tmp/u-run/a64d-neg --drop-opcode G_ICMP",
-      "artifacts": {
-        "diff.json": "2136a2a23aea2f0b95482cc0fcf525871727eed9228220127b73323d56c7d427",
-        "attribution.json": "441c66a71bd824f10d67423f16cfcede124445ba86b25c1e36283b82f2620c11"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_ICMP"
-        ],
-        "unknown_keys": 0
-      },
-      "observed_disagree": 216
-    },
-    {
-      "id": "U-neg/riscv",
-      "direction": "U-neg",
-      "target": "riscv",
-      "dir": "/tmp/rv-vertical4/u-neg",
-      "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u-neg --drop-opcode G_ADD",
-      "artifacts": {
-        "diff.json": "9ee7d0d80f2746ff4126a5451cb1f640618bc2a6601127669c896a36c1b1b787",
-        "attribution.json": "9ca91203b2da24c577a2c7b117b36990e1f47014dda0ad8ea956e83b3f5ae13b"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_ADD",
-          "G_SUB"
-        ],
-        "unknown_keys": 0
-      },
-      "observed_disagree": 152
-    },
-    {
-      "id": "U-neg/arm",
-      "direction": "U-neg",
-      "target": "arm",
-      "dir": "/tmp/u-run/armd-neg",
-      "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd-neg --drop-opcode G_LOAD",
-      "artifacts": {
-        "diff.json": "7441e88a41826330be5b4f2ddd6c2b394ccda83ce113838e53d81a13f620e025",
-        "attribution.json": "ff684ee624576fe7aa2aff078135e371f48f436e678b356fea3a3d2e4d1a690a"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_LOAD",
-          "G_STORE"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_LOAD",
-      "observed_disagree": 148
-    },
-    {
-      "id": "U-neg/mips",
-      "direction": "U-neg",
-      "target": "mips",
-      "dir": "/tmp/u-run/mipsd-neg",
-      "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd-neg --drop-opcode G_CTPOP",
-      "artifacts": {
-        "diff.json": "54b8467667c0c01a395e0cbc7bb1e5caafbf45fc4f5841c7f9ee04f6426a39ea",
-        "attribution.json": "dd0ad729817e400cf4fd3132ef4e31294a99898b5d5c3604b8aac55af806725f"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_CTPOP"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_CTPOP",
-      "observed_disagree": 40
-    },
-    {
-      "id": "U-neg/ppc",
-      "direction": "U-neg",
-      "target": "ppc",
-      "dir": "/tmp/u-run/ppcd-neg",
-      "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd-neg --drop-opcode G_SUB",
-      "artifacts": {
-        "diff.json": "6242ca7269cc2c5ae74a3f6da07ef3f780348ebfcdbf95e3373d4d5b51864dc6",
-        "attribution.json": "f43efef8ea0561e32fbf514ce633ae1bae3ac6d90d3329ebf8c2c7af39975cfa"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_ADD",
-          "G_SUB"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_SUB",
-      "observed_disagree": 12
-    },
-    {
-      "id": "U-neg/m68k",
-      "direction": "U-neg",
-      "target": "m68k",
-      "dir": "/tmp/u-run/m68kd-neg",
-      "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd-neg --drop-opcode G_MUL",
-      "artifacts": {
-        "diff.json": "430b6c96fd9cbd9baa55d629e9b0a178fbd38fd9048c6a9fb2f0ccab6b5a9af4",
-        "attribution.json": "a79b7446880b258f226a2f901de2bae2dce0b52ad22be291543aadecec8da379"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_ADD",
-          "G_AND",
-          "G_MUL",
-          "G_SUB",
-          "G_UDIV"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_MUL",
-      "observed_disagree": 35
-    },
-    {
-      "id": "U-neg/wasm",
-      "direction": "U-neg",
-      "target": "wasm",
-      "dir": "/tmp/u-run/wasmd-neg",
-      "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd-neg --drop-opcode G_SELECT",
-      "artifacts": {
-        "diff.json": "28edd50f0835f3b43d97c3705b6e62fc70d97cbe200f370d34ac0880835978f1",
-        "attribution.json": "08a33e9e5bd69ff70f585ac6ab84b98c7536a777c27c796c777d79c561a94cd8"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_SELECT"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_SELECT",
-      "observed_disagree": 36
-    },
-    {
-      "id": "U-neg/spirv",
-      "direction": "U-neg",
-      "target": "spirv",
-      "dir": "/tmp/u-run/spirvd-neg",
-      "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd-neg --drop-opcode G_UMIN",
-      "artifacts": {
-        "diff.json": "8e7c035ae24c779e14c5fb597d04e798fadeb44591f04eb67ac057a79904b322",
-        "attribution.json": "fd4cbc27bfdd10079564d9323d966cfed023caef71858c1d390c4b4e5024222e"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "G_ABS",
-          "G_BITREVERSE",
-          "G_SADDSAT",
-          "G_SCMP",
-          "G_SMAX",
-          "G_SMIN",
-          "G_SSUBSAT",
-          "G_UADDSAT",
-          "G_UCMP",
-          "G_UMAX",
-          "G_UMIN",
-          "G_USUBSAT"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_UMIN",
-      "observed_disagree": 784
-    },
-    {
-      "id": "G-neg/x86",
-      "direction": "G-neg",
-      "target": "x86",
-      "dir": "/tmp/g-neg2/x86/run",
-      "command": "./run-g-negative.sh x86 G_ADD /tmp/g-neg/x86",
-      "artifacts": {
-        "diff.json": "16d8e63b3d7a6c97240276f08118358bb1f82390c02ee2e2dc443415c3d58867",
-        "attribution.json": "88c5f1cb98b6b54b74d7f59e9ea31206c87800ca1c911c5057435d424654c18e",
-        "official.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
-        "ours.answers.jsonl": "da678155ea3504f0101442006bec3827e7f913129fd2678eaa9b1a3234155638"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "X_G_ADD"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_ADD",
-      "observed_disagree": 127
-    },
-    {
-      "id": "G-neg/aarch64",
-      "direction": "G-neg",
-      "target": "aarch64",
-      "dir": "/tmp/g-neg2/aarch64/run",
-      "command": "./run-g-negative.sh aarch64 G_ZEXT /tmp/g-neg/a64",
-      "artifacts": {
-        "diff.json": "227fe1ce1c8e75c02417b4cbd346d221b4076ddeecc9484a76d8d53c0b3c4b88",
-        "attribution.json": "53ff18514041e80ed8c38ec6f5daa6a051aacb8290deb937f3f91a782802d188",
-        "official.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
-        "ours.answers.jsonl": "64ea64b7ad2a19b587d525541f6f0f4bfd4009369bb504ef83e973dde2f88001"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "A_G_ZEXT"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_ZEXT",
-      "observed_disagree": 315
-    },
-    {
-      "id": "G-neg/riscv",
-      "direction": "G-neg",
-      "target": "riscv",
-      "dir": "/tmp/g-neg2/riscv/run",
-      "command": "./run-g-negative.sh riscv G_FPTOSI /tmp/rv-vertical2/g-neg",
-      "artifacts": {
-        "diff.json": "105e6f4e3246cc4b2655f0a3c79841ca2db9917d0786f8b3c68728d10bc07f22",
-        "attribution.json": "56d96fdaaa6ca3e3afe42930901acdf3e03920e7f507ec2e3b2545b2c6c01392",
-        "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
-        "ours.answers.jsonl": "e2f892ac2771697c89d5049055477282f163230ecc334c3f796ca5bbf7792614"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "R_G_FPTOSI"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_FPTOSI",
-      "observed_disagree": 140
-    },
-    {
-      "id": "G-neg/arm",
-      "direction": "G-neg",
-      "target": "arm",
-      "dir": "/tmp/g-neg/arm/run",
-      "command": "./run-g-negative.sh arm G_LOAD /tmp/g-neg/arm",
-      "artifacts": {
-        "diff.json": "aa6d8e651fa0afab33403ba824c810dac28a287772e5af49f1c3741033ed2de8",
-        "attribution.json": "22d8476a00f77ffc9dd1a85484ceef5f306d1b1efb843fa2c8b430208c9c029e",
-        "official.answers.jsonl": "615123a27714bda555f9dc12a8e11355ec4db8ff39954e1e7c55ff208ee2ea5b",
-        "ours.answers.jsonl": "94ac8c085ef9dff94e385c06e6d019aa16790c3f4aa3d33b8aaa00c951a99e7e"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "A_G_LOAD"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_LOAD",
-      "observed_disagree": 71
-    },
-    {
-      "id": "G-neg/mips",
-      "direction": "G-neg",
-      "target": "mips",
-      "dir": "/tmp/g-neg/mips/run",
-      "command": "./run-g-negative.sh mips G_UITOFP /tmp/g-neg/mips",
-      "artifacts": {
-        "diff.json": "be61de02a177f1a408eeb83b0db2bbcfb59eb12566b72d104e5ad35c82ca496a",
-        "attribution.json": "4015a24efea28051b53da88f1adffad5336680a5567fd8c53fe8b4468fd24a29",
-        "official.answers.jsonl": "d81f89d7dfb1fbb9178c3da2f0d649acd9585177a53c2ce5e942679a0adf6b15",
-        "ours.answers.jsonl": "e9d04f5f3b4883d150c843acc1f46f7077ea2d35baffbb536ca14f347a001f6f"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "Mips_G_UITOFP"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_UITOFP",
-      "observed_disagree": 15
-    },
-    {
-      "id": "G-neg/ppc",
-      "direction": "G-neg",
-      "target": "ppc",
-      "dir": "/tmp/g-neg/ppc/run",
-      "command": "./run-g-negative.sh ppc G_ZEXT /tmp/g-neg/ppc",
-      "artifacts": {
-        "diff.json": "31542411a4f92a4e8801b3afa4222c3f7622285322dc607419ff449034a2f666",
-        "attribution.json": "73ec8b7914cae497bbbec7e6018f9881448aa2ee523d86447f84e56d57d02670",
-        "official.answers.jsonl": "d94d2a64c592fa209363146b9006677fb6e9067b9e2af39f6004f6cad53386a2",
-        "ours.answers.jsonl": "48e924790541b1c287bb422504fe0bcb0604eb8b59599f2fe26d8c75df08a430"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "P_G_ZEXT"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_ZEXT",
-      "observed_disagree": 3
-    },
-    {
-      "id": "G-neg/m68k",
-      "direction": "G-neg",
-      "target": "m68k",
-      "dir": "/tmp/g-neg/m68k/run",
-      "command": "./run-g-negative.sh m68k G_MUL /tmp/g-neg/m68k",
-      "artifacts": {
-        "diff.json": "94a2f877c4b52f08467423d2efce1fc5faa9839650ed22869c09aca53711f57c",
-        "attribution.json": "7b1b701577b9d31f5de3c4c53cb78c1259f30f0c8598570abb2f24c2d4a17f6c",
-        "official.answers.jsonl": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b",
-        "ours.answers.jsonl": "401d3977c5ae823264bf7ea7f0ec1511cc9a41beb0f18bb972e5448e11fcffa1"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "M68k_G_ADD"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_MUL",
-      "observed_disagree": 7
-    },
-    {
-      "id": "G-neg/wasm",
-      "direction": "G-neg",
-      "target": "wasm",
-      "dir": "/tmp/g-neg2/wasm/run",
-      "command": "./run-g-negative.sh wasm G_CTLZ /tmp/g-neg/wasm",
-      "artifacts": {
-        "diff.json": "46d87c5148730aa999c1e3502079487eb4d48f08546bcefb26450fe7fdd59583",
-        "attribution.json": "225e131c778a00ef8def7933e9d52b5d3e83c76f8bfe233f521d9dcf747871ac",
-        "official.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b",
-        "ours.answers.jsonl": "a498fc0f2a6c2870e363e2768eb08698c84c4795075d4051f1449935b88cce7e"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "Wasm_G_CTLZ"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_CTLZ",
-      "observed_disagree": 56
-    },
-    {
-      "id": "G-neg/spirv",
-      "direction": "G-neg",
-      "target": "spirv",
-      "dir": "/tmp/g-neg/spirv/run",
-      "command": "./run-g-negative.sh spirv G_TRUNC /tmp/g-neg/spirv",
-      "artifacts": {
-        "diff.json": "a54987ee1069e6a91402a9119986baa7ab6ef604e20a955a248c2bd44470d1ff",
-        "attribution.json": "88e76bd6c1efd1e35ead0a5f824b0fa36895bc61a57bdb56354775610a887682",
-        "official.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989",
-        "ours.answers.jsonl": "9762ccfc55300e8ca54760d737de2801586693f14f20c74ab71fb07dba8e1f7a"
-      },
-      "expect": {
-        "min_disagree": 1,
-        "rulesets": [
-          "Spv_G_TRUNC"
-        ],
-        "unknown_keys": 0
-      },
-      "injected_opcode": "G_TRUNC",
-      "observed_disagree": 83
-    },
-    {
-      "id": "D/x86",
-      "direction": "D",
-      "target": "x86",
-      "dir": "/tmp/ab-domain/x86-r2/out",
-      "queries": {
-        "path": "/tmp/ab-domain/x86-r2/out/queries.jsonl",
-        "sha256": "9e4324a2e9bfff091c955b1e7e957dd9aa67cc8f3cfc18b4f02ce5048abf1363"
-      },
-      "command": "./run-x86-domain.sh TREE BUILD /tmp/ab-domain/x86-r2/X86LegalizerInfo.inc /tmp/ab-domain/x86-r2/out",
-      "artifacts": {
-        "diff.json": "720d1334b940dca64f60f1b55291aa9e6e45db6c692be5f3c46ab3180bda74cb",
-        "official.answers.jsonl": "20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34",
-        "ours.answers.jsonl": "20b481d9bb7464f3bc865ffb8d57fc4ea2c8979d018b2418d30d0c1c6fc6cc34"
-      },
-      "expect": {
-        "answers_identical": true,
-        "agree": 91340,
-        "disagree": 0,
-        "unanswerable": 648
-      },
-      "runtime": {
-        "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMX86CodeGen.so.24.0git",
-        "sha256": "24bf2a5254dc042e6e1145e926ee42a4dd4d613e3947694b6628f2871b4fe357"
-      }
-    },
-    {
-      "id": "D/aarch64",
-      "direction": "D",
-      "target": "aarch64",
-      "dir": "/tmp/ab-domain/a64-domain-r5",
-      "queries": {
-        "path": "/tmp/ab-domain/a64-domain-r5/baseline/queries.jsonl",
-        "sha256": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
-      },
-      "command": "./run-aarch64-domain.sh TREE BUILD /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r5",
-      "artifacts": {
-        "summary.json": "730fa6184e0a092a521d36ea2bd9d92eb5bf422c8a9a466a943aa15154b86802",
-        "manifest.txt": "79f832edcc9bd3490c8878182f2776e1b92f2a5967952ee57075283f8831eb38",
-        "sites.json": "6e1624bea862e7b5c8df54285dcb83fa056eb76e8938d08e537de5af6f699533",
-        "baseline/diff.json": "b9f40fdb1a236fa9769d12492c260ce45d254e9438f7393d5eb40909dc24ded5",
-        "baseline/queries.jsonl": "8f03a48d309b15adf6a8c50d6ec8fc6d88c4b7846b545c5ab9435f95ac74f609"
-      },
-      "expect": {
-        "summary": {
-          "configs": 9,
-          "queries": 8432640,
-          "agree": 8417376,
-          "disagree": 0,
-          "unanswerable": 351504,
-          "ref_asserted": 15264,
-          "errors": 0,
-          "assert_sites": {
-            "same": 351216,
-            "mismatch": 288,
-            "missing": 0
-          }
-        },
-        "assert_sites": {
-          "same": 351216,
-          "mismatch": 288,
-          "missing": 0
-        }
-      },
-      "diff": "baseline/diff.json",
-      "runtime": {
-        "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMAArch64CodeGen.so.24.0git",
-        "sha256": "e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02"
-      },
-      "sites": "sites.json"
-    },
-    {
-      "id": "D/riscv",
-      "direction": "D",
-      "target": "riscv",
-      "dir": "/tmp/rv-vertical2/domain",
-      "queries": {
-        "path": "/tmp/rv-vertical2/domain/rv64gc/queries.jsonl",
-        "sha256": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
-      },
-      "command": "./run-riscv-domain.sh TREE BUILD /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6",
-      "artifacts": {
-        "summary.json": "fd45ae3682e7d080cced6dc6bd3f785b29e9f01d6f37a86c1f50e5416db0c2c7",
-        "manifest.txt": "aaa179dae82f4c24177f346f5c0f6dc21f0e59b7e9dc077457eeca63545202a0",
-        "rv64gc/diff.json": "067ed79057e6112c5d55e1552ff34897fee583bf6bd1d576914d9a60182b9a23",
-        "rv64gc/queries.jsonl": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
-      },
-      "expect": {
-        "summary": {
-          "configs": 8,
-          "queries": 2029976,
-          "agree": 2029976,
-          "disagree": 0,
-          "unanswerable": 7728,
-          "ref_asserted": 0,
-          "errors": 0
-        }
-      },
-      "diff": "rv64gc/diff.json",
-      "runtime": {
-        "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMRISCVCodeGen.so.24.0git",
-        "sha256": "f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4"
-      }
-    },
-    {
-      "id": "U-full/x86",
-      "direction": "U",
-      "target": "x86",
-      "dir": "/tmp/u-run/full2-x86",
-      "command": "./run-u-end-to-end.sh x86 /tmp/u-full2/x86-full.jsonl /tmp/u-run/full2-x86 --allow-unanswerable 1272",
-      "artifacts": {
-        "diff.json": "0b33032b76d5340f5745e4df6415e219329a7a5bf908655b9087a64fe8d10526",
-        "universe.jsonl": "39f095cca1cfc6ff08a08e60628911c936bd6d798951dcde37daebff4b809da6"
-      },
-      "expect": {
-        "agree": 1121728,
-        "disagree": 0,
-        "unanswerable": 1272,
-        "ref_asserted": 0
-      }
-    },
-    {
-      "id": "U-full/aarch64",
-      "direction": "U",
-      "target": "aarch64",
-      "dir": "/tmp/u-run/full2-a64",
-      "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full2/aarch64-full.jsonl /tmp/u-run/full2-a64 --allow-ref-asserts 30150 --allow-unanswerable 35316",
-      "artifacts": {
-        "diff.json": "1bc25a855cf054544644653dcdb26194ffea83949056ea4c8bc42c67f0704546",
-        "universe.jsonl": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
-      },
-      "expect": {
-        "agree": 3475458,
-        "disagree": 0,
-        "unanswerable": 35316,
-        "ref_asserted": 30150
-      }
-    },
-    {
-      "id": "U-full/riscv",
-      "direction": "U",
-      "target": "riscv",
-      "dir": "/tmp/u-run/full2-rv",
-      "command": "./run-u-end-to-end.sh riscv /tmp/u-full2/riscv-full.jsonl /tmp/u-run/full2-rv --allow-unanswerable 6008",
-      "artifacts": {
-        "diff.json": "1c53c0d99c2c10082191bea5a898501734d29da918678ef246fb76a687c38baa",
-        "universe.jsonl": "b756c962695b0af6cbbf42ac4ab8dc542ca4890e287e1be7a135975c66705abb"
-      },
-      "expect": {
-        "agree": 3028496,
-        "disagree": 0,
-        "unanswerable": 6008,
-        "ref_asserted": 0
-      }
+    "assert_sites": {
+     "same": 351216,
+     "mismatch": 288,
+     "missing": 0
     }
-  ]
+   },
+   "diff": "baseline/diff.json",
+   "runtime": {
+    "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMAArch64CodeGen.so.24.0git",
+    "sha256": "e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02"
+   },
+   "sites": "sites.json"
+  },
+  {
+   "id": "D/riscv",
+   "direction": "D",
+   "target": "riscv",
+   "dir": "/tmp/rv-vertical2/domain",
+   "queries": {
+    "path": "/tmp/rv-vertical2/domain/rv64gc/queries.jsonl",
+    "sha256": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
+   },
+   "command": "./run-riscv-domain.sh TREE BUILD /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6",
+   "artifacts": {
+    "summary.json": "fd45ae3682e7d080cced6dc6bd3f785b29e9f01d6f37a86c1f50e5416db0c2c7",
+    "manifest.txt": "aaa179dae82f4c24177f346f5c0f6dc21f0e59b7e9dc077457eeca63545202a0",
+    "rv64gc/diff.json": "067ed79057e6112c5d55e1552ff34897fee583bf6bd1d576914d9a60182b9a23",
+    "rv64gc/queries.jsonl": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
+   },
+   "expect": {
+    "summary": {
+     "configs": 8,
+     "queries": 2029976,
+     "agree": 2029976,
+     "disagree": 0,
+     "unanswerable": 7728,
+     "ref_asserted": 0,
+     "errors": 0
+    }
+   },
+   "diff": "rv64gc/diff.json",
+   "runtime": {
+    "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMRISCVCodeGen.so.24.0git",
+    "sha256": "f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4"
+   }
+  },
+  {
+   "id": "U-full/x86",
+   "direction": "U",
+   "target": "x86",
+   "dir": "/tmp/u-run/full2-x86",
+   "command": "./run-u-end-to-end.sh x86 /tmp/u-full2/x86-full.jsonl /tmp/u-run/full2-x86 --allow-unanswerable 1272",
+   "artifacts": {
+    "diff.json": "0b33032b76d5340f5745e4df6415e219329a7a5bf908655b9087a64fe8d10526",
+    "universe.jsonl": "39f095cca1cfc6ff08a08e60628911c936bd6d798951dcde37daebff4b809da6"
+   },
+   "expect": {
+    "agree": 1121728,
+    "disagree": 0,
+    "unanswerable": 1272,
+    "ref_asserted": 0
+   }
+  },
+  {
+   "id": "U-full/aarch64",
+   "direction": "U",
+   "target": "aarch64",
+   "dir": "/tmp/u-run/full2-a64",
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full2/aarch64-full.jsonl /tmp/u-run/full2-a64 --allow-ref-asserts 30150 --allow-unanswerable 35316",
+   "artifacts": {
+    "diff.json": "1bc25a855cf054544644653dcdb26194ffea83949056ea4c8bc42c67f0704546",
+    "universe.jsonl": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
+   },
+   "expect": {
+    "agree": 3475458,
+    "disagree": 0,
+    "unanswerable": 35316,
+    "ref_asserted": 30150
+   }
+  },
+  {
+   "id": "U-full/riscv",
+   "direction": "U",
+   "target": "riscv",
+   "dir": "/tmp/u-run/full2-rv",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-full2/riscv-full.jsonl /tmp/u-run/full2-rv --allow-unanswerable 6008",
+   "artifacts": {
+    "diff.json": "1c53c0d99c2c10082191bea5a898501734d29da918678ef246fb76a687c38baa",
+    "universe.jsonl": "b756c962695b0af6cbbf42ac4ab8dc542ca4890e287e1be7a135975c66705abb"
+   },
+   "expect": {
+    "agree": 3028496,
+    "disagree": 0,
+    "unanswerable": 6008,
+    "ref_asserted": 0
+   }
+  }
+ ],
+ "official_build": {
+  "path": "/home/ubuntu/llvm/builds/explore",
+  "tree": "700e551714cc",
+  "recorded": "2026-11-11",
+  "note": "The build directory every entry in this file was produced from. verify-evidence.sh hashes these libraries and fails when the build no longer matches: rebuilding is a baseline change, so the evidence has to be re-run, not inherited. Entries that carry their own `runtime` recorded it at run time; older entries predate that field and are covered by this block.",
+  "libs": {
+   "X86": "24bf2a5254dc042e6e1145e926ee42a4dd4d613e3947694b6628f2871b4fe357",
+   "AArch64": "e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02",
+   "RISCV": "f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4",
+   "ARM": "45f4737bf3112ff28fd9140d95ebaaaf4debe85b82ca32c1ae97b3b4c8146cee",
+   "Mips": "c2e0ee2bbeb87cf4da7e482715a13465b200cf6771376035249cf3d490f33a41",
+   "PowerPC": "b346bbe71da3b3b8db8a990eaf7e88f5cbae72265c39b6273ce87f8a11044602",
+   "M68k": "24cacf3969a019bfdedc0cb0e5d76f020fd8b234487ecdb2971d77132c7938ba",
+   "WebAssembly": "ace4c380a30ecbca62cce66a58e3c5090ab83fa13f599bac0f9ffd3db36a2a4f",
+   "SPIRV": "5bf75b9f35a36087e3b3d4c02de6366145a1093d5db885f5e98709ec12bd93a3"
+  }
+ }
 }

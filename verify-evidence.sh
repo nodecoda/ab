@@ -177,6 +177,34 @@ def check(entry):
         print("PASS %-16s %s" % (entry["id"], where))
     return bad
 
+def check_build(manifest):
+    """The evidence belongs to one build.  A rebuilt library invalidates it."""
+    build = manifest.get("official_build")
+    if not build:
+        return 0
+    root = pathlib.Path(build["path"])
+    if not root.exists():
+        print("SKIP official_build  %s is not present" % root)
+        return 0
+    bad = 0
+    for target, want in sorted(build["libs"].items()):
+        lib = root / "lib" / ("libLLVM%sCodeGen.so.24.0git" % target)
+        if not lib.exists():
+            print("FAIL official_build  missing %s" % lib)
+            bad += 1
+            continue
+        got = hashlib.sha256(lib.read_bytes()).hexdigest()
+        if got != want:
+            print("FAIL official_build  %s is %s, evidence was recorded against %s"
+                  % (lib.name, got[:16], want[:16]))
+            bad += 1
+    if not bad:
+        print("PASS official_build  %s (%d libraries)" % (root, len(build["libs"])))
+    return bad
+
+
+build_failures = check_build(manifest)
+
 total = failures = 0
 for entry in manifest["entries"]:
     if want != "all" and entry["direction"] != want:
@@ -185,5 +213,5 @@ for entry in manifest["entries"]:
     failures += check(entry)
 
 print("%d/%d entries pass" % (total - failures, total))
-sys.exit(1 if failures else 0)
+sys.exit(1 if (failures or build_failures) else 0)
 PY
