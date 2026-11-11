@@ -13,7 +13,9 @@ INC=${3:?}
 OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
 STATE=${5:-$ROOT/.ab/x86}
-EXPECTED_QUERIES=3019
+# 3019 -> 3014 on 2026-11-11: the CTPOP deviation rewrite (gisel de8dbbf /
+# upstream PR 235976) moves 25 G_CTPOP sample points, all within G_CTPOP.
+EXPECTED_QUERIES=3014
 mkdir -p "$OUT" "$STATE"
 
 restore() {

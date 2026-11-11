@@ -12,7 +12,10 @@ BUILD=${2:?}
 INC=${3:?}
 OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-EXPECTED_QUERIES=886
+# 886 -> 894 on 2026-11-11: gisel 076c622 changes which indices a guarded
+# `same_as` covers, so the G_ICMP rule-0 witness points and its samples move
+# (i32 and s32 are the same LLT; the delta is confined to G_ICMP).
+EXPECTED_QUERIES=894
 mkdir -p "$OUT"
 
 "$ROOT/build-wasm-runner.sh" "$TREE" "$BUILD" "$INC" "$OUT/runner"

@@ -7,20 +7,20 @@
       "id": "G/x86",
       "direction": "G",
       "target": "x86",
-      "dir": "/tmp/g-run/x86-new/out",
+      "dir": "/tmp/g-now/x86/out",
       "queries": {
-        "path": "/tmp/g-run/x86-new/out/queries.jsonl",
-        "sha256": "d4a89d99ba31f8ca779e9875209f9d585b832dda5bc612194ae86ffca3e29f45"
+        "path": "/tmp/g-now/x86/out/queries.jsonl",
+        "sha256": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
       },
-      "command": "./run-x86-end-to-end.sh TREE BUILD /tmp/g-run/x86-new/X86LegalizerInfo.inc /tmp/g-run/x86-new/out",
+      "command": "./run-x86-end-to-end.sh TREE BUILD /tmp/g-now/x86/X86LegalizerInfo.inc /tmp/g-now/x86/out",
       "artifacts": {
-        "diff.json": "6575a6ba6a83eeb976f3e8b7d76dc5f013bb72b7076efad62828083493261668",
-        "official.answers.jsonl": "b6b17279d5833c2f567162c2e985f84a005798a39cc186b76a43a414e3d91ff2",
-        "ours.answers.jsonl": "b6b17279d5833c2f567162c2e985f84a005798a39cc186b76a43a414e3d91ff2"
+        "diff.json": "f68594349dbecf942aeb7e9371cec83c662828b8764967754611af42f937fe6c",
+        "official.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
+        "ours.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 3013,
+        "agree": 3014,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -29,16 +29,16 @@
       "id": "G/aarch64",
       "direction": "G",
       "target": "aarch64",
-      "dir": "/tmp/g-run/a64-new2/out",
+      "dir": "/tmp/g-now/a64/out",
       "queries": {
-        "path": "/tmp/g-run/a64-new2/out/queries.jsonl",
+        "path": "/tmp/g-now/a64/out/queries.jsonl",
         "sha256": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98"
       },
-      "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64-new2/AArch64LegalizerInfo.inc /tmp/g-run/a64-new2/out",
+      "command": "./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-now/a64/AArch64LegalizerInfo.inc /tmp/g-now/a64/out",
       "artifacts": {
-        "diff.json": "767eee6c8b1171b9c398cb98a9a5ede20684ebcfa56eb4c9ac5786008f2f7cd7",
-        "official.answers.jsonl": "10ab8aa2eaadffcf1ba483b8b02f003f10469b4045d2b35bef4d98def47e0b16",
-        "ours.answers.jsonl": "10ab8aa2eaadffcf1ba483b8b02f003f10469b4045d2b35bef4d98def47e0b16"
+        "diff.json": "d0654f8ee5a956f5fb8431d66c3376dc6cbb36b73aeb2dd6c4c8aaf9eac96b79",
+        "official.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
+        "ours.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040"
       },
       "expect": {
         "answers_identical": true,
@@ -51,12 +51,12 @@
       "id": "G/riscv",
       "direction": "G",
       "target": "riscv",
-      "dir": "/tmp/rv-vertical2/g",
+      "dir": "/tmp/g-now/rv/out",
       "queries": {
-        "path": "/tmp/rv-vertical2/g/queries.jsonl",
+        "path": "/tmp/g-now/rv/out/queries.jsonl",
         "sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6"
       },
-      "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-run/rv-new/RISCVLegalizerInfo.inc /tmp/g-run/rv-new/out",
+      "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-now/rv/RISCVLegalizerInfo.inc /tmp/g-now/rv/out",
       "artifacts": {
         "diff.json": "a6fc55aed0e4e437eb141abbb9d2e84ffdf295074a65a814a06ddc5b17c064dc",
         "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
@@ -162,20 +162,20 @@
       "id": "G/wasm",
       "direction": "G",
       "target": "wasm",
-      "dir": "/tmp/g-run/wasm/out",
+      "dir": "/tmp/g-now/wasm/out",
       "queries": {
-        "path": "/tmp/g-run/wasm/out/queries.jsonl",
-        "sha256": "3406604ace81decd84b6528d42fec446a2b19aae6b41e8bc552652077a32b6e9"
+        "path": "/tmp/g-now/wasm/out/queries.jsonl",
+        "sha256": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c"
       },
-      "command": "./run-wasm-end-to-end.sh TREE BUILD /tmp/g-run/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-run/wasm/out",
+      "command": "./run-wasm-end-to-end.sh TREE BUILD /tmp/g-now/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-now/wasm/out",
       "artifacts": {
-        "diff.json": "a565bf7619805913fec3cebb8ff31e60160e2b3f7c1222941f8d7f029f007290",
-        "official.answers.jsonl": "e8e886168be30e9f67443deccefbc0fca22988ffd4ddfa7eecafc7c782593b46",
-        "ours.answers.jsonl": "e8e886168be30e9f67443deccefbc0fca22988ffd4ddfa7eecafc7c782593b46"
+        "diff.json": "65762a7a09c59b65aad0d14d3f940ff9da038d094d187fd553e021e2bb0186de",
+        "official.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b",
+        "ours.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 886,
+        "agree": 894,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -609,13 +609,13 @@
       "id": "G-neg/x86",
       "direction": "G-neg",
       "target": "x86",
-      "dir": "/tmp/g-neg/x86/run",
+      "dir": "/tmp/g-neg2/x86/run",
       "command": "./run-g-negative.sh x86 G_ADD /tmp/g-neg/x86",
       "artifacts": {
-        "diff.json": "607383b9ec16b8cbf0deacc152e2a331e7b4efaa562a39a6c4260d1a85702dde",
+        "diff.json": "16d8e63b3d7a6c97240276f08118358bb1f82390c02ee2e2dc443415c3d58867",
         "attribution.json": "88c5f1cb98b6b54b74d7f59e9ea31206c87800ca1c911c5057435d424654c18e",
-        "official.answers.jsonl": "976351de97169726012666bd92739bd7f22a3e41c9d5671f132beb756ac467d7",
-        "ours.answers.jsonl": "bd4a628341bd539ee29bff06f11445417ab2ac2de980b3fa2810601ae96e8ac5"
+        "official.answers.jsonl": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
+        "ours.answers.jsonl": "da678155ea3504f0101442006bec3827e7f913129fd2678eaa9b1a3234155638"
       },
       "expect": {
         "min_disagree": 1,
@@ -631,13 +631,13 @@
       "id": "G-neg/aarch64",
       "direction": "G-neg",
       "target": "aarch64",
-      "dir": "/tmp/g-neg/a64/run",
+      "dir": "/tmp/g-neg2/aarch64/run",
       "command": "./run-g-negative.sh aarch64 G_ZEXT /tmp/g-neg/a64",
       "artifacts": {
-        "diff.json": "8d7a7b0aa841167a39207d0c79677db1c7532cd7d3f131a61c36204ceb734c83",
+        "diff.json": "227fe1ce1c8e75c02417b4cbd346d221b4076ddeecc9484a76d8d53c0b3c4b88",
         "attribution.json": "53ff18514041e80ed8c38ec6f5daa6a051aacb8290deb937f3f91a782802d188",
-        "official.answers.jsonl": "c544ab4d6ac34e0f00c920179f025c14f00362e09171d587608b55e4b7787091",
-        "ours.answers.jsonl": "899cecb07947ee3f3bd783060b922830e0b89cf0d94eb8b66e0e9e34da5edeab"
+        "official.answers.jsonl": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
+        "ours.answers.jsonl": "64ea64b7ad2a19b587d525541f6f0f4bfd4009369bb504ef83e973dde2f88001"
       },
       "expect": {
         "min_disagree": 1,
@@ -653,7 +653,7 @@
       "id": "G-neg/riscv",
       "direction": "G-neg",
       "target": "riscv",
-      "dir": "/tmp/rv-vertical2/g-neg/run",
+      "dir": "/tmp/g-neg2/riscv/run",
       "command": "./run-g-negative.sh riscv G_FPTOSI /tmp/rv-vertical2/g-neg",
       "artifacts": {
         "diff.json": "105e6f4e3246cc4b2655f0a3c79841ca2db9917d0786f8b3c68728d10bc07f22",
@@ -763,13 +763,13 @@
       "id": "G-neg/wasm",
       "direction": "G-neg",
       "target": "wasm",
-      "dir": "/tmp/g-neg/wasm/run",
+      "dir": "/tmp/g-neg2/wasm/run",
       "command": "./run-g-negative.sh wasm G_CTLZ /tmp/g-neg/wasm",
       "artifacts": {
-        "diff.json": "bb7b53288ae27b55f73ab7215758adbb889a6aded8b99335bed88a903572d9d3",
+        "diff.json": "46d87c5148730aa999c1e3502079487eb4d48f08546bcefb26450fe7fdd59583",
         "attribution.json": "225e131c778a00ef8def7933e9d52b5d3e83c76f8bfe233f521d9dcf747871ac",
-        "official.answers.jsonl": "e8e886168be30e9f67443deccefbc0fca22988ffd4ddfa7eecafc7c782593b46",
-        "ours.answers.jsonl": "a74d4c72da12d3fecd180af21a7c505549316a660bb8f8ddfc69ea6dc6618e22"
+        "official.answers.jsonl": "544b7b744917324b2126c480162b585158283e948d5ba107e9d61b81b778044b",
+        "ours.answers.jsonl": "a498fc0f2a6c2870e363e2768eb08698c84c4795075d4051f1449935b88cce7e"
       },
       "expect": {
         "min_disagree": 1,

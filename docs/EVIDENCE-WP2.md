@@ -81,19 +81,20 @@ WP2 记录。
 
 | target | queries | keys | agree | disagree | unanswerable | ref_asserted | 两侧答案文件 |
 |---|---:|---:|---:|---:|---:|---:|---|
-| X86 | 3,019 | 3,013 | 3,013 | 0 | 0 | 0 | 逐字节相同 |
+| X86 | 3,014 | 3,014 | 3,014 | 0 | 0 | 0 | 逐字节相同 |
 | AArch64 | 12,559 | 12,559 | 12,559 | 0 | 0 | 0 | 逐字节相同 |
 | RISC-V | 6,086 | 6,084 | 6,084 | 0 | 0 | 0 | 逐字节相同 |
 | ARM | 1,614 | 1,614 | 1,614 | 0 | 0 | 0 | 逐字节相同 |
 | Mips | 1,656 | 1,656 | 1,647 | 0 | 0 | 9 | 仅 9 条断言行不同 |
 | PPC | 94 | 94 | 94 | 0 | 1 | 0 | 逐字节相同 |
 | M68k | 35 | 35 | 35 | 0 | 0 | 0 | 逐字节相同 |
-| WebAssembly | 886 | 886 | 886 | 0 | 0 | 0 | 逐字节相同 |
+| WebAssembly | 894 | 894 | 894 | 0 | 0 | 0 | 逐字节相同 |
 | SPIR-V | 5,734 | 5,734 | 5,734 | 0 | 4 | 0 | 逐字节相同 |
 
 口径说明：
 
-- `keys < queries` 只出现在 X86（-6）和 RISC-V（-2），是同 key 合并，见上一节。
+- `keys < queries` 只出现在 RISC-V（-2），是同 key 合并，见上一节。X86 在
+  2026-11-11 的 CTPOP 改写后不再有重复 key。
 - Mips 的 9 条是**上游断言**：`MipsLegalizerInfo.cpp` 的 `customIf` 里
   `assert(QueryMemSize != 32 && "4 byte load and store are legal")` 对
   “4 字节 unaligned 访问 + 更宽的值槽”不成立，官方 runner abort、我们答
@@ -118,6 +119,30 @@ cd /home/ubuntu/llvm/ab
 ./run-spirv-end-to-end.sh   TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out
 ./verify-evidence.sh        # 36/36 entries pass
 ```
+
+## 2026-11-11 G 侧刷新（gisel `de8dbbf`）
+
+`076c622` 把带 `when` 的 `same_as` 改成上游自己的 `minScalarEltSameAsIf` 拼写，
+`de8dbbf` 又改了 X86 的 CTPOP 偏差。四个 target 的 inc 因此变了，G 侧全部重跑：
+
+| target | inc sha256 | queries | agree | disagree |
+|---|---|---:|---:|---:|
+| X86 | `38b278dd2a10fe42…` | 3,014 | 3,014 | 0 |
+| AArch64 | `aea61ab511987a0c…` | 12,559 | 12,559 | 0 |
+| RISC-V | `fe6427bdf480143c…` | 6,086 | 6,086 | 0 |
+| WebAssembly | `1293d7a53ab9a743…` | 894 | 894 | 0 |
+
+查询集有两处契约变更，都逐条看过：
+
+- X86 3,019 → 3,014：CTPOP 偏差重写（`de8dbbf`，对齐上游 PR 235976）只移动
+  `G_CTPOP` 的采样点，25 条一进一出，全部在 `G_CTPOP` 内。
+- WebAssembly 886 → 894：`076c622` 改了“守卫 `same_as` 覆盖哪些 index”，
+  `G_ICMP` rule 0 的 witness 点随之变化（`i32` 与 `s32` 是同一个 LLT；delta
+  只有 `G_ICMP`）。
+
+两个 `EXPECTED_QUERIES` 常量已同步更新并写明原因。负控随之重跑，差异数不变
+（X86 127、AArch64 315、RISC-V 140、WebAssembly 56），归因全部落在注入的
+ruleset 内。其余五个 target 的 inc 没变，沿用 2026-11-10 的结果。
 
 SPIR-V 的查询数从 5,136 变成 5,734：`gisel cases` 在此之后开始拒绝 MIR 装不下的
 类型元组（`9e59c9d`、`77bcb7b`）。新集合已复核：无重复 key、两遍 SHA 相同。
