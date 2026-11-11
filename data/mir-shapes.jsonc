@@ -1,0 +1,1168 @@
+// Shape table for the L2 MIR builder.  Data, not code: every entry cites
+// the GenericOpcodes.td line it was transcribed from.
+{
+ "schema": 1,
+ "note": "Operand kinds transcribed from GenericOpcodes.td. typeN/ptypeN are the legalizer's type indices; variable_ops expands from the type sizes; unknown is a literal mir-from-query.py fills per opcode; untyped_imm is a non-generic immediate; i32imm is a fixed alignment.  The table covers every legalizer opcode that appears in the X86, AArch64 and RISC-V corpora; a missing opcode is unbuildable-shape, and its reason says so.",
+ "opcodes": {
+  "G_ABDS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:425"
+  },
+  "G_ABS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:581"
+  },
+  "G_ADD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:308"
+  },
+  "G_AND": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:380"
+  },
+  "G_ANYEXT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:44"
+  },
+  "G_ATOMICRMW_MAX": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1495"
+  },
+  "G_ATOMICRMW_MIN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1496"
+  },
+  "G_ATOMICRMW_SUB": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1490"
+  },
+  "G_ATOMICRMW_XCHG": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1488"
+  },
+  "G_ATOMIC_CMPXCHG": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1",
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1468"
+  },
+  "G_ATOMIC_CMPXCHG_WITH_SUCCESS": {
+   "out": [
+    "type0",
+    "type1"
+   ],
+   "in": [
+    "type2",
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1457"
+  },
+  "G_BITCAST": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:161"
+  },
+  "G_BITREVERSE": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:242"
+  },
+  "G_BR": {
+   "out": [],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1655"
+  },
+  "G_BRCOND": {
+   "out": [],
+   "in": [
+    "type0",
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1665"
+  },
+  "G_BRINDIRECT": {
+   "out": [],
+   "in": [
+    "ptype0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1674"
+  },
+  "G_BSWAP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:235"
+  },
+  "G_BUILD_VECTOR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "variable_ops"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1592"
+  },
+  "G_CLMUL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:588"
+  },
+  "G_CLMULH": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:596"
+  },
+  "G_CLMULR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:606"
+  },
+  "G_CONCAT_VECTORS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "variable_ops"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1609"
+  },
+  "G_CONSTANT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:169"
+  },
+  "G_CONSTANT_POOL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:143"
+  },
+  "G_CTLS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:223"
+  },
+  "G_CTLZ": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:199"
+  },
+  "G_CTLZ_ZERO_POISON": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:205"
+  },
+  "G_CTPOP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:229"
+  },
+  "G_CTTZ": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:211"
+  },
+  "G_CTTZ_ZERO_POISON": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:217"
+  },
+  "G_DYN_STACKALLOC": {
+   "out": [
+    "ptype0"
+   ],
+   "in": [
+    "type1",
+    "i32imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:266"
+  },
+  "G_EXTRACT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1540"
+  },
+  "G_EXTRACT_SUBVECTOR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1737"
+  },
+  "G_EXTRACT_VECTOR_ELT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "type2"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1753"
+  },
+  "G_FABS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:890"
+  },
+  "G_FADD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:998"
+  },
+  "G_FCANONICALIZE": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:902"
+  },
+  "G_FCEIL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1131"
+  },
+  "G_FCMP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "unknown",
+    "type1",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:506"
+  },
+  "G_FCONSTANT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:177"
+  },
+  "G_FCOPYSIGN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:896"
+  },
+  "G_FCOS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1138"
+  },
+  "G_FMAXIMUM": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:971"
+  },
+  "G_FNEG": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:836"
+  },
+  "G_FPEXT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:842"
+  },
+  "G_FPEXTLOAD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1393"
+  },
+  "G_FPOWI": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1068"
+  },
+  "G_FPTOSI": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:854"
+  },
+  "G_FPTOSI_SAT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:878"
+  },
+  "G_FPTOUI": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:860"
+  },
+  "G_FPTRUNC": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:848"
+  },
+  "G_FPTRUNCSTORE": {
+   "out": [],
+   "in": [
+    "type0",
+    "ptype1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1438"
+  },
+  "G_FRAME_INDEX": {
+   "out": [
+    "ptype0"
+   ],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:125"
+  },
+  "G_FREEZE": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:284"
+  },
+  "G_FREM": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1047"
+  },
+  "G_FSHL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:470"
+  },
+  "G_FSQRT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1218"
+  },
+  "G_GET_ROUNDING": {
+   "out": [
+    "type0"
+   ],
+   "in": [],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1346"
+  },
+  "G_GLOBAL_VALUE": {
+   "out": [
+    "ptype0"
+   ],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:131"
+  },
+  "G_ICMP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "unknown",
+    "type1",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:499"
+  },
+  "G_IMPLICIT_DEF": {
+   "out": [
+    "type0"
+   ],
+   "in": [],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:111"
+  },
+  "G_INDEXED_STORE": {
+   "out": [
+    "ptype0"
+   ],
+   "in": [
+    "type1",
+    "ptype0",
+    "ptype2",
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1446"
+  },
+  "G_INSERT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1562"
+  },
+  "G_INSERT_SUBVECTOR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1729"
+  },
+  "G_INSERT_VECTOR_ELT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1",
+    "type2"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1745"
+  },
+  "G_INTRINSIC": {
+   "out": [],
+   "in": [
+    "unknown",
+    "variable_ops"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1617"
+  },
+  "G_INTRINSIC_LRINT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1316"
+  },
+  "G_INTRINSIC_ROUNDEVEN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1328"
+  },
+  "G_INTTOPTR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:149"
+  },
+  "G_INVOKE_REGION_START": {
+   "out": [],
+   "in": [],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1697"
+  },
+  "G_IS_FPCLASS": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:909"
+  },
+  "G_LLROUND": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:297"
+  },
+  "G_LOAD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1367"
+  },
+  "G_LROUND": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:291"
+  },
+  "G_MEMCPY": {
+   "out": [],
+   "in": [
+    "ptype0",
+    "ptype1",
+    "type2",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1854"
+  },
+  "G_MEMCPY_INLINE": {
+   "out": [],
+   "in": [
+    "ptype0",
+    "ptype1",
+    "type2"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1862"
+  },
+  "G_MERGE_VALUES": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "variable_ops"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1572"
+  },
+  "G_MUL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:324"
+  },
+  "G_PREFETCH": {
+   "out": [],
+   "in": [
+    "ptype0",
+    "untyped_imm",
+    "untyped_imm",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1525"
+  },
+  "G_PTRMASK": {
+   "out": [
+    "ptype0"
+   ],
+   "in": [
+    "ptype0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:542"
+  },
+  "G_PTRTOINT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:155"
+  },
+  "G_PTR_ADD": {
+   "out": [
+    "ptype0"
+   ],
+   "in": [
+    "ptype0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:534"
+  },
+  "G_READCYCLECOUNTER": {
+   "out": [
+    "type0"
+   ],
+   "in": [],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1334"
+  },
+  "G_ROTR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:485"
+  },
+  "G_SADDE": {
+   "out": [
+    "type0",
+    "type1"
+   ],
+   "in": [
+    "type0",
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:642"
+  },
+  "G_SBFX": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1927"
+  },
+  "G_SCMP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:513"
+  },
+  "G_SDIV": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:332"
+  },
+  "G_SDIVREM": {
+   "out": [
+    "type0",
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:364"
+  },
+  "G_SELECT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:527"
+  },
+  "G_SEXT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:52"
+  },
+  "G_SEXTLOAD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1376"
+  },
+  "G_SEXT_INREG": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "untyped_imm"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:66"
+  },
+  "G_SHL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:404"
+  },
+  "G_SHUFFLE_VECTOR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "type1",
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1764"
+  },
+  "G_SITOFP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:866"
+  },
+  "G_SMIN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:549"
+  },
+  "G_SMULH": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:702"
+  },
+  "G_SMULO": {
+   "out": [
+    "type0",
+    "type1"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:684"
+  },
+  "G_SPLAT_VECTOR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1772"
+  },
+  "G_SREM": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:348"
+  },
+  "G_STORE": {
+   "out": [],
+   "in": [
+    "type0",
+    "ptype1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1428"
+  },
+  "G_TRAP": {
+   "out": [],
+   "in": [],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1902"
+  },
+  "G_TRUNC": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:83"
+  },
+  "G_TRUNC_SSAT_S": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:91"
+  },
+  "G_UADDE": {
+   "out": [
+    "type0",
+    "type1"
+   ],
+   "in": [
+    "type0",
+    "type0",
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:627"
+  },
+  "G_UADDSAT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:714"
+  },
+  "G_UITOFP": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:872"
+  },
+  "G_UMAX": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:573"
+  },
+  "G_UMIN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type0",
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:565"
+  },
+  "G_UNMERGE_VALUES": {
+   "out": [
+    "type0",
+    "variable_ops"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1553"
+  },
+  "G_VAARG": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1",
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:191"
+  },
+  "G_VASTART": {
+   "out": [],
+   "in": [
+    "type0"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:184"
+  },
+  "G_VECREDUCE_ADD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1825"
+  },
+  "G_VECREDUCE_FADD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1815"
+  },
+  "G_VECREDUCE_FMIN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1819"
+  },
+  "G_VECREDUCE_FMUL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1816"
+  },
+  "G_VECREDUCE_MUL": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1839"
+  },
+  "G_VECREDUCE_OR": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1841"
+  },
+  "G_VECREDUCE_SMIN": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1831"
+  },
+  "G_VSCALE": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "unknown"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1583"
+  },
+  "G_ZEXT": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "type1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:74"
+  },
+  "G_ZEXTLOAD": {
+   "out": [
+    "type0"
+   ],
+   "in": [
+    "ptype1"
+   ],
+   "source": "llvm/include/llvm/Target/GenericOpcodes.td:1384"
+  }
+ }
+}

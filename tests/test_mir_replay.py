@@ -111,13 +111,31 @@ class Normalisation(unittest.TestCase):
         self.assertNotEqual(mr.normalize("LLVM ERROR: a"),
                             mr.normalize("LLVM ERROR: b"))
 
+    def test_target_line_numbers_are_erased(self):
+        """Our include moves lines inside the target's own sources."""
+        official = "llc: /t/llvm/lib/Target/RISCV/GISel/R.cpp:1004: assert"
+        ours = "llc: /t/llvm/lib/Target/RISCV/GISel/R.cpp:200: assert"
+        self.assertEqual(mr.normalize(official), mr.normalize(ours))
+
+    def test_core_line_numbers_are_kept(self):
+        """Core files are not patched, so their offsets still carry signal."""
+        a = "#3 0x? f /t/llvm/lib/CodeGen/GlobalISel/Legalizer.cpp:241:5"
+        b = "#3 0x? f /t/llvm/lib/CodeGen/GlobalISel/Legalizer.cpp:300:5"
+        self.assertNotEqual(mr.normalize(a), mr.normalize(b))
+
+    def test_library_snapshot_paths_are_erased(self):
+        official = "#11 0x? (/tmp/out/official/riscv/libLLVMRISCVCodeGen.so.24+0x?)"
+        ours = "#11 0x? (/tmp/out/ours/riscv/libLLVMRISCVCodeGen.so.24+0x?)"
+        self.assertEqual(mr.normalize(official), mr.normalize(ours))
+
 
 def fake_run(rc=0, out="", err=""):
     return {"rc": rc, "timeout": False, "out": out, "err": err}
 
 
 class Buckets(unittest.TestCase):
-    def replay(self, official, ours, command=None, expect_not=False):
+    def replay(self, official, ours, command=None, expect_not=False,
+               extra=None):
         command = command or (
             "%sllc -mtriple=x86_64-- -run-pass=legalizer %%s -o -"
             % ("not --crash " if expect_not else ""))
@@ -136,7 +154,7 @@ class Buckets(unittest.TestCase):
                 return True
 
             with mock.patch.object(mir_libs, "run_llc",
-                                   side_effect=[official, ours]):
+                                   side_effect=[official, ours] + (extra or [])):
                 result = mr.replay_file(
                     "x86", mir, [command], root / "llc",
                     root / "official", root / "ours", root / "out",
@@ -165,6 +183,35 @@ class Buckets(unittest.TestCase):
         record = self.replay(fake_run(), fake_run(0, out="other"))
         self.assertEqual(record["status"], "diff")
         self.assertTrue(self.detail_exists)
+
+    ABORT_RUN = ("llc -mtriple=x86_64-- -global-isel-abort=1 "
+                 "-run-pass=legalizer %s -o -")
+
+    def test_both_sides_refusing_is_retried_at_abort_zero(self):
+        record = self.replay(fake_run(1, err="LLVM ERROR: x"),
+                             fake_run(1, err="LLVM ERROR: x"),
+                             command=self.ABORT_RUN,
+                             extra=[fake_run(0, out="body"),
+                                    fake_run(0, out="body")])
+        self.assertEqual(record["status"], "same")
+        self.assertEqual(record["mode"], "abort0")
+        self.assertEqual(record["official_rc"], 0)
+
+    def test_abort_zero_retry_still_finds_a_diff(self):
+        record = self.replay(fake_run(1, err="LLVM ERROR: x"),
+                             fake_run(1, err="LLVM ERROR: x"),
+                             command=self.ABORT_RUN,
+                             extra=[fake_run(0, out="a"), fake_run(0, out="b")])
+        self.assertEqual(record["status"], "diff")
+        self.assertEqual(record["mode"], "abort0")
+
+    def test_abort_zero_crash_stays_both_abort(self):
+        record = self.replay(fake_run(-6, err="assert"),
+                             fake_run(-6, err="assert"),
+                             command=self.ABORT_RUN,
+                             extra=[fake_run(-6, err="assert"),
+                                    fake_run(-6, err="assert")])
+        self.assertEqual(record["status"], "both_abort")
 
     def test_timeout_wins_over_output(self):
         timed = {"rc": None, "timeout": True, "out": "", "err": ""}

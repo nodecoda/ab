@@ -556,6 +556,49 @@ def cmd_verify(args) -> int:
     return 0 if ok else 1
 
 
+def cmd_mir(args) -> int:
+    """L2: answerless queries -> minimal MIR -> replay against both libraries.
+
+    The MIR builder preflights each file by parsing it with the *baseline*
+    llc, which is what the build directory holds at rest (prepare_target
+    restores it in ``finally``).  The replay step then builds both sides once
+    and compares them; a failure there is the L2 verdict.
+    """
+    out = Path(args.out).resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    llc = Path(args.llc) if args.llc else Path(args.build) / "bin" / "llc"
+    mir_dir = out / "mir"
+    builder = AB_ROOT / "mir-from-query.py"
+    replay = AB_ROOT / "mir-replay.py"
+
+    build_cmd = [sys.executable, str(builder), "--target", args.target,
+                 "--queries", str(Path(args.queries).resolve()),
+                 "--out", str(mir_dir), "--preflight-llc", str(llc),
+                 "--jobs", str(args.jobs)]
+    if args.limit:
+        build_cmd += ["--limit", str(args.limit)]
+    if args.shapes:
+        build_cmd += ["--shapes", str(Path(args.shapes).resolve())]
+    if args.configs:
+        build_cmd += ["--configs", str(Path(args.configs).resolve())]
+    status = subprocess.call(build_cmd)
+    if status != 0:
+        print("ab: MIR builder failed (rc=%d)" % status, file=sys.stderr)
+        return status
+
+    replay_cmd = [sys.executable, str(replay), "--layer", "generated",
+                  "--mir", str(mir_dir), "--target", args.target,
+                  "--tree", str(Path(args.tree).resolve()),
+                  "--build", str(Path(args.build).resolve()),
+                  "--out", str(out / "replay"), "--prepare",
+                  "--jobs", str(args.jobs), "--timeout", str(args.timeout)]
+    if args.negative_control:
+        replay_cmd += ["--negative-control", args.negative_control]
+    if args.json:
+        replay_cmd.append("--json")
+    return subprocess.call(replay_cmd)
+
+
 def build_parser():
     ap = argparse.ArgumentParser(
         prog="ab.py",
@@ -588,6 +631,25 @@ def build_parser():
     run.add_argument("--no-cache", action="store_true",
                      help="do not reuse official answers")
     run.set_defaults(func=cmd_run)
+
+    mir = sub.add_parser(
+        "mir", help="L2: turn answerless queries into MIR, then replay them")
+    mir.add_argument("--target", required=True)
+    mir.add_argument("--queries", required=True,
+                     help="answerless query JSONL (gisel cases output)")
+    mir.add_argument("--tree", required=True, help="LLVM source tree")
+    mir.add_argument("--build", required=True, help="LLVM build directory")
+    mir.add_argument("--out", required=True, help="artifact directory")
+    mir.add_argument("--llc", help="llc to preflight with (default: BUILD/bin)")
+    mir.add_argument("--shapes", help="override data/mir-shapes.jsonc")
+    mir.add_argument("--configs", help="override data/mir-configs.json")
+    mir.add_argument("--negative-control", metavar="OPCODE",
+                     help="neutralise one opcode; the replay must catch it")
+    mir.add_argument("--limit", type=int)
+    mir.add_argument("--jobs", type=int, default=16)
+    mir.add_argument("--timeout", type=float, default=60.0)
+    mir.add_argument("--json", action="store_true")
+    mir.set_defaults(func=cmd_mir)
 
     verify = sub.add_parser("verify", help="check the build is back on baseline")
     verify.add_argument("--target", required=True)

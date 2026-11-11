@@ -15,6 +15,9 @@ Buckets are disjoint and printed:
 ``both_abort`` means both sides failed with identical output (a legalizer
 `LLVM ERROR`, for example).  It is agreement, but it is counted separately so
 a corpus full of aborts cannot look like a corpus full of transformations.
+Runs that abort on both sides are retried with ``-global-isel-abort=0`` so the
+unlegalized MIR can still be compared; those carry ``mode: abort0`` and are
+counted in ``abort0_compared``.
 """
 
 from __future__ import annotations
@@ -43,6 +46,16 @@ REDIRECT_FD_RE = re.compile(r"^(?:\d*|&)>(?:&\d+)$")
 # Pointer values, stack-frame addresses and machine-code addresses differ on
 # every run even when both libraries behave identically.
 ADDRESS_RE = re.compile(r"0x[0-9a-fA-F]+")
+# Our include replaces a target's rule table, so the line numbers *inside that
+# target's sources* move even when the rules are identical.  Crash frames are
+# compared on function names and messages, not on those offsets.
+TARGET_LOC_RE = re.compile(
+    r"(/[^\s:]*?/lib/Target/[^\s:]+\.(?:cpp|h|inc|def)):\d+(?::\d+)?")
+# Crash frames name the library that was loaded, and the two sides load the
+# same .so from different snapshot directories.
+LIB_PATH_RE = re.compile(
+    r"/[^\s()]+/(?:official|ours|ours-negative)/[^\s()/]+/"
+    r"(libLLVM[^\s()+]+)")
 KNOWN_SUBST = ("%s", "%t")
 
 
@@ -135,6 +148,19 @@ def parse_run(command: str, source: Path, tmp: Path):
     return argv, expect_failure
 
 
+def discover_generated(root: Path, targets):
+    """L2: every .mir file the query builder produced, one RUN line each."""
+    found = []
+    for target in targets:
+        directory = root / target
+        if not directory.is_dir():
+            raise mir_libs.MirError("generated MIR directory not found: %s"
+                                    % directory)
+        for path in sorted(directory.glob("*.mir")):
+            found.append((target, path, read_run_lines(path)))
+    return found
+
+
 def discover(tree: Path, targets):
     found = []
     unsupported = []
@@ -150,8 +176,16 @@ def discover(tree: Path, targets):
 
 
 def normalize(text: str) -> str:
-    """Erase run-to-run addresses so crash output can be compared."""
-    return ADDRESS_RE.sub("0x?", text)
+    """Erase run-to-run addresses and patch-shifted source offsets."""
+    text = LIB_PATH_RE.sub(r"\1", text)
+    return TARGET_LOC_RE.sub(r"\1:?:?", ADDRESS_RE.sub("0x?", text))
+
+
+def _relax_abort(arg: str) -> str:
+    """`-global-isel-abort=1` -> `=0`; leave every other token alone."""
+    if arg.startswith("-global-isel-abort="):
+        return "-global-isel-abort=0"
+    return arg
 
 
 def _diff_text(name, official, ours):
@@ -199,19 +233,49 @@ def replay_file(target: str, path: Path, runs, llc: Path,
             "official_rc": official["rc"],
             "ours_rc": ours["rc"],
         }
+        # `-global-isel-abort=1` errors out on the *first* instruction no
+        # rule covers, so many shapes agree only in "both sides refused".  That
+        # is a real answer, but it hides the MIR that follows.  Retry exactly
+        # those with `-global-isel-abort=0`: the unlegalized instructions are
+        # printed instead, so the two libraries are compared on the work they
+        # actually did.  An assertion crashes in both modes and stays
+        # `both_abort`.
+        compare = (official_out, official_err, ours_out, ours_err)
+        if status == "both_abort" and official["rc"] != 0 and ours["rc"] != 0:
+            relaxed = [_relax_abort(arg) for arg in argv]
+            if relaxed != argv:
+                off = mir_libs.run_llc(llc, official_dir, relaxed, timeout,
+                                       cwd=path.parent)
+                ourz = mir_libs.run_llc(llc, ours_dir, relaxed, timeout,
+                                        cwd=path.parent)
+                if not off["timeout"] and not ourz["timeout"]:
+                    compare = (normalize(off["out"]), normalize(off["err"]),
+                               normalize(ourz["out"]), normalize(ourz["err"]))
+                    record["mode"] = "abort0"
+                    record["official_rc"] = off["rc"]
+                    record["ours_rc"] = ourz["rc"]
+                    identical = (off["rc"], compare[0], compare[1]) == (
+                        ourz["rc"], compare[2], compare[3])
+                    if off["rc"] == 0 and ourz["rc"] == 0:
+                        status = "same" if identical else "diff"
+                    else:
+                        # A crash in relaxed mode means the instruction still
+                        # never got an answer; only a textual difference makes
+                        # it a diff.
+                        status = "both_abort" if identical else "diff"
+                    record["status"] = status
         if expect_failure and status != "timeout":
             record["expect_failure"] = True
         if status == "diff":
-            detail = None
+            record["detail"] = None
             if take_budget():
                 detail_path = out / "diffs" / (
                     "%s.%s.run%d.diff" % (target, key, index))
                 detail_path.parent.mkdir(parents=True, exist_ok=True)
-                body = (_diff_text("stdout", official_out, ours_out)
-                        + _diff_text("stderr", official_err, ours_err))
+                body = (_diff_text("stdout", compare[0], compare[2])
+                        + _diff_text("stderr", compare[1], compare[3]))
                 detail_path.write_text(body or "(no textual difference)\n")
-                detail = str(detail_path)
-            record["detail"] = detail
+                record["detail"] = str(detail_path)
         records.append(record)
     return {"target": target, "path": str(path), "runs": records}
 
@@ -247,7 +311,7 @@ def aggregate(results, targets):
     per_target = {name: {"files": 0, "all_run_lines": 0, "runs": 0,
                          "same": 0, "both_abort": 0, "diff": 0,
                          "timeout": 0, "unsupported_run": 0,
-                         "out_of_layer": 0}
+                         "out_of_layer": 0, "abort0_compared": 0}
                   for name in targets}
     for result in results:
         row = per_target[result["target"]]
@@ -259,9 +323,11 @@ def aggregate(results, targets):
                 continue
             row["runs"] += 1
             row[run["status"]] += 1
+            if run.get("mode") == "abort0":
+                row["abort0_compared"] += 1
     totals = {"all_run_lines": 0, "runs": 0, "same": 0, "both_abort": 0,
               "diff": 0, "timeout": 0, "unsupported_run": 0,
-              "out_of_layer": 0}
+              "out_of_layer": 0, "abort0_compared": 0}
     for row in per_target.values():
         for key in totals:
             totals[key] += row[key]
@@ -284,10 +350,12 @@ def check_identity(totals):
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="mir-replay", description="Replay legalizer MIR against two libraries")
-    parser.add_argument("--layer", choices=("upstream",), default="upstream")
+    parser.add_argument("--layer", choices=("upstream", "generated"),
+                        default="upstream")
+    parser.add_argument("--mir", help="generated MIR directory (layer=generated)")
     parser.add_argument("--target", action="append", default=[],
                         choices=mir_libs.SWAPPABLE)
-    parser.add_argument("--tree", required=True)
+    parser.add_argument("--tree")
     parser.add_argument("--build", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument("--gisel", default=str(mir_libs.DEFAULT_GISEL))
@@ -302,7 +370,11 @@ def main(argv=None) -> int:
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
 
-    tree = Path(args.tree).resolve()
+    if args.layer == "upstream" and not args.tree:
+        parser.error("--tree is required for --layer upstream")
+    if args.layer == "generated" and not args.mir:
+        parser.error("--mir is required for --layer generated")
+    tree = Path(args.tree).resolve() if args.tree else None
     build = Path(args.build).resolve()
     out = Path(args.out).resolve()
     gisel = Path(args.gisel).resolve()
@@ -316,15 +388,18 @@ def main(argv=None) -> int:
             provenance = {
                 "schema": 1,
                 "layer": args.layer,
-                "tree": str(tree),
+                "tree": str(tree) if tree else None,
                 "build": str(build),
-                "git_head": mir_libs.git_head(tree),
+                "git_head": mir_libs.git_head(tree) if tree else None,
                 "llc": str(llc),
                 "llc_sha256": mir_libs.sha256(llc),
                 "targets": {},
             }
             if args.prepare:
                 for target in targets:
+                    if tree is None:
+                        raise mir_libs.MirError(
+                            "--prepare needs --tree (the source swap target)")
                     provenance["targets"][target] = mir_libs.prepare_target(
                         target, tree, build, out, gisel,
                         mutate_opcode=args.negative_control)
@@ -343,7 +418,10 @@ def main(argv=None) -> int:
             (out / "provenance.json").write_text(
                 json.dumps(provenance, indent=2) + "\n")
 
-            files = discover(tree, targets)
+            if args.layer == "generated":
+                files = discover_generated(Path(args.mir).resolve(), targets)
+            else:
+                files = discover(tree, targets)
             started = time.time()
             results = run_replay(files, llc, out / "official",
                                  out / side, out, args.jobs, args.timeout,
@@ -387,15 +465,17 @@ def main(argv=None) -> int:
                     row = per_target[name]
                     print("  %-9s files=%d in_layer=%d same=%d "
                           "both_abort=%d diff=%d timeout=%d unsupported=%d "
-                          "out_of_layer=%d"
+                          "out_of_layer=%d abort0=%d"
                           % (name, row["files"], row["runs"], row["same"],
                              row["both_abort"], row["diff"], row["timeout"],
-                             row["unsupported_run"], row["out_of_layer"]))
+                             row["unsupported_run"], row["out_of_layer"],
+                             row["abort0_compared"]))
                 print("  totals    in_layer=%d same=%d both_abort=%d diff=%d "
-                      "timeout=%d unsupported=%d out_of_layer=%d"
+                      "timeout=%d unsupported=%d out_of_layer=%d abort0=%d"
                       % (totals["runs"], totals["same"], totals["both_abort"],
                          totals["diff"], totals["timeout"],
-                         totals["unsupported_run"], totals["out_of_layer"]))
+                         totals["unsupported_run"], totals["out_of_layer"],
+                         totals["abort0_compared"]))
                 print("report=%s" % report_path)
 
             if args.negative_control:

@@ -56,6 +56,27 @@ so the tree is never left patched while tests run.
 `inject-missing-opcode.py` and requires the replay to report `diff > 0`;
 otherwise the control fails and the command exits 1.
 
+### L2: queries become MIR
+
+```sh
+python3 ab.py mir --target x86 --queries /tmp/x86.cases.jsonl \
+  --tree /home/ubuntu/llvm/trees/explore \
+  --build /home/ubuntu/llvm/builds/explore \
+  --out /tmp/l2-x86 [--negative-control G_ADD] [--limit N] --json
+```
+
+`mir-from-query.py` turns each answerless query into a minimal `.mir` (one
+`# RUN:` line each) using `data/mir-shapes.jsonc` and `data/mir-configs.json`;
+queries that cannot be spelled as real MIR are counted, not dropped.  Every
+def of the instruction under test gets a `COPY` sink, because the legalizer
+erases trivially dead instructions before it looks at them.  Files are
+preflighted with `-run-pass=none` (parse + machine verifier only), then
+replayed with the same buckets as L1.  Runs that abort on both sides are
+retried with `-global-isel-abort=0` so the unlegalized MIR is still compared.
+
+`mir-config-check.py --target T --features F` checks that every gisel config
+has a realizable llc spelling; `--mutate CONFIG` is its negative control.
+
 `--compare action` is the coarse smoke gate; `full` (default) compares
 `(action, type_idx, new_type)`.  `--dry-run` validates the adapter, query file
 and baseline without touching the build.  `ab.py verify` checks that the build

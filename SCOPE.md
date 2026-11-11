@@ -69,11 +69,31 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 ### 6.2 L2：查询生成 MIR
 
 - 题面：`gisel cases` 的无答案 JSONL，经 `mir-from-query.py` 变成最小 MIR。
+  入口是 `ab.py mir`（先建 MIR，再跑回放）。
 - 形状表 `data/mir-shapes.jsonc` 决定哪些查询能变成真题；不可表达的查询进
   `unbuildable_shape` / `unbuildable_type`，config 找不到等价 triple/mattr 的进
-  `config_unrealizable`，三者分别计数。
+  `config_unrealizable`，三者分别计数。`G_PHI`/`G_BRJT`/`G_JUMP_TABLE`/
+  `G_BLOCK_ADDR`/`G_PTRAUTH_GLOBAL_VALUE` 显式跳过，理由写在 `SKIP` 表里。
+- **每条被测指令的每个 def 都要挂一个 `COPY` sink**。legalizer 入口会
+  `isTriviallyDead` 删掉无人使用的指令；没有 sink 时被测指令在三条库上都
+  被删掉，输出恒等，任何规则改动都看不见（L2 第一版就是这么假通过的）。
+  `COPY` 不是 pre-isel generic opcode，legalizer 既不合法化它也不删它。
+- **preflight 用 `-run-pass=none`**：它只回答“这份 MIR 本身是否良构”（解析 +
+  机器验证器）。legalizer 在 preflight 里崩掉不算坏题——两侧一样崩，属于
+  `both_abort`；把 legalizer 的断言当成“形状非法”会让 `both_abort` 被误记成
+  `unbuildable_shape`。
+- **两侧都拒绝时用 `-global-isel-abort=0` 复查**：`abort=1` 会在第一条无法
+  合法化的指令上直接报错，掩盖后面的 MIR。复查后仍两侧同崩（断言）才留在
+  `both_abort`，否则按 `same`/`diff` 计，并记 `mode: abort0` 与
+  `abort0_compared` 计数。
+- **崩溃输出归一化**：地址、两侧快照库路径、以及 `lib/Target/**` 里的行号
+  （我们的 include 会让它们位移）都不参与比较；`lib/CodeGen` 等未打补丁的
+  核心行号仍然比较。
 - 判据与 L1 相同；额外要求
   `built + unbuildable_shape + unbuildable_type + config_unrealizable == 输入查询数`。
+- config 自检：`mir-config-check.py` 要求每个 gisel 配置名在
+  `data/mir-configs.json` 里要么有 `mattr`、要么显式标成不可实现，并验证
+  `llc` 接受该 triple/flags；它**不**证明特征真值一致，那由 L2 回放本身证明。
 
 ### 6.3 L3：全量 check-llvm
 
