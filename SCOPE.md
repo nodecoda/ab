@@ -21,11 +21,12 @@
 | 修改 `.gisel` 或 `inc` 生成器 | gisel |
 | 把对拍结论说成 gisel 的能力 | 文档规范（gisel `docs/SCOPE.md`） |
 
-## 3 比较语义（固定）
+## 3 L0 比较语义（固定）
 
-只比 `getAction()` 这一个点：`(opcode, types, mem, imms) -> (action, type_idx, new_type)`。
+L0 只比 `getAction()` 这一个点：
+`(opcode, types, mem, imms) -> (action, type_idx, new_type)`。
 
-- 不比 MIR，不跑 `llc`，不比机器码。
+- L0 不读 MIR、不跑 `llc`、不比机器码。真实 MIR 层的语义见 §6，两层分开计数。
 - `--compare action`：粗门，只比动作名。
 - `--compare full`：验收门，动作 + `type_idx` + `new_type`。
 - `agree` = **可观测状态相同**：两边都答且答案相同，或者两边都在返回前断言。
@@ -51,3 +52,49 @@
 - 不得 import `gisel.cases` / `gisel.eval` 作为长期依赖；迁移时抽掉。
 - 不得把 ab 的 Python 模块放进 gisel wheel。
 - 不接 AMDGPU。
+
+## 6 MIR/llc 层（L1/L2/L3）
+
+L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真实 MIR 上的行为没变”。
+两层不是互相替代：L0 的分母是类型笛卡尔积，MIR 层的分母是真实指令。
+
+### 6.1 L1：上游 MIR 回放
+
+- 题面：树里 `llvm/test/CodeGen/<T>/**/*.mir` 且 RUN 行含 `-run-pass=legalizer`。
+- 两侧：同一个 `bin/llc`，用 `LD_LIBRARY_PATH` 选官方库或 ours 库。
+- 判据：对每条 RUN 行比较 `(rc, stdout, stderr)`；另跑一遍 `llvm-lit` 作为粗门。
+- 分桶必须显式：`same`、`both_abort`、`diff`、`timeout`、`unsupported_run`。
+  `both_abort` 是“两侧都非零且输出相同”，单独打印；`unsupported_run` 不允许静默丢。
+
+### 6.2 L2：查询生成 MIR
+
+- 题面：`gisel cases` 的无答案 JSONL，经 `mir-from-query.py` 变成最小 MIR。
+- 形状表 `data/mir-shapes.jsonc` 决定哪些查询能变成真题；不可表达的查询进
+  `unbuildable_shape` / `unbuildable_type`，config 找不到等价 triple/mattr 的进
+  `config_unrealizable`，三者分别计数。
+- 判据与 L1 相同；额外要求
+  `built + unbuildable_shape + unbuildable_type + config_unrealizable == 输入查询数`。
+
+### 6.3 L3：全量 check-llvm
+
+- 基线一轮 + 组合替换一轮：`ninja all` 后 `ninja check-llvm`。
+- 判据是与**本次基线**逐条相同，不是“0 failed”。
+- 失败必须拆单 target 归因，不允许用重跑掩盖。
+
+### 6.4 退出码与负控
+
+| 码 | 含义 |
+|---|---|
+| 0 | 所有可运行项一致，负控未触发 |
+| 1 | 有 diff / 单边 abort / 负控没抓到 / config 自检失败 |
+| 2 | 输入不可读、坏 RUN 行、缺库、参数错误 |
+
+负控固定两类：注入错 opcode（`inject-missing-opcode.py`）必须让 L1 出现 diff；
+注入错 config 映射必须让 L2 的 config 自检失败。
+
+### 6.5 不变量
+
+- L1/L2 只跑 `-run-pass=legalizer`，不生成机器码；L3 跑整套测试。
+- 不往源码树写产物；所有报告在 `--out`。
+- 换源/构建必须持锁，`restore` + 重建基线库是收工硬门。
+- `0 diff` 只说明“两侧一致”，不说明“规则正确”。

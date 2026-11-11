@@ -5,6 +5,18 @@ It is **not** part of gisel; the boundary is `docs/SCOPE.md`.  It consumes a
 `.gisel` source (or a prebuilt `.inc`) and an answerless query JSONL, and
 compares the official legalizer with one that includes the generated fragment.
 
+## Two layers
+
+- **L0 (`ab.py run` / `diff.py`)** compares `getAction()` for one query:
+  `(opcode, types, mem, imms) -> (action, type_idx, new_type)`.
+- **MIR/llc (`mir-replay.py`)** replays real `.mir` through
+  `llc -run-pass=legalizer` and diffs the official and replaced libraries.
+
+L0 is the rule-translation gate. The MIR layer is the behavior gate: it also
+covers multi-step legalization, custom actions and the downstream verifier.
+A pass in one is not a pass in the other; the contracts are `SCOPE.md` §3 and
+§6, the report schema is `CONTRACTS.md` §8.
+
 ## One command
 
 ```sh
@@ -23,6 +35,26 @@ the body, then `diff.json`.
 `run-g-negative.sh TARGET OPCODE OUT` is the G-side negative control:
 replace one builder chain with `.unsupported()`, run the target script, and
 require every disagreement to be attributed to that builder.
+
+## MIR/llc regression
+
+```sh
+python3 mir-replay.py --layer upstream \
+  --target x86 --target aarch64 --target riscv \
+  --tree /home/ubuntu/llvm/trees/explore \
+  --build /home/ubuntu/llvm/builds/explore \
+  --out /tmp/mir-l1 --prepare --json
+```
+
+`--prepare` snapshots the official `libLLVM<T>CodeGen.so`, applies the
+generated `.inc` through `swap-source-ctor.py`, rebuilds only that library,
+snapshots the replaced one, restores the source and rebuilds the baseline.
+Replay then runs one `bin/llc` against both snapshots via `LD_LIBRARY_PATH`,
+so the tree is never left patched while tests run.
+
+`--negative-control OPCODE` rebuilds a mutant include with
+`inject-missing-opcode.py` and requires the replay to report `diff > 0`;
+otherwise the control fails and the command exits 1.
 
 `--compare action` is the coarse smoke gate; `full` (default) compares
 `(action, type_idx, new_type)`.  `--dry-run` validates the adapter, query file

@@ -105,3 +105,46 @@ diff.py REF.jsonl OURS.jsonl [--json] [--compare action|full]
 - schema v1 的改动先改 gisel `spec/cases-format.md` 并升版本。
 - key 五元组是破坏性契约：三个项目同一 release 对齐。
 - ab 的 key 实现必须有契约测试：固定 fixture 下与 `gisel.answers.key` 逐 key 相等。
+
+## 8 MIR/llc 报告（`mir-report.json`）
+
+L1/L2 的产物，字段固定：
+
+```json
+{"schema": 1, "layer": "upstream", "generated_at": "...",
+ "llc": "...", "llc_sha256": "...",
+ "totals": {"runs": 0, "same": 0, "both_abort": 0, "diff": 0,
+            "timeout": 0, "unsupported_run": 0},
+ "targets": {"x86": {"files": 0, "runs": 0, "same": 0, "both_abort": 0,
+                     "diff": 0, "timeout": 0, "unsupported_run": 0}},
+ "inputs": {"official_libs": {"x86": "sha256"}, "ours_libs": {"x86": "sha256"}},
+ "files": [{"target": "x86", "path": "...", "runs": [
+            {"run": "llc ...", "status": "same", "official_rc": 0,
+             "ours_rc": 0, "detail": null}]}]}
+```
+
+恒等式（测试必须锁）：
+
+```text
+runs == same + both_abort + diff + timeout + unsupported_run
+targets[*].runs 之和 == totals.runs
+```
+
+- `same`：两侧 rc=0 且 stdout/stderr 相同。
+- `both_abort`：两侧 rc!=0 且 stdout/stderr 相同；一致，但单独计数。
+- `diff`：任何一侧的输出或 rc 不同。
+- `timeout`：任一侧超过 `--timeout`。
+- `unsupported_run`：RUN 行不是可重放的 `llc` 调用（例如 `FileCheck` 单独行）。
+
+退出码：0 = `diff == 0` 且负控未触发；1 = 有 `diff`、单边 abort、或负控没抓到；
+2 = 输入/参数/库错误。
+
+## 9 MIR 形状表（`data/mir-shapes.jsonc`）
+
+这是 `ab` 的产品数据，不是脚本里的临时 dict。
+
+- `schema`：1。
+- 每条 entry 必须带 `source`，指向 `GenericOpcodes.td`、MIR 语法文档或上游测试；
+  没有 `source` 的条目在加载时拒绝（同 `gisel/contract.py` 的规矩）。
+- 条目只描述“如何把一条查询写成合法 MIR”，不描述合法性答案。
+- 不进入 gisel wheel，不属于 `.gisel` 语法，不改变四个出口。
