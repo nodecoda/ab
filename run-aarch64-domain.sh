@@ -57,7 +57,9 @@ PY
 }
 
 run_config() {
-  local cfg=$1 dir=$OUT/$cfg started
+  local cfg=$1
+  local dir=$OUT/$cfg
+  local started
   mkdir -p "$dir"
   if skip_done "$dir"; then
     echo "$cfg: already done, skipping (FORCE=1 to rerun)"
