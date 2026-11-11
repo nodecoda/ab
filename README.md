@@ -45,7 +45,14 @@ checked against `data/riscv-contract.json`.
 ```sh
 python3 riscv_vertical.py --tree TREE --build BUILD --out /tmp/rv [--l3]
 python3 riscv_vertical.py --out /tmp/rv --verify-only [--l3]
+python3 riscv_vertical.py --out /tmp/rv --verify-only --frozen
 ```
+
+`--frozen` rebuilds the artifact layout from the committed copies under
+`oracle/` (G/U and both negative controls come from `oracle/<id>/`, the domain
+summary and the two MIR reports from `oracle/riscv-vertical/`). It needs no
+build tree and no `/tmp` state, so CI runs it on every push
+(`.github/workflows/ci.yml`).
 
 Evidence: `docs/EVIDENCE-riscv.md`.
 

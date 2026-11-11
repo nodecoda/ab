@@ -45,6 +45,20 @@ Total Discovered Tests: 10
         self.assertEqual(rv.parse_l3(path)["failed"], 1)
 
 
+class FrozenSlice(unittest.TestCase):
+    """`--verify-only --frozen` must pass from the committed oracle tree.
+
+    CI has no /tmp artifacts and no LLVM build, so this is the only form of
+    the RISC-V vertical check that can run there.
+    """
+
+    def test_frozen_artifacts_match_the_contract(self):
+        c = json.loads((ROOT / "data" / "riscv-contract.json").read_text())
+        out = rv.materialize_frozen()
+        self.assertEqual(
+            rv.verify(out, c, out / "u" / "queries.jsonl", l3_required=False), 0)
+
+
 class Contract(unittest.TestCase):
     def test_contract_is_complete(self):
         c = json.loads((ROOT / "data" / "riscv-contract.json").read_text())

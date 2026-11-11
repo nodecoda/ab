@@ -16,11 +16,13 @@ the inc, the query files, the counts and the answers, so a green run means
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import re
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -30,6 +32,29 @@ CONTRACT = ROOT / "data" / "riscv-contract.json"
 DEFAULT_TREE = Path("/home/ubuntu/llvm/trees/explore")
 DEFAULT_BUILD = Path("/home/ubuntu/llvm/builds/explore")
 DEFAULT_U_QUERIES = Path("/tmp/u-gen/rvb/queries.jsonl")
+
+# `verify-evidence.sh` freezes the A/B artifacts under `oracle/<id>/`.  The
+# vertical slice needs the same files in its own layout, so `--frozen`
+# rebuilds that layout from the frozen copies.  Only the MIR reports are
+# stored separately: they are not A/B entries, but they are small.
+FROZEN = {
+    "g/queries.jsonl": ("oracle", "G/riscv", "queries.jsonl"),
+    "g/diff.json": ("oracle", "G/riscv", "diff.json"),
+    "g/official.answers.jsonl": ("oracle", "G/riscv", "official.answers.jsonl"),
+    "g/ours.answers.jsonl": ("oracle", "G/riscv", "ours.answers.jsonl"),
+    "u/queries.jsonl": ("oracle", "U/riscv", "queries.jsonl"),
+    "u/diff.json": ("oracle", "U/riscv", "diff.json"),
+    "u/official.answers.jsonl": ("oracle", "U/riscv", "official.answers.jsonl"),
+    "u/ours.answers.jsonl": ("oracle", "U/riscv", "ours.answers.jsonl"),
+    "u/attribution.json": ("oracle", "U/riscv", "attribution.json"),
+    "u-neg/diff.json": ("oracle", "U-neg/riscv", "diff.json"),
+    "u-neg/attribution.json": ("oracle", "U-neg/riscv", "attribution.json"),
+    "g-neg/run/diff.json": ("oracle", "G-neg/riscv", "diff.json"),
+    "g-neg/run/attribution.json": ("oracle", "G-neg/riscv", "attribution.json"),
+    "domain/summary.json": ("oracle", "riscv-vertical", "domain-summary.json"),
+    "l1/mir-report.json": ("oracle", "riscv-vertical/l1", "mir-report.json"),
+    "l2/replay/mir-report.json": ("oracle", "riscv-vertical/l2", "mir-report.json"),
+}
 
 
 def sha256(path: Path) -> str:
@@ -57,6 +82,29 @@ def run_cmd(cmd, cwd=None, log=None, check=True):
     if check and proc.returncode:
         raise SystemExit("command failed (%d): %s" % (proc.returncode, text))
     return proc.returncode
+
+
+def _frozen_bytes(parts) -> bytes:
+    path = ROOT.joinpath(*parts)
+    if not path.exists():
+        path = path.with_name(path.name + ".gz")
+    data = path.read_bytes()
+    return gzip.decompress(data) if path.suffix == ".gz" else data
+
+
+def materialize_frozen() -> Path:
+    """Rebuild the artifact layout from the frozen copies under `oracle/`.
+
+    `--verify-only` is otherwise tied to a /tmp directory that CI does not
+    have.  Everything the verifier reads is committed, so a clean checkout can
+    re-check the RISC-V slice without the build tree or the network.
+    """
+    out = Path(tempfile.mkdtemp(prefix="rv-vertical-"))
+    for rel, parts in FROZEN.items():
+        target = out / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(_frozen_bytes(parts))
+    return out
 
 
 def fail(failures, message):
@@ -265,6 +313,8 @@ def main(argv=None):
     ap.add_argument("--l3", action="store_true",
                     help="also run a single-target check-llvm round")
     ap.add_argument("--verify-only", action="store_true")
+    ap.add_argument("--frozen", action="store_true",
+                    help="with --verify-only: rebuild the layout from ./oracle")
     args = ap.parse_args(argv)
 
     out = Path(args.out).resolve()
@@ -275,6 +325,8 @@ def main(argv=None):
     u_queries = Path(args.u_queries).resolve()
 
     if args.verify_only:
+        if args.frozen:
+            out = materialize_frozen()
         return verify(out, c, u_queries, l3_required=args.l3)
 
     out.mkdir(parents=True, exist_ok=True)

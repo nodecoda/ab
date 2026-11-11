@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ab
+      # The harness only imports `gisel.jsonl` from gisel, but the tests and
+      # `env.sh` resolve it as a sibling checkout.
+      - uses: actions/checkout@v7
+        with:
+          repository: nodecoda/gisel
+          path: gisel
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - name: unit tests
+        working-directory: ab
+        run: |
+          python3 -m pip install -q pytest
+          GISEL_SRC="$GITHUB_WORKSPACE/gisel" python3 -m pytest tests -q
+      - name: frozen evidence still matches
+        working-directory: ab
+        run: ./verify-evidence.sh
+      - name: RISC-V vertical slice from frozen artifacts
+        working-directory: ab
+        run: |
+          python3 riscv_vertical.py --out "$RUNNER_TEMP/no-live-artifacts" \
+            --verify-only --frozen
+      - name: shellcheck the harness entry points
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install -y shellcheck
+          shellcheck -S warning ab/*.sh
