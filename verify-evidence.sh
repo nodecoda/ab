@@ -19,7 +19,8 @@ set -euo pipefail
 # regenerates it.  Exit 1 on the first failing entry (after reporting all).
 
 HERE=$(cd "$(dirname "$0")" && pwd)
-exec python3 - "$HERE/EVIDENCE.json" "${1:-all}" "${VERIFY_FROZEN:-0}" <<'PY'
+MANIFEST=${VERIFY_MANIFEST:-$HERE/EVIDENCE.json}
+exec python3 - "$MANIFEST" "${1:-all}" "${VERIFY_FROZEN:-0}" <<'PY'
 import gzip
 import hashlib
 import json
@@ -58,6 +59,48 @@ def resolve(entry, name, path=None):
 def read(path):
     data = path.read_bytes()
     return gzip.decompress(data) if path.suffix == ".gz" else data
+
+def ok(entry):
+    where = oracle_root / entry["id"] if frozen or not pathlib.Path(entry["dir"]).exists() \
+        else pathlib.Path(entry["dir"])
+    print("PASS %-16s %s" % (entry["id"], where))
+
+
+def check_mir(entry, expect):
+    """A MIR replay report: bucket totals, per-target buckets, and a clean restore.
+
+    The report carries `generated_at`, so its sha256 only ever matches the run
+    that wrote it; the numbers are what a reader should trust, and the
+    provenance file is what says the tree went back to baseline afterwards.
+    """
+    bad = 0
+    path = resolve(entry, entry.get("report", "mir-report.json"))
+    if path is None:
+        return fail(entry, "missing mir-report.json")
+    report = json.loads(read(path).decode())
+    totals = report.get("totals") or {}
+    for key, value in (expect.get("mir") or {}).items():
+        if totals.get(key) != value:
+            bad += fail(entry, "totals %s=%r, expected %r"
+                        % (key, totals.get(key), value))
+    for target, want in (expect.get("mir_targets") or {}).items():
+        got = (report.get("targets") or {}).get(target) or {}
+        for key, value in want.items():
+            if got.get(key) != value:
+                bad += fail(entry, "%s %s=%r, expected %r"
+                            % (target, key, got.get(key), value))
+    llc = expect.get("llc_sha256")
+    if llc and report.get("llc_sha256") != llc:
+        bad += fail(entry, "llc sha256 %s, expected %s"
+                    % ((report.get("llc_sha256") or "")[:16], llc[:16]))
+    prov = resolve(entry, "provenance.json")
+    if prov is not None:
+        prov = json.loads(read(prov).decode())
+        for target, data in (prov.get("targets") or {}).items():
+            if data.get("baseline_lib_restored_exactly") is not True:
+                bad += fail(entry, "%s baseline library not restored" % target)
+    return bad
+
 
 def check(entry):
     d = pathlib.Path(entry["dir"])
@@ -106,6 +149,12 @@ def check(entry):
         return bad
 
     expect = entry["expect"]
+    if entry.get("kind") == "mir":
+        bad += check_mir(entry, expect)
+        if not bad:
+            ok(entry)
+        return bad
+
     diff_path = resolve(entry, entry.get("diff", "diff.json"))
     if diff_path is None:
         return bad + fail(entry, "missing %s" % entry.get("diff", "diff.json"))
@@ -178,8 +227,7 @@ def check(entry):
             bad += fail(entry, "attributed to %r, injected %r" % (sorted(seen), sorted(injected)))
 
     if not bad:
-        where = oracle_root / entry["id"] if frozen or not d.exists() else d
-        print("PASS %-16s %s" % (entry["id"], where))
+        ok(entry)
     return bad
 
 def check_build(manifest):

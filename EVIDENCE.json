@@ -980,6 +980,64 @@
     "sha256": "226aa1fff262a542e1c4ca9468e42e920e3a5f7d1c655fd402f9d6f9f21fd28f",
     "derived_from": "universe.jsonl (sha b756c962695b0af6) expanded by `python3 -m oracle expand --configs rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,ristretto,rv32zilsd`"
    }
+  },
+  {
+   "id": "MIR-L1/upstream",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "x86+aarch64+riscv",
+   "dir": "/tmp/mir-l1-final6",
+   "command": "python3 mir-replay.py --layer upstream --target x86 --target aarch64 --target riscv --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-l1-final6 --prepare --json",
+   "artifacts": {
+    "mir-report.json": "596ec14008a6b0159222d29e88390f268bd003dc44e963436d9929ce86080feb",
+    "provenance.json": "542904543e38d8716a8c71b9ad340c5df483c8134adbaed872e1fe2e7cc779fd"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 868,
+     "runs": 624,
+     "same": 611,
+     "both_abort": 13,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 244,
+     "abort0_compared": 2
+    },
+    "mir_targets": {
+     "x86": {
+      "files": 93,
+      "runs": 140,
+      "same": 140,
+      "both_abort": 0,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 19
+     },
+     "aarch64": {
+      "files": 367,
+      "runs": 214,
+      "same": 201,
+      "both_abort": 13,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 224
+     },
+     "riscv": {
+      "files": 181,
+      "runs": 270,
+      "same": 270,
+      "both_abort": 0,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 1
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
   }
  ],
  "official_build": {

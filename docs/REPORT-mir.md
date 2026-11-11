@@ -13,8 +13,8 @@
 | LLVM 树 | `/home/ubuntu/llvm/trees/explore` @ `700e551714ccb7357a191fd41837ff1b4784abf2`（跑完 restore 后 `git status` 干净） |
 | 构建 | `/home/ubuntu/llvm/builds/explore`，RelWithDebInfo + assertions |
 | `llc` | `bin/llc`，sha256 `ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964` |
-| gisel | `/home/ubuntu/llvm/gisel` @ `de8dbbf` |
-| ab | 本仓库 @ `b42c98e` + 本报告（docs）提交 |
+| gisel | `/home/ubuntu/llvm/gisel` @ `312a9a6`（重跑时；首次记录是 `de8dbbf`） |
+| ab | 本仓库；证据条目 `MIR-L1/upstream`，报告 sha 见 `EVIDENCE.json` |
 
 三份 `.inc`（`--prepare` 时由 `gisel gen --emit=inc` 生成，快照在
 `<out>/inc/`）：
@@ -22,7 +22,7 @@
 | target | inc | sha256 |
 |---|---|---|
 | x86 | `X86LegalizerInfo.inc` | `38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442` |
-| aarch64 | `AArch64LegalizerInfo.inc` | `aea61ab511987a0ccfb06e88dff3d14f696b9e1382d69197551eb30534d824c6` |
+| aarch64 | `AArch64LegalizerInfo.inc` | `0f6dcf0a6b91f105fdea64dcc8f18741f50b2e39fcc26b257cf9ad47ec5e669b` |
 | riscv | `RISCVLegalizerInfo.inc` | `fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06` |
 
 两侧库（官方快照 / 替换后快照）：
@@ -30,13 +30,24 @@
 | target | official `libLLVM<T>CodeGen.so` | ours |
 |---|---|---|
 | x86 | `24bf2a5254dc042e6e1145e926ee42a4dd4d613e3947694b6628f2871b4fe357` | `085928fa26a5e772ff250f045ad4874cd5e8cbbc8046fbeeb2406f7394a9c432` |
-| aarch64 | `f696ec1edb12a16b8db2a959527f1f7eb56c2a1218fd9d5e06a2105c95f1d627` | `f696ec1edb12a16b8db2a959527f1f7eb56c2a1218fd9d5e06a2105c95f1d627` |
-| riscv | `d44d873e01080f3007ecd57a52099fe54c6c43af9de12a8d3fd48d2b42bfff16` | `d44d873e01080f3007ecd57a52099fe54c6c43af9de12a8d3fd48d2b42bfff16` |
+| aarch64 | `e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02` | `123cd6d80d8df1cbb9cf695f4cb27b9ca5d0fbbe12192fe8d205dece1f0fc2dd` |
+| riscv | `f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4` | `d44d873e01080f3007ecd57a52099fe54c6c43af9de12a8d3fd48d2b42bfff16` |
+
+重跑（`/tmp/mir-l1-final6`，命令见 §2）：AArch64 的 `.inc` 因为 gisel
+`e226856`（保留 scalable lane）从 `aea61ab5…` 变成 `0f6dcf0a…`，但 L1 的桶
+完全没变——`runs=624 / same=611 / both_abort=13 / diff=0 / out_of_layer=244`。
+这正说明“inc 变了”和“可观测行为变了”是两件事，必须靠回放来区分。
+
+`EVIDENCE.json` 的 `MIR-L1/upstream` 钉住上面这份报告：文件 sha256、桶计数、
+`llc` sha、以及每个 target 的 `baseline_lib_restored_exactly`。报告里带
+`generated_at`，所以重跑不会复现同一个文件 sha；`verify-evidence.sh` 先比
+sha（证明冻结的就是这次运行），再比桶计数（这是重跑后应当复现的东西）。
+L2 和 L3 还没有进 `EVIDENCE.json`。
 
 `provenance.json` 里记录两侧库与恢复后的基线库 sha。x86 的恢复重编是字节
 可复现的（`baseline_lib_after_restore_sha256 == official_lib_sha256`）；
 aarch64 / riscv 在独立重链后 `.so` 字节不同（`e49c03ec…` / `f32be744…`
-对 `f696ec1e…` / `d44d873e…`），所以这两个 target 的恢复判据是源码字节
+对 `123cd6d8…` / `d44d873e…`），所以这两个 target 的恢复判据是源码字节
 恢复 + L1 回放一致，而不是库字节相等。L3 结束重编回基线后，三库 sha 为
 `24bf2a52…` / `e49c03ec…` / `f32be744…`，`isel-ctpop-vec.ll` 的
 `-global-isel` RUN 探针 rc=0。
