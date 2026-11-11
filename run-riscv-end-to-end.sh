@@ -4,7 +4,7 @@ set -euo pipefail
 # run-riscv-end-to-end.sh TREE BUILD INC OUT [STATE]
 #
 # One command, no manual steps: build both runners from INC, generate the
-# 6,301-query set, answer it twice, and diff.  The query set is `gisel cases`
+# 6,086-query set, answer it twice, and diff.  The query set is `gisel cases`
 # over the corpus imported from the hand-written upstream C++.
 TREE=${1:?usage: run-riscv-end-to-end.sh TREE BUILD INC OUT [STATE]}
 BUILD=${2:?}

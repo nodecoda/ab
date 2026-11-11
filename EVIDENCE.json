@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "generated": "2026-11-10",
- "notes": "Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary.",
+ "generated": "2026-11-11",
+ "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary.",
  "entries": [
   {
    "id": "G/x86",
@@ -51,20 +51,20 @@
    "id": "G/riscv",
    "direction": "G",
    "target": "riscv",
-   "dir": "/tmp/g-run/rv-new/out",
+   "dir": "/tmp/rv-vertical2/g",
    "queries": {
-    "path": "/tmp/g-run/rv-new/out/queries.jsonl",
+    "path": "/tmp/rv-vertical2/g/queries.jsonl",
     "sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6"
    },
    "command": "./run-riscv-end-to-end.sh TREE BUILD /tmp/g-run/rv-new/RISCVLegalizerInfo.inc /tmp/g-run/rv-new/out",
    "artifacts": {
-    "diff.json": "bf44853aff9ee66faadff31d631ac032b43692e4f5075a1f6ce9306666d42a92",
-    "official.answers.jsonl": "1738caf3163981a1d158566ee39973a3f4db575f84c4dd8b73b7520a72d92657",
-    "ours.answers.jsonl": "1738caf3163981a1d158566ee39973a3f4db575f84c4dd8b73b7520a72d92657"
+    "diff.json": "a6fc55aed0e4e437eb141abbb9d2e84ffdf295074a65a814a06ddc5b17c064dc",
+    "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
+    "ours.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 6084,
+    "agree": 6086,
     "disagree": 0,
     "unanswerable": 0
    }
@@ -248,16 +248,17 @@
    "id": "U/riscv",
    "direction": "U",
    "target": "riscv",
-   "dir": "/tmp/u-run/rv",
+   "dir": "/tmp/rv-vertical2/u",
    "queries": {
-    "path": "/tmp/u-gen/rvb/queries.jsonl",
+    "path": "/tmp/rv-vertical2/u/queries.jsonl",
     "sha256": "e15c7ccfbe0bccc59e6cece97d085811c0fb1cb21417751cc313469b4a70b755"
    },
    "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/u-run/rv",
    "artifacts": {
-    "diff.json": "9d5504aae5166481e459b15c467541a8c432a9fb71e638549664914f21c4d231",
-    "official.answers.jsonl": "de0b0cc5e5fc42c6104befa1b629f38c75cf5a05ff5b15c0d16afdad043572f4",
-    "ours.answers.jsonl": "de0b0cc5e5fc42c6104befa1b629f38c75cf5a05ff5b15c0d16afdad043572f4"
+    "diff.json": "5a8fc2e0ad561063dff01293d45e1700846020e0e47f7a4ec969233a840d4119",
+    "official.answers.jsonl": "f50995fbdbc63362bf4f5487eed80798f059c391d73ec635307780a7806fe1a2",
+    "ours.answers.jsonl": "f50995fbdbc63362bf4f5487eed80798f059c391d73ec635307780a7806fe1a2",
+    "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
     "answers_identical": true,
@@ -438,10 +439,10 @@
    "id": "U-neg/riscv",
    "direction": "U-neg",
    "target": "riscv",
-   "dir": "/tmp/u-run/rv-neg",
-   "command": "./run-u-end-to-end.sh riscv <queries> /tmp/u-run/rv-neg --drop-opcode G_ADD",
+   "dir": "/tmp/rv-vertical2/u-neg",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/rv-vertical2/u-neg --drop-opcode G_ADD",
    "artifacts": {
-    "diff.json": "5039d5c85a2cbd6c99714ce4144257400b0f4a7029b2a4f8ed0482725f1ac2e5",
+    "diff.json": "cef260271e516cd8fa8f0be71c6b593a961c534a3a813e85fdff3d5f35b4723b",
     "attribution.json": "81b161b0871b8c5d9c506df07b17f3b2b303039ec9595678f547f5156e49b93b"
    },
    "expect": {
@@ -451,7 +452,8 @@
      "G_SUB"
     ],
     "unknown_keys": 0
-   }
+   },
+   "observed_disagree": 140
   },
   {
    "id": "U-neg/arm",
@@ -644,13 +646,13 @@
    "id": "G-neg/riscv",
    "direction": "G-neg",
    "target": "riscv",
-   "dir": "/tmp/g-neg/rv/run",
-   "command": "./run-g-negative.sh riscv G_FPTOSI /tmp/g-neg/rv",
+   "dir": "/tmp/rv-vertical2/g-neg/run",
+   "command": "./run-g-negative.sh riscv G_FPTOSI /tmp/rv-vertical2/g-neg",
    "artifacts": {
-    "diff.json": "290e913fe7e61b9fc6c6b85d57805322f0e8161d91644c8ac96ca01c48555810",
+    "diff.json": "105e6f4e3246cc4b2655f0a3c79841ca2db9917d0786f8b3c68728d10bc07f22",
     "attribution.json": "56d96fdaaa6ca3e3afe42930901acdf3e03920e7f507ec2e3b2545b2c6c01392",
-    "official.answers.jsonl": "cbc9b288634f9fae85deef570c132f6a0474daff6ec01540762e6b6271dfdab8",
-    "ours.answers.jsonl": "4e909e62dafd44d845f0d9c180d0c747915b2f904979060c83cb694e428246ce"
+    "official.answers.jsonl": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
+    "ours.answers.jsonl": "e2f892ac2771697c89d5049055477282f163230ecc334c3f796ca5bbf7792614"
    },
    "expect": {
     "min_disagree": 1,
@@ -870,18 +872,18 @@
    "id": "D/riscv",
    "direction": "D",
    "target": "riscv",
-   "dir": "/tmp/ab-domain/rv-domain-r6",
+   "dir": "/tmp/rv-vertical2/domain",
    "queries": {
-    "path": "/tmp/ab-domain/rv-domain-r6/rv64gc/queries.jsonl",
+    "path": "/tmp/rv-vertical2/domain/rv64gc/queries.jsonl",
     "sha256": "a0fbcbb43829f28ac8c827075f348f3d37137e1bd4f61bb0f676ec2e32fa0f9a"
    },
    "command": "./run-riscv-domain.sh TREE BUILD /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6",
    "artifacts": {
     "summary.json": "fd45ae3682e7d080cced6dc6bd3f785b29e9f01d6f37a86c1f50e5416db0c2c7",
-    "manifest.txt": "e12c2baa4702a522b306803882088222f6fdd853d8f01e8bd3eeb7c15c954cd2",
+    "manifest.txt": "aaa179dae82f4c24177f346f5c0f6dc21f0e59b7e9dc077457eeca63545202a0",
     "rv64gc/diff.json": "067ed79057e6112c5d55e1552ff34897fee583bf6bd1d576914d9a60182b9a23",
-    "rv64gc/official.answers.jsonl": "65ca2954c2b93592d340f7bb4d4e7b6853b283338659339493b3552213d64a16",
-    "rv64gc/ours.answers.jsonl": "65ca2954c2b93592d340f7bb4d4e7b6853b283338659339493b3552213d64a16"
+    "rv64gc/official.answers.jsonl": "80cd5d02c9f76b9e3862ad68efeaa1233fbef837bc034736fd48a73641f66439",
+    "rv64gc/ours.answers.jsonl": "80cd5d02c9f76b9e3862ad68efeaa1233fbef837bc034736fd48a73641f66439"
    },
    "expect": {
     "summary": {

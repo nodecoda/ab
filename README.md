@@ -36,6 +36,19 @@ the body, then `diff.json`.
 replace one builder chain with `.unsupported()`, run the target script, and
 require every disagreement to be attributed to that builder.
 
+## RISC-V vertical slice
+
+`riscv_vertical.py` is the first end-to-end target: G/U questions, both
+negative controls, the 8-config domain, MIR L1/L2, and optionally L3, all
+checked against `data/riscv-contract.json`.
+
+```sh
+python3 riscv_vertical.py --tree TREE --build BUILD --out /tmp/rv [--l3]
+python3 riscv_vertical.py --out /tmp/rv --verify-only [--l3]
+```
+
+Evidence: `docs/EVIDENCE-riscv.md`.
+
 ## MIR/llc regression
 
 ```sh

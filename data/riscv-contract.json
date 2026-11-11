@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "target": "riscv",
+  "comment": "The RISC-V vertical slice. Every count and hash here was produced at the snapshot below; run riscv_vertical.py --verify-only OUT to re-check an artifact directory, or without --verify-only to regenerate it.",
+  "snapshot": {
+    "tree_commit": "700e551714ccb7357a191fd41837ff1b4784abf2",
+    "gisel_commit": "de8dbbf59cf53199493f6880e435e7f0e5c53ab5",
+    "pin": "9bfc850b9940566bef17a34601826775349ba0e6 + 5 patches",
+    "inc_sha256": "fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06",
+    "corpus_sha256": "3293f26167ee694b688297852dea3abe3305179b9e1baf1bb2d050991d12dd33",
+    "features_sha256": "38967ab10a020b3c69c4fa4940b257f248588419b16a507dc1317c6398075ecf"
+  },
+  "g": {
+    "queries": 6086,
+    "queries_sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6",
+    "agree": 6086,
+    "disagree": 0,
+    "unanswerable": 0,
+    "answers_sha256": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
+    "diff_sha256": "a6fc55aed0e4e437eb141abbb9d2e84ffdf295074a65a814a06ddc5b17c064dc"
+  },
+  "u": {
+    "queries": 20239,
+    "queries_sha256": "e15c7ccfbe0bccc59e6cece97d085811c0fb1cb21417751cc313469b4a70b755",
+    "agree": 20239,
+    "disagree": 0,
+    "unanswerable": 0,
+    "answers_sha256": "f50995fbdbc63362bf4f5487eed80798f059c391d73ec635307780a7806fe1a2",
+    "diff_sha256": "5a8fc2e0ad561063dff01293d45e1700846020e0e47f7a4ec969233a840d4119",
+    "attribution_sha256": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+  },
+  "u_neg": {
+    "opcode": "G_ADD",
+    "disagree": 140,
+    "rulesets": {
+      "G_ADD": 70,
+      "G_SUB": 70
+    },
+    "unknown_keys": 0,
+    "attribution_sha256": "81b161b0871b8c5d9c506df07b17f3b2b303039ec9595678f547f5156e49b93b",
+    "diff_sha256": "cef260271e516cd8fa8f0be71c6b593a961c534a3a813e85fdff3d5f35b4723b"
+  },
+  "g_neg": {
+    "opcode": "G_FPTOSI",
+    "disagree": 140,
+    "rulesets": {
+      "R_G_FPTOSI": 140
+    },
+    "unknown_keys": 0,
+    "attribution_sha256": "56d96fdaaa6ca3e3afe42930901acdf3e03920e7f507ec2e3b2545b2c6c01392",
+    "diff_sha256": "105e6f4e3246cc4b2655f0a3c79841ca2db9917d0786f8b3c68728d10bc07f22"
+  },
+  "domain": {
+    "configs": 8,
+    "per_config": 253747,
+    "queries": 2029976,
+    "agree": 2029976,
+    "disagree": 0,
+    "unanswerable": 7728,
+    "unanswerable_map": {
+      "rv64gc": 1074,
+      "rv32gc": 1074,
+      "rv64gcv": 1074,
+      "rv32gcv": 1074,
+      "rv64zbb": 642,
+      "rv64zfh": 1074,
+      "ristretto": 642,
+      "rv32zilsd": 1074
+    },
+    "summary_sha256": "fd45ae3682e7d080cced6dc6bd3f785b29e9f01d6f37a86c1f50e5416db0c2c7"
+  },
+  "mir_l1": {
+    "runs": 270,
+    "same": 270,
+    "both_abort": 0,
+    "diff": 0,
+    "timeout": 0,
+    "out_of_layer": 1
+  },
+  "mir_l2": {
+    "runs": 4203,
+    "same": 4050,
+    "both_abort": 151,
+    "diff": 0,
+    "timeout": 2,
+    "abort0_compared": 2265
+  },
+  "l3": {
+    "discovered": 80655,
+    "passed": 64916,
+    "xfail": 146,
+    "failed": 0
+  }
+}
