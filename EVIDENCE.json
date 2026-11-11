@@ -1038,6 +1038,120 @@
     },
     "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
    }
+  },
+  {
+   "id": "MIR-L2/x86",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "x86",
+   "dir": "/tmp/l2/x86/replay",
+   "command": "python3 ab.py mir --target x86 --queries /tmp/l2/x86.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2/x86",
+   "artifacts": {
+    "mir-report.json": "c3bbe9d649aae0ea4b52e3fe7db41a8cd6ee8df08b0943d7ff83b953a46f5d02",
+    "provenance.json": "5ed0e4931c5a7a9489fc8ec9ad5deb035b4947f71457a9c33db337f7ab762776"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 2390,
+     "runs": 2390,
+     "same": 2374,
+     "both_abort": 16,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 1558
+    },
+    "mir_targets": {
+     "x86": {
+      "files": 2390,
+      "runs": 2390,
+      "same": 2374,
+      "both_abort": 16,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/aarch64",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "aarch64",
+   "dir": "/tmp/l2/a64/replay",
+   "command": "python3 ab.py mir --target aarch64 --queries /tmp/l2/a64.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2/a64",
+   "artifacts": {
+    "mir-report.json": "a94a045fa45eeba1f5afb52f4cc6515979dfe697ce8a7be4d8d8306b7e96b806",
+    "provenance.json": "c861c4948bd7d794e7f6da65f0f8a9c18b6df169438fde3709f77722a0d298ec"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 8774,
+     "runs": 8774,
+     "same": 7874,
+     "both_abort": 837,
+     "diff": 0,
+     "timeout": 63,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 4250
+    },
+    "mir_targets": {
+     "aarch64": {
+      "files": 8774,
+      "runs": 8774,
+      "same": 7874,
+      "both_abort": 837,
+      "diff": 0,
+      "timeout": 63,
+      "unsupported_run": 0,
+      "out_of_layer": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/riscv",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "riscv",
+   "dir": "/tmp/l2/rv/replay",
+   "command": "python3 ab.py mir --target riscv --queries /tmp/l2/rv.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2/rv",
+   "artifacts": {
+    "mir-report.json": "fdf1bf7533c6afb926a21910f3baecd7dd3ba3c55e362ed130823656ff80cc89",
+    "provenance.json": "e16131ead809ffb2f2e2d6e2e36db15b13997ca3ea87a467071af7b2263b3c19"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 4203,
+     "runs": 4203,
+     "same": 4050,
+     "both_abort": 151,
+     "diff": 0,
+     "timeout": 2,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 2265
+    },
+    "mir_targets": {
+     "riscv": {
+      "files": 4203,
+      "runs": 4203,
+      "same": 4050,
+      "both_abort": 151,
+      "diff": 0,
+      "timeout": 2,
+      "unsupported_run": 0,
+      "out_of_layer": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
   }
  ],
  "official_build": {

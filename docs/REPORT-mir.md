@@ -148,6 +148,14 @@ python3 -m gisel cases tests/corpus/RISCVLegalizerInfo.gisel \
 | aarch64 | 8,774 | 7,874 | 837 | **0** | 63 | 4,250 |
 | riscv | 4,203 | 4,050 | 151 | **0** | 2 | 2,265 |
 
+重跑（`/tmp/l2/*`，同一冻结树 `700e551714cc`、同一 `llc`，查询由 gisel
+`312a9a6` 现生成）：三个 target 的分母和桶与上表逐项相同——x86 3,014 → 2,390、
+aarch64 12,226 → 8,774、riscv 6,086 → 4,203；`diff` 全 0，timeout 仍是
+0 / 63 / 2。查询文件 sha256 分别是 `f6923a39…` / `3fbf0178…` / `4f027ac8…`
+（riscv 与 `data/riscv-contract.json` 记录的一致）。三份报告连同
+`provenance.json` 冻结为 `EVIDENCE.json` 的 `MIR-L2/x86`、`MIR-L2/aarch64`、
+`MIR-L2/riscv`。
+
 快照（`provenance.json` 与 `sha256sum`）：
 
 | 项 | 值 |

@@ -142,6 +142,6 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 - `targets/*.json` 的 `query_count` 是**当前生成器的输出**，由
   `./refresh-counts.py --check` 校验；它不等于 `EVIDENCE.json` 里某次冻结运行
   的条数（证据绑定的是它自己的 queries 文件与 sha）。
-- MIR 只有 **L1** 进了 `EVIDENCE.json`（`MIR-L1/upstream`）；L2/L3 的证据仍在
-  `docs/REPORT-mir.md` 与 `data/riscv-contract.json`。`verify-evidence.sh` 全绿
-  只覆盖 L0 + L1，不等于“L2/L3 也验过了”。
+- MIR 的 **L1**（`MIR-L1/upstream`）和 **L2**（`MIR-L2/{x86,aarch64,riscv}`）进了
+  `EVIDENCE.json`；**L3** 的证据仍只在 `docs/REPORT-mir.md` §6。`verify-evidence.sh`
+  全绿覆盖 L0 + MIR L1/L2，不等于“L3 也验过了”。
