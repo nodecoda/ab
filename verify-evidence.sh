@@ -173,8 +173,8 @@ def check(entry):
             bad += fail(entry, "attributed to %r, injected %r" % (sorted(seen), sorted(injected)))
 
     if not bad:
-        print("PASS %-16s %s" % (entry["id"], d if d.exists()
-                                 else oracle_root / entry["id"]))
+        where = oracle_root / entry["id"] if frozen or not d.exists() else d
+        print("PASS %-16s %s" % (entry["id"], where))
     return bad
 
 total = failures = 0
