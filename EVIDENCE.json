@@ -275,20 +275,21 @@
       "id": "U/arm",
       "direction": "U",
       "target": "arm",
-      "dir": "/tmp/u-run/arm",
+      "dir": "/tmp/u-run/armd",
       "queries": {
-        "path": "/tmp/u-gen/arm-f2/queries.jsonl",
-        "sha256": "776511b43b9313ccb75a706a8a5e5932c6b1a1dce2ef655522013c94a9114b76"
+        "path": "/tmp/u-gen/armd/queries.jsonl",
+        "sha256": "513988b78d814e34d488936e57dbaf08cfd87d3d80341b5b72ebd8285c1c61f4"
       },
-      "command": "./run-u-end-to-end.sh arm /tmp/u-gen/arm-f2/queries.jsonl /tmp/u-run/arm",
+      "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd",
       "artifacts": {
-        "diff.json": "0fb6fab86099428c0381ca99e95ccb3677748754d005aa968b8396073d8d1b14",
-        "official.answers.jsonl": "a62e2bd587f042fb7f7d421663d4e2e9b787c8476082d1a57bf09135b3585701",
-        "ours.answers.jsonl": "a62e2bd587f042fb7f7d421663d4e2e9b787c8476082d1a57bf09135b3585701"
+        "diff.json": "343b2af6ced87311daf525d795b64da127d437f61ead5d4111cda5b280b60f91",
+        "official.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
+        "ours.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
+        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 15639,
+        "agree": 15695,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -297,20 +298,21 @@
       "id": "U/mips",
       "direction": "U",
       "target": "mips",
-      "dir": "/tmp/u-run/mips",
+      "dir": "/tmp/u-run/mipsd",
       "queries": {
-        "path": "/tmp/u-gen/mips-f2/queries.jsonl",
-        "sha256": "fbe3dc0cc679c55fdd2db8cfc024eb474a8d5e549b07797ef69841c0610de6ec"
+        "path": "/tmp/u-gen/mipsd/queries.jsonl",
+        "sha256": "83c4c42543a678568123d8d5df742ab5b10247d126c7e6a8dd31f8687acc3acb"
       },
-      "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mips-f2/queries.jsonl /tmp/u-run/mips",
+      "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd",
       "artifacts": {
-        "diff.json": "d6be55ae41ce62bba43f54736ad7f961e49ebc1b51616a639f91c29cc08b5059",
-        "official.answers.jsonl": "5b8b36b822810aa80b1845bc3a54fad2d4a3fb8b9dd499a1c33203e3cddf2184",
-        "ours.answers.jsonl": "5b8b36b822810aa80b1845bc3a54fad2d4a3fb8b9dd499a1c33203e3cddf2184"
+        "diff.json": "3cf0017bb54068523167c4fed4652013a27ccfca0c755a5fc9d7f120d6076afd",
+        "official.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
+        "ours.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
+        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 11341,
+        "agree": 11396,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -319,20 +321,21 @@
       "id": "U/ppc",
       "direction": "U",
       "target": "ppc",
-      "dir": "/tmp/u-run/ppc2",
+      "dir": "/tmp/u-run/ppcd",
       "queries": {
-        "path": "/tmp/u-gen/ppc-f2/queries.jsonl",
-        "sha256": "28a3d06d26ac37c256a59206844645c97df91916834924e0c2d24d666bb5f73f"
+        "path": "/tmp/u-gen/ppcd/queries.jsonl",
+        "sha256": "8bac7868d2999f3f0619ae5853d5a5eecf18bbb158f602cb1a4511809f0725d1"
       },
-      "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppc-f2/queries.jsonl /tmp/u-run/ppc2",
+      "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd",
       "artifacts": {
-        "diff.json": "7c43016862fb07c5ecd7b897afe30eefcd30e3a5cd773356d1054f2cc8c4a634",
-        "official.answers.jsonl": "773142bace88dfa3983b0a6d3fb3e2851bff3fbd3f8c9766d26e330e0aae522f",
-        "ours.answers.jsonl": "773142bace88dfa3983b0a6d3fb3e2851bff3fbd3f8c9766d26e330e0aae522f"
+        "diff.json": "12ce6309a3d1791f3135c8dc36527c096f0b6e6c224b06f53fece0f767c2ee5d",
+        "official.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
+        "ours.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
+        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 2176,
+        "agree": 2177,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -341,20 +344,21 @@
       "id": "U/m68k",
       "direction": "U",
       "target": "m68k",
-      "dir": "/tmp/u-run/m68k2",
+      "dir": "/tmp/u-run/m68kd",
       "queries": {
-        "path": "/tmp/u-gen/m68k-f2/queries.jsonl",
-        "sha256": "2c86f80921633ccf972cdc1a19505a74da2d5474fa6b8471a9c58aa86b181cb1"
+        "path": "/tmp/u-gen/m68kd/queries.jsonl",
+        "sha256": "63456e3502ba8e63abc98ffec8498d06d9a9f248c447feac8243394fa2868e2e"
       },
-      "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68k-f2/queries.jsonl /tmp/u-run/m68k2",
+      "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd",
       "artifacts": {
-        "diff.json": "f3ecba717d4d05c73379cf13af70d5c2582f8f3dcf4d62ac5f2063e58f4f4bb6",
-        "official.answers.jsonl": "e1a6a969a38093232d88fdc995b10e7a777fff724892a0f5430f64bce17d6034",
-        "ours.answers.jsonl": "e1a6a969a38093232d88fdc995b10e7a777fff724892a0f5430f64bce17d6034"
+        "diff.json": "7fde218ddf37faa5361110fb2b8cefe8cd3d3d8209126bdbb670483ef317c8b1",
+        "official.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
+        "ours.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
+        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 2180,
+        "agree": 2182,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -363,20 +367,21 @@
       "id": "U/wasm",
       "direction": "U",
       "target": "wasm",
-      "dir": "/tmp/u-run/wasm2",
+      "dir": "/tmp/u-run/wasmd",
       "queries": {
-        "path": "/tmp/u-gen/wasm-f2/queries.jsonl",
-        "sha256": "899579aa72313ce1e771e31a020c1110f3d1cd8b38bc66acb1c467c9a80e18e5"
+        "path": "/tmp/u-gen/wasmd/queries.jsonl",
+        "sha256": "9324c30ae1ef593b59007fe5c2c4396a708f3ed8e68d01ceb48ab0300e1492eb"
       },
-      "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasm-f2/queries.jsonl /tmp/u-run/wasm2",
+      "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd",
       "artifacts": {
-        "diff.json": "7f068a15a1bf43d26ea387a92cf80daa3acf707f1ddc5bf6f12b921d170ece34",
-        "official.answers.jsonl": "059758ee8dc1f3a7f036c28f99785f6a43cae5db16ceca05e32f06b8c578afac",
-        "ours.answers.jsonl": "059758ee8dc1f3a7f036c28f99785f6a43cae5db16ceca05e32f06b8c578afac"
+        "diff.json": "183d96b449d260b8f08ea9f827068545b007b5b3d6237b57bbd3a5d15d1c95a4",
+        "official.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
+        "ours.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
+        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
       },
       "expect": {
         "answers_identical": true,
-        "agree": 9274,
+        "agree": 9290,
         "disagree": 0,
         "unanswerable": 0
       }
@@ -385,16 +390,17 @@
       "id": "U/spirv",
       "direction": "U",
       "target": "spirv",
-      "dir": "/tmp/u-run/spirv",
+      "dir": "/tmp/u-run/spirvd",
       "queries": {
-        "path": "/tmp/u-gen/spirv-f2/queries.jsonl",
-        "sha256": "6f5e21ba295ac3cd0f9f60af3af8f78a3200fd6e4e9ce94714068cfc1876f3a0"
+        "path": "/tmp/u-gen/spirvd/queries.jsonl",
+        "sha256": "9f2156afc668e418fecac9bf584c757effd14f35d67ab5d6adc90ae9c183207d"
       },
-      "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirv-f2/queries.jsonl /tmp/u-run/spirv",
+      "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd",
       "artifacts": {
-        "diff.json": "119c9f3ac4e41ba723de8b56721b3c1a7b559c50448f812df83dccafa2ba4c23",
-        "official.answers.jsonl": "0ef1a9365a47b67958fe672efd1b6046a9d7a6671aa52cd0fb74e896404fffd5",
-        "ours.answers.jsonl": "0ef1a9365a47b67958fe672efd1b6046a9d7a6671aa52cd0fb74e896404fffd5"
+        "diff.json": "9078a76da68b9af9d3f753d57e7dc2010162971d0febc6376d26eb0b083d576a",
+        "official.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
+        "ours.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
+        "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
       },
       "expect": {
         "answers_identical": true,
@@ -466,12 +472,11 @@
       "id": "U-neg/arm",
       "direction": "U-neg",
       "target": "arm",
-      "dir": "/tmp/u-neg/arm",
-      "command": "./run-u-end-to-end.sh arm /tmp/u-gen/arm-f2/queries.jsonl /tmp/u-neg/arm --drop-opcode G_LOAD",
+      "dir": "/tmp/u-run/armd-neg",
+      "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd-neg --drop-opcode G_LOAD",
       "artifacts": {
-        "diff.json": "7984a37baa26807e096d5cf9cd46cc34d7048ee27defe10d8f6fa6e001566018",
-        "official.answers.jsonl": "a62e2bd587f042fb7f7d421663d4e2e9b787c8476082d1a57bf09135b3585701",
-        "ours.answers.jsonl": "6232c50eb013326714aff9164172f29a39772a2af137894ba97d88eb534fbc0d"
+        "diff.json": "7441e88a41826330be5b4f2ddd6c2b394ccda83ce113838e53d81a13f620e025",
+        "attribution.json": "ff684ee624576fe7aa2aff078135e371f48f436e678b356fea3a3d2e4d1a690a"
       },
       "expect": {
         "min_disagree": 1,
@@ -488,12 +493,11 @@
       "id": "U-neg/mips",
       "direction": "U-neg",
       "target": "mips",
-      "dir": "/tmp/u-neg/mips",
-      "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mips-f2/queries.jsonl /tmp/u-neg/mips --drop-opcode G_CTPOP",
+      "dir": "/tmp/u-run/mipsd-neg",
+      "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd-neg --drop-opcode G_CTPOP",
       "artifacts": {
-        "diff.json": "8a9bcb45ec67341ad6a40ce0f8d9463ef95b3d644f301421150764d807172d72",
-        "official.answers.jsonl": "5b8b36b822810aa80b1845bc3a54fad2d4a3fb8b9dd499a1c33203e3cddf2184",
-        "ours.answers.jsonl": "2b376fc8cdeb994472b4307b1f233a2d07cb00a4bdd3939d0f98193ce4d6c1f1"
+        "diff.json": "54b8467667c0c01a395e0cbc7bb1e5caafbf45fc4f5841c7f9ee04f6426a39ea",
+        "attribution.json": "dd0ad729817e400cf4fd3132ef4e31294a99898b5d5c3604b8aac55af806725f"
       },
       "expect": {
         "min_disagree": 1,
@@ -503,18 +507,17 @@
         "unknown_keys": 0
       },
       "injected_opcode": "G_CTPOP",
-      "observed_disagree": 55
+      "observed_disagree": 40
     },
     {
       "id": "U-neg/ppc",
       "direction": "U-neg",
       "target": "ppc",
-      "dir": "/tmp/u-neg/ppc",
-      "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppc-f2/queries.jsonl /tmp/u-neg/ppc --drop-opcode G_SUB",
+      "dir": "/tmp/u-run/ppcd-neg",
+      "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd-neg --drop-opcode G_SUB",
       "artifacts": {
-        "diff.json": "175fd0e7729757acfbcb0a0ba4e99153c37234a1e093484b1890b154124002ee",
-        "official.answers.jsonl": "773142bace88dfa3983b0a6d3fb3e2851bff3fbd3f8c9766d26e330e0aae522f",
-        "ours.answers.jsonl": "4e3f668afc70ec6eef924c3d1d856e4290181a3bd93c9eee8d34f6fb6c0cea2d"
+        "diff.json": "6242ca7269cc2c5ae74a3f6da07ef3f780348ebfcdbf95e3373d4d5b51864dc6",
+        "attribution.json": "f43efef8ea0561e32fbf514ce633ae1bae3ac6d90d3329ebf8c2c7af39975cfa"
       },
       "expect": {
         "min_disagree": 1,
@@ -531,12 +534,11 @@
       "id": "U-neg/m68k",
       "direction": "U-neg",
       "target": "m68k",
-      "dir": "/tmp/u-neg/m68k",
-      "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68k-f2/queries.jsonl /tmp/u-neg/m68k --drop-opcode G_MUL",
+      "dir": "/tmp/u-run/m68kd-neg",
+      "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd-neg --drop-opcode G_MUL",
       "artifacts": {
-        "diff.json": "ef11fac274a31f20d5bb983a325eec7209e8f864ffb9822693b8fadd93782ac7",
-        "official.answers.jsonl": "e1a6a969a38093232d88fdc995b10e7a777fff724892a0f5430f64bce17d6034",
-        "ours.answers.jsonl": "7d5284bcc7344f249031aa93f5b4499c9b1aa39db8b36a8577a35b230a6388c6"
+        "diff.json": "430b6c96fd9cbd9baa55d629e9b0a178fbd38fd9048c6a9fb2f0ccab6b5a9af4",
+        "attribution.json": "a79b7446880b258f226a2f901de2bae2dce0b52ad22be291543aadecec8da379"
       },
       "expect": {
         "min_disagree": 1,
@@ -556,12 +558,11 @@
       "id": "U-neg/wasm",
       "direction": "U-neg",
       "target": "wasm",
-      "dir": "/tmp/u-neg/wasm",
-      "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasm-f2/queries.jsonl /tmp/u-neg/wasm --drop-opcode G_SELECT",
+      "dir": "/tmp/u-run/wasmd-neg",
+      "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd-neg --drop-opcode G_SELECT",
       "artifacts": {
-        "diff.json": "a8cdd7f3b70b1d04a05317ad110de0fc1690fc82866d6dfff14f94e0514f6784",
-        "official.answers.jsonl": "059758ee8dc1f3a7f036c28f99785f6a43cae5db16ceca05e32f06b8c578afac",
-        "ours.answers.jsonl": "3827834b1c4c326e10c3e473540b99aa3fd00bc7a2402c4b64f6c28b947ffaef"
+        "diff.json": "28edd50f0835f3b43d97c3705b6e62fc70d97cbe200f370d34ac0880835978f1",
+        "attribution.json": "08a33e9e5bd69ff70f585ac6ab84b98c7536a777c27c796c777d79c561a94cd8"
       },
       "expect": {
         "min_disagree": 1,
@@ -571,18 +572,17 @@
         "unknown_keys": 0
       },
       "injected_opcode": "G_SELECT",
-      "observed_disagree": 48
+      "observed_disagree": 36
     },
     {
       "id": "U-neg/spirv",
       "direction": "U-neg",
       "target": "spirv",
-      "dir": "/tmp/u-neg/spirv",
-      "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirv-f2/queries.jsonl /tmp/u-neg/spirv --drop-opcode G_UMIN",
+      "dir": "/tmp/u-run/spirvd-neg",
+      "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd-neg --drop-opcode G_UMIN",
       "artifacts": {
-        "diff.json": "7cd8c266396a11b23378db68f4afc515629ca7c72c341d1d6824f7f5d805dc04",
-        "official.answers.jsonl": "0ef1a9365a47b67958fe672efd1b6046a9d7a6671aa52cd0fb74e896404fffd5",
-        "ours.answers.jsonl": "a97290cebe70f9d05c9f546ff00a2eac2f6a5ea98fe66dbb3be581cc2a665553"
+        "diff.json": "8e7c035ae24c779e14c5fb597d04e798fadeb44591f04eb67ac057a79904b322",
+        "attribution.json": "fd4cbc27bfdd10079564d9323d966cfed023caef71858c1d390c4b4e5024222e"
       },
       "expect": {
         "min_disagree": 1,
@@ -603,7 +603,7 @@
         "unknown_keys": 0
       },
       "injected_opcode": "G_UMIN",
-      "observed_disagree": 798
+      "observed_disagree": 784
     },
     {
       "id": "G-neg/x86",

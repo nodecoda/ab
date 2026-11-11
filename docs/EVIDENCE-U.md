@@ -31,7 +31,9 @@ cd /home/ubuntu/llvm/upstream-source
 | RISC-V | 20,533 | 20,445 | 88 | `14a196f5b25d5652…` |
 
 `dropped` 是上游自己就不能作答的形状（`known-unanswerable` / `parse-error` /
-`asserted`，逐条带 reason）。它们两边都不作答，所以不进入分母，也不计入
+`asserted`，逐条带 reason）。2026-11-11 刷新后 Mips / PPC / WebAssembly / SPIR-V
+的 dropped 全部是 `asserted`：新题面里的 `nxv*`、指针当标量、`v32s8` 等形状
+撞上上游断言，runner 逐条隔离后只丢命中的那一条。它们两边都不作答，所以不进入分母，也不计入
 `unanswerable`。契约见 `CONTRACTS.md` §3.1。
 
 ## 结果（正式）
@@ -105,7 +107,7 @@ shim `coreMinScalarSameAs` 把顺序写反了。两个形状里两侧位宽相�
 29,561 条，复跑仍是 0。这条差异是 U 方向**自己抓到的**：G 方向的题面由 gisel
 生成，永远不会问到这个形状。
 
-## U5：其余六个 target（2026-11-10）
+## U5：其余六个 target（2026-11-10，2026-11-11 刷新）
 
 U4 只覆盖了 X86 / AArch64 / RISC-V。这一轮把 U 方向接到剩下六个后端：
 ARM / Mips / PPC / M68k / WebAssembly / SPIR-V。AMDGPU 按决定不接。
@@ -114,22 +116,22 @@ ARM / Mips / PPC / M68k / WebAssembly / SPIR-V。AMDGPU 按决定不接。
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-./oracle/scripts/gen-u.sh arm     /tmp/u-gen/arm-f2
-./oracle/scripts/gen-u.sh mips    /tmp/u-gen/mips-f2
-./oracle/scripts/gen-u.sh ppc     /tmp/u-gen/ppc-f2
-./oracle/scripts/gen-u.sh m68k    /tmp/u-gen/m68k-f2
-./oracle/scripts/gen-u.sh wasm    /tmp/u-gen/wasm-f2
-./oracle/scripts/gen-u.sh spirv   /tmp/u-gen/spirv-f2
+./oracle/scripts/gen-u.sh arm     /tmp/u-gen/armd
+./oracle/scripts/gen-u.sh mips    /tmp/u-gen/mipsd
+./oracle/scripts/gen-u.sh ppc     /tmp/u-gen/ppcd
+./oracle/scripts/gen-u.sh m68k    /tmp/u-gen/m68kd
+./oracle/scripts/gen-u.sh wasm    /tmp/u-gen/wasmd
+./oracle/scripts/gen-u.sh spirv   /tmp/u-gen/spirvd
 ```
 
 | target | 配置 | rules | witnessed | shadowed | unexercised | 全配置 unex | raw | kept | dropped | `queries.jsonl` sha256 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| ARM | 7 | 741 | 741 | 0 | 0 | 0 | 15,639 | 15,639 | 0 | `776511b43b9313cc…` |
-| Mips | 5 | 765 | 736 | 0 | 29 | 20 | 11,341 | 11,341 | 0 | `fbe3dc0cc679c55f…` |
-| PPC | 1 | 49 | 49 | 0 | 0 | 0 | 2,192 | 2,176 | 16 | `28a3d06d26ac37c2…` |
-| M68k | 1 | 33 | 33 | 0 | 0 | 0 | 2,180 | 2,180 | 0 | `2c86f80921633ccf…` |
-| WebAssembly | 4 | 922 | 922 | 0 | 0 | 0 | 9,290 | 9,274 | 16 | `899579aa72313ce1…` |
-| SPIR-V | 6 | 3,766 | 3,228 | 194 | 344 | 0 | 15,588 | 15,580 | 8 | `6f5e21ba295ac3cd…` |
+| ARM | 7 | 741 | 741 | 0 | 0 | 0 | 15,695 | 15,695 | 0 | `513988b78d814e34…` |
+| Mips | 5 | 765 | 736 | 0 | 29 | 20 | 11,406 | 11,396 | 10 | `83c4c42543a67856…` |
+| PPC | 1 | 49 | 49 | 0 | 0 | 0 | 2,196 | 2,177 | 19 | `8bac7868d2999f3f…` |
+| M68k | 1 | 33 | 33 | 0 | 0 | 0 | 2,182 | 2,182 | 0 | `63456e3502ba8e63…` |
+| WebAssembly | 4 | 922 | 922 | 0 | 0 | 0 | 9,362 | 9,290 | 72 | `9324c30ae1ef593b…` |
+| SPIR-V | 6 | 3,766 | 3,228 | 194 | 344 | 0 | 15,596 | 15,580 | 16 | `9f2156afc668e418…` |
 
 `全配置 unex` 是“每个配置都没命中”的规则数；门禁按跨配置 `(opcode,
 rule_index)` 并集判定（`CONTRACTS.md` §5）。SPIR-V 的 344 条 unexercised
@@ -139,31 +141,31 @@ rule_index)` 并集判定（`CONTRACTS.md` §5）。SPIR-V 的 344 条 unexercis
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./run-u-end-to-end.sh arm   /tmp/u-gen/arm-f2/queries.jsonl   /tmp/u-run/arm
-./run-u-end-to-end.sh mips  /tmp/u-gen/mips-f2/queries.jsonl  /tmp/u-run/mips
-./run-u-end-to-end.sh ppc   /tmp/u-gen/ppc-f2/queries.jsonl   /tmp/u-run/ppc2
-./run-u-end-to-end.sh m68k  /tmp/u-gen/m68k-f2/queries.jsonl  /tmp/u-run/m68k2
-./run-u-end-to-end.sh wasm  /tmp/u-gen/wasm-f2/queries.jsonl  /tmp/u-run/wasm2
-./run-u-end-to-end.sh spirv /tmp/u-gen/spirv-f2/queries.jsonl /tmp/u-run/spirv
+./run-u-end-to-end.sh arm   /tmp/u-gen/armd/queries.jsonl   /tmp/u-run/armd
+./run-u-end-to-end.sh mips  /tmp/u-gen/mipsd/queries.jsonl  /tmp/u-run/mipsd
+./run-u-end-to-end.sh ppc   /tmp/u-gen/ppcd/queries.jsonl   /tmp/u-run/ppcd
+./run-u-end-to-end.sh m68k  /tmp/u-gen/m68kd/queries.jsonl  /tmp/u-run/m68kd
+./run-u-end-to-end.sh wasm  /tmp/u-gen/wasmd/queries.jsonl  /tmp/u-run/wasmd
+./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd
 ```
 
 | target | queries | agree | disagree | unanswerable | 两侧答案文件 |
 |---|---:|---:|---:|---:|---|
-| ARM | 15,639 | 15,639 | 0 | 0 | 逐字节相同 |
-| Mips | 11,341 | 11,341 | 0 | 0 | 逐字节相同 |
-| PPC | 2,176 | 2,176 | 0 | 0 | 逐字节相同 |
-| M68k | 2,180 | 2,180 | 0 | 0 | 逐字节相同 |
-| WebAssembly | 9,274 | 9,274 | 0 | 0 | 逐字节相同 |
+| ARM | 15,695 | 15,695 | 0 | 0 | 逐字节相同 |
+| Mips | 11,396 | 11,396 | 0 | 0 | 逐字节相同 |
+| PPC | 2,177 | 2,177 | 0 | 0 | 逐字节相同 |
+| M68k | 2,182 | 2,182 | 0 | 0 | 逐字节相同 |
+| WebAssembly | 9,290 | 9,290 | 0 | 0 | 逐字节相同 |
 | SPIR-V | 15,580 | 15,580 | 0 | 0 | 逐字节相同 |
 
 | target | `diff.json` sha256 | 生成 inc sha256 |
 |---|---|---|
-| ARM | `0fb6fab86099428c…` | `021a84797085030f…` |
-| Mips | `d6be55ae41ce62bb…` | `fd4a51d952b822d6…` |
-| PPC | `7c43016862fb07c5…` | `c15f766bd2a16761…` |
-| M68k | `f3ecba717d4d05c7…` | `8d843f4f5775e63e…` |
-| WebAssembly | `7f068a15a1bf43d2…` | `ac5307b57ce7c4ef…` |
-| SPIR-V | `119c9f3ac4e41ba7…` | `a9037d2c63426a1a…` |
+| ARM | `343b2af6ced87311…` | `021a84797085030f…` |
+| Mips | `3cf0017bb5406852…` | `fd4a51d952b822d6…` |
+| PPC | `12ce6309a3d1791f…` | `c15f766bd2a16761…` |
+| M68k | `7fde218ddf37faa5…` | `8d843f4f5775e63e…` |
+| WebAssembly | `183d96b449d260b8…` | `1293d7a53ab9a743…` |
+| SPIR-V | `9078a76da68b9af9…` | `a9037d2c63426a1a…` |
 
 `EVIDENCE.json` 里记录完整的 sha256 和重跑命令；`verify-evidence.sh` 逐项校验。
 
@@ -172,11 +174,11 @@ cd /home/ubuntu/llvm/ab
 | target | 注入 | disagree | `by_ruleset` | `unknown_keys` | rc |
 |---|---|---:|---|---:|---:|
 | ARM | `G_LOAD`（该 builder 同时建 `G_STORE`） | 148 | `G_LOAD 74 / G_STORE 74` | 0 | 1 |
-| Mips | `G_CTPOP` | 55 | `G_CTPOP 55` | 0 | 1 |
+| Mips | `G_CTPOP` | 40 | `G_CTPOP 40` | 0 | 1 |
 | PPC | `G_SUB`（同时建 `G_ADD`） | 12 | `G_ADD 6 / G_SUB 6` | 0 | 1 |
 | M68k | `G_MUL`（同一 builder 建五条算术） | 35 | `G_ADD 7 / G_AND 7 / G_MUL 7 / G_SUB 7 / G_UDIV 7` | 0 | 1 |
-| WebAssembly | `G_SELECT` | 48 | `G_SELECT 48` | 0 | 1 |
-| SPIR-V | `G_UMIN`（12 条 opcode 共用一个 builder） | 798 | 12 个 ruleset，各 64–67 | 0 | 1 |
+| WebAssembly | `G_SELECT` | 36 | `G_SELECT 36` | 0 | 1 |
+| SPIR-V | `G_UMIN`（12 条 opcode 共用一个 builder） | 784 | 12 个 ruleset，各 57–67 | 0 | 1 |
 
 六个 `outside_expected` 都为空：所有差异都落在被注入的 ruleset 内。
 
