@@ -928,17 +928,34 @@
    "id": "U-full/aarch64",
    "direction": "U",
    "target": "aarch64",
-   "dir": "/tmp/u-run/full2-a64",
-   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full2/aarch64-full.jsonl /tmp/u-run/full2-a64 --allow-ref-asserts 30150 --allow-unanswerable 35316",
+   "dir": "/tmp/u-run/full4-a64",
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full-new/aarch64-full-expanded.jsonl /tmp/u-run/full4-a64 --allow-ref-asserts 30150 --allow-unanswerable 35316",
    "artifacts": {
-    "diff.json": "1bc25a855cf054544644653dcdb26194ffea83949056ea4c8bc42c67f0704546",
+    "diff.json": "523ae4973b4d682199612cf77aa943ead3c9bc1e82b3fa1aac7c3d0c0f888343",
     "universe.jsonl": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
    },
    "expect": {
+    "ref": 3505608,
     "agree": 3475458,
     "disagree": 0,
     "unanswerable": 35316,
-    "ref_asserted": 30150
+    "ref_asserted": 30150,
+    "ref_asserted_by_site": {
+     "LowLevelType.h:470": 27,
+     "fatal:Possible incorrect use of LLT getNumElements  for scalable vect": 1260,
+     "fatal:cannot implicitly convert a scalable size to a fixed-width size": 28863
+    }
+   },
+   "queries": {
+    "path": "/tmp/u-run/full4-a64/universe.jsonl",
+    "sha256": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
+   },
+   "expanded_queries": {
+    "path": "/tmp/u-full-new/aarch64-full-expanded.jsonl",
+    "sha256": "963e2403e07d92821ea04c58cb1664d0d870e1ae7147e8d789681818977c0ef2",
+    "rows": 3505608,
+    "from": "python3 -m oracle expand --universe /tmp/u-run/full4-a64/universe.jsonl --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve --out aarch64-full-expanded.jsonl",
+    "note": "The expanded file is 500 MB and is not frozen; it is deterministic from the frozen universe and the config list, and `ref` pins its row count."
    }
   },
   {

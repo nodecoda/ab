@@ -240,7 +240,7 @@ ristretto,rv32zilsd`；`gen-u.sh --full` 一条命令产出同一份 `universe.f
 | target | universe | queries | agree | `ref_asserted` | disagree | 两侧都断言 | `diff.json` sha256 |
 |---|---:|---:|---:|---:|---:|---:|---|
 | X86 | 280,432 | 1,121,728 | 1,121,728 | 0 | 0 | 1,272 | `0b33032b76d5340f…` |
-| AArch64 | 389,512 | 3,505,608 | 3,475,458 | 30,150 | 0 | 35,316 | `1bc25a855cf05454…` |
+| AArch64 | 389,512 | 3,505,608 | 3,475,458 | 30,150 | 0 | 35,316 | `523ae4973b4d6821…` |
 | RISC-V | 378,562 | 3,028,496 | 3,028,496 | 0 | 0 | 6,008 | `1c53c0d99c2c1008…` |
 
 | target | `queries.full.jsonl` sha256 | 生成 inc sha256 | 两侧答案文件 |
@@ -266,7 +266,23 @@ disagree == matched`）。`--allow-ref-asserts N` 把“上游先断言、我们
 | `LowLevelType.h:151` / `:470` | 333 / 27 | 移位与 `G_VECREDUCE_AND/OR/XOR` |
 
 其中 35,316 条两侧都断言（计入 `unanswerable`），30,150 条上游断言、我方答出
-（`ref_asserted`）。这些形状大多不是合法 MIR（`anyext` 两侧位宽不等、指针向量做
+（`ref_asserted`）。
+
+2026-11-11 重跑后 `diff.json` 直接给出 `ref_asserted_by_site`（只统计这 30,150 条），
+机器分类取代了手工漏斗：
+
+| `ref_asserted` 站点 | 条数 |
+|---|---:|
+| `fatal:cannot implicitly convert a scalable size to a fixed-width size` | 28,863 |
+| `fatal:Possible incorrect use of LLT getNumElements for scalable vect…` | 1,260 |
+| `LowLevelType.h:470` | 27 |
+
+按 opcode：`G_ANYEXT/G_SEXT/G_ZEXT` 各 5,535、`G_MERGE_VALUES` 4,932、
+`G_UNMERGE_VALUES` 4,788、`G_TRUNC` 1,215、移位三条各 369、
+`G_VECREDUCE_SMAX/SMIN/UMAX/UMIN` 各 315、`G_VECREDUCE_AND/OR/XOR` 各 9、
+`G_FPTOSI/FPTOUI`（含 `_SAT`）各 54。
+这三个站点已写进 `EVIDENCE.json` 的 `expect.ref_asserted_by_site`，
+`verify-evidence.sh` 逐个比对。这些形状大多不是合法 MIR（`anyext` 两侧位宽不等、指针向量做
 标量位宽操作），所以不进入分母；两类都单独计数，不混进 `agree`。已记录在
 `/home/ubuntu/admin/upstream-issues/`（#12、#13、#18）。
 

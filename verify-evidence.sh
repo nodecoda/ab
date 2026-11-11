@@ -121,9 +121,14 @@ def check(entry):
         if a != b:
             bad += fail(entry, "answer files differ (diff.json alone is not enough)")
 
-    for key in ("agree", "disagree", "unanswerable", "ref_asserted"):
+    for key in ("ref", "agree", "disagree", "unanswerable", "ref_asserted"):
         if key in expect and diff.get(key) != expect[key]:
             bad += fail(entry, "%s=%r, expected %r" % (key, diff.get(key), expect[key]))
+
+    by_site = expect.get("ref_asserted_by_site")
+    if by_site is not None and diff.get("ref_asserted_by_site") != by_site:
+        bad += fail(entry, "ref_asserted_by_site=%r, expected %r"
+                    % (diff.get("ref_asserted_by_site"), by_site))
 
     sites_expect = expect.get("assert_sites")
     if sites_expect:
