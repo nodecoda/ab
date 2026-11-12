@@ -20,4 +20,5 @@
 
 已记录的延期：`run-domain.sh` 与 `run-{x86,aarch64,riscv}-domain.sh` 仍是四份
 入口（640 行），只有通用那份读 `targets/`。合并需要重跑 8.4M 条 domain，暂缓；
+`test_domain_contracts.py` 锁住四处 config 集合与 `data/domain.json` 的漂移。
 新加的 domain 脚本必须先读 `targets/`，不再复制配置表。
