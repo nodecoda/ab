@@ -33,6 +33,8 @@
 |---|---|---|
 | C1 | `gisel` CI 从 2026-11-11 起是红的：`test_packaging_reads_the_package_version` 在 3.11/3.12 上报 `KeyError: 'version'`（3.10 走正则路径，所以本地绿） | `6b1d763` 修测试；顺手把 CI 的 lint / `gen --emit={inc,check,core}` 从 3 个语料扩到 `tests/corpus/*.gisel` |
 | C2 | L3 只在日志里、没进 `EVIDENCE.json` | `1edf867`：`l3.py` + `kind: "lit"`，逐条 `(status, expected)`，80,596 条，0 变化 |
+| C3 | upstream-source 没有 CI | `ada7db3`：`import-tests`（80 passed）与 `import-check`（pin 的 partial clone，7 MB，九目标 `--check` 16 s）两个 job；run `43146080543` 绿 |
+| C4 | `graph` 的闭包审计默认不成立 | `gisel f1472b2`：`--check-closure` 改为默认开启（`--no-check-closure` 显式退出）；四个大 target 默认 rc=1，`--refine` 后 rc=0。spec/README/REPORT 同步 |
 
 ## 3 还缺的
 
@@ -49,15 +51,6 @@
   或从查询合成）。中高。
 - 建议：先 ARM（MIR 测试多、ABI 固定），再 PPC，再 Mips。
 
-### O2 upstream-source 没有 CI
-
-`import --all --check`（9/9）和 80 个测试只在本地跑。仓库没有
-`.github/workflows/`。
-
-- 成本：低。先跑 `pytest import/tests`（不需要 LLVM 构建）；`--check` 需要
-  `git show <pin>:<path>`，CI 里做一次浅 fetch 即可，或者把失败留成本地门。
-- 建议：先上 pytest 门，`--check` 单独一个 job（允许慢）。
-
 ### O3 “改 `.gisel` 之后”的回放流程不是命令
 
 规划 §7/§9 要求：改语料 → 重生成 `inc` → 对 frozen oracle 跑 G/U + 负控。
@@ -67,16 +60,6 @@
 - 成本：中。把 frozen `official.answers.jsonl` 当参照，跑新 `inc`，比较；
   九个 target 的 runner 都是现成的。
 - 建议：做成 `ab/replay-frozen.sh TARGET`，先在 RISC-V 上验证，再推广。
-
-### O4 `graph --check-closure` 默认不成立
-
-不带 `--refine` 时闭包违例 > 0（X86 277、AArch64 2,671、RISC-V 2,864、Wasm
-302）；`--refine` 后四个大 target 全 0（`REPORT-graph`）。所以“0 环”默认是
-“代表点商图上 0 环”，不是完整结论。
-
-- 成本：低（改默认值或只改文档）。
-- 建议：保持默认关闭，但把 `cycles=0` 的输出里强制打印“closure 未验证”；
-  或在 `--check-closure` 失败时 rc=1 成为默认。**这个口径要你拍板。**
 
 ### O5 `agree` 里含“谁都没答”
 
@@ -126,6 +109,6 @@ L1/L2 只看一遍 `-run-pass=legalizer`；L3 用真实 IR 覆盖了三个 targe
 | 级别 | 谁够得上 | 还差 |
 |---|---|---|
 | L4（内部权威） | x86 / aarch64 / riscv | O3（改语料后的 frozen 回放流程） |
-| L3 以下 | 其余六个 | O1（MIR/llc）、O2（上游 CI） |
+| L3 以下 | 其余六个 | O1（MIR/llc） |
 
 L4 是**分 target 授予**的，不是一个总开关；九个 target 共享的只有 L0/D/U-full。
