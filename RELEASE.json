@@ -1,7 +1,13 @@
 {
   "cases_sha256": {
     "aarch64.cases.jsonl": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98",
+    "arm.cases.jsonl": "9fcccfb5e8125c067c6a9367d5704aea9805ffe23c794d08ec6899e192c9a606",
+    "m68k.cases.jsonl": "e765e396ca57cd3f179bb3e44235705674e9f33cfa30ce9ac7dda23684be8e3f",
+    "mips.cases.jsonl": "93d6d3e60e6fa06419b8b38da8b687ce7cc20ca2fe6ce17cd710ad570f57959f",
+    "ppc.cases.jsonl": "675e59e9e632fa96e1bb02251e59c9f4438cbd3968c7d5f2ef3af4a74214ca83",
     "riscv.cases.jsonl": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6",
+    "spirv.cases.jsonl": "583af2c0019af248b597963119fcbbb0084046924a0f028e75b709127e559c53",
+    "wasm.cases.jsonl": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c",
     "x86.cases.jsonl": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
   },
   "cohort": "cohort-2026-11-13",
@@ -35,6 +41,11 @@
   },
   "nightly_graphs_sha256": {
     "aarch64-baseline.json": "07d3efcc2656063e476e3c34ae130928add96cabd245965c519187b4eb4f2a0c",
+    "arm-neon.json": "c514ce621a1fd7dea032c3d091c1865e7472084e9dd601b23353b5f378a7775a",
+    "m68k-default.json": "96e9c674b9e6c2b3fc184012b31ae02740e3045dc9c37f41af6cdac1f63ef3a5",
+    "mips32.json": "5be0baa93d8765b39e31aaf3d24b5b996688260ea538bbda6d86c747ce4457c6",
+    "ppc-default.json": "55c076ede21f77815b606a9b4904c4a61fa1afce4e6b9f4d5be97b4e7f94dfe1",
+    "wasm32.json": "8e01df0f4c6539ecd43deef9be0871380738becae1e790e1b2e50e447ff4ddef",
     "x86-C0.json": "fc556701d810659e549c8063c0ade8383107059c483152734d7de53b36ce6d18",
     "x86-C1.json": "e93383662816c4dd51c2b6e5744757d9b87cc5e7d5defc3653d82d0c61bae53b",
     "x86-C2.json": "cefe4ea1c77f83df76a2f5bc4c6c9cc87dca34c8abdcd5b8c13e4c105be119d3",
@@ -59,9 +70,9 @@
     }
   },
   "repos": {
-    "ab": "fa07dbc9ada6fa59870b10f1b925001d3231e57d",
-    "gisel": "4c7651341648e6d89434cf39cc81dcd537dae6f6",
-    "upstream_source": "b186b1149c0176e51b3bd59e6135ed142063c360"
+    "ab": "abd0eafe0ad166238b72cf1d86b180f8fb3a476d",
+    "gisel": "d6b4a8b72a3a599125c008f8d321afbc6a460db0",
+    "upstream_source": "6a6c73feb59136a83f70a786cb98150d59027c98"
   },
   "schema": 1,
   "version": "0.3.0"
