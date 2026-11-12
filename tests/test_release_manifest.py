@@ -77,6 +77,26 @@ class ReleaseManifest(unittest.TestCase):
             data = (CORPUS / name).read_bytes()
             self.assertEqual(hashlib.sha256(data).hexdigest(), want, name)
 
+    def test_hash_copies_match_the_artifact_manifests(self):
+        """RELEASE.json copies hashes; the artifact SHA files are the source.
+
+        A copy is allowed, but editing either side alone must fail here.
+        """
+        cases = GISEL / "tests" / "artifacts" / "cases" / "SHA256"
+        nightly = GISEL / "tests" / "artifacts" / "graph" / "nightly" / "SHA256"
+        for path, key in ((cases, "cases_sha256"),
+                          (nightly, "nightly_graphs_sha256")):
+            rows = {}
+            for line in path.read_text().splitlines():
+                digest, name = line.split()
+                rows[name] = digest
+            self.assertEqual(self.data[key], rows, str(path))
+
+        goldens = {}
+        for path in sorted((GISEL / "tests" / "artifacts" / "graph").glob("*.json")):
+            goldens[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.assertEqual(self.data["graph_goldens_sha256"], goldens)
+
     def test_the_golden_manifests_are_named(self):
         self.assertEqual(set(self.data["cases_sha256"]), {
             "x86.cases.jsonl", "aarch64.cases.jsonl", "riscv.cases.jsonl",
