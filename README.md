@@ -56,6 +56,15 @@ sets, and requires the same numbers as the committed official answers.  This
 is the gate to run after editing a `.gisel` file: `verify-evidence.sh` only
 proves the old artifacts did not change.  See `docs/REPLAY-FROZEN.md`.
 
+## Adoption branches
+
+The three L4 targets have fork branches that actually build from the gisel
+fragment (`explore/{x86,aarch64,riscv}-adopt` in `nodecoda/llvm-project`).
+Each one is backed by the same three checks: the built CodeGen library hash
+equals the MIR-L3 "swapped" hash, all 80,596 lit results are identical, and the
+frozen `G`/`U` replays disagree zero times.  Branch list, provenance hashes,
+the inc-generation policy and the rollback rule are in `docs/ADOPT.md`.
+
 ## Vertical slice
 
 `vertical.py` is the end-to-end slice for one target: G/U questions, both
