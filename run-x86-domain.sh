@@ -60,7 +60,10 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.official" \
 python3 "$ROOT/swap-source-ctor.py" apply \
   --target x86 --tree "$TREE" --inc "$INC"
 ninja -C "$BUILD" libLLVMX86CodeGen.so
-"$ROOT/build-runner.sh" "$TREE" "$BUILD" "$OUT/runner.ours" shipping
+# The tree is patched at this point, so the pin check would reject it.  The
+# official runner above was built on the restored tree; only this build skips.
+GIT_DSL_SKIP_PIN_CHECK=1 "$ROOT/build-runner.sh" "$TREE" "$BUILD" \
+  "$OUT/runner.ours" shipping
 python3 "$ROOT/run-queries.py" "$OUT/runner.ours" \
   "$OUT/queries.jsonl" "$OUT/ours.answers.jsonl" \
   --report "$OUT/ours.report.json"
@@ -68,3 +71,30 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.ours" \
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
   "$OUT/ours.answers.jsonl" --json \
   --expect-unanswerable "$EXPECTED_UNANSWERABLE" | tee "$OUT/diff.json"
+
+# All four configs are asked in one file, so there is no per-config diff to
+# report.  The summary keeps the same shape as the AArch64 / RISC-V domain
+# runners: totals only, `per_config` empty.
+python3 - "$OUT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+out = Path(sys.argv[1])
+d = json.loads((out / "diff.json").read_text())
+configs = {json.loads(line)["config"]
+           for line in (out / "queries.jsonl").read_text().splitlines()
+           if line.strip()}
+summary = {
+    "target": "x86",
+    "configs": len(configs),
+    "queries": d["ref"],
+    "agree": d["agree"],
+    "disagree": d["disagree"],
+    "unanswerable": d["unanswerable"],
+    "per_config": [],
+    "note": "x86 asks all configs in one query file; no per-config split",
+}
+(out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
+print("wrote", out / "summary.json")
+PY

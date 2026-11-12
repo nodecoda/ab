@@ -235,25 +235,26 @@
    "id": "U/aarch64",
    "direction": "U",
    "target": "aarch64",
-   "dir": "/tmp/u-run/a64d",
+   "dir": "/tmp/a64-vertical/u",
    "queries": {
-    "path": "/tmp/u-gen/a64d/queries.jsonl",
-    "sha256": "260728bb73cf4db308dea37970ede7b3a22cb2e4f6b1913721c280fa133b8fe5"
+    "path": "/tmp/u-gen/a64/queries.jsonl",
+    "sha256": "906b8b491557f08a8be478fce3ab9e1df89e61b8497a1ecb4044a1a2a0940c65"
    },
-   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl /tmp/u-run/a64d",
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64/queries.jsonl /tmp/a64-vertical/u --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "89d3fd10273e5f2de03c9b05d073b2910be30432f85942945254b170f63fe28c",
-    "official.answers.jsonl": "821d0237161e5a1144ed2a8c1174bb56a3e299c8b9c39fad11e1c428bb8bb305",
-    "ours.answers.jsonl": "821d0237161e5a1144ed2a8c1174bb56a3e299c8b9c39fad11e1c428bb8bb305",
+    "diff.json": "a8a6160fe3ee6069267311f7c3f0c93d11d9bb4b9f84ee4758bca237319e3ca3",
+    "official.answers.jsonl": "a0faa02f040f3de73169570a621cc5abc4309612aeed69512e11832eae6eea79",
+    "ours.answers.jsonl": "a0faa02f040f3de73169570a621cc5abc4309612aeed69512e11832eae6eea79",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 29561,
+    "agree": 29608,
     "disagree": 0,
     "unanswerable": 0,
-    "answered_equal": 29561
-   }
+    "answered_equal": 29608
+   },
+   "note": "Refreshed 2026-11-12 after oracle ac98717 (pad combos to the opcode type-slot width). The previous 29,561-query file predated that fix."
   },
   {
    "id": "U/riscv",
@@ -447,10 +448,10 @@
    "id": "U-neg/aarch64",
    "direction": "U-neg",
    "target": "aarch64",
-   "dir": "/tmp/u-run/a64d-neg",
-   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl /tmp/u-run/a64d-neg --drop-opcode G_ICMP",
+   "dir": "/tmp/a64-vertical/u-neg",
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64/queries.jsonl /tmp/a64-vertical/u-neg --drop-opcode G_ICMP",
    "artifacts": {
-    "diff.json": "2136a2a23aea2f0b95482cc0fcf525871727eed9228220127b73323d56c7d427",
+    "diff.json": "0ff489aca64cdff6ed1f32b7a5dc34978045a59795e17edad84ef9f0b1c29a30",
     "attribution.json": "441c66a71bd824f10d67423f16cfcede124445ba86b25c1e36283b82f2620c11"
    },
    "expect": {
@@ -459,7 +460,7 @@
      "G_ICMP"
     ],
     "unknown_keys": 0,
-    "answered_equal": 29345
+    "answered_equal": 29392
    },
    "observed_disagree": 216
   },

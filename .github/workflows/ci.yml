@@ -32,11 +32,13 @@ jobs:
       - name: frozen evidence still matches
         working-directory: ab
         run: VERIFY_FROZEN=1 ./verify-evidence.sh
-      - name: RISC-V vertical slice from frozen artifacts
+      - name: vertical slice from frozen artifacts
         working-directory: ab
         run: |
-          python3 riscv_vertical.py --out "$RUNNER_TEMP/no-live-artifacts" \
-            --verify-only --frozen
+          for target in riscv x86 aarch64; do
+            python3 vertical.py --target "$target" \
+              --out "$RUNNER_TEMP/no-live-artifacts-$target" --verify-only --frozen
+          done
       - name: shellcheck the harness entry points
         run: |
           sudo apt-get -qq update

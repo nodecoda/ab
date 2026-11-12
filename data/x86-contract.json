@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "target": "x86",
+  "comment": "Every count and hash here was recorded by `vertical.py --target x86 --record` at the snapshot below; `--verify-only` re-derives the comparison instead of trusting the summary.",
+  "snapshot": {
+    "tree_commit": "700e551714ccb7357a191fd41837ff1b4784abf2",
+    "gisel_commit": "6db213d5f47764af3ffc49f4db07d73c05029ac0",
+    "pin": "9bfc850b9940566bef17a34601826775349ba0e6 + 6 patches",
+    "inc_sha256": "38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442",
+    "corpus_sha256": "934a935659e7aff3b0d8cec3a33b013846a12683d776cb4d7156507ef2b78f70",
+    "features_sha256": "0e4fb878c003b3bf8fe34cfcb88464df6b574079dc7dd9c98453e9db28cf9dec"
+  },
+  "g": {
+    "queries": 3014,
+    "queries_sha256": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6",
+    "agree": 3014,
+    "disagree": 0,
+    "unanswerable": 0,
+    "missing_ref": 0,
+    "missing_ours": 0,
+    "errors": 0,
+    "answers_sha256": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a"
+  },
+  "u": {
+    "queries": 10027,
+    "queries_sha256": "bb5d041ab5c0b4a3c847fc82fd9f35b2dcdea87e8aa20e009621229552bfe548",
+    "agree": 10027,
+    "disagree": 0,
+    "unanswerable": 0,
+    "missing_ref": 0,
+    "missing_ours": 0,
+    "errors": 0,
+    "answers_sha256": "ead0fef3cfb6b62d75bd3c5825cc68d370194b64cfdbb2a6129b2c164153da78",
+    "attribution_sha256": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
+  },
+  "u_neg": {
+    "opcode": "G_SUB",
+    "disagree": 164,
+    "rulesets": {
+      "G_ADD": 82,
+      "G_SUB": 82
+    },
+    "unknown_keys": 0,
+    "attribution_sha256": "fe8a7c32e4ae7cdcf7bf85446aef4316bb260163db204b8e24fb32c69b8ac44e"
+  },
+  "g_neg": {
+    "opcode": "G_ADD",
+    "disagree": 127,
+    "rulesets": {
+      "X_G_ADD": 127
+    },
+    "unknown_keys": 0,
+    "attribution_sha256": "88c5f1cb98b6b54b74d7f59e9ea31206c87800ca1c911c5057435d424654c18e"
+  },
+  "domain": {
+    "configs": 4,
+    "per_config": null,
+    "queries": 91340,
+    "agree": 91340,
+    "disagree": 0,
+    "unanswerable": 648,
+    "unanswerable_map": {},
+    "summary_sha256": "96e2fae24046fdba8beb4ab6afd47708f18bc2aeea9bd9758214e6ef470d5288"
+  },
+  "mir_l1": {
+    "all_run_lines": 159,
+    "runs": 140,
+    "same": 140,
+    "both_abort": 0,
+    "diff": 0,
+    "timeout": 0,
+    "unsupported_run": 0,
+    "out_of_layer": 19,
+    "abort0_compared": 0
+  },
+  "mir_l2": {
+    "all_run_lines": 2390,
+    "runs": 2390,
+    "same": 2374,
+    "both_abort": 16,
+    "diff": 0,
+    "timeout": 0,
+    "unsupported_run": 0,
+    "out_of_layer": 0,
+    "abort0_compared": 1558
+  },
+  "l3": {
+    "discovered": 0,
+    "passed": 0,
+    "xfail": 0,
+    "failed": 0
+  }
+}

@@ -56,28 +56,32 @@ sets, and requires the same numbers as the committed official answers.  This
 is the gate to run after editing a `.gisel` file: `verify-evidence.sh` only
 proves the old artifacts did not change.  See `docs/REPLAY-FROZEN.md`.
 
-## RISC-V vertical slice
+## Vertical slice
 
-`riscv_vertical.py` is the first end-to-end target: G/U questions, both
-negative controls, the 8-config domain, MIR L1/L2, and optionally L3, all
-checked against `data/riscv-contract.json`.
+`vertical.py` is the end-to-end slice for one target: G/U questions, both
+negative controls, the full domain, MIR L1/L2, and optionally L3, all checked
+against `data/<target>-contract.json`.
 
 ```sh
-python3 riscv_vertical.py --tree TREE --build BUILD --out /tmp/rv [--l3]
-python3 riscv_vertical.py --out /tmp/rv --verify-only [--l3]
-python3 riscv_vertical.py --out /tmp/rv --verify-only --frozen
+python3 vertical.py --target riscv   --tree TREE --build BUILD --out /tmp/rv [--l3]
+python3 vertical.py --target x86     --out /tmp/x --verify-only [--l3]
+python3 vertical.py --target aarch64 --out /tmp/a --verify-only --frozen
 ```
+
+`riscv_vertical.py` stays as a thin shim over the same code, so the older
+invocations keep working.  `--record` writes the contract from the run that
+just finished; it is for adding a target, not for refreshing one.
 
 `VERIFY_FROZEN=1 ./verify-evidence.sh` reads only the committed `oracle/`
 copies, so CI proves the repo alone replays the recorded evidence.
 
 `--frozen` rebuilds the artifact layout from the committed copies under
 `oracle/` (G/U and both negative controls come from `oracle/<id>/`, the domain
-summary and the two MIR reports from `oracle/riscv-vertical/`). It needs no
-build tree and no `/tmp` state, so CI runs it on every push
-(`.github/workflows/ci.yml`).
+summary and the two MIR reports from `oracle/<target>-vertical/`). It needs no
+build tree and no `/tmp` state, so CI runs it for all three targets on every
+push (`.github/workflows/ci.yml`).
 
-Evidence: `docs/EVIDENCE-riscv.md`.
+Evidence: `docs/EVIDENCE-riscv.md`, `docs/EVIDENCE-domain.md`.
 
 ## MIR/llc regression
 

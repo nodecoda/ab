@@ -50,13 +50,27 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 
 按“价值 / 成本”排序。
 
-### O7 只有 RISC-V 有一条龙的 vertical slice
+### O7 一条龙的 vertical slice（已关闭）
 
-`riscv_vertical.py` 把 G/U/负控/D/MIR/证据串成一条命令；x86、aarch64 没有。
-这是可用性缺口，不是证据缺口。
+`vertical.py --target {riscv,x86,aarch64}` 把 G/U/负控/domain/MIR L1/L2
+串成一条命令，每一步都对 `data/<target>-contract.json` 复核。x86 与
+aarch64 的 contract 与冻结副本（`oracle/<target>-vertical/`）已提交，
+CI 用 `--verify-only --frozen` 在没有构建树和 `/tmp` 的机器上重放。
 
-- 成本：低（复用脚本，参数化 target）。
-- 建议：直接做；现在 MIR 层九个 target 已齐，一条龙脚本不再受 O1 阻塞。
+AArch64 速记：G 12,559 / U 29,608 / domain 8,432,640（双端断言 351,504）/
+L1 214 runs / L2 8,576 runs，全部 disagree 0。负控 G_ZEXT 315、G_ICMP 216。
+
+- 旧 `riscv_vertical.py` 保留为薄壳，命令不变。
+
+### O8 AArch64 的 U 题面在 universe 修复之前冻结（已刷新）
+
+`oracle ac98717` 修掉了 3-slot opcode 的短 types 组合（ArrayRef 越界），
+但 `oracle/U/aarch64` 还是修复前的 29,561 条。2026-11-12 重新生成
+（29,608 条，A/B agree 29,608 / disagree 0），并同步刷新 `U-neg/aarch64`。
+
+其余 target 的 U 冻结物是否早于 `ac98717` 没有逐一下结论；按“只跟 pin”的
+政策，这属于证据迁移，动哪个 target 就在哪次改动里一并刷新并在 commit
+信息里写明。
 
 ### O9 多步 / 动态 legalize 的等价性没有证明
 
