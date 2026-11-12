@@ -407,6 +407,28 @@ def _pin_line() -> str:
     return "%s + %d patches" % (doc.get("commit", "unknown"), len(patches))
 
 
+def config_check(target: str, spec: dict, build: Path, out: Path) -> None:
+    """Prove every config name has a realizable llc spelling, before MIR.
+
+    `mir-config-check.py` had no caller: the mapping from a gisel config to
+    `-mattr` was documented but never exercised.  Run it as part of the slice,
+    with its own negative control (`--mutate` must make the check fail), so a
+    config that llc no longer accepts stops the run instead of surfacing as a
+    mysterious MIR timeout.
+    """
+    llc = build / "bin" / "llc"
+    if not llc.exists():
+        raise SystemExit("mir-config-check needs %s" % llc)
+    features = GISEL / "tests" / "cases" / spec["features"]
+    names = sorted(json.loads(features.read_text()))
+    base = [sys.executable, ROOT / "mir-config-check.py", "--target", target,
+            "--features", str(features), "--llc", str(llc), "--json"]
+    run_cmd(base, log=out / "mir-config-check.json")
+    if names:
+        run_cmd(base + ["--mutate", names[0]],
+                log=out / "mir-config-check-mutate.json")
+
+
 def build_contract(target: str, out: Path, u_queries: Path, tree: Path) -> dict:
     """The contract a `--record` run just earned."""
     g = load(out / "g" / "diff.json")
@@ -573,6 +595,7 @@ def main(argv=None, default_target="riscv"):
     run_cmd(leg_command("run-g-negative.sh", args.target, spec["g_neg"],
                         out / "g-neg", tree=tree, build=build))
     run_cmd([ROOT / spec["domain"], tree, build, inc, out / "domain"])
+    config_check(args.target, spec, build, out)
 
     l1_timeouts = contract_pin(args.expect_l1_timeouts, c, "mir_l1",
                                "timeout")
