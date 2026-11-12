@@ -213,3 +213,32 @@ targets[*].runs 之和 == totals.runs
 
 `adopt-check.sh` 会 `git fetch --depth=1` 三个采用分支，比较分支内 `.inc` 的
 sha 与 gisel 产物；这是唯一需要网络的证据检查。
+
+## 11 Cohort 记录（`VERIFICATION.json`）
+
+`RELEASE.json` 是可生成的清单：它只写提交、产物 SHA 和 gate 命令，且在
+manifest commit 之后冻结。`VERIFICATION.json` 是它的子提交，写“这些门在
+tag 上跑过没有”。
+
+必填字段：
+
+| 字段 | 含义 |
+|---|---|
+| `schema` | 2 |
+| `cohort` / `tag` | 与 `RELEASE.json.cohort` 相同，不带 `v` 前缀 |
+| `manifest_commit` | 最后一次修改 `RELEASE.json` 的提交 |
+| `commits` | tag 指向的三仓提交；`commits.ab == manifest_commit` |
+| `gate_commits` | gate 实际运行的提交；当前与 `commits` 相同 |
+| `gates[]` | `name` / `manifest_command` / `repo` / `command` / `rc` / `evidence` / `duration_s` / `inputs` 的 blob 映射 / `fingerprint` |
+| `online_gates[]` | 需要网络的门；`pass` / `skipped` / `unknown`，不许把 `unknown` 记成 `pass` |
+| `ci` | 每个 workflow 的 run id 与 conclusion；`publish.runs` 必须为 0 |
+| `history[]` | 被取代的旧记录；旧 schema 原样保留 |
+
+规则：
+
+- `fingerprint` 是每个输入文件 git blob id 的有序拼接再 sha256；提交记录
+  不改变它，`cohort.py check` 因此能在不重跑 gate 的情况下报 `STALE`。
+- 记录提交是 tag 的子提交；`test_verification` 在 manifest commit 上 skip，
+  在记录提交上运行。
+- tag 不重写。CI 红在 harness 自身时，修一个子提交，把绿 run 记进 `ci`，
+  并在 `ci_notes` 写明哪条红 run、为什么。

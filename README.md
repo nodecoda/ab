@@ -36,6 +36,28 @@ python3 ab.py run --target x86-ctor \
 without the ledger: official from the pinned constructor, ours after swapping
 the body, then `diff.json`.
 
+## Cohort
+
+`cohort.py` turns a release cut into four verbs:
+
+```sh
+python3 cohort.py plan                 # gates, repos, inputs, online gates
+python3 cohort.py tag cohort-YYYY-MM-DD-rN
+python3 cohort.py verify --clone /tmp/cohort --jobs 2
+python3 cohort.py check [--worktree]   # FRESH / STALE per gate, no re-run
+```
+
+`RELEASE.json` names the commits and gate commands.  `cohort.py` adds the
+repo and input files for each gate and stores a git-blob fingerprint in
+`VERIFICATION.json`.  `check` compares the record with the tagged commits;
+`check --worktree` compares it with what is on disk now, which is how a
+changed corpus shows up before anyone tags again.
+
+The record is a child of the tag: the tag commit has no r3 record yet, so
+`test_verification` skips there and runs on the record commit.  Do not edit
+`RELEASE.json` after its manifest commit; the record shape is in
+`CONTRACTS.md` §11.
+
 ## Full domain
 
 `run-domain.sh TARGET TREE BUILD INC OUT` asks every point the declared value
