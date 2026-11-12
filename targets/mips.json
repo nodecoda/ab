@@ -15,5 +15,6 @@
     "mode": "dual"
   },
   "features": "tests/cases/mips-features.json",
-  "query_count": 1656
+  "query_count": 1656,
+  "mir_strategy": "swap-source"
 }

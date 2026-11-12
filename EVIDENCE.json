@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "generated": "2026-11-11",
- "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte.",
+ "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1).",
  "entries": [
   {
    "id": "G/x86",
@@ -1549,6 +1549,206 @@
      "tests_compared": 80596,
      "identical": true
     }
+   }
+  },
+  {
+   "id": "MIR-L1/arm",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "arm",
+   "dir": "/tmp/mir-arm2",
+   "command": "python3 mir-replay.py --layer upstream --target arm --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-arm2 --prepare --json",
+   "artifacts": {
+    "mir-report.json": "2ac11def243455fe9da8e584c6bf98ed9b34de25d8f771e2dc98dd6c7a12c206",
+    "provenance.json": "0ff56b32ad25944010c47fa85765a5f9006fad79c49715d95b260fc8ef55e7d3"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 43,
+     "runs": 43,
+     "same": 43,
+     "both_abort": 0,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 0
+    },
+    "mir_targets": {
+     "arm": {
+      "files": 16,
+      "all_run_lines": 43,
+      "runs": 43,
+      "same": 43,
+      "both_abort": 0,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L1/arm-neg",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "arm",
+   "dir": "/tmp/mir-arm-neg2",
+   "command": "python3 mir-replay.py --layer upstream --target arm --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-arm-neg2 --prepare --negative-control G_MERGE_VALUES --json",
+   "artifacts": {
+    "mir-report.json": "495b0edcf20a558c36cb4bd86c4c0cecb947fedbb816bf01716e20f05e54123a",
+    "provenance.json": "a510c0e3e3bd41b97ef0cc67026deb615145040a42f43fc67b180565fd0cbe68"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 43,
+     "runs": 43,
+     "same": 39,
+     "both_abort": 0,
+     "diff": 4,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 0
+    },
+    "mir_targets": {
+     "arm": {
+      "files": 16,
+      "all_run_lines": 43,
+      "runs": 43,
+      "same": 39,
+      "both_abort": 0,
+      "diff": 4,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L1/ppc",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "ppc",
+   "dir": "/tmp/mir-ppc",
+   "command": "python3 mir-replay.py --layer upstream --target ppc --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-ppc --prepare --json",
+   "artifacts": {
+    "mir-report.json": "8edf18eda55d8df456234e4055bf96e33e3bbd4027ba36ec588082bf01311d14",
+    "provenance.json": "3f2f639be509f432e4db06c0a12cf8652ae15563677f7beaf42ff4184a3840a5"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 1,
+     "runs": 1,
+     "same": 1,
+     "both_abort": 0,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 0
+    },
+    "mir_targets": {
+     "ppc": {
+      "files": 1,
+      "all_run_lines": 1,
+      "runs": 1,
+      "same": 1,
+      "both_abort": 0,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L1/mips",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "mips",
+   "dir": "/tmp/mir-mips",
+   "command": "python3 mir-replay.py --layer upstream --target mips --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-mips --prepare --json",
+   "artifacts": {
+    "mir-report.json": "7637b21aadfe6ef88bf52fb9d17b0a27b6a0b59af1e7f7060b7b13546a5592b7",
+    "provenance.json": "bc0c79b85cc33c532dacd0cc67f30f18795460e800d23805350a56a7ecbdfec9"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 77,
+     "runs": 72,
+     "same": 72,
+     "both_abort": 0,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 5,
+     "abort0_compared": 0
+    },
+    "mir_targets": {
+     "mips": {
+      "files": 63,
+      "all_run_lines": 77,
+      "runs": 72,
+      "same": 72,
+      "both_abort": 0,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 5,
+      "abort0_compared": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L1/mips-neg",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "mips",
+   "dir": "/tmp/mir-mips-neg",
+   "command": "python3 mir-replay.py --layer upstream --target mips --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-mips-neg --prepare --negative-control G_ADD --json",
+   "artifacts": {
+    "mir-report.json": "bcf72826d71e0e8fef48299a7efea9316d8293350c2fb0add79426886e8a5a7b",
+    "provenance.json": "387d1b203d5c49f7574e63d28392d2558ddcad50f1030c1a57de06119202256a"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 77,
+     "runs": 72,
+     "same": 57,
+     "both_abort": 0,
+     "diff": 15,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 5,
+     "abort0_compared": 0
+    },
+    "mir_targets": {
+     "mips": {
+      "files": 63,
+      "all_run_lines": 77,
+      "runs": 72,
+      "same": 57,
+      "both_abort": 0,
+      "diff": 15,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 5,
+      "abort0_compared": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
    }
   }
  ],

@@ -1,5 +1,6 @@
 """MIR library plumbing: target specs, snapshot/restore, lock, llc runner."""
 
+import importlib.util
 import os
 import subprocess
 import sys
@@ -24,6 +25,16 @@ class TargetSpecs(unittest.TestCase):
             self.assertEqual(spec["name"], name)
             self.assertTrue(spec["library"].endswith("CodeGen.so.24.0git"))
             self.assertIn(name, mir_libs.TEST_DIR)
+
+    def test_every_swappable_target_has_a_constructor_spec(self):
+        # SWAPPABLE drives mir-replay --target; the swap script is the other
+        # half of the same contract.  A target in one and not the other fails
+        # at the end of a rebuild instead of here.
+        spec = importlib.util.spec_from_file_location(
+            "swap_source_ctor", ROOT / "swap-source-ctor.py")
+        swap = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(swap)
+        self.assertEqual(set(mir_libs.SWAPPABLE), set(swap.TARGETS))
 
     def test_unknown_target_is_an_error(self):
         with self.assertRaises(mir_libs.MirError):

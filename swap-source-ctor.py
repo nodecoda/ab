@@ -49,6 +49,61 @@ TARGETS = {
         "inc": "RISCVLegalizerInfo.inc",
         "subtarget": "RISCVSubtarget",
     },
+    "arm": {
+        "source": "llvm/lib/Target/ARM/ARMLegalizerInfo.cpp",
+        "ctor": "ARMLegalizerInfo::ARMLegalizerInfo(const ARMSubtarget &ST)",
+        "inc": "ARMLegalizerInfo.inc",
+        "subtarget": "ARMSubtarget",
+        # Thumb1 is not supported, and upstream says so by returning before
+        # any rule is installed.  That is structure, not a rule: keep it so
+        # the A/B compares rule tables rather than "empty vs populated".
+        "body": """\
+{
+  using namespace TargetOpcode;
+  if (ST.isThumb1Only()) {
+    verify(*ST.getInstrInfo());
+    return;
+  }
+  // The FCmp libcall tables are data for legalizeCustom, not rules.  The
+  // importer lists them as skipped, so the swap has to keep the call.
+  if (ST.useSoftFloat() || !ST.hasVFP2Base()) {
+    if (AEABI(ST))
+      setFCmpLibcallsAEABI();
+    else
+      setFCmpLibcallsGNU();
+  }
+#include "__INC__"
+  verify(*ST.getInstrInfo());
+}
+""",
+    },
+    "ppc": {
+        "source": "llvm/lib/Target/PowerPC/GISel/PPCLegalizerInfo.cpp",
+        "ctor": "PPCLegalizerInfo::PPCLegalizerInfo(const PPCSubtarget &ST)",
+        "inc": "PowerPCLegalizerInfo.inc",
+        "subtarget": "PPCSubtarget",
+        # Upstream does not call verify() here, and the rules take no
+        # subtarget input at all.
+        "body": """\
+{
+  using namespace TargetOpcode;
+#include "__INC__"
+}
+""",
+    },
+    "mips": {
+        "source": "llvm/lib/Target/Mips/MipsLegalizerInfo.cpp",
+        "ctor": "MipsLegalizerInfo::MipsLegalizerInfo(const MipsSubtarget &ST)",
+        "inc": "MipsLegalizerInfo.inc",
+        "subtarget": "MipsSubtarget",
+        "body": """\
+{
+  using namespace TargetOpcode;
+#include "__INC__"
+  verify(*ST.getInstrInfo());
+}
+""",
+    },
 }
 
 BODY = """\

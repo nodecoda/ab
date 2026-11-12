@@ -15,5 +15,6 @@
     "mode": "dual"
   },
   "features": "tests/cases/ppc-features.json",
-  "query_count": 94
+  "query_count": 94,
+  "mir_strategy": "swap-source"
 }

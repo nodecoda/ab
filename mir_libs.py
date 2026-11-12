@@ -45,7 +45,7 @@ TEST_DIR = {
 }
 
 # Targets whose constructor body can be replaced in the source tree today.
-SWAPPABLE = ("x86", "aarch64", "riscv")
+SWAPPABLE = ("x86", "aarch64", "riscv", "arm", "ppc", "mips")
 
 
 class MirError(RuntimeError):
@@ -192,7 +192,9 @@ def prepare_target(target: str, tree: Path, build: Path, out: Path,
 
     return {
         "adapter": spec["name"],
-        "strategy": spec["strategy"],
+        # The target file may describe the L0 runner strategy;  the MIR layer
+        # records the constructor swap it actually used.
+        "strategy": spec.get("mir_strategy", spec["strategy"]),
         "inc": str(inc),
         "inc_sha256": inc_sha,
         "mutate_opcode": mutate_opcode,

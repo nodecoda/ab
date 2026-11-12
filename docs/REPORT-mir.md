@@ -414,13 +414,44 @@ include 它，`ninja` 也不知道该重编。
 那一轮 x86 确实换上了；旧版 §6.1 抄成 `--build` 是文档错误，不是历史运行
 方式。`ab.py` 的 `swap_source` 一直走 `--tree`，L1/L2 的 x86 证据不受影响。
 
+### 6.6 2026-11-12：ARM / PPC / Mips 的 L1（新增）
+
+`swap-source-ctor.py` 增加了三个构造函数替换形态，`mir_libs.SWAPPABLE` 从
+三个扩到六个。命令与 x86 相同：
+
+```sh
+python3 mir-replay.py --layer upstream --target arm \
+  --tree /home/ubuntu/llvm/trees/explore \
+  --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-arm2 --prepare --json
+# rc=0, 13 s; official lib 45f4737b…, ours f47cf316…
+```
+
+| target | files | runs | same | diff | 负控 |
+|---|---:|---:|---:|---:|---|
+| ARM | 16 | 43 | 43 | 0 | `G_MERGE_VALUES` → 4 diff |
+| Mips | 63 | 72 | 72 | 0 | `G_ADD` → 15 diff |
+| PPC | 1 | 1 | 1 | 0 | `G_ADD` → **0 diff（未被抓到）** |
+
+ARM 的构造函数有两段不是规则、但影响 legalize 的语句：Thumb1 提前返回，和
+soft-float 分支里的 `setFCmpLibcallsAEABI/GNU`（importer 已标记为 skipped 的
+数据表）。替换体保留这两段；第一版没保留，`arm-legalize-fp.mir` 的 4 条
+soft-float run 全部 SIGABRT（`FCmp32Libcalls` 越界断言），修完才 43/43。
+
+PPC 的唯一 MIR 文件 `legalize-ret.mir` 只有 COPY/RET，没有 generic 指令，
+所以 1/1 same 是**名义上的**，负控抓不到。要给 PPC 真实覆盖，得把
+`data/mir-configs.json` 扩到 ppc 并走 L2（从查询合成 MIR）。
+
+五个新条目已进 `EVIDENCE.json`（`MIR-L1/arm`、`MIR-L1/arm-neg`、
+`MIR-L1/ppc`、`MIR-L1/mips`、`MIR-L1/mips-neg`）；`VERIFY_FROZEN=1
+./verify-evidence.sh` 现在是 64/64。
+
 ## 7 未覆盖
 
 - **多步 legalize 与 result 层面的等价性**：L1/L2 只看
   `-run-pass=legalizer` 的输出文本；L3 用 `check-llvm` 补了“真实 IR 的下游
   可观测结果”，但仍不是任意 IR 上的语义证明。
-- **非 `x86/aarch64/riscv` 的 target**：`mir_libs.SWAPPABLE` 与 L3 组合轮都只有
-  这三个（构造函数可替换）。ARM/MIPS/PPC/M68k/WebAssembly/SPIR-V 只有 L0 适配器。
+- **MIR 覆盖**：L1 六个（x86/aarch64/riscv/arm/mips，PPC 名义 1 条）；L2/L3 仍
+  只有 x86/aarch64/riscv。M68k/WebAssembly/SPIR-V 只有 L0 适配器。
 - **`-mtriple` 之外的 config 轴**：回放用的是 MIR 文件自带的
   `-mtriple`/`-mattr`；没有按 gisel 的配置矩阵重跑 L1。
 
@@ -428,7 +459,7 @@ include 它，`ninja` 也不知道该重编。
 
 ```sh
 python3 -m pytest -q                            # ab: 127 tests
-cd /home/ubuntu/llvm/gisel && python3 -m unittest discover -q -s tests  # 243 tests
+cd /home/ubuntu/llvm/gisel && python3 -m unittest discover -q -s tests  # 246 tests
 ```
 
 产物：

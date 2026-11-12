@@ -15,5 +15,6 @@
     "mode": "dual"
   },
   "features": "tests/cases/arm-features.json",
-  "query_count": 1614
+  "query_count": 1614,
+  "mir_strategy": "swap-source"
 }
