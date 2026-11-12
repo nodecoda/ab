@@ -65,7 +65,26 @@ x86 实测：`G` 闭包 3,370 个状态，`D` 闭包 92,132 个，交集只有 1
   用 `--allow-ref-asserts 1696` 钉住；数变了就失败。
 - **stuck = 0**：没有“变异没改变类型”的状态，所以循环不会原地打转。
 
-### 3.3 并集
+### 3.3 其余六个 target（同样两个种子）
+
+| target | G 种子 | G 新增 | G 总计 | D 种子 | D 新增 | D 总计 | 轮数 G/D | 双端断言 G/D | 单边 | disagree |
+|---|---:|---:|---:|---:|---:|---:|:-:|---:|---:|---:|
+| arm | 1,614 | 11 | 1,625 | 9,296 | 0 | 9,296 | 2/1 | 0 / 0 | 0 | **0** |
+| mips | 1,656 | 0 | 1,656 | 18,745 | 0 | 18,745 | 1/1 | 0 / 0 | 9 | **0** |
+| ppc | 94 | 1 | 95 | 1,005 | 0 | 1,005 | 2/1 | 1 / 3 | 0 | **0** |
+| m68k | 35 | 2 | 37 | 112 | 0 | 112 | 2/1 | 0 / 0 | 0 | **0** |
+| wasm | 894 | 150 | 1,044 | 11,996 | 24 | 12,020 | 3/2 | 0 / 132 | 0 | **0** |
+| spirv | 5,689 | 259 | 5,948 | 3,472,080 | 432 | 3,472,512 | 2/2 | 8 / 900 | 0 | **0** |
+
+- `mips` 的 9 条单边断言是冻结 `G` 证据里已有的那一类（`G_LOAD` 值类型为
+  `s64`/`s33`/`s63`、mem 为 `s32`/align 8），`--allow-ref-asserts 9` 与原证据同数。
+- 六个 target 的 `D` 种子由 `run-domain.sh` 同一条路径生成（`gisel domain` 逐配置），
+  条数与 `data/domain.json` 的钉数逐一相等；`domain` 打印的 “dropped ill-formed”
+  是生成期就丢掉的点，不进题面。
+- 六个 target 的 G/D 并集没有单独量（需要两侧 key 拼写的交集）；三个 L4 target
+  的并集在 §3.4。
+
+### 3.4 并集（三个 L4 target）
 
 | target | G | D | 交集 | 并集 |
 |---|---:|---:|---:|---:|
@@ -73,7 +92,10 @@ x86 实测：`G` 闭包 3,370 个状态，`D` 闭包 92,132 个，交集只有 1
 | aarch64 | 15,386 | 944,069 | 704 | **958,751** |
 | riscv | 6,347 | 254,065 | 256 | **260,156** |
 
-并集就是“这次实测覆盖的循环状态集”。三个 target 的并集上，disagree 全 0。
+并集就是这三个 target 实测覆盖的循环状态集，disagree 全 0。
+
+九个 target 合起来：`G` 种子 31,641 条、新增 3,867 条；`D` 种子 4,795,281 条、
+新增 8,675 条。全部 0 disagree、0 stuck。
 
 ## 4 复现
 
@@ -102,6 +124,24 @@ seed D  x86 9e4324a2e9bfff09… aarch64 8f03a48d309b15ad… riscv a0fbcbb43829f2
 ```
 
 运行时间：x86 11 s（D）/ 0.5 s（G），riscv 34 s / 6 s，aarch64 2m23s / 2 s。
+
+其余六个 target（2026-11-12，同一棵树，`build-<t>-runner.sh` 生成 runner）：
+
+```text
+arm    runner.official 0958b8aaad99d46e…  runner.ours c02249bd4c55a756…
+mips   runner.official b0db6d254e24644c…  runner.ours 615bbe40d252834e…
+ppc    runner.official bab6bfea592346de…  runner.ours 3c61baab06760058…
+m68k   runner.official 5345edc062c99761…  runner.ours 9463fc8d0daef646…
+wasm   runner.official 801c6eca8b5bea4b…  runner.ours 4d5434b92b11b704…
+spirv  runner.official 530123a4c034852f…  runner.ours 9b2b1bc42f18988b…
+
+seed G  arm 9fcccfb5e8125c06… mips 8405f772d77de0c7… ppc 675e59e9e632fa96…
+        m68k e765e396ca57cd3f… wasm 3442ddeedad10e38… spirv 583af2c0019af248…
+seed D  arm b25d2ecca6dfa625… mips cbe4901993c1a47d… ppc 7941062a8667ef7f…
+        m68k 27358b87337549d4… wasm 5f1449f30ab09e1e… spirv b7a2f00906eef8bf…
+```
+
+spirv 的 `D` 种子 3,472,080 条，一轮 ~2 分钟；六 target 合计约 9 分钟。
 `closure.py` 的退出码：0 = 全部一致且钉数匹配，1 = 有分歧或钉数不匹配，2 = 用法/IO。
 
 ## 5 证明了什么，没证明什么
