@@ -43,6 +43,7 @@ L0/D/U-full。
 | C6 | 改 `.gisel` 后没有 frozen 回放命令（原 O3） | `replay-frozen.py`：九 target × G/U 共 18 个方向逐条一致；见 `docs/REPLAY-FROZEN.md` |
 | C7 | `agree` 把“谁都没答”算成一致 | 对外报 `answered_equal`；U-full 表加列（AArch64 3,475,458 → 3,440,142）；`EVIDENCE.json` 的 28 个答案类条目钉住该字段 |
 | C8 | U-full 的展开题面没有冻结，容易被读成丢文件 | `verify-evidence.sh` 在跑 U-full 时打印 NOTE：只冻结 universe + expand 命令，展开文件按需生成 |
+| C9 | `run-x86-end-to-end.sh` 在打补丁后建 ours runner，同样被 `check-pin.sh` 拒绝 | ours 的 build 设 `GIT_DSL_SKIP_PIN_CHECK=1`；official build 仍在还原树上校验。实测整条脚本 rc=0、3,014 条 agree |
 
 ## 3 还缺的
 

@@ -51,7 +51,10 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.official" \
 python3 "$ROOT/swap-source-ctor.py" apply \
   --target x86 --tree "$TREE" --inc "$INC"
 ninja -C "$BUILD" libLLVMX86CodeGen.so
-"$ROOT/build-runner.sh" "$TREE" "$BUILD" "$OUT/runner.ours" shipping
+# The tree is patched here, so the content pin check would reject our own
+# include.  The official build above ran it on the restored text.
+GIT_DSL_SKIP_PIN_CHECK=1 "$ROOT/build-runner.sh" "$TREE" "$BUILD" \
+  "$OUT/runner.ours" shipping
 python3 "$ROOT/run-queries.py" "$OUT/runner.ours" \
   "$OUT/queries.jsonl" "$OUT/ours.answers.jsonl"
 
