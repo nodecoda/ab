@@ -24,6 +24,14 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 3014
+   },
+   "snapshot": {
+    "corpus": "X86LegalizerInfo.gisel",
+    "corpus_sha256": "934a935659e7aff3b0d8cec3a33b013846a12683d776cb4d7156507ef2b78f70",
+    "inc": "x86.inc",
+    "inc_sha256": "38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442",
+    "features": "x86-features.json",
+    "features_sha256": "0e4fb878c003b3bf8fe34cfcb88464df6b574079dc7dd9c98453e9db28cf9dec"
    }
   },
   {
@@ -47,6 +55,14 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 12559
+   },
+   "snapshot": {
+    "corpus": "AArch64LegalizerInfo.gisel",
+    "corpus_sha256": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
+    "inc": "aarch64.inc",
+    "inc_sha256": "0f6dcf0a6b91f105fdea64dcc8f18741f50b2e39fcc26b257cf9ad47ec5e669b",
+    "features": "features.json",
+    "features_sha256": "6e5257466f1bc03ef1592fa4c3d43fb0d41494436b073f8c74720f814fe71bf6"
    }
   },
   {
@@ -70,6 +86,14 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 6086
+   },
+   "snapshot": {
+    "corpus": "RISCVLegalizerInfo.gisel",
+    "corpus_sha256": "3293f26167ee694b688297852dea3abe3305179b9e1baf1bb2d050991d12dd33",
+    "inc": "riscv.inc",
+    "inc_sha256": "fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06",
+    "features": "riscv-features.json",
+    "features_sha256": "38967ab10a020b3c69c4fa4940b257f248588419b16a507dc1317c6398075ecf"
    }
   },
   {
@@ -229,6 +253,14 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 10027
+   },
+   "snapshot": {
+    "corpus": "X86LegalizerInfo.gisel",
+    "corpus_sha256": "934a935659e7aff3b0d8cec3a33b013846a12683d776cb4d7156507ef2b78f70",
+    "inc": "x86.inc",
+    "inc_sha256": "38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442",
+    "features": "x86-features.json",
+    "features_sha256": "0e4fb878c003b3bf8fe34cfcb88464df6b574079dc7dd9c98453e9db28cf9dec"
    }
   },
   {
@@ -254,7 +286,15 @@
     "unanswerable": 0,
     "answered_equal": 29608
    },
-   "note": "Refreshed 2026-11-12 after oracle ac98717 (pad combos to the opcode type-slot width). The previous 29,561-query file predated that fix."
+   "note": "Refreshed 2026-11-12 after oracle ac98717 (pad combos to the opcode type-slot width). The previous 29,561-query file predated that fix.",
+   "snapshot": {
+    "corpus": "AArch64LegalizerInfo.gisel",
+    "corpus_sha256": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
+    "inc": "aarch64.inc",
+    "inc_sha256": "0f6dcf0a6b91f105fdea64dcc8f18741f50b2e39fcc26b257cf9ad47ec5e669b",
+    "features": "features.json",
+    "features_sha256": "6e5257466f1bc03ef1592fa4c3d43fb0d41494436b073f8c74720f814fe71bf6"
+   }
   },
   {
    "id": "U/riscv",
@@ -279,7 +319,15 @@
     "unanswerable": 0,
     "answered_equal": 20445
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a (universe padding fix): same 20,445 queries, 240 sampled points re-drawn from the corrected universe, A/B agree 20,445 / disagree 0."
+   "note": "Refreshed 2026-11-12 with tool 513201a (universe padding fix): same 20,445 queries, 240 sampled points re-drawn from the corrected universe, A/B agree 20,445 / disagree 0.",
+   "snapshot": {
+    "corpus": "RISCVLegalizerInfo.gisel",
+    "corpus_sha256": "3293f26167ee694b688297852dea3abe3305179b9e1baf1bb2d050991d12dd33",
+    "inc": "riscv.inc",
+    "inc_sha256": "fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06",
+    "features": "riscv-features.json",
+    "features_sha256": "38967ab10a020b3c69c4fa4940b257f248588419b16a507dc1317c6398075ecf"
+   }
   },
   {
    "id": "U/arm",

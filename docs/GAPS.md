@@ -86,12 +86,15 @@ L1/L2 只看一遍 `-run-pass=legalizer`；L3 用真实 IR 覆盖了三个 targe
 但仍是“上游写进测试的形状”。任意 IR 上的多步等价没有证据。
 
 - 这是边界，不是待办；写进 `PLAN` §10 即可。
+- 口径：`--refine` 才让四个大 target 的闭包归零（X86 277、AArch64 2,671、
+  RISC-V 2,864、Wasm 302），而 refine 会改变“原子”划分。所以 L4 的静态
+  结论只能写成“refine 后闭包”，未 refine 的 `cycles=0` 只对代表点商图成立。
 
 ## 4 按级别的结论
 
 | 级别 | 谁够得上 | 还差 |
 |---|---|---|
-| L4（内部权威） | x86 / aarch64 / riscv | 静态闭包 + frozen 回放 + CI 都齐；仍缺动态 `legalize` 的多步等价（边界，见 O9） |
+| L4（内部权威） | x86 / aarch64 / riscv | **refine 后**静态闭包 + frozen 回放 + corpus→inc 绑定 + CI 都齐；仍缺动态 `legalize` 的多步等价（边界，见 O9） |
 | L3 以下 | 其余六个 | 没有 L3；L0/D/U-full/L2 已齐 |
 
 L4 是**分 target 授予**的，不是一个总开关；九个 target 共享的只有 L0/D/U-full。

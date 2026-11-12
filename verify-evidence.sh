@@ -17,15 +17,24 @@ set -euo pipefail
 # The artifacts themselves live under /tmp and are not committed.  A missing
 # artifact is a failure, not a skip: the manifest records the command that
 # regenerates it.  Exit 1 on the first failing entry (after reporting all).
+#
+# Entries that carry a `snapshot` also pin their source: the `.gisel` corpus,
+# the feature file, and the generated `inc`.  The inc is regenerated from the
+# corpus during verification, so an answer set cannot stay "green" after the
+# corpus or the generator moved underneath it.
 
 HERE=$(cd "$(dirname "$0")" && pwd)
 MANIFEST=${VERIFY_MANIFEST:-$HERE/EVIDENCE.json}
+export AB_HOME=$HERE
 exec python3 - "$MANIFEST" "${1:-all}" "${VERIFY_FROZEN:-0}" <<'PY'
 import gzip
 import hashlib
 import json
+import os
 import pathlib
+import subprocess
 import sys
+import tempfile
 
 manifest_path, want, frozen = sys.argv[1], sys.argv[2], sys.argv[3] == "1"
 manifest = json.loads(pathlib.Path(manifest_path).read_text())
@@ -206,9 +215,70 @@ def check_lit(entry, expect):
     return bad
 
 
+def gisel_root():
+    env = os.environ.get("GISEL_SRC")
+    if env:
+        return pathlib.Path(env)
+    home = pathlib.Path(os.environ.get("AB_HOME", manifest_path)).resolve()
+    if home.name == "EVIDENCE.json":
+        home = home.parent
+    return home.parent / "gisel"
+
+
+def check_snapshot(entry):
+    """The corpus -> inc -> answers chain a G/U entry belongs to.
+
+    A recorded answer set is only evidence for the `.gisel` file and the
+    `inc` that produced it.  Hash both, then regenerate the inc from the
+    corpus so the committed artifact cannot drift away from its source while
+    the hashes stay pinned.
+    """
+    snap = entry.get("snapshot")
+    if not snap:
+        return 0
+    root = gisel_root()
+    bad = 0
+    for label, rel, key in (
+            ("corpus", "tests/corpus/" + snap["corpus"], "corpus_sha256"),
+            ("features", "tests/cases/" + snap["features"], "features_sha256")):
+        path = root / rel
+        if not path.exists():
+            bad += fail(entry, "snapshot %s missing: %s" % (label, path))
+            continue
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        if got != snap[key]:
+            bad += fail(entry, "snapshot %s sha256 %s != %s"
+                        % (label, got[:16], snap[key][:16]))
+    inc = root / "tests" / "artifacts" / snap["inc"]
+    if not inc.exists():
+        bad += fail(entry, "snapshot inc missing: %s" % inc)
+    else:
+        got = hashlib.sha256(inc.read_bytes()).hexdigest()
+        if got != snap["inc_sha256"]:
+            bad += fail(entry, "snapshot inc sha256 %s != %s"
+                        % (got[:16], snap["inc_sha256"][:16]))
+    with tempfile.TemporaryDirectory() as tmp:
+        out = pathlib.Path(tmp) / "regen.inc"
+        proc = subprocess.run(
+            [sys.executable, "-m", "gisel", "gen",
+             str(root / "tests" / "corpus" / snap["corpus"]),
+             "--emit=inc", "--out", str(out)],
+            cwd=str(root), capture_output=True, text=True)
+        if proc.returncode:
+            bad += fail(entry, "snapshot regen failed: %s"
+                        % (proc.stderr.strip().splitlines()[-1:] or [""])[0])
+        else:
+            got = hashlib.sha256(out.read_bytes()).hexdigest()
+            if got != snap["inc_sha256"]:
+                bad += fail(entry, "snapshot regen sha256 %s != %s"
+                            % (got[:16], snap["inc_sha256"][:16]))
+    return bad
+
+
 def check(entry):
     d = pathlib.Path(entry["dir"])
     bad = 0
+    bad += check_snapshot(entry)
 
     for name, expected in entry["artifacts"].items():
         path = resolve(entry, name)

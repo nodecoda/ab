@@ -36,6 +36,20 @@ U 的 aarch64 / spirv 两行是 2026-11-12 刷新题面后由 U A/B 重跑得到
 `inc` sha 只说明“这次跑的是哪份产物”；语料一改就会变，回放的判据是答案，
 不是 sha。
 
+## 2026-11-12 复跑：三个 L4 target 在新 U 题面上再回放一次
+
+U 题面刷新后（`oracle ac98717`），用当前 `inc` 对新的冻结答案重放：
+
+```text
+x86      G 3,014 / U 10,027      0 disagree
+aarch64  G 12,559 / U 29,608     0 disagree
+riscv    G 6,086 / U 20,445      0 disagree
+```
+
+同一天起，`EVIDENCE.json` 的这 6 条 `G/U` 记录带 `snapshot`（corpus +
+features + inc）；`verify-evidence.sh` 会从 corpus 重新生成 `inc` 并比对，
+所以“答案还绿、语料已经变了”这种漂移不再可能静默通过。
+
 ## 这次回放修掉的一个真问题
 
 第一次跑 x86 时 `build-runner.sh` 里的 `check-pin.sh` 拒绝了树：ours 构建发生
