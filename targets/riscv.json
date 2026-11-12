@@ -15,5 +15,24 @@
     "mode": "dual"
   },
   "features": "tests/cases/riscv-features.json",
-  "query_count": 6086
+  "query_count": 6086,
+  "test_dir": "RISCV",
+  "artifact": "riscv.inc",
+  "contract": "data/riscv-contract.json",
+  "e2e": "run-riscv-end-to-end.sh",
+  "domain": "run-riscv-domain.sh",
+  "g_neg": "G_FPTOSI",
+  "u_neg": "G_ADD",
+  "u_prefix": "rvb",
+  "allow_unanswerable": 0,
+  "l3": true,
+  "diff_policy": {
+    "allow_ref_asserts": null,
+    "expect_unanswerable": null,
+    "expected_queries": 6086
+  },
+  "mir": {
+    "swappable": true,
+    "strategy": "swap-source"
+  }
 }

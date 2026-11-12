@@ -16,5 +16,24 @@
   },
   "features": "tests/cases/x86-features.json",
   "axes": null,
-  "query_count": 3014
+  "query_count": 3014,
+  "test_dir": "X86",
+  "artifact": "x86.inc",
+  "contract": "data/x86-contract.json",
+  "e2e": "run-x86-end-to-end.sh",
+  "domain": "run-x86-domain.sh",
+  "g_neg": "G_ADD",
+  "u_neg": "G_SUB",
+  "u_prefix": "x86",
+  "allow_unanswerable": 0,
+  "l3": true,
+  "diff_policy": {
+    "allow_ref_asserts": null,
+    "expect_unanswerable": null,
+    "expected_queries": 3014
+  },
+  "mir": {
+    "swappable": true,
+    "strategy": "swap-source"
+  }
 }

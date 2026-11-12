@@ -16,5 +16,23 @@
   },
   "features": "tests/cases/mips-features.json",
   "query_count": 1656,
-  "mir_strategy": "swap-source"
+  "test_dir": "Mips",
+  "artifact": "mips.inc",
+  "contract": null,
+  "e2e": "run-mips-end-to-end.sh",
+  "domain": null,
+  "g_neg": "G_UITOFP",
+  "u_neg": "G_CTPOP",
+  "u_prefix": null,
+  "allow_unanswerable": 0,
+  "l3": false,
+  "diff_policy": {
+    "allow_ref_asserts": 9,
+    "expect_unanswerable": null,
+    "expected_queries": 1656
+  },
+  "mir": {
+    "swappable": true,
+    "strategy": "swap-source"
+  }
 }

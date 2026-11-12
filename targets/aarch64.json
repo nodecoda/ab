@@ -16,5 +16,24 @@
   },
   "features": "tests/cases/features.json",
   "axes": "tests/cases/aarch64-mem-orderings.axes.json",
-  "query_count": 12559
+  "query_count": 12559,
+  "test_dir": "AArch64",
+  "artifact": "aarch64.inc",
+  "contract": "data/aarch64-contract.json",
+  "e2e": "run-aarch64-end-to-end.sh",
+  "domain": "run-aarch64-domain.sh",
+  "g_neg": "G_ZEXT",
+  "u_neg": "G_ICMP",
+  "u_prefix": "a64",
+  "allow_unanswerable": 0,
+  "l3": true,
+  "diff_policy": {
+    "allow_ref_asserts": null,
+    "expect_unanswerable": null,
+    "expected_queries": 12559
+  },
+  "mir": {
+    "swappable": true,
+    "strategy": "swap-source"
+  }
 }
