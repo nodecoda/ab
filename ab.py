@@ -92,13 +92,16 @@ def git_head(tree: Path) -> str:
     return proc.stdout.strip()
 
 
-def run_capture(cmd, cwd=None):
+def run_capture(cmd, cwd=None, env=None):
+    merged = dict(os.environ)
+    if env:
+        merged.update(env)
     return subprocess.run([str(part) for part in cmd], cwd=str(cwd or AB_ROOT),
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, env=merged)
 
 
-def run_checked(cmd, cwd=None):
-    proc = run_capture(cmd, cwd)
+def run_checked(cmd, cwd=None, env=None):
+    proc = run_capture(cmd, cwd, env)
     if proc.returncode:
         raise HarnessError("command failed (%d): %s\n%s"
                            % (proc.returncode,
@@ -233,11 +236,18 @@ def generate_inc(target: dict, source: Path, out: Path) -> Path:
 
 
 def build_swap_runner(target: dict, tree: Path, build: Path, out: Path,
-                      name: str) -> Path:
+                      name: str, skip_pin: bool = False) -> Path:
+    """Build a query runner against the library currently in BUILD.
+
+    `skip_pin` is for the replaced (ours) library: the tree is patched at that
+    moment, so a content check would reject our own include.  The caller must
+    have checked the restored tree before patching.
+    """
     builder = AB_ROOT / target["runner"]["builder"]
     runner = out / name
+    env = {"GIT_DSL_SKIP_PIN_CHECK": "1"} if skip_pin else None
     run_checked(["bash", builder, tree, build, runner,
-                 target["runner"].get("mode", "shipping")])
+                 target["runner"].get("mode", "shipping")], env=env)
     return runner
 
 
@@ -442,10 +452,11 @@ def cmd_run(args) -> int:
                 shutil.copyfile(official, cache_path)
             body_error = None
             try:
+                run_checked([AB_ROOT / "check-pin.sh", tree])
                 swap_source("apply", target, tree, inc)
                 ninja(build, target["ninja_target"])
                 runner = build_swap_runner(target, tree, build, out,
-                                           "runner.ours")
+                                           "runner.ours", skip_pin=True)
                 record["ours_runner_sha256"] = sha256(runner)
                 answer(runner, queries, ours)
             except BaseException as exc:  # keep the tree restorable

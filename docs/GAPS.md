@@ -38,6 +38,8 @@ x86 / aarch64 / riscv 有 L1+L2+L3，arm / mips / ppc 有 L1。PPC 的 L1 只有
 | C2 | L3 只在日志里、没进 `EVIDENCE.json` | `1edf867`：`l3.py` + `kind: "lit"`，逐条 `(status, expected)`，80,596 条，0 变化 |
 | C3 | upstream-source 没有 CI | `ada7db3`：`import-tests`（80 passed）与 `import-check`（pin 的 partial clone，7 MB，九目标 `--check` 16 s）两个 job；run `43146080543` 绿 |
 | C4 | `graph` 的闭包审计默认不成立 | `gisel f1472b2`：`--check-closure` 改为默认开启（`--no-check-closure` 显式退出）；四个大 target 默认 rc=1，`--refine` 后 rc=0。spec/README/REPORT 同步 |
+| C5 | ours 构建在已打补丁的树上跑 `check-pin.sh`，x86/a64/riscv 的 G 路径在内容冻结后失效 | `ab.py` 改为打补丁前校验还原树，`build_swap_runner(..., skip_pin=True)` 只跳过 ours；官方侧校验没有放宽 |
+| C6 | 改 `.gisel` 后没有 frozen 回放命令（原 O3） | `replay-frozen.py`：九 target × G/U 共 18 个方向逐条一致；见 `docs/REPLAY-FROZEN.md` |
 
 ## 3 还缺的
 
@@ -64,16 +66,6 @@ ARM 的 ctor 有两个规则之外的结构：Thumb1 提前返回、`setFCmpLibc
   超过 AArch64，先确认 llc 能否跑它。
 - 建议：先把 `mir-configs.json` 扩到 arm/mips/ppc，用 L2 给 PPC 真实覆盖；再
   评估 m68k/wasm。
-
-### O3 “改 `.gisel` 之后”的回放流程不是命令
-
-规划 §7/§9 要求：改语料 → 重生成 `inc` → 对 frozen oracle 跑 G/U + 负控。
-现在 `verify-evidence.sh` 证明的是“冻结物没变”，不是“新产物和冻结的官方答案
-一致”。`riscv_vertical.py --frozen` 只覆盖 RISC-V。
-
-- 成本：中。把 frozen `official.answers.jsonl` 当参照，跑新 `inc`，比较；
-  九个 target 的 runner 都是现成的。
-- 建议：做成 `ab/replay-frozen.sh TARGET`，先在 RISC-V 上验证，再推广。
 
 ### O5 `agree` 里含“谁都没答”
 
@@ -122,7 +114,7 @@ L1/L2 只看一遍 `-run-pass=legalizer`；L3 用真实 IR 覆盖了三个 targe
 
 | 级别 | 谁够得上 | 还差 |
 |---|---|---|
-| L4（内部权威） | x86 / aarch64 / riscv | O3（改语料后的 frozen 回放流程） |
+| L4（内部权威） | x86 / aarch64 / riscv | 静态闭包 + frozen 回放 + CI 都齐；仍缺动态 `legalize` 的多步等价（边界，见 O9） |
 | L3 以下 | 其余六个 | O1（PPC 的真实 MIR 覆盖、m68k/wasm/spirv 的 MIR） |
 
 L4 是**分 target 授予**的，不是一个总开关；九个 target 共享的只有 L0/D/U-full。

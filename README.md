@@ -48,6 +48,14 @@ how many only the reference refuses.  A drift fails; it does not absorb.
 replace one builder chain with `.unsupported()`, run the target script, and
 require every disagreement to be attributed to that builder.
 
+## Frozen replay
+
+`replay-frozen.py TARGET --tree TREE --build BUILD --out OUT --direction both`
+rebuilds the target's include and runner, answers the frozen `G`/`U` query
+sets, and requires the same numbers as the committed official answers.  This
+is the gate to run after editing a `.gisel` file: `verify-evidence.sh` only
+proves the old artifacts did not change.  See `docs/REPLAY-FROZEN.md`.
+
 ## RISC-V vertical slice
 
 `riscv_vertical.py` is the first end-to-end target: G/U questions, both
