@@ -438,8 +438,18 @@ soft-float 分支里的 `setFCmpLibcallsAEABI/GNU`（importer 已标记为 skipp
 soft-float run 全部 SIGABRT（`FCmp32Libcalls` 越界断言），修完才 43/43。
 
 PPC 的唯一 MIR 文件 `legalize-ret.mir` 只有 COPY/RET，没有 generic 指令，
-所以 1/1 same 是**名义上的**，负控抓不到。要给 PPC 真实覆盖，得把
-`data/mir-configs.json` 扩到 ppc 并走 L2（从查询合成 MIR）。
+所以 1/1 same 是**名义上的**，负控抓不到。真实覆盖来自 L2（2026-11-12 补）：
+
+```sh
+python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl \
+  --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore \
+  --out /tmp/l2-ppc --json
+# 94 queries -> 71 MIR; runs=71 same=70 both_abort=1 diff=0; abort0 compared 64
+```
+
+`data/mir-configs.json` 增加了 `ppc/default`（powerpc64le，无 mattr）。
+负控用 `G_FADD`（1 diff）；`G_ZEXT` / `G_BITCAST` 抓不到，因为 Unsupported
+和 Legal 在 legalizer 输出里都可能原样保留指令——负控要选会改变输出的动作。
 
 五个新条目已进 `EVIDENCE.json`（`MIR-L1/arm`、`MIR-L1/arm-neg`、
 `MIR-L1/ppc`、`MIR-L1/mips`、`MIR-L1/mips-neg`）；`VERIFY_FROZEN=1

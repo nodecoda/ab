@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "generated": "2026-11-11",
- "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1).",
+ "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1). PPC L2 added 2026-11-12: the upstream MIR corpus has no generic opcode, so the query-derived set is what actually exercises its rules.",
  "entries": [
   {
    "id": "G/x86",
@@ -1746,6 +1746,86 @@
       "unsupported_run": 0,
       "out_of_layer": 5,
       "abort0_compared": 0
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/ppc",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "ppc",
+   "dir": "/tmp/l2-ppc/replay",
+   "command": "python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-ppc --json",
+   "artifacts": {
+    "mir-report.json": "ea8857111c18fc53ee5266dcfe40df5fcd8c94be4b2be407312348e57fb19920",
+    "provenance.json": "1a6460a05c7ba1753ca1d8bd2fd570132134315c019e3fb251b2d3c097351546"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 71,
+     "runs": 71,
+     "same": 70,
+     "both_abort": 1,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 64
+    },
+    "mir_targets": {
+     "ppc": {
+      "files": 71,
+      "all_run_lines": 71,
+      "runs": 71,
+      "same": 70,
+      "both_abort": 1,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 64
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/ppc-neg",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "ppc",
+   "dir": "/tmp/l2-ppc-neg-G_FADD/replay",
+   "command": "python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-ppc-neg-G_FADD --negative-control G_FADD --json",
+   "artifacts": {
+    "mir-report.json": "42a113d537c1d5cda3fe6a9a32cbe110e5afee524297fbe9fd95d255e8421950",
+    "provenance.json": "7cddd05578b80dac500b4f46106aefb4a7e053d41d5c50df83c18d8b061be5fc"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 71,
+     "runs": 71,
+     "same": 69,
+     "both_abort": 1,
+     "diff": 1,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 63
+    },
+    "mir_targets": {
+     "ppc": {
+      "files": 71,
+      "all_run_lines": 71,
+      "runs": 71,
+      "same": 69,
+      "both_abort": 1,
+      "diff": 1,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 63
      }
     },
     "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
