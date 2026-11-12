@@ -81,6 +81,7 @@ GATES = {
         "repo": "upstream_source",
         "inputs": ["import/**/*", "pin/**/*", "oracle/**/*",
                    "gisel:tests/corpus/*.gisel"],
+        "expand": "import-check",
     },
     "pin/make-base.sh TREE DEST --verify": {
         "repo": "upstream_source",
@@ -92,6 +93,15 @@ GATES = {
         "command": "./verify-evidence.sh",
         "inputs": ["EVIDENCE.json", "evidence.py", "evidence.schema.json",
                    "oracle/**/*", "data/**/*", "*.sh", "gisel:tests/artifacts/**/*"],
+    },
+}
+
+# Gates the workbench runs on itself but does not put in RELEASE.json: the
+# manifest names product evidence, not the harness's own unit suite.
+WORKBENCH_GATES = {
+    "python3 -m pytest tests -q": {
+        "repo": "ab",
+        "inputs": ["tests/**/*", "*.py", "*.sh", "data/**/*", "oracle/**/*"],
     },
 }
 
@@ -160,6 +170,17 @@ def gate_table(manifest, online=False):
             "slow": bool(spec.get("slow")),
             "online": False,
             "expand": spec.get("expand"),
+        })
+    for command, spec in WORKBENCH_GATES.items():
+        table.append({
+            "name": command,
+            "manifest_command": None,
+            "repo": spec["repo"],
+            "command": command,
+            "inputs": spec["inputs"],
+            "slow": False,
+            "online": False,
+            "expand": None,
         })
     if online:
         for name, spec in ONLINE_GATES.items():
@@ -295,6 +316,21 @@ def changed_inputs(gate, record, worktree=True):
     return sorted(changed)[:5]
 
 
+def _expand_command(gate, clone_root, out_dir):
+    command = gate["command"]
+    if gate.get("expand") == "make-base":
+        tree = os.environ.get("COHORT_TREE", "/home/ubuntu/llvm/trees/explore")
+        dest = pathlib.Path(out_dir) / "pin-base"
+        if dest.exists():
+            shutil.rmtree(dest)
+        command = "pin/make-base.sh %s %s --verify" % (tree, dest)
+    elif gate.get("expand") == "import-check":
+        llvm = os.environ.get("COHORT_LLVM",
+                              "/home/ubuntu/llvm/llvm-project")
+        command = command + " --git-repo %s" % llvm
+    return command
+
+
 def _last_line(text, limit=200):
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     if not lines:
@@ -312,6 +348,7 @@ def _run_one(gate, clones, out_dir, timeout):
         "AB_SRC": str(pathlib.Path(clones) / "ab"),
         "UPSTREAM_SOURCE": str(pathlib.Path(clones) / "upstream_source"),
         "PYTHONDONTWRITEBYTECODE": "1",
+        "VERIFY_FROZEN": "1",
     })
     started = time.time()
     try:
@@ -324,6 +361,13 @@ def _run_one(gate, clones, out_dir, timeout):
         stdout = (exc.stdout or "") if isinstance(exc.stdout, str) else ""
         stderr = "timeout after %ss" % timeout
     elapsed = round(time.time() - started, 1)
+    if gate.get("expand") == "make-base":
+        tree = os.environ.get("COHORT_TREE", "/home/ubuntu/llvm/trees/explore")
+        dest = pathlib.Path(out_dir) / "pin-base"
+        subprocess.run(["git", "-C", tree, "worktree", "remove", "--force",
+                        str(dest)], capture_output=True, text=True)
+        if dest.exists():
+            shutil.rmtree(dest, ignore_errors=True)
     log = pathlib.Path(out_dir) / ("%s.log" % gate["name"].replace("/", "_"))
     log.parent.mkdir(parents=True, exist_ok=True)
     log.write_text("$ %s\n\n[stdout]\n%s\n[stderr]\n%s\n"
@@ -430,7 +474,14 @@ def cmd_verify(args):
             return fail("unknown gate(s): %s" % ", ".join(sorted(missing)))
     clone_root = pathlib.Path(args.clone)
     clone_root.mkdir(parents=True, exist_ok=True)
+    manifest_commit = git(AB, "log", "-1", "--format=%H", "--",
+                          "RELEASE.json").stdout.strip()
+    if not manifest_commit:
+        return fail("RELEASE.json is not committed")
+    # The manifest commit adds only RELEASE.json, but that file is an input
+    # to the manifest tests; gate at the tag commit, not its parent.
     commits = dict(manifest["repos"])
+    commits["ab"] = manifest_commit
     for name, rev in (("gisel", commits["gisel"]),
                       ("upstream_source", commits["upstream_source"]),
                       ("ab", commits["ab"])):
@@ -459,18 +510,13 @@ def cmd_verify(args):
                   % ("ok" if result["rc"] == 0 else "FAIL",
                      result["repo"], result["name"],
                      result["duration_s"], result["evidence"]))
-    manifest_commit = git(AB, "log", "-1", "--format=%H", "--",
-                          "RELEASE.json").stdout.strip()
-    if not manifest_commit:
-        return fail("RELEASE.json is not committed")
-    tag_commits = dict(commits)
-    tag_commits["ab"] = manifest_commit
     payload = {
         "schema": 2,
         "cohort": manifest["cohort"],
         "manifest_commit": manifest_commit,
-        "tags": {name: args.name for name in ("gisel", "upstream_source", "ab")},
-        "commits": tag_commits,
+        "tags": {name: manifest["cohort"]
+                 for name in ("gisel", "upstream_source", "ab")},
+        "commits": commits,
         "gate_commits": commits,
         "gates": results,
         "online_gates": [],
@@ -479,6 +525,18 @@ def cmd_verify(args):
         "recorded_at": time.strftime("%Y-%m-%d"),
     }
     draft = out / "verification-draft.json"
+    if args.only and draft.exists():
+        previous = json.loads(draft.read_text())
+        fresh = {item["name"]: item for item in results}
+        merged = []
+        for item in previous.get("gates", []):
+            merged.append(fresh.pop(item["name"], item))
+        merged.extend(fresh.values())
+        order = {gate["name"]: index for index, gate in enumerate(table)}
+        payload["gates"] = sorted(merged, key=lambda item: order.get(item["name"], 999))
+        payload["online_gates"] = previous.get("online_gates", [])
+        payload["ci"] = previous.get("ci", {})
+        payload["history"] = previous.get("history", [])
     draft.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     failed = [item for item in results if item["rc"] != 0]
     print("draft: %s (%d/%d gates rc=0)" % (draft, len(results) - len(failed),
