@@ -161,3 +161,4 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
   **L3**（`MIR-L3/check-llvm`）都进了 `EVIDENCE.json`；L3 的证据是两轮
   `(status, expected)` 的逐条记录，`verify-evidence.sh` 会从冻结的 per-test
   文件重算比较结果，并拒绝“换了 `.inc` 但库没变”的组合轮。
+- 对照最初的规划还缺什么，见 `docs/GAPS.md`（三根柱子、按价值排序）。
