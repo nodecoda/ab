@@ -4,7 +4,6 @@
   "source": "tests/corpus/RISCVLegalizerInfo.gisel",
   "strategy": "generated-ctor",
   "baseline_inc": null,
-  "swap_inc": null,
   "inc_name": "RISCVLegalizerInfo.inc",
   "library": "lib/libLLVMRISCVCodeGen.so.24.0git",
   "ninja_target": null,
@@ -34,8 +33,7 @@
     "expected_queries": 6086
   },
   "mir": {
-    "swappable": true,
-    "strategy": "swap-source"
+    "swappable": true
   },
   "u_builder": "build-riscv-runner.sh"
 }

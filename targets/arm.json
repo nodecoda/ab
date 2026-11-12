@@ -4,7 +4,6 @@
   "source": "tests/corpus/ARMLegalizerInfo.gisel",
   "strategy": "generated-ctor",
   "baseline_inc": null,
-  "swap_inc": null,
   "inc_name": "ARMLegalizerInfo.inc",
   "library": "lib/libLLVMARMCodeGen.so.24.0git",
   "ninja_target": null,
@@ -34,8 +33,7 @@
     "expected_queries": 1614
   },
   "mir": {
-    "swappable": true,
-    "strategy": "swap-source"
+    "swappable": true
   },
   "u_builder": "build-arm-runner.sh"
 }

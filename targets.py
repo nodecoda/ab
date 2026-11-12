@@ -195,7 +195,6 @@ SHELL_FIELDS = {
     "T_EXPECT_UNANSWERABLE": "diff_policy.expect_unanswerable",
     "T_L3": "l3",
     "T_MIR_SWAPPABLE": "mir.swappable",
-    "T_MIR_STRATEGY": "mir.strategy",
 }
 
 def shell_env(doc):

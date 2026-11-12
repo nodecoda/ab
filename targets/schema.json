@@ -11,7 +11,6 @@
     "source",
     "strategy",
     "baseline_inc",
-    "swap_inc",
     "inc_name",
     "library",
     "ninja_target",
@@ -54,12 +53,6 @@
       ]
     },
     "baseline_inc": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "swap_inc": {
       "type": [
         "string",
         "null"
@@ -211,19 +204,11 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "swappable",
-        "strategy"
+        "swappable"
       ],
       "properties": {
         "swappable": {
           "type": "boolean"
-        },
-        "strategy": {
-          "enum": [
-            "swap-source",
-            "generated-ctor",
-            null
-          ]
         }
       }
     },

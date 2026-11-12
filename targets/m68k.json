@@ -4,7 +4,6 @@
   "source": "tests/corpus/M68kLegalizerInfo.gisel",
   "strategy": "generated-ctor",
   "baseline_inc": null,
-  "swap_inc": null,
   "inc_name": "M68kLegalizerInfo.inc",
   "library": "lib/libLLVMM68kCodeGen.so.24.0git",
   "ninja_target": null,
@@ -34,8 +33,7 @@
     "expected_queries": 35
   },
   "mir": {
-    "swappable": true,
-    "strategy": "generated-ctor"
+    "swappable": true
   },
   "u_builder": "build-m68k-runner.sh"
 }

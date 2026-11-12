@@ -112,6 +112,36 @@ class SchemaTest(unittest.TestCase):
         self.assertIsNotNone(ab)
 
 
+CONSUMED = {
+    "schema", "name", "source", "strategy", "baseline_inc", "inc_name",
+    "library", "ninja_target", "touch_source",
+    "runner.source", "runner.builder", "runner.mode", "u_builder",
+    "features", "axes", "query_count", "test_dir", "artifact", "contract",
+    "e2e", "domain", "g_neg", "u_neg", "u_prefix", "allow_unanswerable",
+    "l3", "lib_snapshot",
+    "diff_policy.allow_ref_asserts", "diff_policy.expect_unanswerable",
+    "diff_policy.expected_queries", "mir.swappable",
+}
+
+
+def leaves(value, prefix=""):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            name = "%s.%s" % (prefix, key) if prefix else key
+            yield from leaves(item, name)
+    else:
+        yield prefix
+
+
+class OrphanTest(unittest.TestCase):
+    def test_every_field_has_a_consumer(self):
+        for name, doc in {p.stem: json.loads(p.read_text())
+                          for p in (ROOT / "targets").glob("*.json")
+                          if p.name != "schema.json"}.items():
+            with self.subTest(target=name):
+                self.assertEqual(set(leaves(doc)), CONSUMED)
+
+
 class ParityTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

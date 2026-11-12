@@ -4,7 +4,6 @@
   "source": "tests/corpus/AArch64LegalizerInfo.gisel",
   "strategy": "generated-ctor",
   "baseline_inc": "unittests/Target/AArch64/AArch64LegalizerInfo.inc",
-  "swap_inc": null,
   "inc_name": "AArch64LegalizerInfo.inc",
   "library": "lib/libLLVMAArch64CodeGen.so.24.0git",
   "ninja_target": null,
@@ -34,8 +33,7 @@
     "expected_queries": 12559
   },
   "mir": {
-    "swappable": true,
-    "strategy": "swap-source"
+    "swappable": true
   },
   "u_builder": "build-aarch64-runner.sh"
 }

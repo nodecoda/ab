@@ -4,7 +4,6 @@
   "source": "tests/corpus/X86LegalizerInfo.gisel",
   "strategy": "generated-ctor",
   "baseline_inc": "lib/Target/X86/X86LegalizerInfo.inc",
-  "swap_inc": null,
   "inc_name": "X86LegalizerInfo.inc",
   "library": "lib/libLLVMX86CodeGen.so.24.0git",
   "ninja_target": null,
@@ -34,8 +33,7 @@
     "expected_queries": null
   },
   "mir": {
-    "swappable": false,
-    "strategy": null
+    "swappable": false
   },
   "u_builder": "build-x86-ctor-runner.sh"
 }
