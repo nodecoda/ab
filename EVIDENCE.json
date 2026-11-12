@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "generated": "2026-11-12",
- "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1). PPC L2 added 2026-11-12: the upstream MIR corpus has no generic opcode, so the query-derived set is what actually exercises its rules. ARM/Mips L2 added 2026-11-12 (configs in data/mir-configs.json, checked by mir-config-check.py); G_LOAD is the negative control for both because their generated include builds FADD in two chains.",
+ "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1). PPC L2 added 2026-11-12: the upstream MIR corpus has no generic opcode, so the query-derived set is what actually exercises its rules. ARM/Mips L2 added 2026-11-12 (configs in data/mir-configs.json, checked by mir-config-check.py); G_LOAD is the negative control for both because their generated include builds FADD in two chains. M68k/Wasm L2 added 2026-11-12 as well; both constructors are rule tables only, so the swap is the generic body.",
  "entries": [
   {
    "id": "G/x86",
@@ -2014,6 +2014,166 @@
       "unsupported_run": 0,
       "out_of_layer": 0,
       "abort0_compared": 1039
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/m68k",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "m68k",
+   "dir": "/tmp/l2-m68k/replay",
+   "command": "python3 ab.py mir --target m68k --queries /tmp/m68k.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-m68k --json",
+   "artifacts": {
+    "mir-report.json": "dc2126b47b5aa37dfbcca1860e4c8200c620c3e9cf73a6d4d0ba94d8a853b5ee",
+    "provenance.json": "98f9998813ac70e09f6c2ee55eb4ac50534aa4df385262e14b4e6d3abfee23c9"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 25,
+     "runs": 25,
+     "same": 25,
+     "both_abort": 0,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 22
+    },
+    "mir_targets": {
+     "m68k": {
+      "files": 25,
+      "all_run_lines": 25,
+      "runs": 25,
+      "same": 25,
+      "both_abort": 0,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 22
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/m68k-neg",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "m68k",
+   "dir": "/tmp/l2-m68k-neg-G_LOAD/replay",
+   "command": "python3 ab.py mir --target m68k --queries /tmp/m68k.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-m68k-neg-G_LOAD --negative-control G_LOAD --json",
+   "artifacts": {
+    "mir-report.json": "27448fb9cdba11e4b66fdeebf0e9b11ba6662720fd2db96f99249c75cf82f13b",
+    "provenance.json": "2e50d0d32ae3da54b73e61b549f46688fe89b27fbee8df25dab2a49afa43708a"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 25,
+     "runs": 25,
+     "same": 21,
+     "both_abort": 0,
+     "diff": 4,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 18
+    },
+    "mir_targets": {
+     "m68k": {
+      "files": 25,
+      "all_run_lines": 25,
+      "runs": 25,
+      "same": 21,
+      "both_abort": 0,
+      "diff": 4,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 18
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/wasm",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "wasm",
+   "dir": "/tmp/l2-wasm/replay",
+   "command": "python3 ab.py mir --target wasm --queries /tmp/wasm.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-wasm --json",
+   "artifacts": {
+    "mir-report.json": "68fdf571a49a34a3637bdce547af97d6036afcbe90a3199687f90cab930348d7",
+    "provenance.json": "87eae49412266b4e9d5969e57c2d436942d1e13e08e98fe1e547cf6dce8ec505"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 588,
+     "runs": 588,
+     "same": 576,
+     "both_abort": 12,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 272
+    },
+    "mir_targets": {
+     "wasm": {
+      "files": 588,
+      "all_run_lines": 588,
+      "runs": 588,
+      "same": 576,
+      "both_abort": 12,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 272
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/wasm-neg",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "wasm",
+   "dir": "/tmp/l2-wasm-neg-G_LOAD/replay",
+   "command": "python3 ab.py mir --target wasm --queries /tmp/wasm.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-wasm-neg-G_LOAD --negative-control G_LOAD --json",
+   "artifacts": {
+    "mir-report.json": "c77a99276cf1af5c7de7daa2dc9deb7d7bc89baa291635e3c5ff45aa0723690a",
+    "provenance.json": "6d70e6938fb36a2b05ec622c0b7ebcac1ec01c71a35331f19c71e16ab1eb5e9d"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 588,
+     "runs": 588,
+     "same": 500,
+     "both_abort": 12,
+     "diff": 76,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 272
+    },
+    "mir_targets": {
+     "wasm": {
+      "files": 588,
+      "all_run_lines": 588,
+      "runs": 588,
+      "same": 500,
+      "both_abort": 12,
+      "diff": 76,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 272
      }
     },
     "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"

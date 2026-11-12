@@ -357,6 +357,44 @@
     ],
     "source": "mips32r6 + MSA"
    }
+  },
+  "m68k": {
+   "default": {
+    "triple": "m68k-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [],
+    "source": "m68k-features.json default: no optional feature"
+   }
+  },
+  "wasm": {
+   "wasm32": {
+    "triple": "wasm32-unknown-unknown",
+    "pointer_width": 32,
+    "mattr": [],
+    "source": "wasm-features.json wasm32: ST.hasAddr64() false, no sign-ext"
+   },
+   "wasm32-signext": {
+    "triple": "wasm32-unknown-unknown",
+    "pointer_width": 32,
+    "mattr": [
+     "+sign-ext"
+    ],
+    "source": "wasm-features.json wasm32-signext: hasSignExt()"
+   },
+   "wasm64": {
+    "triple": "wasm64-unknown-unknown",
+    "pointer_width": 64,
+    "mattr": [],
+    "source": "wasm-features.json wasm64: ST.hasAddr64()"
+   },
+   "wasm64-signext": {
+    "triple": "wasm64-unknown-unknown",
+    "pointer_width": 64,
+    "mattr": [
+     "+sign-ext"
+    ],
+    "source": "wasm-features.json wasm64-signext: hasAddr64() + hasSignExt()"
+   }
   }
  }
 }

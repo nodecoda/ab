@@ -42,7 +42,7 @@
 `llc` sha、以及每个 target 的 `baseline_lib_restored_exactly`。报告里带
 `generated_at`，所以重跑不会复现同一个文件 sha；`verify-evidence.sh` 先比
 sha（证明冻结的就是这次运行），再比桶计数（这是重跑后应当复现的东西）。
-L2 的六份报告是 `MIR-L2/{x86,aarch64,riscv,arm,mips,ppc}`，L3 是 `MIR-L3/check-llvm`
+L2 的八份报告是 `MIR-L2/{x86,aarch64,riscv,arm,mips,ppc,m68k,wasm}`，L3 是 `MIR-L3/check-llvm`
 （`kind: "lit"`：两轮 per-test 记录，`verify-evidence.sh` 会重算比较结果）。
 
 `provenance.json` 里记录两侧库与恢复后的基线库 sha。x86 的恢复重编是字节
@@ -453,7 +453,7 @@ python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl \
 
 五个新条目已进 `EVIDENCE.json`（`MIR-L1/arm`、`MIR-L1/arm-neg`、
 `MIR-L1/ppc`、`MIR-L1/mips`、`MIR-L1/mips-neg`）；`VERIFY_FROZEN=1
-./verify-evidence.sh` 当时是 64/64（见 §6.7 后的 70/70）。
+./verify-evidence.sh` 当时是 64/64（见 §6.7、§6.8 后的 74/74）。
 
 ### 6.7 2026-11-12：ARM / Mips 的 L2（新增）
 
@@ -491,13 +491,50 @@ python3 ab.py mir --target mips --queries /tmp/mips.queries.jsonl \
 四条新条目（`MIR-L2/{arm,arm-neg,mips,mips-neg}`）已冻结；
 `VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 16/16。
 
+### 6.8 2026-11-12：M68k / WebAssembly 的 L2（新增）
+
+这两个 target 的构造函数只有规则表（没有 Thumb1 提前返回一类的结构，也没有
+libcall 数据表），所以 `swap-source-ctor.py` 用通用函数体即可；`mir_libs.SWAPPABLE`
+扩到八个 target。`data/mir-configs.json` 新增 `m68k/default` 与 wasm 的四个配置
+（`wasm32`/`wasm32-signext`/`wasm64`/`wasm64-signext`，`-mattr=+sign-ext` 对应
+`ST.hasSignExt()`）；`mir-config-check.py` 两个 target 都返回 `ok`。
+
+```sh
+python3 ab.py mir --target m68k --queries /tmp/m68k.queries.jsonl \
+  --tree … --build … --out /tmp/l2-m68k --json
+# m68k: 35 queries -> 25 MIR (8 shape, 2 type, 0 config)
+python3 ab.py mir --target wasm --queries /tmp/wasm.queries.jsonl \
+  --tree … --build … --out /tmp/l2-wasm --json
+# wasm: 894 queries -> 588 MIR (298 shape, 8 type, 0 config)
+```
+
+| target | files | runs | same | both_abort | diff | abort0 compared |
+|---|---:|---:|---:|---:|---:|---:|
+| M68k | 25 | 25 | 25 | 0 | 0 | 22 |
+| WebAssembly | 588 | 588 | 576 | 12 | 0 | 272 |
+
+负控都用 `G_LOAD`：
+
+| target | 注入 | 结果 |
+|---|---|---|
+| M68k | `G_LOAD` → unsupported | `diff=4`（same 21） |
+| WebAssembly | `G_LOAD` → unsupported | `diff=76`（same 500；both_abort 12） |
+
+M68k 的 10 条未建成是 8 条形状 + 2 条类型：原因集中在 `gep offset` 不匹配（4）、
+向量 `G_CONSTANT`（2），以及题面把 `G_FRAME_INDEX`/`G_STORE` 的指针槽写成标量（4）。
+Wasm 的 306 条未建成主要是 `G_ASHR`/`G_ROTL` 没有形状、以及机器验证器拒绝的位宽不匹配（48 条
+`operand types must be all-vector or all-scalar`、44 条 `bitcast sizes must match`）。
+
+四条新条目已冻结；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 20/20，
+全量 74/74。
+
 ## 7 未覆盖
 
 - **多步 legalize 与 result 层面的等价性**：L1/L2 只看
   `-run-pass=legalizer` 的输出文本；L3 用 `check-llvm` 补了“真实 IR 的下游
   可观测结果”，但仍不是任意 IR 上的语义证明。
 - **MIR 覆盖**：L1 六个（x86/aarch64/riscv/arm/mips，PPC 名义 1 条）；L2 六个
-  （x86/aarch64/riscv/ppc/arm/mips），L3 只有三个。M68k/WebAssembly/SPIR-V
+  （x86/aarch64/riscv/ppc/arm/mips/m68k/wasm），L3 只有三个。M68k/WebAssembly/SPIR-V
   只有 L0 适配器。
 - **`-mtriple` 之外的 config 轴**：回放用的是 MIR 文件自带的
   `-mtriple`/`-mattr`；没有按 gisel 的配置矩阵重跑 L1。

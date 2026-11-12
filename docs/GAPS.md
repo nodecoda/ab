@@ -2,7 +2,7 @@
 
 > 2026-11-12 快照。规划原文在 `gisel/docs/PLAN-internal-authority.md`；这里只记
 > “现在到哪了、还差什么”，不重复论证。数字全部来自 `EVIDENCE.json`
-> （`VERIFY_FROZEN=1 ./verify-evidence.sh` → 70/70）和 `SCOPE.md §7`。
+> （`VERIFY_FROZEN=1 ./verify-evidence.sh` → 74/74）和 `SCOPE.md §7`。
 
 三根柱子：
 
@@ -20,15 +20,16 @@
 | arm | 1,614 | 9,296 | 15,695 | 1,769,782 | L1+L2 | — |
 | mips | 1,647 | 18,745 | 11,396 | 1,264,130 | L1+L2 | — |
 | ppc | 94 | 1,005 | 2,177 | 252,826 | L1（名义）+ L2 | — |
-| m68k | 35 | 112 | 2,182 | 252,826 | — | — |
-| wasm | 894 | 11,996 | 9,290 | 1,011,304 | — | — |
+| m68k | 35 | 112 | 2,182 | 252,826 | L2 | — |
+| wasm | 894 | 11,996 | 9,290 | 1,011,304 | L2 | — |
 | spirv | 5,689 | 3,472,080 | 15,580 | 4,082,382 | — | — |
 
-九个 target 都有 L0（`getAction`）+ D + U + U-full + 负控；MIR/llc 层覆盖六个：
-x86 / aarch64 / riscv 有 L1+L2+L3，arm / mips / ppc 有 L1+L2（PPC 的 L1 名义）。
+九个 target 都有 L0（`getAction`）+ D + U + U-full + 负控；MIR/llc 层覆盖八个：
+x86 / aarch64 / riscv 有 L1+L2+L3，arm / mips / ppc 有 L1+L2（PPC 的 L1 名义），
+m68k / wasm 有 L2。
 PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，负控（G_ADD）
 抓不到差异；它的真实覆盖来自 L2：71 条查询生成的 MIR，`G_FADD` 负控能抓到。
-m68k / wasm / spirv 还没有 MIR。说“九个 target 都对拍过”时，主语只能是
+spirv 还没有 MIR。说“九个 target 都对拍过”时，主语只能是
 L0/D/U-full。
 
 ## 2 这一轮关掉的
@@ -49,7 +50,7 @@ L0/D/U-full。
 
 按“价值 / 成本”排序。
 
-### O1 MIR/llc 层覆盖 7/9（m68k/wasm/spirv 缺 MIR）
+### O1 MIR/llc 层覆盖 8/9（SPIR-V 缺 MIR）
 
 2026-11-12 补了 ARM / PPC / Mips 的构造函数替换（`swap-source-ctor.py` 的
 `arm`/`ppc`/`mips` 条目，`mir_libs.SWAPPABLE` 同步），用 pin 树的上游 MIR 回放：
@@ -62,15 +63,17 @@ L0/D/U-full。
 | PPC L2 | 71 | 71 | 70 + 1 both-abort | 0 | `G_FADD` → 1 diff |
 | ARM L2 | 1,141 | 1,141 | 1,141 | 0 | `G_LOAD` → 64 diff |
 | Mips L2 | 1,311 | 1,311 | 1,311 | 0 | `G_LOAD` → 105 diff |
+| M68k L2 | 25 | 25 | 25 | 0 | `G_LOAD` → 4 diff |
+| Wasm L2 | 588 | 588 | 576 + 12 both-abort | 0 | `G_LOAD` → 76 diff |
 
 ARM 的 ctor 有两个规则之外的结构：Thumb1 提前返回、`setFCmpLibcalls*` 数据表
 （importer 明确标记为 skipped）。替换体保留这两段，否则 soft-float 配置会
 在 `getFCmpLibcalls` 断言崩溃（第一次跑就是这样抓到 4 条 SIGABRT，修完才 43/43）。
 
 - 为什么重要：X86 的 CTPOP 回归（L3 §6.3）说明 L0 全绿不等于下游不变。
-- 还差：m68k / wasm / spirv 没有 MIR。SPIR-V 的图上规模此前已超过 AArch64，
-  先确认 llc 能否跑它。
-- 建议：先评估 m68k/wasm（题面小、配置少），SPIR-V 单独排期。
+- 还差：SPIR-V 没有 MIR。它的图上规模此前已超过 AArch64，先确认 llc 能跑
+  它的 `-run-pass=legalizer`。
+- 建议：SPIR-V 单独排期；先做一条 MIR 冒烟，再决定是否进 L2。
 
 ### O6 pin 漂移没有自动检测
 
@@ -102,6 +105,6 @@ L1/L2 只看一遍 `-run-pass=legalizer`；L3 用真实 IR 覆盖了三个 targe
 | 级别 | 谁够得上 | 还差 |
 |---|---|---|
 | L4（内部权威） | x86 / aarch64 / riscv | 静态闭包 + frozen 回放 + CI 都齐；仍缺动态 `legalize` 的多步等价（边界，见 O9） |
-| L3 以下 | 其余六个 | O1（m68k/wasm/spirv 的 MIR；L1/L2 已齐） |
+| L3 以下 | 其余六个 | O1（SPIR-V 的 MIR） |
 
 L4 是**分 target 授予**的，不是一个总开关；九个 target 共享的只有 L0/D/U-full。

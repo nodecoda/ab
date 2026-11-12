@@ -45,7 +45,8 @@ TEST_DIR = {
 }
 
 # Targets whose constructor body can be replaced in the source tree today.
-SWAPPABLE = ("x86", "aarch64", "riscv", "arm", "ppc", "mips")
+SWAPPABLE = ("x86", "aarch64", "riscv", "arm", "ppc", "mips",
+             "m68k", "wasm")
 
 
 class MirError(RuntimeError):

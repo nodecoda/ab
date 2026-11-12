@@ -104,6 +104,35 @@ TARGETS = {
 }
 """,
     },
+    "m68k": {
+        "source": "llvm/lib/Target/M68k/GISel/M68kLegalizerInfo.cpp",
+        "ctor": "M68kLegalizerInfo::M68kLegalizerInfo(const M68kSubtarget &ST)",
+        "inc": "M68kLegalizerInfo.inc",
+        "subtarget": "M68kSubtarget",
+        # Upstream's constructor is only the rule table: no subtarget
+        # conditions, no libcall data, no trailing structure.
+        "body": """\
+{
+  using namespace TargetOpcode;
+#include "__INC__"
+}
+""",
+    },
+    "wasm": {
+        "source": "llvm/lib/Target/WebAssembly/GISel/WebAssemblyLegalizerInfo.cpp",
+        "ctor": ("WebAssemblyLegalizerInfo::WebAssemblyLegalizerInfo(\n"
+                 "    const WebAssemblySubtarget &ST)"),
+        "inc": "WebAssemblyLegalizerInfo.inc",
+        "subtarget": "WebAssemblySubtarget",
+        # The rules read ST.hasAddr64()/hasSignExt(); the generated
+        # fragment names the parameter ST, so keep it as written.
+        "body": """\
+{
+  using namespace TargetOpcode;
+#include "__INC__"
+}
+""",
+    },
 }
 
 BODY = """\
