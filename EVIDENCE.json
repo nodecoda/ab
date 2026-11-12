@@ -285,16 +285,16 @@
    "id": "U/arm",
    "direction": "U",
    "target": "arm",
-   "dir": "/tmp/u-run/armd",
+   "dir": "/tmp/u-new/arm",
    "queries": {
-    "path": "/tmp/u-gen/armd/queries.jsonl",
-    "sha256": "513988b78d814e34d488936e57dbaf08cfd87d3d80341b5b72ebd8285c1c61f4"
+    "path": "/tmp/u-gen/arm/queries.jsonl",
+    "sha256": "2b5a8d67256b97b01a17f539d0b3800408fc09ecf60c37aecd8b31841f1a0b67"
    },
-   "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd",
+   "command": "./run-u-end-to-end.sh arm /tmp/u-gen/arm/queries.jsonl /tmp/u-new/arm --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "343b2af6ced87311daf525d795b64da127d437f61ead5d4111cda5b280b60f91",
-    "official.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
-    "ours.answers.jsonl": "42f6afe4751a58f3f3a877be757be9410b1cb8e2f259883faa282153f1e6a328",
+    "diff.json": "13e8008e644d69cf80c169ef0f9fa3d983d6482b3232f18d3ae099ca6342cf04",
+    "official.answers.jsonl": "ec82927184c2f48995c69f6ad3b3e3759100dd4097f63a383484a71b2e89fddf",
+    "ours.answers.jsonl": "ec82927184c2f48995c69f6ad3b3e3759100dd4097f63a383484a71b2e89fddf",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
@@ -303,22 +303,23 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 15695
-   }
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
   },
   {
    "id": "U/mips",
    "direction": "U",
    "target": "mips",
-   "dir": "/tmp/u-run/mipsd",
+   "dir": "/tmp/u-new/mips",
    "queries": {
-    "path": "/tmp/u-gen/mipsd/queries.jsonl",
-    "sha256": "83c4c42543a678568123d8d5df742ab5b10247d126c7e6a8dd31f8687acc3acb"
+    "path": "/tmp/u-gen/mips/queries.jsonl",
+    "sha256": "27da22e8fdaa84fea06f4f4c24209dc8707338166c47b50e50035251c4df129f"
    },
-   "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd",
+   "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mips/queries.jsonl /tmp/u-new/mips --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "3cf0017bb54068523167c4fed4652013a27ccfca0c755a5fc9d7f120d6076afd",
-    "official.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
-    "ours.answers.jsonl": "36033e0d431134f17e37b00b1a0ab1b270d10f6fe8b664641655502ff04b74e2",
+    "diff.json": "bc8f7a8c548e43ec0dbb0c9675212042197f47ab73161adc968b959a804b6ab4",
+    "official.answers.jsonl": "8cc9c7d5433da8c6fc417269c6313af539b86de84111b7217369c505f0443f7d",
+    "ours.answers.jsonl": "8cc9c7d5433da8c6fc417269c6313af539b86de84111b7217369c505f0443f7d",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
@@ -327,22 +328,23 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 11396
-   }
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
   },
   {
    "id": "U/ppc",
    "direction": "U",
    "target": "ppc",
-   "dir": "/tmp/u-run/ppcd",
+   "dir": "/tmp/u-new/ppc",
    "queries": {
-    "path": "/tmp/u-gen/ppcd/queries.jsonl",
-    "sha256": "8bac7868d2999f3f0619ae5853d5a5eecf18bbb158f602cb1a4511809f0725d1"
+    "path": "/tmp/u-gen/ppc/queries.jsonl",
+    "sha256": "964931485e6e621ebc4f3142efb77cac7623164a6e088307411fce14948d1d72"
    },
-   "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd",
+   "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppc/queries.jsonl /tmp/u-new/ppc --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "12ce6309a3d1791f3135c8dc36527c096f0b6e6c224b06f53fece0f767c2ee5d",
-    "official.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
-    "ours.answers.jsonl": "7597f2a6cf97b9af6fe93a3739aa730a04437c9dc697f7337e19a327e544bb70",
+    "diff.json": "eccb0f3f099c41f17f0172f184a7eafe97ca6da2064bdb2a95804070bc11ab45",
+    "official.answers.jsonl": "d527ce197db8b9f0dbe67ca2c69c7da284e9c0ee8017c7446423e9cedfb35767",
+    "ours.answers.jsonl": "d527ce197db8b9f0dbe67ca2c69c7da284e9c0ee8017c7446423e9cedfb35767",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
@@ -351,22 +353,23 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 2177
-   }
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
   },
   {
    "id": "U/m68k",
    "direction": "U",
    "target": "m68k",
-   "dir": "/tmp/u-run/m68kd",
+   "dir": "/tmp/u-new/m68k",
    "queries": {
-    "path": "/tmp/u-gen/m68kd/queries.jsonl",
-    "sha256": "63456e3502ba8e63abc98ffec8498d06d9a9f248c447feac8243394fa2868e2e"
+    "path": "/tmp/u-gen/m68k/queries.jsonl",
+    "sha256": "ff3cc32a1f6a6d1bf22aa04f8cb9e2496bf58fb7469260e1fe4cdfab9f9ab90d"
    },
-   "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd",
+   "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68k/queries.jsonl /tmp/u-new/m68k --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "7fde218ddf37faa5361110fb2b8cefe8cd3d3d8209126bdbb670483ef317c8b1",
-    "official.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
-    "ours.answers.jsonl": "b3a8e8421ac2c258e3910e1a716b1454b82bf018fc8b72fd8258cc6b656e22bd",
+    "diff.json": "78638dbede6f6fca1e1f18d5947bce2e979708830a33cd355725b7af04cd9879",
+    "official.answers.jsonl": "3904dc1b182bd1b634d70717decab076095143dba6df4f39bc4ea250a78f464a",
+    "ours.answers.jsonl": "3904dc1b182bd1b634d70717decab076095143dba6df4f39bc4ea250a78f464a",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
@@ -375,22 +378,23 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 2182
-   }
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
   },
   {
    "id": "U/wasm",
    "direction": "U",
    "target": "wasm",
-   "dir": "/tmp/u-run/wasmd",
+   "dir": "/tmp/u-new/wasm",
    "queries": {
-    "path": "/tmp/u-gen/wasmd/queries.jsonl",
-    "sha256": "9324c30ae1ef593b59007fe5c2c4396a708f3ed8e68d01ceb48ab0300e1492eb"
+    "path": "/tmp/u-gen/wasm/queries.jsonl",
+    "sha256": "00784e0eee196d943e49a029f12708013bfe48870c01bdf40ff4b6b96ea610af"
    },
-   "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd",
+   "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasm/queries.jsonl /tmp/u-new/wasm --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "183d96b449d260b8f08ea9f827068545b007b5b3d6237b57bbd3a5d15d1c95a4",
-    "official.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
-    "ours.answers.jsonl": "cba8b76252c067ade3e8e79400b844da508d83b7a73240a18bf72f446508c875",
+    "diff.json": "7f7f71cdf1af35191e5c909092282b1e3d74f359fb8f6630fa852d9747ddd748",
+    "official.answers.jsonl": "2d8f84a0832921ead8a73e4eba62acc175112fb876af60564b287889331fdb1a",
+    "ours.answers.jsonl": "2d8f84a0832921ead8a73e4eba62acc175112fb876af60564b287889331fdb1a",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
@@ -399,31 +403,33 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 9290
-   }
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
   },
   {
    "id": "U/spirv",
    "direction": "U",
    "target": "spirv",
-   "dir": "/tmp/u-run/spirvd",
+   "dir": "/tmp/u-new/spirv",
    "queries": {
-    "path": "/tmp/u-gen/spirvd/queries.jsonl",
-    "sha256": "9f2156afc668e418fecac9bf584c757effd14f35d67ab5d6adc90ae9c183207d"
+    "path": "/tmp/u-gen/spirv/queries.jsonl",
+    "sha256": "9c19f15bc310fedeb430215b706ecc504c6003a150eae9b46e90d7168db768ec"
    },
-   "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd",
+   "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirv/queries.jsonl /tmp/u-new/spirv --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "9078a76da68b9af9d3f753d57e7dc2010162971d0febc6376d26eb0b083d576a",
-    "official.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
-    "ours.answers.jsonl": "fe2f9940bd6619ca0a90150e040468584338238c3d5420c89f75c2a1f3a38351",
+    "diff.json": "33dbf8a5b2aaa195f4749d77fe8b3c7af4d971dd6ad55ca594a12c182bd1f5ab",
+    "official.answers.jsonl": "c7982fb09769bbb851208764288307f0d593ac0bcc0c3a0fa73b513ab7b442a1",
+    "ours.answers.jsonl": "c7982fb09769bbb851208764288307f0d593ac0bcc0c3a0fa73b513ab7b442a1",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
     "answers_identical": true,
-    "agree": 15580,
+    "agree": 15592,
     "disagree": 0,
     "unanswerable": 0,
-    "answered_equal": 15580
-   }
+    "answered_equal": 15592
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
   },
   {
    "id": "U-neg/x86",
@@ -491,10 +497,10 @@
    "id": "U-neg/arm",
    "direction": "U-neg",
    "target": "arm",
-   "dir": "/tmp/u-run/armd-neg",
-   "command": "./run-u-end-to-end.sh arm /tmp/u-gen/armd/queries.jsonl /tmp/u-run/armd-neg --drop-opcode G_LOAD",
+   "dir": "/tmp/u-new/arm-neg",
+   "command": "./run-u-end-to-end.sh arm /tmp/u-gen/arm/queries.jsonl /tmp/u-new/arm-neg --drop-opcode G_LOAD",
    "artifacts": {
-    "diff.json": "7441e88a41826330be5b4f2ddd6c2b394ccda83ce113838e53d81a13f620e025",
+    "diff.json": "2b9067fabb12ebd6832a9b5b906d796bfb59c52deae0de9b26aafe53da075dfc",
     "attribution.json": "ff684ee624576fe7aa2aff078135e371f48f436e678b356fea3a3d2e4d1a690a"
    },
    "expect": {
@@ -513,10 +519,10 @@
    "id": "U-neg/mips",
    "direction": "U-neg",
    "target": "mips",
-   "dir": "/tmp/u-run/mipsd-neg",
-   "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mipsd/queries.jsonl /tmp/u-run/mipsd-neg --drop-opcode G_CTPOP",
+   "dir": "/tmp/u-new/mips-neg",
+   "command": "./run-u-end-to-end.sh mips /tmp/u-gen/mips/queries.jsonl /tmp/u-new/mips-neg --drop-opcode G_CTPOP",
    "artifacts": {
-    "diff.json": "54b8467667c0c01a395e0cbc7bb1e5caafbf45fc4f5841c7f9ee04f6426a39ea",
+    "diff.json": "52ffb89bdbff687ac17fa69e34682b28aa539143b21cbd2c7a469171fc7d7773",
     "attribution.json": "dd0ad729817e400cf4fd3132ef4e31294a99898b5d5c3604b8aac55af806725f"
    },
    "expect": {
@@ -534,10 +540,10 @@
    "id": "U-neg/ppc",
    "direction": "U-neg",
    "target": "ppc",
-   "dir": "/tmp/u-run/ppcd-neg",
-   "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppcd/queries.jsonl /tmp/u-run/ppcd-neg --drop-opcode G_SUB",
+   "dir": "/tmp/u-new/ppc-neg",
+   "command": "./run-u-end-to-end.sh ppc /tmp/u-gen/ppc/queries.jsonl /tmp/u-new/ppc-neg --drop-opcode G_SUB",
    "artifacts": {
-    "diff.json": "6242ca7269cc2c5ae74a3f6da07ef3f780348ebfcdbf95e3373d4d5b51864dc6",
+    "diff.json": "a47698f374e4902cf87f35fe783920e906c500724939839e45915627a4877c06",
     "attribution.json": "f43efef8ea0561e32fbf514ce633ae1bae3ac6d90d3329ebf8c2c7af39975cfa"
    },
    "expect": {
@@ -556,10 +562,10 @@
    "id": "U-neg/m68k",
    "direction": "U-neg",
    "target": "m68k",
-   "dir": "/tmp/u-run/m68kd-neg",
-   "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68kd/queries.jsonl /tmp/u-run/m68kd-neg --drop-opcode G_MUL",
+   "dir": "/tmp/u-new/m68k-neg",
+   "command": "./run-u-end-to-end.sh m68k /tmp/u-gen/m68k/queries.jsonl /tmp/u-new/m68k-neg --drop-opcode G_MUL",
    "artifacts": {
-    "diff.json": "430b6c96fd9cbd9baa55d629e9b0a178fbd38fd9048c6a9fb2f0ccab6b5a9af4",
+    "diff.json": "5733c59798da828d9e6f1e9708c3155e8e3d998770c603944583e92646bdddb6",
     "attribution.json": "a79b7446880b258f226a2f901de2bae2dce0b52ad22be291543aadecec8da379"
    },
    "expect": {
@@ -581,10 +587,10 @@
    "id": "U-neg/wasm",
    "direction": "U-neg",
    "target": "wasm",
-   "dir": "/tmp/u-run/wasmd-neg",
-   "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasmd/queries.jsonl /tmp/u-run/wasmd-neg --drop-opcode G_SELECT",
+   "dir": "/tmp/u-new/wasm-neg",
+   "command": "./run-u-end-to-end.sh wasm /tmp/u-gen/wasm/queries.jsonl /tmp/u-new/wasm-neg --drop-opcode G_SELECT",
    "artifacts": {
-    "diff.json": "28edd50f0835f3b43d97c3705b6e62fc70d97cbe200f370d34ac0880835978f1",
+    "diff.json": "f2d4056ec163f48f8571c615be71a4e1c510b684625bf3d2161f10e0d85f6d5d",
     "attribution.json": "08a33e9e5bd69ff70f585ac6ab84b98c7536a777c27c796c777d79c561a94cd8"
    },
    "expect": {
@@ -602,10 +608,10 @@
    "id": "U-neg/spirv",
    "direction": "U-neg",
    "target": "spirv",
-   "dir": "/tmp/u-run/spirvd-neg",
-   "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd-neg --drop-opcode G_UMIN",
+   "dir": "/tmp/u-new/spirv-neg",
+   "command": "./run-u-end-to-end.sh spirv /tmp/u-gen/spirv/queries.jsonl /tmp/u-new/spirv-neg --drop-opcode G_UMIN",
    "artifacts": {
-    "diff.json": "8e7c035ae24c779e14c5fb597d04e798fadeb44591f04eb67ac057a79904b322",
+    "diff.json": "5e338356236f9ed1e5adff98ec69a3d9cedef1731bb9e1fe6153c932db86eef2",
     "attribution.json": "fd4cbc27bfdd10079564d9323d966cfed023caef71858c1d390c4b4e5024222e"
    },
    "expect": {
@@ -625,7 +631,7 @@
      "G_USUBSAT"
     ],
     "unknown_keys": 0,
-    "answered_equal": 14796
+    "answered_equal": 14808
    },
    "injected_opcode": "G_UMIN",
    "observed_disagree": 784
@@ -941,78 +947,76 @@
    "id": "U-full/x86",
    "direction": "U",
    "target": "x86",
-   "dir": "/tmp/u-run/full2-x86",
-   "command": "./run-u-end-to-end.sh x86 /tmp/u-full2/x86-full.jsonl /tmp/u-run/full2-x86 --allow-unanswerable 1272",
+   "dir": "/tmp/u-full-new/x86/run",
+   "command": "./run-u-end-to-end.sh x86 /tmp/u-full-new/x86/queries.jsonl /tmp/u-full-new/x86/run --allow-unanswerable 1392",
    "artifacts": {
-    "diff.json": "0b33032b76d5340f5745e4df6415e219329a7a5bf908655b9087a64fe8d10526",
-    "universe.jsonl": "39f095cca1cfc6ff08a08e60628911c936bd6d798951dcde37daebff4b809da6"
+    "diff.json": "38965a9cc0f634a4686faae49cfd520a7f2dc889d192e75aa37d4c83004a914a",
+    "universe.jsonl": "99d6963d60090a6b36d8b0e42931560f3b70aa7863c56114c7c76170527e4137"
    },
    "expect": {
-    "ref": 1121728,
-    "agree": 1121728,
+    "ref": 965592,
+    "agree": 965592,
     "disagree": 0,
-    "unanswerable": 1272,
+    "unanswerable": 1392,
     "ref_asserted": 0,
-    "answered_equal": 1120456
+    "answered_equal": 964200
    },
    "queries": {
     "path": "/tmp/u-full-new/x86/queries.jsonl",
-    "sha256": "843060d986ff2da0d847104e779c2f6b985ebe1fc538c0f51597f184a0265a1e",
-    "derived_from": "universe.jsonl (sha 39f095cca1cfc6ff) expanded by `python3 -m oracle expand --configs C0,C1,C2,C3`"
-   }
+    "sha256": "2eeca0080c44fee913f8326a7363014b18469d85aae15effb7d0c9e9bb13db7a",
+    "derived_from": "universe.jsonl (sha 99d6963d60090a6b) expanded by `python3 -m oracle expand --configs C0,C1,C2,C3`"
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. The 1,392 unanswerable rows assert at LowLevelType.h:429 on both sides."
   },
   {
    "id": "U-full/aarch64",
    "direction": "U",
    "target": "aarch64",
-   "dir": "/tmp/u-run/full4-a64",
-   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full-new/aarch64-full-expanded.jsonl /tmp/u-run/full4-a64 --allow-ref-asserts 30150 --allow-unanswerable 35316",
+   "dir": "/tmp/u-full-new/aarch64/run",
+   "command": "./run-u-end-to-end.sh aarch64 /tmp/u-full-new/aarch64/queries.jsonl /tmp/u-full-new/aarch64/run --allow-unanswerable 43452 --allow-ref-asserts 40014",
    "artifacts": {
-    "diff.json": "523ae4973b4d682199612cf77aa943ead3c9bc1e82b3fa1aac7c3d0c0f888343",
-    "universe.jsonl": "933514ca57b7446fd45bca4cd3ef70797315e46e81200f75b0f41aa248be3cee"
+    "diff.json": "ca02dbf06ae308ec2c2d428362974d0b03e88ae9ff34691058d2e09dd3257759",
+    "universe.jsonl": "fe1a202ee36231aa0cd285e8e98be2b06837dc3a5d1b0228d58fcf6fe70583bf"
    },
    "expect": {
-    "ref": 3505608,
-    "agree": 3475458,
+    "ref": 3951279,
+    "agree": 3911265,
     "disagree": 0,
-    "unanswerable": 35316,
-    "ref_asserted": 30150,
-    "ref_asserted_by_site": {
-     "LowLevelType.h:470": 27,
-     "fatal:Possible incorrect use of LLT getNumElements  for scalable vect": 1260,
-     "fatal:cannot implicitly convert a scalable size to a fixed-width size": 28863
-    },
-    "answered_equal": 3440142
+    "unanswerable": 43452,
+    "ref_asserted": 40014,
+    "answered_equal": 3867813
    },
    "queries": {
-    "path": "/tmp/u-full-new/queries.jsonl",
-    "sha256": "963e2403e07d92821ea04c58cb1664d0d870e1ae7147e8d789681818977c0ef2",
-    "derived_from": "universe.jsonl (389,512 rows, sha 933514ca\u2026) expanded by `python3 -m oracle expand --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve`"
-   }
+    "path": "/tmp/u-full-new/aarch64/queries.jsonl",
+    "sha256": "8ad32c1f0736cb66839152a450cdcfc5fa61089d60f8768e71df72914b882cb3",
+    "derived_from": "universe.jsonl (sha fe1a202ee36231aa) expanded by `python3 -m oracle expand --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve`"
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. See diff.json for the pinned assert sites."
   },
   {
    "id": "U-full/riscv",
    "direction": "U",
    "target": "riscv",
-   "dir": "/tmp/u-run/full2-rv",
-   "command": "./run-u-end-to-end.sh riscv /tmp/u-full2/riscv-full.jsonl /tmp/u-run/full2-rv --allow-unanswerable 6008",
+   "dir": "/tmp/u-full-new/riscv/run",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-full-new/riscv/queries.jsonl /tmp/u-full-new/riscv/run --allow-unanswerable 5400",
    "artifacts": {
-    "diff.json": "1c53c0d99c2c10082191bea5a898501734d29da918678ef246fb76a687c38baa",
-    "universe.jsonl": "b756c962695b0af6cbbf42ac4ab8dc542ca4890e287e1be7a135975c66705abb"
+    "diff.json": "85a5b0930ebe0c4b61950fbda9c7ea858e5db3dd585c808482544c5d195b9927",
+    "universe.jsonl": "e11cba9b8f04b7514405b9e403cf0edd1c1d2db616ea2afee0292efcc9bcc938"
    },
    "expect": {
-    "ref": 3028496,
-    "agree": 3028496,
+    "ref": 2022608,
+    "agree": 2022608,
     "disagree": 0,
-    "unanswerable": 6008,
+    "unanswerable": 5400,
     "ref_asserted": 0,
-    "answered_equal": 3022488
+    "answered_equal": 2017208
    },
    "queries": {
     "path": "/tmp/u-full-new/riscv/queries.jsonl",
-    "sha256": "226aa1fff262a542e1c4ca9468e42e920e3a5f7d1c655fd402f9d6f9f21fd28f",
-    "derived_from": "universe.jsonl (sha b756c962695b0af6) expanded by `python3 -m oracle expand --configs rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,ristretto,rv32zilsd`"
-   }
+    "sha256": "71e1011e48816795b22ae7f6904e93af6267c7670fa18abde59102b260ab844d",
+    "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,ristretto,rv32zilsd`"
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. See diff.json for the pinned assert sites."
   },
   {
    "id": "MIR-L1/upstream",

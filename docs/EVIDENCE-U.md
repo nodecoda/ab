@@ -230,8 +230,9 @@ python3 -m oracle expand --universe /tmp/u-full2/aarch64-all.jsonl \
     --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve \
     --out /tmp/u-full2/aarch64-full.jsonl
 cd /home/ubuntu/llvm/ab
-./run-u-end-to-end.sh aarch64 /tmp/u-full2/aarch64-full.jsonl /tmp/u-run/full2-a64 \
-    --allow-ref-asserts 30150 --allow-unanswerable 35316
+./run-u-end-to-end.sh aarch64 /tmp/u-full-new/aarch64/queries.jsonl \
+    /tmp/u-full-new/aarch64/run \
+    --allow-ref-asserts 40014 --allow-unanswerable 43452
 ```
 
 X86 用 `C0,C1,C2,C3`，RISC-V 用 `rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,
@@ -239,15 +240,21 @@ ristretto,rv32zilsd`；`gen-u.sh --full` 一条命令产出同一份 `universe.f
 
 | target | universe | queries | agree | `answered_equal` | `ref_asserted` | disagree | 两侧都断言 | `diff.json` sha256 |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| X86 | 280,432 | 1,121,728 | 1,121,728 | 1,120,456 | 0 | 0 | 1,272 | `0b33032b76d5340f…` |
-| AArch64 | 389,512 | 3,505,608 | 3,475,458 | 3,440,142 | 30,150 | 0 | 35,316 | `523ae4973b4d6821…` |
-| RISC-V | 378,562 | 3,028,496 | 3,028,496 | 3,022,488 | 0 | 0 | 6,008 | `1c53c0d99c2c1008…` |
+| X86 | 241,398 | 965,592 | 965,592 | 964,200 | 0 | 0 | 1,392 | `38965a9cc0f634a4…` |
+| AArch64 | 439,031 | 3,951,279 | 3,911,265 | 3,867,813 | 40,014 | 0 | 43,452 | `ca02dbf06ae308ec…` |
+| RISC-V | 252,826 | 2,022,608 | 2,022,608 | 2,017,208 | 0 | 0 | 5,400 | `85a5b0930ebe0c4b…` |
+
+2026-11-12 刷新（`oracle ac98717` 之后）：三份 universe 重新生成，条数与
+旧表不同是修复本身的结果。AArch64 的 40,014 条 `ref_asserted` 分三类：
+`cannot implicitly convert a scalable size to a fixed-width size` 36,639、
+`Possible incorrect use of LLT getNumElements for scalable vector` 3,240、
+`LowLevelType.h:470` 135；逐条站点在冻结的 `diff.json` 里。
 
 | target | `queries.full.jsonl` sha256 | 生成 inc sha256 | 两侧答案文件 |
 |---|---|---|---|
-| X86 | `843060d986ff2da0…` | `38b278dd2a10fe42…` | 逐字节相同 |
-| AArch64 | `963e2403e07d9282…` | `0f6dcf0a6b91f105…` | 不同（30,150 行是 `ref_asserted`） |
-| RISC-V | `226aa1fff262a542…` | `fe6427bdf480143c…` | 逐字节相同 |
+| X86 | `2eeca0080c44fee9…` | `38b278dd2a10fe42…` | 逐字节相同 |
+| AArch64 | `8ad32c1f0736cb66…` | `0f6dcf0a6b91f105…` | 不同（40,014 行是 `ref_asserted`） |
+| RISC-V | `71e1011e48816795…` | `fe6427bdf480143c…` | 逐字节相同 |
 
 `agree` 含“两侧都断言”的点（diff 的 accounting 是 `agree + ref_asserted +
 disagree == matched`）。对外报数用 `answered_equal = agree - unanswerable`：
