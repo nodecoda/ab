@@ -65,6 +65,17 @@ equals the MIR-L3 "swapped" hash, all 80,596 lit results are identical, and the
 frozen `G`/`U` replays disagree zero times.  Branch list, provenance hashes,
 the inc-generation policy and the rollback rule are in `docs/ADOPT.md`.
 
+## Multi-step closure
+
+`closure.py` answers the question a one-step A/B leaves open: does the whole
+`legalize` loop agree?  It feeds every non-terminal answer's `new_type` back in
+as a new query, asks both builds, and stops at a fixed point.  Because the
+resulting state set is closed under the successor, one-step equality there
+implies loop equality by induction.  Seeds are `cases` (rule-aware, `p0:*`) and
+`domain` (declared product, `p0:64`); the two keys spell pointers differently,
+so both are needed.  Numbers, the pinned AArch64 asserts and the boundary are in
+`docs/CLOSURE.md`.
+
 ## Vertical slice
 
 `vertical.py` is the end-to-end slice for one target: G/U questions, both

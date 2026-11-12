@@ -81,21 +81,37 @@ L1 214 runs / L2 8,576 runs，全部 disagree 0。负控 G_ZEXT 315、G_ICMP 216
 
 数值与站点见 `docs/EVIDENCE-U.md`；`EVIDENCE.json` 76/76 通过。
 
-### O9 多步 / 动态 legalize 的等价性没有证明
+### O9 多步 / 动态 legalize 的等价性（后继闭包已证，边界收窄）
 
-L1/L2 只看一遍 `-run-pass=legalizer`；L3 用真实 IR 覆盖了三个 target 的下游，
-但仍是“上游写进测试的形状”。任意 IR 上的多步等价没有证据。
+2026-11-12 之前，这条只能写“没有证据”。现在有了：`closure.py` 把
+“一步答案相同 + 后继相同 + 状态集对后继封闭 ⇒ 整个循环相同”做成可执行检查，
+种子分别取 `G`（cases）和 `D`（domain），跑到不动点：
 
-- 这是边界，不是待办；写进 `PLAN` §10 即可。
-- 口径：`--refine` 才让四个大 target 的闭包归零（X86 277、AArch64 2,671、
-  RISC-V 2,864、Wasm 302），而 refine 会改变“原子”划分。所以 L4 的静态
-  结论只能写成“refine 后闭包”，未 refine 的 `cycles=0` 只对代表点商图成立。
+| target | G 闭包 | D 闭包 | 并集 | disagree | stuck |
+|---|---:|---:|---:|---:|---:|
+| x86 | 3,370 | 92,132 | 94,327 | 0 | 0 |
+| aarch64 | 15,386 | 944,069 | 958,751 | 0 | 0 |
+| riscv | 6,347 | 254,065 | 260,156 | 0 | 0 |
+
+aarch64 的 1,696 条单边断言沿用 domain 的钉数（`--allow-ref-asserts 1696`）；
+双端断言数与 domain 证据逐位一致（x86 648、riscv 1,074、aarch64 39,056+6）。
+命令、runner/seed sha、运行时间见 `docs/CLOSURE.md`。
+
+仍未覆盖（边界，不是待办）：
+
+- 起点在声明域之外：`s7`、`s31` 这类宽度，非常见的 mem 描述符/立即数。
+  `s7 → widen → s8` 的后继在集合里，但第一步没被问过。
+- `Custom` 动作体是手写 C++，动作名一致不等于里面的类型改写一致。
+- MIR 层副作用由 L1/L2/L3 覆盖，那条链的形状仍来自上游测试。
+- 分区闭包（`graph --check-closure`）与后继闭包是两个问题：未 refine 时
+  X86 277 / AArch64 2,671 / RISC-V 2,864 / Wasm 302 的类内不封闭仍然存在，
+  closure 不替它回答。
 
 ## 4 按级别的结论
 
 | 级别 | 谁够得上 | 还差 |
 |---|---|---|
-| L4（内部权威） | x86 / aarch64 / riscv | **refine 后**静态闭包 + frozen 回放 + corpus→inc 绑定 + CI 都齐；仍缺动态 `legalize` 的多步等价（边界，见 O9） |
+| L4（内部权威） | x86 / aarch64 / riscv | **refine 后**静态闭包 + frozen 回放 + corpus→inc 绑定 + CI 都齐；多步等价在声明域的后继闭包上已验证（`docs/CLOSURE.md`），域外起点仍是边界（O9） |
 | L3 以下 | 其余六个 | 没有 L3；L0/D/U-full/L2 已齐 |
 
 L4 是**分 target 授予**的，不是一个总开关；九个 target 共享的只有 L0/D/U-full。
