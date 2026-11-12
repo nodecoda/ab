@@ -1,5 +1,29 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43323171636
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43322961594
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43323047640
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43322962360
+    }
+  },
+  "ci_notes": [
+    "CI on the tag commit 7ca3615 and the record commit 7fb3d09 failed only in tests/test_cohort.py: GitHub runners have no git user.name, so the temporary repos had no seed commit. Fixed in 6ee5009; the recorded ab run is the green run on that commit.",
+    "The tag stays at 7ca3615. Rewriting it to absorb a test-only fix would move the evidence, not improve it."
+  ],
   "cohort": "cohort-2026-11-13-r3",
   "commits": {
     "ab": "7ca3615bf7e21440a3d0f59d2f60cbf2de5af638",
