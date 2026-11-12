@@ -41,12 +41,14 @@ L0/D/U-full。
 | C4 | `graph` 的闭包审计默认不成立 | `gisel f1472b2`：`--check-closure` 改为默认开启（`--no-check-closure` 显式退出）；四个大 target 默认 rc=1，`--refine` 后 rc=0。spec/README/REPORT 同步 |
 | C5 | ours 构建在已打补丁的树上跑 `check-pin.sh`，x86/a64/riscv 的 G 路径在内容冻结后失效 | `ab.py` 改为打补丁前校验还原树，`build_swap_runner(..., skip_pin=True)` 只跳过 ours；官方侧校验没有放宽 |
 | C6 | 改 `.gisel` 后没有 frozen 回放命令（原 O3） | `replay-frozen.py`：九 target × G/U 共 18 个方向逐条一致；见 `docs/REPLAY-FROZEN.md` |
+| C7 | `agree` 把“谁都没答”算成一致 | 对外报 `answered_equal`；U-full 表加列（AArch64 3,475,458 → 3,440,142）；`EVIDENCE.json` 的 28 个答案类条目钉住该字段 |
+| C8 | U-full 的展开题面没有冻结，容易被读成丢文件 | `verify-evidence.sh` 在跑 U-full 时打印 NOTE：只冻结 universe + expand 命令，展开文件按需生成 |
 
 ## 3 还缺的
 
 按“价值 / 成本”排序。
 
-### O1 MIR/llc 层只覆盖 6/9（PPC 还是名义）
+### O1 MIR/llc 层覆盖 7/9（arm/mips 缺 L2，m68k/wasm/spirv 缺 MIR）
 
 2026-11-12 补了 ARM / PPC / Mips 的构造函数替换（`swap-source-ctor.py` 的
 `arm`/`ppc`/`mips` 条目，`mir_libs.SWAPPABLE` 同步），用 pin 树的上游 MIR 回放：
@@ -68,16 +70,6 @@ ARM 的 ctor 有两个规则之外的结构：Thumb1 提前返回、`setFCmpLibc
   llc 能否跑它。
 - 建议：先给 arm / mips 补 `mir-configs.json`，再评估 m68k/wasm。
 
-### O5 `agree` 里含“谁都没答”
-
-L0 的 `agree` 是“可观测状态相同”，**包含双侧都断言**（`unanswerable`）。
-U-full/aarch64 的 3,475,458 条 `agree` 里有 35,316 条是谁都没答；
-单侧断言（`ref_asserted` 30,150）不算 `agree`，但标题数字仍是 `agree`。
-`answered_equal = agree - unanswerable` 才是“真给出答案且一致”。
-
-- 成本：低。
-- 建议：对外一律报 `answered_equal`，`agree` 只作恒等式的一环。
-
 ### O6 pin 漂移没有自动检测
 
 pin 停在 `9bfc850b`，带 6 个 PR；其中 #237753、#238306 已在 2026-11 合入上游。
@@ -95,14 +87,6 @@ pin 停在 `9bfc850b`，带 6 个 PR；其中 #237753、#238306 已在 2026-11 �
 
 - 成本：低（复用脚本，参数化 target）。
 - 建议：在 O1 补 MIR 之后一起做，否则只是把现有步骤换个壳。
-
-### O8 U-full 的展开题面没有冻结
-
-冻结的是 `universe.jsonl`（1–19 MB）+ 展开命令；展开后的
-1.1M–4.1M 条查询按需生成（144–473 MB）。`EVIDENCE.json` 记了 sha 和命令。
-
-- 不是缺陷，是取舍；但“重放证据”需要先跑 expand。
-- 建议：`verify-evidence.sh` 打印这一条提示，别让读者以为丢文件了。
 
 ### O9 多步 / 动态 legalize 的等价性没有证明
 

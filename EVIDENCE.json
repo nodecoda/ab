@@ -22,7 +22,8 @@
     "answers_identical": true,
     "agree": 3014,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 3014
    }
   },
   {
@@ -44,7 +45,8 @@
     "answers_identical": true,
     "agree": 12559,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 12559
    }
   },
   {
@@ -66,7 +68,8 @@
     "answers_identical": true,
     "agree": 6086,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 6086
    }
   },
   {
@@ -177,7 +180,8 @@
     "answers_identical": true,
     "agree": 894,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 894
    }
   },
   {
@@ -223,7 +227,8 @@
     "answers_identical": true,
     "agree": 10027,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 10027
    }
   },
   {
@@ -246,7 +251,8 @@
     "answers_identical": true,
     "agree": 29561,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 29561
    }
   },
   {
@@ -292,7 +298,8 @@
     "answers_identical": true,
     "agree": 15695,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 15695
    }
   },
   {
@@ -315,7 +322,8 @@
     "answers_identical": true,
     "agree": 11396,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 11396
    }
   },
   {
@@ -338,7 +346,8 @@
     "answers_identical": true,
     "agree": 2177,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 2177
    }
   },
   {
@@ -361,7 +370,8 @@
     "answers_identical": true,
     "agree": 2182,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 2182
    }
   },
   {
@@ -384,7 +394,8 @@
     "answers_identical": true,
     "agree": 9290,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 9290
    }
   },
   {
@@ -407,7 +418,8 @@
     "answers_identical": true,
     "agree": 15580,
     "disagree": 0,
-    "unanswerable": 0
+    "unanswerable": 0,
+    "answered_equal": 15580
    }
   },
   {
@@ -426,7 +438,8 @@
      "G_ADD",
      "G_SUB"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 9863
    },
    "observed_disagree": 164
   },
@@ -445,7 +458,8 @@
     "rulesets": [
      "G_ICMP"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 29345
    },
    "observed_disagree": 216
   },
@@ -485,7 +499,8 @@
      "G_LOAD",
      "G_STORE"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 15547
    },
    "injected_opcode": "G_LOAD",
    "observed_disagree": 148
@@ -505,7 +520,8 @@
     "rulesets": [
      "G_CTPOP"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 11356
    },
    "injected_opcode": "G_CTPOP",
    "observed_disagree": 40
@@ -526,7 +542,8 @@
      "G_ADD",
      "G_SUB"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 2165
    },
    "injected_opcode": "G_SUB",
    "observed_disagree": 12
@@ -550,7 +567,8 @@
      "G_SUB",
      "G_UDIV"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 2147
    },
    "injected_opcode": "G_MUL",
    "observed_disagree": 35
@@ -570,7 +588,8 @@
     "rulesets": [
      "G_SELECT"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 9254
    },
    "injected_opcode": "G_SELECT",
    "observed_disagree": 36
@@ -601,7 +620,8 @@
      "G_UMIN",
      "G_USUBSAT"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 14796
    },
    "injected_opcode": "G_UMIN",
    "observed_disagree": 784
@@ -623,7 +643,8 @@
     "rulesets": [
      "X_G_ADD"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 2887
    },
    "injected_opcode": "G_ADD",
    "observed_disagree": 127
@@ -645,7 +666,8 @@
     "rulesets": [
      "A_G_ZEXT"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 12244
    },
    "injected_opcode": "G_ZEXT",
    "observed_disagree": 315
@@ -667,7 +689,8 @@
     "rulesets": [
      "R_G_FPTOSI"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 5946
    },
    "injected_opcode": "G_FPTOSI",
    "observed_disagree": 140
@@ -777,7 +800,8 @@
     "rulesets": [
      "Wasm_G_CTLZ"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 838
    },
    "injected_opcode": "G_CTLZ",
    "observed_disagree": 56
@@ -823,7 +847,8 @@
     "answers_identical": true,
     "agree": 91340,
     "disagree": 0,
-    "unanswerable": 648
+    "unanswerable": 648,
+    "answered_equal": 90692
    },
    "runtime": {
     "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMX86CodeGen.so.24.0git",
@@ -923,7 +948,8 @@
     "agree": 1121728,
     "disagree": 0,
     "unanswerable": 1272,
-    "ref_asserted": 0
+    "ref_asserted": 0,
+    "answered_equal": 1120456
    },
    "queries": {
     "path": "/tmp/u-full-new/x86/queries.jsonl",
@@ -951,7 +977,8 @@
      "LowLevelType.h:470": 27,
      "fatal:Possible incorrect use of LLT getNumElements  for scalable vect": 1260,
      "fatal:cannot implicitly convert a scalable size to a fixed-width size": 28863
-    }
+    },
+    "answered_equal": 3440142
    },
    "queries": {
     "path": "/tmp/u-full-new/queries.jsonl",
@@ -974,7 +1001,8 @@
     "agree": 3028496,
     "disagree": 0,
     "unanswerable": 6008,
-    "ref_asserted": 0
+    "ref_asserted": 0,
+    "answered_equal": 3022488
    },
    "queries": {
     "path": "/tmp/u-full-new/riscv/queries.jsonl",

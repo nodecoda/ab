@@ -237,11 +237,11 @@ cd /home/ubuntu/llvm/ab
 X86 用 `C0,C1,C2,C3`，RISC-V 用 `rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,
 ristretto,rv32zilsd`；`gen-u.sh --full` 一条命令产出同一份 `universe.full.jsonl`。
 
-| target | universe | queries | agree | `ref_asserted` | disagree | 两侧都断言 | `diff.json` sha256 |
-|---|---:|---:|---:|---:|---:|---:|---|
-| X86 | 280,432 | 1,121,728 | 1,121,728 | 0 | 0 | 1,272 | `0b33032b76d5340f…` |
-| AArch64 | 389,512 | 3,505,608 | 3,475,458 | 30,150 | 0 | 35,316 | `523ae4973b4d6821…` |
-| RISC-V | 378,562 | 3,028,496 | 3,028,496 | 0 | 0 | 6,008 | `1c53c0d99c2c1008…` |
+| target | universe | queries | agree | `answered_equal` | `ref_asserted` | disagree | 两侧都断言 | `diff.json` sha256 |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| X86 | 280,432 | 1,121,728 | 1,121,728 | 1,120,456 | 0 | 0 | 1,272 | `0b33032b76d5340f…` |
+| AArch64 | 389,512 | 3,505,608 | 3,475,458 | 3,440,142 | 30,150 | 0 | 35,316 | `523ae4973b4d6821…` |
+| RISC-V | 378,562 | 3,028,496 | 3,028,496 | 3,022,488 | 0 | 0 | 6,008 | `1c53c0d99c2c1008…` |
 
 | target | `queries.full.jsonl` sha256 | 生成 inc sha256 | 两侧答案文件 |
 |---|---|---|---|
@@ -250,9 +250,11 @@ ristretto,rv32zilsd`；`gen-u.sh --full` 一条命令产出同一份 `universe.f
 | RISC-V | `226aa1fff262a542…` | `fe6427bdf480143c…` | 逐字节相同 |
 
 `agree` 含“两侧都断言”的点（diff 的 accounting 是 `agree + ref_asserted +
-disagree == matched`）。`--allow-ref-asserts N` 把“上游先断言、我们答出”单独
-计类，`--allow-unanswerable N` 锁住“两侧都断言”的条数；两个数都按实测值钉死，
-漂了就 rc=1。
+disagree == matched`）。对外报数用 `answered_equal = agree - unanswerable`：
+“两边都真给了答案且相同”。AArch64 的差额就是 35,316 条谁都没答。
+`--allow-ref-asserts N` 把“上游先断言、我们答出”单独计类，
+`--allow-unanswerable N` 锁住“两侧都断言”的条数；两个数都按实测值钉死，
+漂了就 rc=1。`EVIDENCE.json` 现在也钉住 `answered_equal`。
 
 ### 上游为什么会断言（65,466 条，全部在 AArch64）
 

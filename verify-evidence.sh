@@ -382,5 +382,12 @@ for entry in manifest["entries"]:
     failures += check(entry)
 
 print("%d/%d entries pass" % (total - failures, total))
+if any((want == "all" or e["direction"] == want)
+       and e["id"].startswith("U-full/") for e in manifest["entries"]):
+    # O8: say it out loud so a reader does not think the expanded query file
+    # was silently dropped.
+    print("NOTE U-full/*: only `universe.jsonl` and the expand command are "
+          "frozen; the 144-473 MB expanded query file is regenerated on "
+          "demand (docs/EVIDENCE-U.md).")
 sys.exit(1 if (failures or build_failures) else 0)
 PY
