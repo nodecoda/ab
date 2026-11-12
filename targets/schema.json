@@ -31,6 +31,7 @@
     "u_prefix",
     "allow_unanswerable",
     "l3",
+    "lib_snapshot",
     "diff_policy",
     "mir"
   ],
@@ -229,6 +230,9 @@
     "u_builder": {
       "type": "string",
       "minLength": 1
+    },
+    "lib_snapshot": {
+      "type": "boolean"
     }
   },
   "allOf": [

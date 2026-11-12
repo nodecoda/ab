@@ -292,6 +292,11 @@ def compare(target: dict, ref: Path, ours: Path, out: Path, mode: str,
            "--details", "1000000"]
     if queries is not None:
         cmd += ["--queries", str(queries)]
+    policy = target.get("diff_policy") or {}
+    if policy.get("allow_ref_asserts") is not None:
+        cmd += ["--allow-ref-asserts", str(policy["allow_ref_asserts"])]
+    if policy.get("expect_unanswerable") is not None:
+        cmd += ["--expect-unanswerable", str(policy["expect_unanswerable"])]
     proc = run_capture(cmd)
     (out / "diff.json").write_text(proc.stdout)
     if proc.returncode == 2:

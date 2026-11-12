@@ -27,6 +27,7 @@
   "u_prefix": "x86",
   "allow_unanswerable": 0,
   "l3": true,
+  "lib_snapshot": false,
   "diff_policy": {
     "allow_ref_asserts": null,
     "expect_unanswerable": null,
