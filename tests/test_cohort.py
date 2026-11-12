@@ -24,6 +24,9 @@ def git(repo, *args):
                           capture_output=True, text=True)
 
 
+IDENTITY = ("-c", "user.name=cohort", "-c", "user.email=cohort@example.invalid")
+
+
 def init_repo(path: Path, files: dict[str, str]) -> str:
     path.mkdir(parents=True, exist_ok=True)
     git(path, "init", "-q")
@@ -32,7 +35,7 @@ def init_repo(path: Path, files: dict[str, str]) -> str:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(text)
     git(path, "add", "-A")
-    git(path, "commit", "-q", "-m", "seed")
+    git(path, *IDENTITY, "commit", "-q", "-m", "seed")
     return git(path, "rev-parse", "HEAD").stdout.strip()
 
 
@@ -136,7 +139,7 @@ class Tagging(unittest.TestCase):
             "gates": [],
         }, indent=2) + "\n")
         git(self.ab, "add", "RELEASE.json")
-        git(self.ab, "commit", "-q", "-m", "manifest")
+        git(self.ab, *IDENTITY, "commit", "-q", "-m", "manifest")
         self.manifest_commit = git(self.ab, "rev-parse", "HEAD").stdout.strip()
         self.patches = [
             mock.patch.object(cohort, "AB", self.ab),

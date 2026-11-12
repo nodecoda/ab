@@ -438,7 +438,9 @@ def cmd_tag(args):
             return fail("%s already has tag %s; do not rewrite it, use the "
                         "next -rN" % (name, args.name))
     for name, repo in repos.items():
-        found = git(repo, "tag", "-a", args.name, "-m",
+        found = git(repo, "-c", "user.name=cohort",
+                    "-c", "user.email=cohort@example.invalid",
+                    "tag", "-a", args.name, "-m",
                     "cohort %s" % args.name, head(repo))
         if found.returncode:
             return fail("%s: %s" % (name, found.stderr.strip()))
