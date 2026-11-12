@@ -1553,7 +1553,13 @@
     }
   ],
   "manifest_commit": "7ca3615bf7e21440a3d0f59d2f60cbf2de5af638",
-  "online_gates": [],
+  "online_gates": [
+    {
+      "evidence": "x86 4b8a026249c2, aarch64 a355d055cf28, riscv 0feeca6a2b68; inc sha equals tests/artifacts/*.inc",
+      "name": "adopt-check",
+      "status": "pass"
+    }
+  ],
   "recorded_at": "2026-11-13",
   "schema": 2,
   "supersedes": "cohort-2026-11-13-r2",
