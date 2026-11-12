@@ -32,7 +32,8 @@ if [ "${GIT_DSL_SKIP_PIN_CHECK:-}" = "1" ]; then
 fi
 
 python3 - "$TREE" "$PIN" <<'PY'
-import json, hashlib, os, subprocess, sys
+import json, subprocess, sys
+from pathlib import Path
 
 tree, pin_path = sys.argv[1], sys.argv[2]
 pin = json.load(open(pin_path))
@@ -73,15 +74,19 @@ if base_map is None:
           % head, file=sys.stderr)
     sys.exit(0)
 
-bad = []
-for rel, expected in sorted(base_map.items()):
-    path = os.path.join(tree, rel)
-    if not os.path.exists(path):
-        bad.append((rel, expected, "missing"))
-        continue
-    actual = hashlib.sha256(open(path, "rb").read()).hexdigest()
-    if actual != expected:
-        bad.append((rel, expected, actual))
+# One hashing implementation, shared with pin/make-base.sh --verify.
+verifier = Path(pin_path).with_name("verify-base.py")
+hashes = subprocess.run([sys.executable, str(verifier), tree, pin_path,
+                         "--emit-json"], capture_output=True, text=True)
+if hashes.returncode != 0:
+    sys.stderr.write(hashes.stderr)
+    print("pin check: cannot hash %s" % tree, file=sys.stderr)
+    sys.exit(1)
+actual = json.loads(hashes.stdout)
+
+bad = [(rel, want, actual.get(rel) or "missing")
+       for rel, want in sorted(base_map.items())
+       if actual.get(rel) != want]
 
 if not bad:
     frozen = pin.get("official_base", {}).get("frozen", {})
@@ -92,12 +97,12 @@ if not bad:
 
 print("pin check: %s (%s) carries content the corpus was not imported from."
       % (head, branch), file=sys.stderr)
-for rel, expected, actual in bad:
+for rel, expected, got in bad:
     print("  %s" % rel, file=sys.stderr)
     print("    official_base %s" % expected[:16], file=sys.stderr)
-    print("    in this tree  %s" % (actual[:16] if actual != "missing" else "missing"),
+    print("    in this tree  %s" % (got[:16] if got != "missing" else "missing"),
           file=sys.stderr)
-    if has_git and actual != "missing":
+    if has_git and got != "missing":
         log = git("log", "--oneline", "--format=%h %an | %s",
                   "%s..HEAD" % base, "--", rel).stdout.strip()
         for line in log.splitlines():
