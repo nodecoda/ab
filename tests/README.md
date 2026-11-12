@@ -18,7 +18,9 @@
 - `test_runner_protocol.py`：真实 runner 的逐行 flush 与坏 LLT rc=2；
 - 负控包装脚本的 `run-u --drop-opcode` 分支（需要真实构建，当前只测分类器）。
 
-已记录的延期：`run-domain.sh` 与 `run-{x86,aarch64,riscv}-domain.sh` 仍是四份
-入口（640 行），只有通用那份读 `targets/`。合并需要重跑 8.4M 条 domain，暂缓；
-`test_domain_contracts.py` 锁住四处 config 集合与 `data/domain.json` 的漂移。
-新加的 domain 脚本必须先读 `targets/`，不再复制配置表。
+domain 入口：`run-domain.sh TARGET` 是唯一公开入口。x86 / AArch64 / RISC-V
+仍由各自的 `run-*-domain.sh` 实现，因为构建方式与 unanswerable 契约不同；
+`run-domain.sh TARGET --plan` 只读打印 config / queries / unanswerable，
+不 build、不跑查询。`test_domain_contracts.py` 锁住 plan 与 features 文件、
+`data/domain.json` 的一致性。新加的 domain 脚本必须先读 `targets/`，
+不再复制配置表。

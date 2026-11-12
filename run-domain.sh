@@ -22,6 +22,16 @@ set -euo pipefail
 # numbers, writes them to <OUT>/first-run.json and exits 0 without pinning.
 # Review that file, copy the numbers into data/domain.json, rerun.
 TARGET=${1:?usage: run-domain.sh TARGET TREE BUILD INC OUT [STATE]}
+ROOT=$(cd "$(dirname "$0")" && pwd)
+if [[ ${2:-} == --plan ]]; then
+  exec python3 "$ROOT/domain-plan.py" "$TARGET"
+fi
+case "$TARGET" in
+  x86|aarch64|riscv)
+    shift
+    exec "$ROOT/run-$TARGET-domain.sh" "$@"
+    ;;
+esac
 TREE=${2:?}
 BUILD=${3:?}
 INC=${4:?}
