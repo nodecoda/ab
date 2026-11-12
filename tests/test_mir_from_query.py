@@ -85,6 +85,20 @@ class Build(unittest.TestCase):
                 mfq.build(query(opcode, ["s32"]), SHAPES, X86, 64)
             self.assertIn(mfq.SKIP[opcode], caught.exception.reason)
 
+    def test_target_skip_says_why_and_leaves_other_targets_alone(self):
+        """SPIR-V's pre-legalizer splits splats; asking the rule table
+        directly hits an upstream out-of-range type index."""
+        cfg = CONFIGS["targets"]["spirv"]["spirv32-kernel"]
+        with self.assertRaises(mfq.Unbuildable) as caught:
+            mfq.build(query("G_SPLAT_VECTOR", ["v32s1"], config="spirv32-kernel"),
+                      SHAPES, cfg, 32, "spirv")
+        self.assertEqual(caught.exception.bucket, "unbuildable_shape")
+        self.assertIn("G_CONCAT_VECTORS", caught.exception.reason)
+        # The same opcode is not skipped for a target that never asked.
+        text = mfq.build(query("G_SPLAT_VECTOR", ["v4s32"]), SHAPES, X86, 64,
+                         "x86")
+        self.assertIn("G_SPLAT_VECTOR", text)
+
     def test_shuffle_mask_covers_every_lane(self):
         text = mfq.build(query("G_SHUFFLE_VECTOR", ["v4s32", "v4s32"]),
                          SHAPES, X86, 64)

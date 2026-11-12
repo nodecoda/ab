@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "generated": "2026-11-12",
- "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1). PPC L2 added 2026-11-12: the upstream MIR corpus has no generic opcode, so the query-derived set is what actually exercises its rules. ARM/Mips L2 added 2026-11-12 (configs in data/mir-configs.json, checked by mir-config-check.py); G_LOAD is the negative control for both because their generated include builds FADD in two chains. M68k/Wasm L2 added 2026-11-12 as well; both constructors are rule tables only, so the swap is the generic body.",
+ "notes": "RISC-V entries refreshed 2026-11-11 from /tmp/rv-vertical2 (see docs/EVIDENCE-riscv.md); the other targets remain the 2026-11-10 snapshot. Artifacts live under /tmp; `command` regenerates them. verify-evidence.sh checks sha256 + the recorded summary. U-full/* are the --limit 0 universes (one file per target, expanded across every configuration by `oracle expand`); the full query file is not frozen (144-473 MB) - its sha256 and the expand command are in docs/EVIDENCE-U.md, and the frozen universe plus that command regenerate it byte-for-byte. MIR-L1/arm, arm-neg, ppc, mips and mips-neg added 2026-11-12 (constructor swap for the three targets; PPC's only MIR file has no generic opcode, so its L1 line is nominal \u2014 see docs/GAPS.md O1). PPC L2 added 2026-11-12: the upstream MIR corpus has no generic opcode, so the query-derived set is what actually exercises its rules. ARM/Mips L2 added 2026-11-12 (configs in data/mir-configs.json, checked by mir-config-check.py); G_LOAD is the negative control for both because their generated include builds FADD in two chains. M68k/Wasm L2 added 2026-11-12 as well; both constructors are rule tables only, so the swap is the generic body. SPIR-V L2 added 2026-11-12 with per-target configs (env from the triple, extensions via --spirv-ext); its G_SPLAT_VECTOR queries are skipped because SPIR-VPreLegalizer splits splats before the legalizer and the rule table itself indexes Types[4]/Types[16] (docs/REPORT-mir.md 6.9).",
  "entries": [
   {
    "id": "G/x86",
@@ -2174,6 +2174,86 @@
       "unsupported_run": 0,
       "out_of_layer": 0,
       "abort0_compared": 272
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/spirv",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "spirv",
+   "dir": "/tmp/l2-spirv/replay",
+   "command": "python3 ab.py mir --target spirv --queries /tmp/spirv.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-spirv --json",
+   "artifacts": {
+    "mir-report.json": "cf62f9ec31681f76643fa35accef6839f714ccc0dc9417d1d9ef3d83c2854fa1",
+    "provenance.json": "77b8833934c03db570af21683db7fea13252af40ce37c1c853442239d9279a5a"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 2625,
+     "runs": 2625,
+     "same": 2595,
+     "both_abort": 30,
+     "diff": 0,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 1987
+    },
+    "mir_targets": {
+     "spirv": {
+      "files": 2625,
+      "all_run_lines": 2625,
+      "runs": 2625,
+      "same": 2595,
+      "both_abort": 30,
+      "diff": 0,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 1987
+     }
+    },
+    "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "MIR-L2/spirv-neg",
+   "kind": "mir",
+   "direction": "MIR",
+   "target": "spirv",
+   "dir": "/tmp/l2-spirv-neg-G_ADD/replay",
+   "command": "python3 ab.py mir --target spirv --queries /tmp/spirv.queries.jsonl --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore --out /tmp/l2-spirv-neg-G_ADD --negative-control G_ADD --json",
+   "artifacts": {
+    "mir-report.json": "cdfd558943f398e2a13b8b5c1ab9373005210202aef683597aa914a895fda737",
+    "provenance.json": "957698665cfda10de3a9cde004bfb830935945a978f5227238d5b26b8f754a7c"
+   },
+   "expect": {
+    "mir": {
+     "all_run_lines": 2625,
+     "runs": 2625,
+     "same": 2494,
+     "both_abort": 30,
+     "diff": 101,
+     "timeout": 0,
+     "unsupported_run": 0,
+     "out_of_layer": 0,
+     "abort0_compared": 1921
+    },
+    "mir_targets": {
+     "spirv": {
+      "files": 2625,
+      "all_run_lines": 2625,
+      "runs": 2625,
+      "same": 2494,
+      "both_abort": 30,
+      "diff": 101,
+      "timeout": 0,
+      "unsupported_run": 0,
+      "out_of_layer": 0,
+      "abort0_compared": 1921
      }
     },
     "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"

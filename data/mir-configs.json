@@ -395,6 +395,50 @@
     ],
     "source": "wasm-features.json wasm64-signext: hasAddr64() + hasSignExt()"
    }
+  },
+  "spirv": {
+   "spirv64-kernel": {
+    "triple": "spirv64-unknown-unknown",
+    "pointer_width": 64,
+    "mattr": [],
+    "source": "spirv-features.json spirv64-kernel: no OS => env Kernel, no extension"
+   },
+   "spirv32-kernel": {
+    "triple": "spirv32-unknown-unknown",
+    "pointer_width": 32,
+    "mattr": [],
+    "source": "spirv-features.json spirv32-kernel: no OS => env Kernel, no extension"
+   },
+   "spirv64-shader": {
+    "triple": "spirv64-unknown-vulkan",
+    "pointer_width": 64,
+    "mattr": [],
+    "source": "spirv-features.json spirv64-shader: OS=vulkan => env Shader"
+   },
+   "spirv32-shader": {
+    "triple": "spirv32-unknown-vulkan",
+    "pointer_width": 32,
+    "mattr": [],
+    "source": "spirv-features.json spirv32-shader: OS=vulkan => env Shader"
+   },
+   "spirv64-kernel-ext": {
+    "triple": "spirv64-unknown-unknown",
+    "pointer_width": 64,
+    "mattr": [],
+    "args": [
+     "--spirv-ext=+SPV_ALTERA_arbitrary_precision_integers,+SPV_EXT_long_vector"
+    ],
+    "source": "spirv-features.json spirv64-kernel-ext: arbitrary precision ints + long vectors"
+   },
+   "spirv32-shader-ext": {
+    "triple": "spirv32-unknown-vulkan",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "--spirv-ext=+SPV_EXT_long_vector,+SPV_KHR_bit_instructions"
+    ],
+    "source": "spirv-features.json spirv32-shader-ext: long vectors + bit instructions"
+   }
   }
  }
 }

@@ -42,7 +42,7 @@
 `llc` sha、以及每个 target 的 `baseline_lib_restored_exactly`。报告里带
 `generated_at`，所以重跑不会复现同一个文件 sha；`verify-evidence.sh` 先比
 sha（证明冻结的就是这次运行），再比桶计数（这是重跑后应当复现的东西）。
-L2 的八份报告是 `MIR-L2/{x86,aarch64,riscv,arm,mips,ppc,m68k,wasm}`，L3 是 `MIR-L3/check-llvm`
+L2 的九份报告是 `MIR-L2/{x86,aarch64,riscv,arm,mips,ppc,m68k,wasm,spirv}`，L3 是 `MIR-L3/check-llvm`
 （`kind: "lit"`：两轮 per-test 记录，`verify-evidence.sh` 会重算比较结果）。
 
 `provenance.json` 里记录两侧库与恢复后的基线库 sha。x86 的恢复重编是字节
@@ -453,7 +453,7 @@ python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl \
 
 五个新条目已进 `EVIDENCE.json`（`MIR-L1/arm`、`MIR-L1/arm-neg`、
 `MIR-L1/ppc`、`MIR-L1/mips`、`MIR-L1/mips-neg`）；`VERIFY_FROZEN=1
-./verify-evidence.sh` 当时是 64/64（见 §6.7、§6.8 后的 74/74）。
+./verify-evidence.sh` 当时是 64/64（见 §6.7–§6.9 后的 76/76）。
 
 ### 6.7 2026-11-12：ARM / Mips 的 L2（新增）
 
@@ -528,13 +528,54 @@ Wasm 的 306 条未建成主要是 `G_ASHR`/`G_ROTL` 没有形状、以及机器
 四条新条目已冻结；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 20/20，
 全量 74/74。
 
+### 6.9 2026-11-12：SPIR-V 的 L2（新增，O1 收口）
+
+SPIR-V 的配置轴与别的 target 不同：环境（kernel/shader）来自 triple，扩展走
+`--spirv-ext=+...`，不是 `-mattr`。`data/mir-configs.json` 的 `spirv` 段因此用
+`args` 表达 6 个配置：
+
+| 配置 | triple | 环境 | args |
+|---|---|---|---|
+| `spirv64-kernel` / `spirv32-kernel` | `spirv{64,32}-unknown-unknown` | Kernel | — |
+| `spirv64-shader` / `spirv32-shader` | `spirv{64,32}-unknown-vulkan` | Shader | — |
+| `spirv64-kernel-ext` | `spirv64-unknown-unknown` | Kernel | `+SPV_ALTERA_arbitrary_precision_integers,+SPV_EXT_long_vector` |
+| `spirv32-shader-ext` | `spirv32-unknown-vulkan` | Shader | `+SPV_EXT_long_vector,+SPV_KHR_bit_instructions` |
+
+`mir-config-check.py --target spirv` 返回 `ok`。构造函数有两句不是规则、但
+`legalizeCustom` 依赖的成员初始化（`this->ST = &ST; GR = ST.getSPIRVGlobalRegistry();`，
+importer 已列为 ignored），替换体保留这两句。
+
+```sh
+python3 ab.py mir --target spirv --queries /tmp/spirv.queries.jsonl \
+  --tree … --build … --out /tmp/l2-spirv --json
+# spirv: 5,689 queries -> 2,625 MIR (2,930 shape, 134 type, 0 config)
+```
+
+| target | files | runs | same | both_abort | diff | abort0 compared |
+|---|---:|---:|---:|---:|---:|---:|
+| SPIR-V | 2,625 | 2,625 | 2,595 | 30 | 0 | 1,987 |
+
+负控 `G_ADD`（101 条查询，单条 builder 链）：`diff=101`，`same=2,494`
+（`G_ADD` 在 SPIR-V 是 `legal`/`custom` 混合，把它整体换成 `.unsupported()`
+会让每一侧都 abort，抓得到）。
+
+**G_SPLAT_VECTOR 的 41 条被跳过**，理由写在 `mir-from-query.py` 的
+`SKIP_BY_TARGET`：SPIR-V 的前端在 legalizer 之前就把 splat 拆成
+`G_CONCAT_VECTORS`，真实管线不会拿宽于 `MaxVectorSize` 的 splat 去问规则表；
+直接问会命中上游 `changeElementSizeTo(0, MaxVectorSize)` 的
+`Types[4]`/`Types[16]` 越界（issue #17，已记为潜在 bug）。跳过使 `diff` 从 4
+变成 0，同时把这 41 条计入 `unbuildable_shape`，不是静默丢弃。
+
+两条新条目已冻结；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 22/22，
+全量 76/76。
+
 ## 7 未覆盖
 
 - **多步 legalize 与 result 层面的等价性**：L1/L2 只看
   `-run-pass=legalizer` 的输出文本；L3 用 `check-llvm` 补了“真实 IR 的下游
   可观测结果”，但仍不是任意 IR 上的语义证明。
 - **MIR 覆盖**：L1 六个（x86/aarch64/riscv/arm/mips，PPC 名义 1 条）；L2 六个
-  （x86/aarch64/riscv/ppc/arm/mips/m68k/wasm），L3 只有三个。M68k/WebAssembly/SPIR-V
+  （九个 target 都有），L3 只有三个。M68k/WebAssembly/SPIR-V
   只有 L0 适配器。
 - **`-mtriple` 之外的 config 轴**：回放用的是 MIR 文件自带的
   `-mtriple`/`-mattr`；没有按 gisel 的配置矩阵重跑 L1。

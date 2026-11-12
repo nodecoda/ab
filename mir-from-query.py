@@ -75,6 +75,19 @@ SKIP = {
                               "operands; the query only names two types",
 }
 
+# Per-target skips: the rule table exists, but the real pipeline never asks it
+# this question.  Keep the reason explicit instead of weakening the replay.
+SKIP_BY_TARGET = {
+    "spirv": {
+        "G_SPLAT_VECTOR":
+            "SPIR-VPreLegalizer splits a splat into G_CONCAT_VECTORS before "
+            "the legalizer, so the rule table never sees a splat wider than "
+            "MaxVectorSize; asking it directly hits upstream's "
+            "changeElementSizeTo(0, MaxVectorSize), which indexes Types[4] / "
+            "Types[16] and aborts (see docs/REPORT-mir.md 6.9)",
+    },
+}
+
 
 class Unbuildable(Exception):
     def __init__(self, bucket: str, reason: str):
@@ -225,10 +238,14 @@ def fill_slot(index: int, pointers, given):
     return given
 
 
-def build(query: dict, shapes: dict, cfg: dict, ptr_bits: int):
+def build(query: dict, shapes: dict, cfg: dict, ptr_bits: int,
+          target: str = ""):
     opcode = query["name"]
     if opcode in SKIP:
         raise Unbuildable("unbuildable_shape", SKIP[opcode])
+    target_skip = SKIP_BY_TARGET.get(target, {})
+    if opcode in target_skip:
+        raise Unbuildable("unbuildable_shape", target_skip[opcode])
     shape = shapes.get(opcode)
     if shape is None:
         raise Unbuildable("unbuildable_shape", "no shape for %s" % opcode)
@@ -641,7 +658,7 @@ def main(argv=None) -> int:
         if width is None:
             width = 64 if "64" in cfg["triple"] else 32
         try:
-            text = build(query, shapes, cfg, width)
+            text = build(query, shapes, cfg, width, args.target)
         except Unbuildable as exc:
             buckets[exc.bucket] += 1
             reasons[exc.reason] += 1

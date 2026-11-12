@@ -118,6 +118,24 @@ TARGETS = {
 }
 """,
     },
+    "spirv": {
+        "source": "llvm/lib/Target/SPIRV/SPIRVLegalizerInfo.cpp",
+        "ctor": "SPIRVLegalizerInfo::SPIRVLegalizerInfo(const SPIRVSubtarget &ST)",
+        "inc": "SPIRVLegalizerInfo.inc",
+        "subtarget": "SPIRVSubtarget",
+        # Two constructor statements are plumbing, not rules: legalizeCustom
+        # reads the subtarget and the global registry through these members.
+        # The importer lists both as ignored; dropping them leaves ST/GR null.
+        "body": """\
+{
+  using namespace TargetOpcode;
+  this->ST = &ST;
+  GR = ST.getSPIRVGlobalRegistry();
+#include "__INC__"
+  verify(*ST.getInstrInfo());
+}
+""",
+    },
     "wasm": {
         "source": "llvm/lib/Target/WebAssembly/GISel/WebAssemblyLegalizerInfo.cpp",
         "ctor": ("WebAssemblyLegalizerInfo::WebAssemblyLegalizerInfo(\n"
