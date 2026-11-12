@@ -13,9 +13,12 @@
 - `test_leg_provenance.py`、`test_negative_scripts.py`：U / G-neg 腿显式接收
   `--tree` / `--build`，不再回落到默认路径。
 
+`test_runner_protocol.py`：真实 runner 的坏 LLT / 坏 JSON rc=2，且先前答案
+保留。它需要构建好的 runner，`AB_RUNNER=<path>` 时运行，CI 里 skip；harness
+侧（半行、非信号退出）由 `test_run_queries.py` 覆盖。
+
 仍待补：
 
-- `test_runner_protocol.py`：真实 runner 的逐行 flush 与坏 LLT rc=2；
 - 负控包装脚本的 `run-u --drop-opcode` 分支（需要真实构建，当前只测分类器）。
 
 domain 入口：`run-domain.sh TARGET` 是唯一公开入口。x86 / AArch64 / RISC-V
