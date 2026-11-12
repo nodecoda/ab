@@ -206,8 +206,10 @@ targets[*].runs 之和 == totals.runs
 | `adopt` | gisel 的 `<t>.inc` + `docs/ADOPT.md` | inc sha、分支/commit/lib sha 在文档里 |
 
 `verify-evidence.sh [DIRECTION]` 只做转发；`VERIFY_FROZEN=1` 时只读
-`oracle/` 和 `data/closure/`，并显式打印 `official_build not checked (frozen)`。
-非 frozen 模式缺构建目录是失败，不会 SKIP。
+`oracle/` 和 `data/closure/`，并显式打印
+`SKIP official_build  frozen mode verifies artifacts, not the build`；
+汇总行另报 `N check(s) skipped`。SKIP 不是 PASS：冻结模式只证明产物字节，
+不证明产生它们的构建身份。非 frozen 模式缺构建目录或库哈希不符都是失败。
 
 `adopt-check.sh` 会 `git fetch --depth=1` 三个采用分支，比较分支内 `.inc` 的
 sha 与 gisel 产物；这是唯一需要网络的证据检查。

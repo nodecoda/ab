@@ -187,7 +187,8 @@ class Shape(unittest.TestCase):
             [sys.executable, str(EVIDENCE), "verify", "--manifest", str(manifest),
              "--frozen"], capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stdout)
-        self.assertIn("not checked (frozen)", proc.stdout)
+        self.assertIn("SKIP official_build", proc.stdout)
+        self.assertIn("1 check(s) skipped", proc.stdout)
 
     def test_a_live_manifest_fails_on_a_missing_build(self):
         tmp = Path(tempfile.mkdtemp())

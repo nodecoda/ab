@@ -67,6 +67,7 @@ class Verifier:
         self.manifest = json.loads(self.manifest_path.read_text())
         self.oracle_root = self.manifest_path.parent / "oracle"
         self.failures = 0
+        self.skipped = 0
 
     # -- reporting -------------------------------------------------------
     def fail(self, entry, message: str) -> int:
@@ -534,7 +535,10 @@ class Verifier:
         if not build:
             return 0
         if self.frozen:
-            print("PASS official_build  not checked (frozen)")
+            # Frozen mode proves the bytes, not the build that produced them.
+            # Say "SKIP", not "PASS": the two are different claims.
+            print("SKIP official_build  frozen mode verifies artifacts, not the build")
+            self.skipped += 1
             return 0
         root = pathlib.Path(build["path"])
         if not root.exists():
@@ -620,6 +624,8 @@ class Verifier:
             self.failures += self.check(entry)
         total = len(selected)
         print("%d/%d entries pass" % (total - self.failures, total))
+        if self.skipped:
+            print("%d check(s) skipped" % self.skipped)
         if any(e.get("id", "").startswith("U-full/") for e in selected):
             print("NOTE U-full/*: only `universe.jsonl` and the expand command "
                   "are frozen; the expanded query file is regenerated on demand.")
