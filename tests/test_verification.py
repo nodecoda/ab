@@ -21,6 +21,20 @@ class VerificationRecord(unittest.TestCase):
         self.record = json.loads(VERIFICATION.read_text())
         self.manifest = json.loads(MANIFEST.read_text())
 
+    def test_schema_two_carries_fingerprints_and_history(self):
+        if self.record.get("schema") != 2:
+            self.skipTest("schema 1 record (r2); r3 must be schema 2")
+        self.assertEqual(self.record["schema"], 2)
+        for name in ("gisel", "upstream_source", "ab"):
+            self.assertTrue(self.record["tags"][name].startswith("cohort-"))
+        for gate in self.record["gates"]:
+            self.assertIn("fingerprint", gate, gate.get("name"))
+            self.assertEqual(len(gate["fingerprint"]), 64, gate.get("name"))
+            self.assertTrue(gate.get("blobs"), gate.get("name"))
+        self.assertIsInstance(self.record["history"], list)
+        self.assertEqual(self.record["gate_commits"]["ab"],
+                         self.manifest["repos"]["ab"])
+
     def test_cohort_matches_the_manifest(self):
         self.assertEqual(self.record["cohort"], self.manifest["cohort"])
         self.assertTrue(self.record["cohort"].startswith("cohort-"))
