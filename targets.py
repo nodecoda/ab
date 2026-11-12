@@ -126,11 +126,15 @@ def check_all():
     return errors
 
 
+def names():
+    return sorted(p.stem for p in TARGET_DIR.glob("*.json")
+                  if p.name != "schema.json")
+
+
 def load(name):
     path = TARGET_DIR / ("%s.json" % name)
     if not path.exists():
-        known = sorted(p.stem for p in TARGET_DIR.glob("*.json")
-                       if p.name != "schema.json")
+        known = names()
         raise TargetError("unknown target %r (known: %s)"
                           % (name, ", ".join(known) or "none"))
     doc = json.loads(path.read_text())
@@ -164,32 +168,31 @@ def shell_value(value):
 # The names are the contract with the shell scripts.  Add a name here and in
 # the script that reads it, never one without the other.
 SHELL_FIELDS = {
-    "TARGET": "name",
-    "SOURCE": "source",
-    "FEATURES": "features",
-    "AXES": "axes",
-    "BUILDER": "runner.builder",
-    "U_BUILDER": "u_builder",
-    "RUNNER_SOURCE": "runner.source",
-    "INC_NAME": "inc_name",
-    "ARTIFACT": "artifact",
-    "TEST_DIR": "test_dir",
-    "CONTRACT": "contract",
-    "E2E": "e2e",
-    "DOMAIN": "domain",
-    "G_NEG": "g_neg",
-    "U_NEG": "u_neg",
-    "U_PREFIX": "u_prefix",
-    "ALLOW_UNANSWERABLE": "allow_unanswerable",
-    "QUERY_COUNT": "query_count",
-    "EXPECTED_QUERIES": "diff_policy.expected_queries",
-    "ALLOW_REF_ASSERTS": "diff_policy.allow_ref_asserts",
-    "EXPECT_UNANSWERABLE": "diff_policy.expect_unanswerable",
-    "L3": "l3",
-    "MIR_SWAPPABLE": "mir.swappable",
-    "MIR_STRATEGY": "mir.strategy",
+    "T_TARGET": "name",
+    "T_SOURCE": "source",
+    "T_FEATURES": "features",
+    "T_AXES": "axes",
+    "T_BUILDER": "runner.builder",
+    "T_U_BUILDER": "u_builder",
+    "T_RUNNER_SOURCE": "runner.source",
+    "T_INC_NAME": "inc_name",
+    "T_ARTIFACT": "artifact",
+    "T_TEST_DIR": "test_dir",
+    "T_CONTRACT": "contract",
+    "T_E2E": "e2e",
+    "T_DOMAIN": "domain",
+    "T_G_NEG": "g_neg",
+    "T_U_NEG": "u_neg",
+    "T_U_PREFIX": "u_prefix",
+    "T_ALLOW_UNANSWERABLE": "allow_unanswerable",
+    "T_QUERY_COUNT": "query_count",
+    "T_EXPECTED_QUERIES": "diff_policy.expected_queries",
+    "T_ALLOW_REF_ASSERTS": "diff_policy.allow_ref_asserts",
+    "T_EXPECT_UNANSWERABLE": "diff_policy.expect_unanswerable",
+    "T_L3": "l3",
+    "T_MIR_SWAPPABLE": "mir.swappable",
+    "T_MIR_STRATEGY": "mir.strategy",
 }
-
 
 def shell_env(doc):
     lines = []

@@ -53,36 +53,14 @@ TREE=${AB_TREE:-/home/ubuntu/llvm/trees/explore}
 BUILD=${AB_BUILD:-/home/ubuntu/llvm/builds/explore}
 mkdir -p "$OUT"
 
-case "$TARGET" in
-  x86)     BUILDER=$ROOT/build-x86-ctor-runner.sh
-           CORPUS=$GISEL/tests/corpus/X86LegalizerInfo.gisel
-           INC_NAME=X86LegalizerInfo.inc ;;
-  aarch64) BUILDER=$ROOT/build-aarch64-runner.sh
-           CORPUS=$GISEL/tests/corpus/AArch64LegalizerInfo.gisel
-           INC_NAME=AArch64LegalizerInfo.inc ;;
-  riscv)   BUILDER=$ROOT/build-riscv-runner.sh
-           CORPUS=$GISEL/tests/corpus/RISCVLegalizerInfo.gisel
-           INC_NAME=RISCVLegalizerInfo.inc ;;
-  arm)     BUILDER=$ROOT/build-arm-runner.sh
-           CORPUS=$GISEL/tests/corpus/ARMLegalizerInfo.gisel
-           INC_NAME=ARMLegalizerInfo.inc ;;
-  mips)    BUILDER=$ROOT/build-mips-runner.sh
-           CORPUS=$GISEL/tests/corpus/MipsLegalizerInfo.gisel
-           INC_NAME=MipsLegalizerInfo.inc ;;
-  ppc)     BUILDER=$ROOT/build-ppc-runner.sh
-           CORPUS=$GISEL/tests/corpus/PowerPCLegalizerInfo.gisel
-           INC_NAME=PowerPCLegalizerInfo.inc ;;
-  m68k)    BUILDER=$ROOT/build-m68k-runner.sh
-           CORPUS=$GISEL/tests/corpus/M68kLegalizerInfo.gisel
-           INC_NAME=M68kLegalizerInfo.inc ;;
-  wasm)    BUILDER=$ROOT/build-wasm-runner.sh
-           CORPUS=$GISEL/tests/corpus/WebAssemblyLegalizerInfo.gisel
-           INC_NAME=WebAssemblyLegalizerInfo.inc ;;
-  spirv)   BUILDER=$ROOT/build-spirv-runner.sh
-           CORPUS=$GISEL/tests/corpus/SPIRVLegalizerInfo.gisel
-           INC_NAME=SPIRVLegalizerInfo.inc ;;
-  *) echo "unsupported target: $TARGET" >&2; exit 2 ;;
-esac
+if ! python3 "$ROOT/targets.py" env "$TARGET" >/dev/null 2>&1; then
+  echo "unsupported target: $TARGET" >&2
+  exit 2
+fi
+eval "$(python3 "$ROOT/targets.py" env "$TARGET")"
+CORPUS=$GISEL/$T_SOURCE
+BUILDER=$ROOT/$T_U_BUILDER
+INC_NAME=$T_INC_NAME
 
 if [[ ! -f $QUERIES ]]; then
   echo "input error: queries not found: $QUERIES" >&2

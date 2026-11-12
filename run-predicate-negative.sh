@@ -20,27 +20,13 @@ RULE=${5:--1}
 TREE=${AB_TREE:-/home/ubuntu/llvm/trees/explore}
 BUILD=${AB_BUILD:-/home/ubuntu/llvm/builds/explore}
 
-case "$TARGET" in
-  x86)     CORPUS=$GISEL/tests/corpus/X86LegalizerInfo.gisel
-           SCRIPT=$PWD/run-x86-end-to-end.sh ;;
-  aarch64) CORPUS=$GISEL/tests/corpus/AArch64LegalizerInfo.gisel
-           SCRIPT=$PWD/run-aarch64-end-to-end.sh ;;
-  riscv)   CORPUS=$GISEL/tests/corpus/RISCVLegalizerInfo.gisel
-           SCRIPT=$PWD/run-riscv-end-to-end.sh ;;
-  arm)     CORPUS=$GISEL/tests/corpus/ARMLegalizerInfo.gisel
-           SCRIPT=$PWD/run-arm-end-to-end.sh ;;
-  mips)    CORPUS=$GISEL/tests/corpus/MipsLegalizerInfo.gisel
-           SCRIPT=$PWD/run-mips-end-to-end.sh ;;
-  ppc)     CORPUS=$GISEL/tests/corpus/PowerPCLegalizerInfo.gisel
-           SCRIPT=$PWD/run-ppc-end-to-end.sh ;;
-  m68k)    CORPUS=$GISEL/tests/corpus/M68kLegalizerInfo.gisel
-           SCRIPT=$PWD/run-m68k-end-to-end.sh ;;
-  wasm)    CORPUS=$GISEL/tests/corpus/WebAssemblyLegalizerInfo.gisel
-           SCRIPT=$PWD/run-wasm-end-to-end.sh ;;
-  spirv)   CORPUS=$GISEL/tests/corpus/SPIRVLegalizerInfo.gisel
-           SCRIPT=$PWD/run-spirv-end-to-end.sh ;;
-  *) echo "unsupported target: $TARGET" >&2; exit 2 ;;
-esac
+if ! python3 "$ROOT/targets.py" env "$TARGET" >/dev/null 2>&1; then
+  echo "unsupported target: $TARGET" >&2
+  exit 2
+fi
+eval "$(python3 "$ROOT/targets.py" env "$TARGET")"
+CORPUS=$GISEL/$T_SOURCE
+SCRIPT=$ROOT/$T_E2E
 
 mkdir -p "$OUT"
 BASE_INC=$OUT/base.inc

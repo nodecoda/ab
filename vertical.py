@@ -36,46 +36,38 @@ GISEL = Path(__file__).resolve().parent.parent / "gisel"
 DEFAULT_TREE = Path("/home/ubuntu/llvm/trees/explore")
 DEFAULT_BUILD = Path("/home/ubuntu/llvm/builds/explore")
 
-# Everything target-specific lives here.  `u_prefix` is the directory name
-# under /tmp/u-gen that `oracle/scripts/gen-u.sh` writes.
-TARGETS = {
-    "riscv": {
-        "contract": "data/riscv-contract.json",
-        "inc": "riscv.inc",
-        "corpus": "RISCVLegalizerInfo.gisel",
-        "features": "riscv-features.json",
-        "end_to_end": "run-riscv-end-to-end.sh",
-        "domain": "run-riscv-domain.sh",
-        "g_neg": "G_FPTOSI",
-        "u_neg": "G_ADD",
-        "u_prefix": "rvb",
-        "allow_unanswerable": "0",
-    },
-    "x86": {
-        "contract": "data/x86-contract.json",
-        "inc": "x86.inc",
-        "corpus": "X86LegalizerInfo.gisel",
-        "features": "x86-features.json",
-        "end_to_end": "run-x86-end-to-end.sh",
-        "domain": "run-x86-domain.sh",
-        "g_neg": "G_ADD",
-        "u_neg": "G_SUB",
-        "u_prefix": "x86",
-        "allow_unanswerable": "0",
-    },
-    "aarch64": {
-        "contract": "data/aarch64-contract.json",
-        "inc": "aarch64.inc",
-        "corpus": "AArch64LegalizerInfo.gisel",
-        "features": "features.json",
-        "end_to_end": "run-aarch64-end-to-end.sh",
-        "domain": "run-aarch64-domain.sh",
-        "g_neg": "G_ZEXT",
-        "u_neg": "G_ICMP",
-        "u_prefix": "a64",
-        "allow_unanswerable": "0",
-    },
-}
+sys.path.insert(0, str(ROOT))
+import targets as target_registry  # noqa: E402
+
+
+def spec_from(doc: dict) -> dict:
+    """The view vertical.py needs, derived from targets/<name>.json."""
+    return {
+        "contract": doc["contract"],
+        "inc": doc["artifact"],
+        "corpus": Path(doc["source"]).name,
+        "features": Path(doc["features"]).name,
+        "end_to_end": doc["e2e"],
+        "domain": doc["domain"],
+        "g_neg": doc["g_neg"],
+        "u_neg": doc["u_neg"],
+        "u_prefix": doc["u_prefix"],
+        "allow_unanswerable": str(doc["allow_unanswerable"]),
+    }
+
+
+def contract_targets() -> dict:
+    out = {}
+    for name in target_registry.names():
+        doc = target_registry.load(name)
+        if doc["contract"]:
+            out[name] = spec_from(doc)
+    return out
+
+
+# A derived view, not a registry: only targets with a recorded contract can
+# run this slice.  Nine-target frozen replay is replay-frozen.py.
+TARGETS = contract_targets()
 
 
 def sha256(path: Path) -> str:
@@ -476,8 +468,7 @@ def build_contract(target: str, out: Path, u_queries: Path, tree: Path) -> dict:
 
 def main(argv=None, default_target="riscv"):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--target", choices=sorted(TARGETS),
-                    default=default_target)
+    ap.add_argument("--target", default=default_target)
     ap.add_argument("--tree", default=str(DEFAULT_TREE))
     ap.add_argument("--build", default=str(DEFAULT_BUILD))
     ap.add_argument("--out", required=True)
@@ -491,6 +482,11 @@ def main(argv=None, default_target="riscv"):
                     help="write data/<target>-contract.json from this run")
     args = ap.parse_args(argv)
 
+    if args.target not in TARGETS:
+        raise SystemExit(
+            "%s: no vertical contract; this script needs data/%s-contract.json "
+            "(nine-target frozen replay is replay-frozen.py)"
+            % (args.target, args.target))
     spec = TARGETS[args.target]
     out = Path(args.out).resolve()
     tree = Path(args.tree).resolve()

@@ -31,22 +31,15 @@ INJECT = ROOT / "inject-missing-opcode.py"
 NINJA = os.environ.get("NINJA", "ninja")
 DEFAULT_GISEL = Path(os.environ.get("GISEL_SRC", ROOT.parent / "gisel")).resolve()
 
-# LLVM test directory names differ from the adapter names.
-TEST_DIR = {
-    "x86": "X86",
-    "aarch64": "AArch64",
-    "riscv": "RISCV",
-    "arm": "ARM",
-    "mips": "Mips",
-    "wasm": "WebAssembly",
-    "ppc": "PowerPC",
-    "m68k": "M68k",
-    "spirv": "SPIRV",
-}
+# Derived from targets/*.json; never add a target table here again.
+sys.path.insert(0, str(ROOT))
+import targets as target_registry  # noqa: E402
 
-# Targets whose constructor body can be replaced in the source tree today.
-SWAPPABLE = ("x86", "aarch64", "riscv", "arm", "ppc", "mips",
-             "m68k", "wasm", "spirv")
+_SPECS = {name: target_registry.load(name)
+          for name in target_registry.names()}
+TEST_DIR = {name: doc["test_dir"] for name, doc in _SPECS.items()}
+SWAPPABLE = tuple(name for name, doc in _SPECS.items()
+                  if doc["mir"]["swappable"])
 
 
 class MirError(RuntimeError):

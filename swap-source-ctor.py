@@ -21,11 +21,9 @@ import shutil
 import sys
 from pathlib import Path
 
-TARGETS = {
+_DERIVED = {
     "x86": {
-        "source": "llvm/lib/Target/X86/GISel/X86LegalizerInfo.cpp",
         "ctor": "X86LegalizerInfo::X86LegalizerInfo(",
-        "inc": "X86LegalizerInfo.inc",
         "subtarget": "X86Subtarget",
         "body": """\
 {
@@ -36,23 +34,17 @@ TARGETS = {
 """,
     },
     "aarch64": {
-        "source": "llvm/lib/Target/AArch64/GISel/AArch64LegalizerInfo.cpp",
         "ctor": ("AArch64LegalizerInfo::AArch64LegalizerInfo("
                  "const AArch64Subtarget &ST)"),
-        "inc": "AArch64LegalizerInfo.inc",
         "subtarget": "AArch64Subtarget",
     },
     "riscv": {
-        "source": "llvm/lib/Target/RISCV/GISel/RISCVLegalizerInfo.cpp",
         "ctor": ("RISCVLegalizerInfo::RISCVLegalizerInfo("
                  "const RISCVSubtarget &ST)"),
-        "inc": "RISCVLegalizerInfo.inc",
         "subtarget": "RISCVSubtarget",
     },
     "arm": {
-        "source": "llvm/lib/Target/ARM/ARMLegalizerInfo.cpp",
         "ctor": "ARMLegalizerInfo::ARMLegalizerInfo(const ARMSubtarget &ST)",
-        "inc": "ARMLegalizerInfo.inc",
         "subtarget": "ARMSubtarget",
         # Thumb1 is not supported, and upstream says so by returning before
         # any rule is installed.  That is structure, not a rule: keep it so
@@ -78,9 +70,7 @@ TARGETS = {
 """,
     },
     "ppc": {
-        "source": "llvm/lib/Target/PowerPC/GISel/PPCLegalizerInfo.cpp",
         "ctor": "PPCLegalizerInfo::PPCLegalizerInfo(const PPCSubtarget &ST)",
-        "inc": "PowerPCLegalizerInfo.inc",
         "subtarget": "PPCSubtarget",
         # Upstream does not call verify() here, and the rules take no
         # subtarget input at all.
@@ -92,9 +82,7 @@ TARGETS = {
 """,
     },
     "mips": {
-        "source": "llvm/lib/Target/Mips/MipsLegalizerInfo.cpp",
         "ctor": "MipsLegalizerInfo::MipsLegalizerInfo(const MipsSubtarget &ST)",
-        "inc": "MipsLegalizerInfo.inc",
         "subtarget": "MipsSubtarget",
         "body": """\
 {
@@ -105,9 +93,7 @@ TARGETS = {
 """,
     },
     "m68k": {
-        "source": "llvm/lib/Target/M68k/GISel/M68kLegalizerInfo.cpp",
         "ctor": "M68kLegalizerInfo::M68kLegalizerInfo(const M68kSubtarget &ST)",
-        "inc": "M68kLegalizerInfo.inc",
         "subtarget": "M68kSubtarget",
         # Upstream's constructor is only the rule table: no subtarget
         # conditions, no libcall data, no trailing structure.
@@ -119,9 +105,7 @@ TARGETS = {
 """,
     },
     "spirv": {
-        "source": "llvm/lib/Target/SPIRV/SPIRVLegalizerInfo.cpp",
         "ctor": "SPIRVLegalizerInfo::SPIRVLegalizerInfo(const SPIRVSubtarget &ST)",
-        "inc": "SPIRVLegalizerInfo.inc",
         "subtarget": "SPIRVSubtarget",
         # Two constructor statements are plumbing, not rules: legalizeCustom
         # reads the subtarget and the global registry through these members.
@@ -137,10 +121,8 @@ TARGETS = {
 """,
     },
     "wasm": {
-        "source": "llvm/lib/Target/WebAssembly/GISel/WebAssemblyLegalizerInfo.cpp",
         "ctor": ("WebAssemblyLegalizerInfo::WebAssemblyLegalizerInfo(\n"
                  "    const WebAssemblySubtarget &ST)"),
-        "inc": "WebAssemblyLegalizerInfo.inc",
         "subtarget": "WebAssemblySubtarget",
         # The rules read ST.hasAddr64()/hasSignExt(); the generated
         # fragment names the parameter ST, so keep it as written.
@@ -152,6 +134,18 @@ TARGETS = {
 """,
     },
 }
+
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import targets as target_registry  # noqa: E402
+
+# source/inc come from targets/*.json; ctor/subtarget/body are specific to
+# this rewrite tool and stay here.
+TARGETS = {}
+for _name, _entry in _DERIVED.items():
+    _doc = target_registry.load(_name)
+    TARGETS[_name] = dict(_entry, source=_doc["touch_source"],
+                          inc=_doc["inc_name"])
 
 BODY = """\
 {

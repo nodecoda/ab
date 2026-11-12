@@ -48,7 +48,7 @@ class NegativeScripts(unittest.TestCase):
         self.dir = Path(tempfile.mkdtemp(prefix="ab-neg-"))
         for name in ("env.sh", "inject-missing-opcode.py", "diff.py",
                      "g-attribution.py", "u-attribution.py",
-                     "run-g-negative.sh"):
+                     "run-g-negative.sh", "targets.py"):
             link(ROOT / name, self.dir / name)
         (self.dir / "run-x86-end-to-end.sh").write_text(fake_end_to_end())
         (self.dir / "run-x86-end-to-end.sh").chmod(0o755)

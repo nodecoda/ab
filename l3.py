@@ -38,9 +38,13 @@ DEFAULT_TREE = Path("/home/ubuntu/llvm/trees/explore")
 DEFAULT_BUILD = Path("/home/ubuntu/llvm/builds/explore")
 GISEL = Path(os.environ.get("GISEL_SRC", HERE.parent / "gisel")).resolve()
 SWAP = HERE / "swap-source-ctor.py"
-LIB = "libLLVM%sCodeGen.so.24.0git"
-NAMES = {"x86": "X86", "aarch64": "AArch64", "riscv": "RISCV"}
-TARGETS = ("x86", "aarch64", "riscv")
+sys.path.insert(0, str(HERE))
+import targets as target_registry  # noqa: E402
+
+_SPECS = {name: target_registry.load(name)
+          for name in target_registry.names()}
+NAMES = {name: doc["test_dir"] for name, doc in _SPECS.items()}
+TARGETS = tuple(name for name, doc in _SPECS.items() if doc["l3"])
 
 
 def sha256(path: Path) -> str:
@@ -48,7 +52,7 @@ def sha256(path: Path) -> str:
 
 
 def lib(build: Path, target: str) -> Path:
-    return build / "lib" / (LIB % NAMES[target])
+    return build / _SPECS[target]["library"]
 
 
 def announce(cmd: list[str]) -> None:

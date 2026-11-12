@@ -89,10 +89,10 @@ class SchemaTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         namespace = {}
         exec(proc.stdout, {}, namespace)
-        self.assertEqual(namespace["TARGET"], "x86")
-        self.assertEqual(namespace["U_NEG"], "G_SUB")
-        self.assertEqual(namespace["EXPECTED_QUERIES"], "3014")
-        self.assertEqual(namespace["U_BUILDER"], "build-x86-ctor-runner.sh")
+        self.assertEqual(namespace["T_TARGET"], "x86")
+        self.assertEqual(namespace["T_U_NEG"], "G_SUB")
+        self.assertEqual(namespace["T_EXPECTED_QUERIES"], "3014")
+        self.assertEqual(namespace["T_U_BUILDER"], "build-x86-ctor-runner.sh")
 
     def test_verify_without_baseline_inc_is_a_clean_error(self):
         ab = load_ab()
