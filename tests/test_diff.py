@@ -24,12 +24,18 @@ def write(rows):
     return f.name
 
 
+def query(name, types, config="C0"):
+    return {"config": config, "name": name, "types": types, "mem": None,
+            "imms": []}
+
+
 class Diff(unittest.TestCase):
-    def run_diff(self, a, b, *flags):
+    def run_diff(self, a, b, *flags, queries=None):
         pa, pb = write(a), write(b)
-        r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--json", *flags],
-            capture_output=True, text=True)
+        args = [sys.executable, str(DIFF), pa, pb, "--json", *flags]
+        if queries is not None:
+            args += ["--queries", write(queries)]
+        r = subprocess.run(args, capture_output=True, text=True)
         self.assertIn(r.returncode, (0, 1, 2), r.stderr)
         return r.returncode, json.loads(r.stdout)
 
@@ -56,6 +62,72 @@ class Diff(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertEqual(r["missing_ref"], 1)   # G_SUB only in ours
         self.assertEqual(r["missing_ours"], 1)  # G_ADD s64 only in ref
+
+
+    def test_queries_flag_accepts_exact_key_coverage(self):
+        rows = [row("G_ADD", ["s32"]), row("G_ADD", ["s64"])]
+        queries = [query("G_ADD", ["s32"]), query("G_ADD", ["s64"])]
+        rc, r = self.run_diff(rows, rows, queries=queries)
+        self.assertEqual(rc, 0)
+        self.assertEqual(r["query_count"], 2)
+        self.assertEqual(r["missing_in_both"], 0)
+        self.assertEqual(r["unexpected"], 0)
+
+    def test_both_sides_truncated_to_the_same_half_is_exit_one(self):
+        """A1: equal key sets are not enough; the query file is the set."""
+        full = [row("G_ADD", ["s32"]), row("G_ADD", ["s64"]),
+                row("G_SUB", ["s32"]), row("G_SUB", ["s64"])]
+        prefix = full[:2]
+        queries = [query("G_ADD", ["s32"]), query("G_ADD", ["s64"]),
+                   query("G_SUB", ["s32"]), query("G_SUB", ["s64"])]
+        pa, pb = write(prefix), write(prefix)
+        r = subprocess.run(
+            [sys.executable, str(DIFF), pa, pb, "--json",
+             "--queries", write(queries)],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 1, r.stderr)
+        result = json.loads(r.stdout)
+        self.assertEqual(result["query_count"], 4)
+        self.assertEqual(result["missing_in_both"], 2)
+        self.assertIn("query set mismatch", r.stderr)
+
+    def test_a_query_missing_from_both_answers_is_exit_one(self):
+        """A2: the query exists, neither answer file mentions it."""
+        answers = [row("G_ADD", ["s32"])]
+        queries = [query("G_ADD", ["s32"]), query("G_ADD", ["s64"])]
+        pa, pb = write(answers), write(answers)
+        r = subprocess.run(
+            [sys.executable, str(DIFF), pa, pb, "--json",
+             "--queries", write(queries)],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 1, r.stderr)
+        result = json.loads(r.stdout)
+        self.assertEqual(result["missing_in_both"], 1)
+        self.assertEqual(result["unexpected"], 0)
+        self.assertIn("query set mismatch", r.stderr)
+
+    def test_an_answer_key_outside_the_query_set_is_exit_one(self):
+        answers = [row("G_ADD", ["s32"]), row("G_SUB", ["s32"])]
+        queries = [query("G_ADD", ["s32"])]
+        pa, pb = write(answers), write(answers)
+        r = subprocess.run(
+            [sys.executable, str(DIFF), pa, pb, "--json",
+             "--queries", write(queries)],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 1, r.stderr)
+        result = json.loads(r.stdout)
+        self.assertEqual(result["missing_in_both"], 0)
+        self.assertEqual(result["unexpected"], 1)
+
+    def test_a_malformed_query_line_is_exit_two(self):
+        answers = [row("G_ADD", ["s32"])]
+        pa, pb = write(answers), write(answers)
+        qpath = Path(write([]))
+        qpath.write_text('{"config": "C0", "name": "G_ADD"}\nnot json\n')
+        r = subprocess.run(
+            [sys.executable, str(DIFF), pa, pb, "--queries", str(qpath)],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2, r.stderr)
 
     def test_symmetric_unanswerable_is_agree(self):
         """agree means "same observable result", not "answered".

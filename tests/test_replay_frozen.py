@@ -31,7 +31,10 @@ class Compare(unittest.TestCase):
     def test_known_reference_assertions_are_replayed_exactly(self):
         replay = load()
         cmd = replay.diff_command({"ref_asserted": 9, "unanswerable": 1},
-                                  Path("ref.jsonl"), Path("ours.jsonl"))
+                                  Path("ref.jsonl"), Path("ours.jsonl"),
+                                  Path("queries.jsonl"))
+        self.assertIn("--queries", cmd)
+        self.assertEqual(cmd[cmd.index("--queries") + 1], "queries.jsonl")
         self.assertIn("--allow-ref-asserts", cmd)
         self.assertEqual(cmd[cmd.index("--allow-ref-asserts") + 1], "9")
         self.assertIn("--expect-unanswerable", cmd)

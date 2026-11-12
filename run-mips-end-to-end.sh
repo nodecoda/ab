@@ -37,4 +37,5 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.ours" \
 # pinned so a new class of assert cannot hide here; see
 # docs/REPORT-cxx-corpus.md and the upstream issue file.
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" --allow-ref-asserts 9 --json | tee "$OUT/diff.json"
+  "$OUT/ours.answers.jsonl" --queries "$OUT/queries.jsonl" \
+  --allow-ref-asserts 9 --json | tee "$OUT/diff.json"

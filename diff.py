@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 """Compare two full-answer JSONL files: the A/B workbench verb.
 
-    diff.py REF ANSWERS [--json] [--compare action|full]
+    diff.py REF ANSWERS [--queries QUERIES.jsonl] [--json]
+            [--compare action|full]
 
-Exit codes: 0 = same queries, same answers; 1 = a disagreeing or missing key;
-2 = an unreadable line or a key with two different answers.  This is the workbench side of the boundary in
+``--queries`` closes the truncation hole: the query file fed to both sides is
+the denominator, so a key that neither answer file contains is a failure and a
+key that an answer file contains but the query file does not is a failure.  A
+plain two-file comparison can only compare the intersection; this flag makes
+the full set explicit.
+
+Exit codes: 0 = same queries, same answers; 1 = a disagreeing, missing, or
+unexpected key; 2 = an unreadable line or a key with two different answers.  This is the workbench side of the boundary in
 ``docs/SCOPE.md``: the comparison lives here, not in ``gisel``, because it
 exists to compare a reference implementation with ours.  Only the answer-file
 reader is shared from ``gisel.answers``.
@@ -50,8 +57,31 @@ def _classify(a, b):
     return "new_type"
 
 
+def collect_keys(path):
+    """Keys of a query file, plus row/error counts, without answer decoding.
+
+    A query row has no ``action`` field, so ``J.load`` is the wrong reader
+    here.  A malformed row is counted, not skipped silently.
+    """
+    keys = set()
+    rows = 0
+    errors = 0
+    with open(path) as stream:
+        for lineno, line in enumerate(stream, 1):
+            line = line.strip()
+            if not line:
+                continue
+            rows += 1
+            try:
+                keys.add(J.key(json.loads(line)))
+            except (ValueError, KeyError, TypeError, J.EvalError) as exc:
+                print("%s:%d: %s" % (path, lineno, exc), file=sys.stderr)
+                errors += 1
+    return keys, rows, errors
+
+
 def compare(ref, ours, mode="full", details_limit=100,
-            allow_ref_asserts=None):
+            allow_ref_asserts=None, queries=None):
     """Full-set comparison: a key on one side only is a failure.
 
     ``mode="action"`` is the coarse smoke gate: it compares only the action
@@ -62,7 +92,13 @@ def compare(ref, ours, mode="full", details_limit=100,
     """
     if mode not in ("action", "full"):
         raise ValueError("unknown compare mode %r" % (mode,))
-    keys = sorted(set(ref) | set(ours), key=repr)
+    answer_keys = set(ref) | set(ours)
+    keys = sorted(answer_keys, key=repr)
+    if queries is None:
+        missing_in_both = unexpected = None
+    else:
+        missing_in_both = sorted(queries - answer_keys, key=repr)
+        unexpected = sorted(answer_keys - queries, key=repr)
     matched = [k for k in keys if k in ref and k in ours]
     agree = 0
     unanswerable = 0
@@ -125,6 +161,11 @@ def compare(ref, ours, mode="full", details_limit=100,
         "first_details": details,
         "missing_ref_keys": sorted(set(ours) - set(ref), key=repr)[:20],
         "missing_ours_keys": sorted(set(ref) - set(ours), key=repr)[:20],
+        "query_count": None if queries is None else len(queries),
+        "missing_in_both": None if queries is None else len(missing_in_both),
+        "unexpected": None if queries is None else len(unexpected),
+        "missing_in_both_keys": [] if queries is None else missing_in_both[:20],
+        "unexpected_keys": [] if queries is None else unexpected[:20],
     }
 
 
@@ -211,6 +252,9 @@ def main(argv=None):
     ap.add_argument("ref")
     ap.add_argument("ours")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--queries", default=None, metavar="PATH",
+                    help="query file fed to both sides; answers must cover "
+                         "exactly its key set")
     ap.add_argument("--compare", choices=("action", "full"), default="full",
                     help="action: coarse smoke gate; full: acceptance")
     ap.add_argument("--details", type=int, default=100,
@@ -233,9 +277,20 @@ def main(argv=None):
 
     ref, e1 = J.load(args.ref)
     ours, e2 = J.load(args.ours)
+    query_keys = None
+    query_rows = None
+    qerrors = 0
+    if args.queries:
+        try:
+            query_keys, query_rows, qerrors = collect_keys(args.queries)
+        except OSError as exc:
+            print("cannot read queries: %s" % exc, file=sys.stderr)
+            return 2
     result = compare(ref, ours, args.compare, args.details,
-                     args.allow_ref_asserts)
-    result["errors"] = e1 + e2
+                     args.allow_ref_asserts, query_keys)
+    result["errors"] = e1 + e2 + qerrors
+    if args.queries:
+        result["query_rows"] = query_rows
     pin_mode, pin_value = _parse_assert_pin(args.allow_ref_asserts)
     ref_asserted_all = result.pop("_ref_asserted_all", [])
     ref_sites = collect_sites(args.ref) if (args.assert_sites or ref_asserted_all) else {}
@@ -265,6 +320,10 @@ def main(argv=None):
                  result["answered_equal"], result["unanswerable"],
                  result["disagree"], result["missing_ref"],
                  result["missing_ours"], result["errors"]))
+        if args.queries:
+            print("queries=%d missing_in_both=%d unexpected=%d"
+                  % (result["query_count"], result["missing_in_both"],
+                     result["unexpected"]))
         for key, a, b in result["first"]:
             print("MISMATCH %r: ref=%r ours=%r" % (key, a, b))
         if result.get("ref_asserted_by_site"):
@@ -283,6 +342,13 @@ def main(argv=None):
             print("MISSING in ours: %r" % (key,))
     if result["errors"]:
         return 2
+    if args.queries and (result["missing_in_both"] or result["unexpected"]):
+        print("query set mismatch: queries=%d ref=%d ours=%d "
+              "missing_in_both=%d unexpected=%d"
+              % (result["query_count"], result["ref"], result["ours"],
+                 result["missing_in_both"], result["unexpected"]),
+              file=sys.stderr)
+        return 1
     if (args.expect_unanswerable is not None
             and result["unanswerable"] != args.expect_unanswerable):
         print("both sides unanswerable on %d queries, expected %d"

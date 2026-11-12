@@ -113,7 +113,8 @@ run_config() {
   # --assert-sites adds where each unanswerable query died; the comparison
   # itself still runs on status only, so this cannot change a verdict.
   if ! python3 "$ROOT/diff.py" "$dir/official.answers.jsonl" \
-      "$dir/ours.answers.jsonl" --json --assert-sites "${extra[@]}" \
+      "$dir/ours.answers.jsonl" --queries "$dir/queries.jsonl" \
+      --json --assert-sites "${extra[@]}" \
       | tee "$dir/diff.json"; then
     echo "$cfg: diff failed (see $dir/diff.json)" >&2
     return 1

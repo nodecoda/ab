@@ -103,7 +103,8 @@ run_config() {
     extra+=(--allow-ref-asserts "$EXPECTED_REF_ASSERTS")
   fi
   if ! python3 "$ROOT/diff.py" "$dir/official.answers.jsonl" \
-      "$dir/ours.answers.jsonl" --json "${extra[@]}" | tee "$dir/diff.json"; then
+      "$dir/ours.answers.jsonl" --queries "$dir/queries.jsonl" \
+      --json "${extra[@]}" | tee "$dir/diff.json"; then
     echo "$cfg: diff failed (see $dir/diff.json)" >&2
     return 1
   fi

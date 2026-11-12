@@ -30,4 +30,4 @@ fi
 "$OUT/runner.ours" --queries "$QUERIES" > "$OUT/ours.answers.jsonl"
 
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" --json | tee "$OUT/diff.json"
+  "$OUT/ours.answers.jsonl" --queries "$QUERIES" --json | tee "$OUT/diff.json"

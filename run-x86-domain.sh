@@ -69,7 +69,7 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.ours" \
   --report "$OUT/ours.report.json"
 
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" --json \
+  "$OUT/ours.answers.jsonl" --queries "$OUT/queries.jsonl" --json \
   --expect-unanswerable "$EXPECTED_UNANSWERABLE" | tee "$OUT/diff.json"
 
 # All four configs are asked in one file, so there is no per-config diff to

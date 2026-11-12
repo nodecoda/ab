@@ -13,4 +13,4 @@ mkdir -p "$OUT"
 "$REF" --queries "$QUERIES" > "$OUT/reference.answers.jsonl"
 "$OURS" --queries "$QUERIES" > "$OUT/ours.answers.jsonl"
 python3 "$ROOT/diff.py" "$OUT/reference.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" --json | tee "$OUT/diff.json"
+  "$OUT/ours.answers.jsonl" --queries "$QUERIES" --json | tee "$OUT/diff.json"

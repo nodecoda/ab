@@ -77,14 +77,15 @@ def build_ours(target: dict, tree: Path, build: Path, inc: Path, out: Path) -> P
     raise SystemExit("unknown strategy %r" % target["strategy"])
 
 
-def diff_command(expected: dict, official: Path, ours: Path) -> list[str]:
+def diff_command(expected: dict, official: Path, ours: Path,
+                 queries: Path) -> list[str]:
     """Replay the classification the frozen entry used.
 
     Both flags pin an exact count, so this cannot hide a new class of
     difference: a different number of reference assertions fails the run.
     """
     cmd = [sys.executable, str(ROOT / "diff.py"), str(official), str(ours),
-           "--json"]
+           "--json", "--queries", str(queries)]
     if expected.get("ref_asserted"):
         cmd += ["--allow-ref-asserts", str(expected["ref_asserted"])]
     if expected.get("unanswerable"):
@@ -131,7 +132,7 @@ def main(argv=None) -> int:
         ours = work / "ours.answers.jsonl"
         ab.answer(runner, queries, ours)
         proc = subprocess.run(
-            diff_command(expected, official, ours), capture_output=True,
+            diff_command(expected, official, ours, queries), capture_output=True,
             text=True)
         if proc.returncode:
             print("%s: diff failed: %s" % (direction, proc.stderr.strip()))

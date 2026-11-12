@@ -44,4 +44,5 @@ python3 "$ROOT/run-queries.py" "$OUT/runner.official" \
 python3 "$ROOT/run-queries.py" "$OUT/runner.ours" \
   "$OUT/queries.jsonl" "$OUT/ours.answers.jsonl"
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" --expect-unanswerable 4 --json | tee "$OUT/diff.json"
+  "$OUT/ours.answers.jsonl" --queries "$OUT/queries.jsonl" \
+  --expect-unanswerable 4 --json | tee "$OUT/diff.json"

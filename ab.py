@@ -331,10 +331,14 @@ def run_eval(core: Path, features: Path, queries: Path, out: Path) -> tuple[Path
     return dest, proc.returncode
 
 
-def compare(target: dict, ref: Path, ours: Path, out: Path, mode: str):
-    proc = run_capture([sys.executable, AB_ROOT / "diff.py",
-                        ref, ours, "--json", "--compare", mode,
-                        "--details", "1000000"])
+def compare(target: dict, ref: Path, ours: Path, out: Path, mode: str,
+            queries: Path | None = None):
+    cmd = [sys.executable, AB_ROOT / "diff.py",
+           ref, ours, "--json", "--compare", mode,
+           "--details", "1000000"]
+    if queries is not None:
+        cmd += ["--queries", str(queries)]
+    proc = run_capture(cmd)
     (out / "diff.json").write_text(proc.stdout)
     if proc.returncode == 2:
         raise HarnessError("diff failed: %s" % proc.stderr.strip())
@@ -506,7 +510,8 @@ def cmd_run(args) -> int:
         else:
             raise HarnessError("unknown strategy %r" % target["strategy"])
 
-        rc, result = compare(target, official, ours, out, args.compare)
+        rc, result = compare(target, official, ours, out, args.compare,
+                             queries)
         if not args.no_eval:
             eval_answers, eval_rc = run_eval(core, features, queries, out)
             record["eval_rc"] = eval_rc
