@@ -45,7 +45,7 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 | C9 | `run-x86-end-to-end.sh` 在打补丁后建 ours runner，同样被 `check-pin.sh` 拒绝 | ours 的 build 设 `GIT_DSL_SKIP_PIN_CHECK=1`；official build 仍在还原树上校验。实测整条脚本 rc=0、3,014 条 agree |
 | C10 | O1：MIR/llc 层只覆盖 7/9，arm/mips 缺 L2，m68k/wasm/spirv 没有 MIR | 2026-11-12 补齐：arm 1,141、mips 1,311、m68k 25、wasm 588、spirv 2,625 条，diff 全 0，负控全部抓到；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 22/22 |
 | C11 | O6：pin 漂移没有政策 | `upstream-source` 明确“只跟 pin”：`README.md` + `PIN.json` 的 comment 写死四步显式迁移；不建自动同步 job（见该仓库 README「pin 政策」） |
-| C12 | 采用分支不存在：L3 只是“换了再还原”，fork 里没有一处真的是 gisel 的规则 | `nodecoda/llvm-project` 分支 `explore/x86-adopt`（`0e6ee585320e`）把 x86 构造函数体换成 `#include "X86LegalizerInfo.inc"`，inc sha 与 `EVIDENCE.json` 绑定值逐位相同；构建出的 `libLLVMX86CodeGen` sha 与 L3 “swapped” 记录逐位相同；80,596 条 lit 逐条一致；冻结 G/U 回放 3,014/10,027 全一致。决定与回滚见 `docs/ADOPT-x86.md` |
+| C12 | 采用分支不存在：L3 只是“换了再还原”，fork 里没有一处真的是 gisel 的规则 | `nodecoda/llvm-project` 分支 `explore/x86-adopt`（`4b8a026249c2`）把 x86 构造函数体换成 `#include "X86LegalizerInfo.inc"`，inc sha 与 `EVIDENCE.json` 绑定值逐位相同；构建出的 `libLLVMX86CodeGen` sha 与 L3 “swapped” 记录逐位相同；80,596 条 lit 逐条一致；冻结 G/U 回放 3,014/10,027 全一致。决定与回滚见 `docs/ADOPT-x86.md` |
 
 ## 3 还缺的
 

@@ -9,7 +9,7 @@
 |---|---|
 | fork 仓库 | `github.com/nodecoda/llvm-project` |
 | 分支 | `explore/x86-adopt` |
-| commit | `0e6ee585320e`（父提交 `700e551714cc` = pin 基线 `explore/06-review-fixes`） |
+| commit | `4b8a026249c2`（父提交 `700e551714cc` = pin 基线 `explore/06-review-fixes`） |
 | 改动 | `llvm/lib/Target/X86/GISel/X86LegalizerInfo.cpp`：构造函数体 621 行 → `#include "X86LegalizerInfo.inc"` |
 | 新增 | `llvm/lib/Target/X86/GISel/X86LegalizerInfo.inc`（生成物，入库） |
 | 未动 | `legalizeCustom` 及其后全部代码；`llvm/unittests/Target/X86/X86LegalizerInfoReference.cpp`（冻结参照） |
@@ -18,7 +18,7 @@
 
 ```sh
 python3 -m gisel gen /home/ubuntu/llvm/gisel/tests/corpus/X86LegalizerInfo.gisel \
-    --config x86-64 --out X86LegalizerInfo.inc --emit=inc
+    --emit=inc --out X86LegalizerInfo.inc
 ```
 
 - gisel：`e6811cd`
@@ -56,7 +56,7 @@ libLLVMX86CodeGen.so.24.0git  085928fa26a5e772ff250f045ad4874cd5e8cbbc8046fbeeb2
 |---|---|---|
 | inc 是否入库 | **入库**，与 `.cpp` 同一个 commit | 采用分支要能独立构建；生成物就是输入。sha 与 gisel 产物绑定，不会被“悄悄重新生成” |
 | 由谁生成 | **人工**，命令写进 commit message 与本文档；CI 侧只有 gisel 仓库的 `verify-evidence.sh` 会从 corpus 重生成并比对 | 采用分支不在 LLVM 项目 CI 里；强行加生成 job 等于把 gisel 塞进上游构建。漂移检测靠 sha 对比，一条命令 |
-| 怎么回滚 | `git revert 0e6ee585320e` | 只有一个 commit，无构建系统改动、无其它文件依赖该 inc |
+| 怎么回滚 | `git revert 4b8a026249c2` | 只有一个 commit，无构建系统改动、无其它文件依赖该 inc |
 
 漂移检测（改规则前后都跑）：
 
