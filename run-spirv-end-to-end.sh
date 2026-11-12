@@ -21,7 +21,11 @@ BUILD=${2:?}
 INC=${3:?}
 OUT=${4:?}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-EXPECTED_QUERIES=5734
+# 5,734 -> 5,689 on 2026-11-12: `numElementsNotPow2` now translates with the
+# upstream `isFixedVector()` half, so the scalarize rule stops claiming
+# scalable vectors and its witness points shrink (U-full found the 400 keys
+# that were answered differently).
+EXPECTED_QUERIES=5689
 mkdir -p "$OUT"
 
 "$ROOT/build-spirv-runner.sh" "$TREE" "$BUILD" "$INC" "$OUT/runner"

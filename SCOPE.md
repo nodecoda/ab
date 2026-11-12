@@ -130,16 +130,16 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 | L0 U | upstream-source 出题（采样） | 9 个 | x86 10,027 / aarch64 29,561 / riscv 20,445 / arm 15,695 / mips 11,396 / ppc 2,177 / m68k 2,182 / wasm 9,290 / spirv 15,580 | `EVIDENCE.json` `U/*` |
 | L0 负控 | 注入错 opcode / 错谓词 | 9 个 | 每个 target 一组 | `EVIDENCE.json` `G-neg/*`、`U-neg/*` |
 | D | 规则无关的声明值域全量对拍 | 9 个 | x86 91,340 / aarch64 8,432,640 / riscv 2,029,976 / spirv 3,472,080 / mips 18,745 / wasm 11,996 / arm 9,296 / ppc 1,005 / m68k 112（agree；unanswerable 另计） | `EVIDENCE.json` `D/*` |
-| U-full | 上游题面按全部配置展开 | x86, aarch64, riscv | x86 1,121,728 / aarch64 3,505,608 / riscv 3,028,496 | `EVIDENCE.json` `U-full/*` |
+| U-full | 上游题面按全部配置展开 | 9 个 | x86 1,121,728 / aarch64 3,505,608 / riscv 3,028,496 / spirv 4,082,382 / arm 1,769,782 / mips 1,264,130 / wasm 1,011,304 / m68k 252,826 / ppc 252,826 | `EVIDENCE.json` `U-full/*` |
 | MIR L1 | 上游 `-run-pass=legalizer` MIR 回放 | x86, aarch64, riscv | 624 条 RUN（611 same + 13 双端 abort，diff 0） | `docs/REPORT-mir.md` §2 |
 | MIR L2 | 由查询合成 MIR 回放 | x86, aarch64, riscv | 15,367 建成（14,298 same + 1,004 双端 abort + 65 timeout，diff 0） | `docs/REPORT-mir.md` §3、`data/riscv-contract.json` |
 | MIR L3 | `ninja check-llvm` 全量 | x86, aarch64, riscv 组合 | 80,655 个 lit 测试 | `docs/REPORT-mir.md` §6 |
 
 约束：
 
-- 9 个 target 都有 L0（G/U/负控）和 D（domain 全量）；只有 x86、aarch64、riscv
-  有 U-full 和 MIR。说“9 个 target 都对拍过”时，主语可以是 L0 或 D；说 U-full
-  或 MIR 时主语必须是那三个。
+- 9 个 target 都有 L0（G/U/负控）、D（domain 全量）和 U-full；只有 x86、
+  aarch64、riscv 有 MIR。说“9 个 target 都对拍过”时，主语可以是 L0、D 或
+  U-full；说 MIR 时主语必须是那三个。
 - 3 个 target 的 domain 有双端断言需要单独解释：SPIR-V 900 条（G_SPLAT_VECTOR，
   两侧死在不同的断言点，见 `docs/EVIDENCE-domain.md` §5）、WebAssembly 132 条、
   PowerPC 3 条；它们都按配置钉死，不是 `disagree`。

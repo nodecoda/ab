@@ -184,22 +184,23 @@
    "id": "G/spirv",
    "direction": "G",
    "target": "spirv",
-   "dir": "/tmp/g-run/spirv/out",
+   "dir": "/tmp/g-spirv-new2",
    "queries": {
-    "path": "/tmp/g-run/spirv/out/queries.jsonl",
-    "sha256": "c251e7a19120fb52e122b9a8a19861d389ebbfecf00207d3403a7ca6798ac366"
+    "path": "/tmp/g-spirv-new2/queries.jsonl",
+    "sha256": "583af2c0019af248b597963119fcbbb0084046924a0f028e75b709127e559c53"
    },
-   "command": "./run-spirv-end-to-end.sh TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out",
+   "command": "./run-spirv-end-to-end.sh TREE BUILD /tmp/g-spirv-new2/SPIRVLegalizerInfo.inc /tmp/g-spirv-new2",
    "artifacts": {
-    "diff.json": "062afd656768a7d4b3dd2c00e4aa89d56a563c32690e1dde6e2c1a8511751042",
-    "official.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989",
-    "ours.answers.jsonl": "4abab4e07f2846322bd46a3721014047341a4f2944ecd0a73ed9aad5fe72d989"
+    "diff.json": "52290233603203427353bbf169212afbcd2230a3bea4926cf7ac6ee3c4d50abc",
+    "official.answers.jsonl": "9a85803b8c4ae55de1ef99cd4c50bbe5083697a39ba80583980809cf26194f48",
+    "ours.answers.jsonl": "abcd3c145b58d738a2651ab7e35199c7f27d0ff198e1cc762f82f1e495f2f902"
    },
    "expect": {
-    "answers_identical": true,
-    "agree": 5734,
+    "ref": 5689,
+    "agree": 5689,
     "disagree": 0,
-    "unanswerable": 4
+    "unanswerable": 4,
+    "ref_asserted": 0
    }
   },
   {
@@ -1349,6 +1350,154 @@
     }
    },
    "kind": "summary"
+  },
+  {
+   "id": "U-full/m68k",
+   "direction": "U",
+   "target": "m68k",
+   "dir": "/tmp/u-full2/m68k/run",
+   "command": "./run-u-end-to-end.sh m68k /tmp/u-full2/m68k/queries.jsonl /tmp/u-full2/m68k/run",
+   "artifacts": {
+    "diff.json": "46381855d14b2fa3c6a06843a1ee84e8171805b8c5bac09b3af18c899e9daa50",
+    "universe.jsonl": "e11cba9b8f04b7514405b9e403cf0edd1c1d2db616ea2afee0292efcc9bcc938"
+   },
+   "expect": {
+    "ref": 252826,
+    "agree": 252826,
+    "disagree": 0,
+    "unanswerable": 0,
+    "ref_asserted": 0
+   },
+   "queries": {
+    "path": "/tmp/u-full2/m68k/queries.jsonl",
+    "sha256": "7f0f810d623c116a9b7dd10acc7050344a0726e7973332fbbc54ac74783f8275",
+    "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs default`"
+   }
+  },
+  {
+   "id": "U-full/ppc",
+   "direction": "U",
+   "target": "ppc",
+   "dir": "/tmp/u-full2/ppc/run3",
+   "command": "./run-u-end-to-end.sh ppc /tmp/u-full2/ppc/queries.jsonl /tmp/u-full2/ppc/run3 --allow-unanswerable 924 --allow-ref-asserts 558",
+   "artifacts": {
+    "diff.json": "6a418b168476b06f4be9171cd3861ce80470f374701d05602341fe239dda7a57",
+    "universe.jsonl": "e11cba9b8f04b7514405b9e403cf0edd1c1d2db616ea2afee0292efcc9bcc938"
+   },
+   "expect": {
+    "ref": 252826,
+    "agree": 252268,
+    "disagree": 0,
+    "unanswerable": 924,
+    "ref_asserted": 558,
+    "ref_asserted_by_site": {
+     "fatal:cannot implicitly convert a scalable size to a fixed-width size": 558
+    }
+   },
+   "queries": {
+    "path": "/tmp/u-full2/ppc/queries.jsonl",
+    "sha256": "7f0f810d623c116a9b7dd10acc7050344a0726e7973332fbbc54ac74783f8275",
+    "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs default`"
+   }
+  },
+  {
+   "id": "U-full/arm",
+   "direction": "U",
+   "target": "arm",
+   "dir": "/tmp/u-full2/arm/run2",
+   "command": "./run-u-end-to-end.sh arm /tmp/u-full2/arm/queries.jsonl /tmp/u-full2/arm/run2",
+   "artifacts": {
+    "diff.json": "816e3a8f3547f28a5a2245622330f536b79d883527dbd2a43ccb38c56ebfaf79",
+    "universe.jsonl": "e11cba9b8f04b7514405b9e403cf0edd1c1d2db616ea2afee0292efcc9bcc938"
+   },
+   "expect": {
+    "ref": 1769782,
+    "agree": 1769782,
+    "disagree": 0,
+    "unanswerable": 0,
+    "ref_asserted": 0
+   },
+   "queries": {
+    "path": "/tmp/u-full2/arm/queries.jsonl",
+    "sha256": "446f9b146662e56149a9551ddfef6c550357982e444cf7baf7ad85338686133b",
+    "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs armv7a-neon,armv7a-nodiv,armv7a-a5,armv6-arm1176,armv4t,thumbv7m,armv7-soft`"
+   }
+  },
+  {
+   "id": "U-full/mips",
+   "direction": "U",
+   "target": "mips",
+   "dir": "/tmp/u-full2/mips/run2",
+   "command": "./run-u-end-to-end.sh mips /tmp/u-full2/mips/queries.jsonl /tmp/u-full2/mips/run2 --allow-ref-asserts 750",
+   "artifacts": {
+    "diff.json": "f2c20bc15a26580a7786ebf9564fbaf73aeb8351d9f6e4b58656bd5319aafc8e",
+    "universe.jsonl": "e11cba9b8f04b7514405b9e403cf0edd1c1d2db616ea2afee0292efcc9bcc938"
+   },
+   "expect": {
+    "ref": 1264130,
+    "agree": 1263380,
+    "disagree": 0,
+    "unanswerable": 0,
+    "ref_asserted": 750,
+    "ref_asserted_by_site": {
+     "MipsLegalizerInfo.cpp:133": 30,
+     "fatal:cannot implicitly convert a scalable size to a fixed-width size": 720
+    }
+   },
+   "queries": {
+    "path": "/tmp/u-full2/mips/queries.jsonl",
+    "sha256": "c313d289ffb640b6ae87bda28ef0f9aabf15b1d6d9a15ba1da700e189d171172",
+    "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs mips32,mips32r2,mips32r6,mips32r5-msa,mips32r6-msa`"
+   }
+  },
+  {
+   "id": "U-full/wasm",
+   "direction": "U",
+   "target": "wasm",
+   "dir": "/tmp/u-full2/wasm/run2",
+   "command": "./run-u-end-to-end.sh wasm /tmp/u-full2/wasm/queries.jsonl /tmp/u-full2/wasm/run2 --allow-unanswerable 4868",
+   "artifacts": {
+    "diff.json": "4b1cd86991b878dc7f093826d4d575f4a6083b26e15bc60dd1482d29ca1f233c",
+    "universe.jsonl": "e11cba9b8f04b7514405b9e403cf0edd1c1d2db616ea2afee0292efcc9bcc938"
+   },
+   "expect": {
+    "ref": 1011304,
+    "agree": 1011304,
+    "disagree": 0,
+    "unanswerable": 4868,
+    "ref_asserted": 0
+   },
+   "queries": {
+    "path": "/tmp/u-full2/wasm/queries.jsonl",
+    "sha256": "893dd3c6f1682ce6062afcc8d926439f2bc46d5f88ea2a9a809d56a7835b0caa",
+    "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs wasm32,wasm32-signext,wasm64,wasm64-signext`"
+   }
+  },
+  {
+   "id": "U-full/spirv",
+   "direction": "U",
+   "target": "spirv",
+   "dir": "/tmp/u-full2/spirv/run5",
+   "command": "./run-u-end-to-end.sh spirv /tmp/u-full2/spirv/queries.jsonl /tmp/u-full2/spirv/run5 --allow-unanswerable 1464 --allow-ref-asserts 246",
+   "artifacts": {
+    "diff.json": "7662e1b5b06ca13909a75b523a86452ff535ab7a86e4921339a16120e034bef4",
+    "universe.jsonl": "a20c7fe098f48155590761438df83c8d792a9155093ba1334d4867d51b5af8c1"
+   },
+   "expect": {
+    "ref": 4082382,
+    "agree": 4082136,
+    "disagree": 0,
+    "unanswerable": 1464,
+    "ref_asserted": 246,
+    "ref_asserted_by_site": {
+     "fatal:Possible incorrect use of LLT getNumElements  for scalable vect": 246
+    }
+   },
+   "queries": {
+    "path": "/tmp/u-full2/spirv/queries.jsonl",
+    "sha256": "13077fe5ab7570fae73f309c983bf61b0dc4adb4fa59c741070a71883b9a8025",
+    "derived_from": "universe.jsonl (sha a20c7fe098f48155) expanded by `python3 -m oracle expand --configs spirv64-kernel,spirv32-kernel,spirv64-shader,spirv32-shader,spirv64-kernel-ext,spirv32-shader-ext`"
+   }
   }
  ],
  "official_build": {

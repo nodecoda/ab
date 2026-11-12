@@ -339,8 +339,8 @@ D 方向的 AArch64 题面都不含 `nxv2p0` 的 `G_SHUFFLE_VECTOR`，所以那�
 
 ```sh
 cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./verify-evidence.sh
-# PASS G/x86 … PASS U-full/riscv, 42/42 entries pass
-# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 3 + U-full 3）
+# PASS G/x86 … PASS U-full/spirv, 58/58 entries pass
+# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 9 + U-full 9 + MIR 4）
 ```
 
 `VERIFY_FROZEN=1` 只读仓库里的 `oracle/`，不读 /tmp。CI 跑的就是这一条
@@ -348,6 +348,62 @@ cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./verify-evidence.sh
 
 `EVIDENCE.json` 记录每个产物的 sha256、查询数、期望的 `disagree`/`unanswerable`
 以及重跑命令；`verify-evidence.sh` 逐项复核，缺产物按失败处理。
+
+## U-full 扩到 9 个 target（2026-11-12）
+
+`U` 是压缩题面（每条规则一个 witness 加采样），`U-full` 是把 oracle 的
+universe 按**每个配置**原样展开。六个 target 的 universe 用与 `U` 相同的
+limit（spirv 4000，其余 1200）现生成，展开后逐条跑两侧：
+
+```sh
+cd /home/ubuntu/llvm/upstream-source
+oracle/out/<t>-dump --dump-arity /tmp/u-full2/<t>/arity.jsonl
+python3 -m oracle universe --arity ... --target <t> --limit <limit> --out .../universe.jsonl
+python3 -m oracle expand --universe .../universe.jsonl --configs <cfg,...> --out .../queries.jsonl
+cd /home/ubuntu/llvm/ab && ./run-u-end-to-end.sh <t> .../queries.jsonl <out> [pins]
+```
+
+| target | 查询 | agree | 双端断言 | 单边断言 | disagree | 证据 |
+|---|---:|---:|---:|---:|---:|---|
+| m68k | 252,826 | 252,826 | 0 | 0 | 0 | `U-full/m68k` |
+| arm | 1,769,782 | 1,769,782 | 0 | 0 | 0 | `U-full/arm` |
+| wasm | 1,011,304 | 1,011,304 | 4,868 | 0 | 0 | `U-full/wasm` |
+| ppc | 252,826 | 252,268 | 924 | 558 | 0 | `U-full/ppc` |
+| mips | 1,264,130 | 1,263,380 | 0 | 750 | 0 | `U-full/mips` |
+| spirv | 4,082,382 | 4,082,136 | 1,464 | 246 | 0 | `U-full/spirv` |
+
+合计新增 8,633,250 条，`disagree=0`。断言分布：
+
+- **wasm 4,868 条双端断言**：`LowLevelType.h:429`（4,404）与
+  `LowLevelType.h:151`（464），两侧死在同一个点，属于题面自身触发上游断言。
+- **ppc 924 条双端断言**（`LegalizerInfo.cpp:200`）+ **558 条单边断言**，
+  单边全部是 `cannot implicitly convert a scalable size to a fixed-width size`。
+- **mips 750 条单边断言**：720 条同上，30 条在
+  `MipsLegalizerInfo.cpp:133`（`assert(QueryMemSize <= Size && "Scalar can't
+  hold MemSize")`）——query 的 mem 比标量槽宽，上游在断言处就停了，我们照规则
+  给出 WidenScalar。
+- **spirv 1,464 条双端断言 + 246 条单边断言**（`getNumElements` on scalable）。
+
+### 抓到的真差异：SPIR-V 400 条
+
+第一轮在 spirv 上出现 400 条 `disagree`，全部是 `G_FREM` / `G_SDIV` /
+`G_SREM` / `G_UDIV` / `G_UREM` 的 `nxv3` 查询：上游答 `Custom`，我们答
+`FewerElements`（scalar 16）。
+
+根因不在 SPIR-V 规则本身，而在 importer 对
+`numElementsNotPow2(0)` 的翻译：上游是
+`isFixedVector() && !isPowerOf2(getNumElements())`，翻译只保留了后半句，
+于是这条 `scalarize` 也吃下了 scalable vector（known-min 3 也不是 2 的幂）。
+修法两处：`import/import-cxx.py` 补回 `is_fixed_vector` 守卫，SPIR-V 语料
+重新生成。修后 400 条全部 `agree`。
+
+两个副作用要记住：
+
+1. `G/spirv` 的 case 数从 5,734 降到 5,689——这条规则不再声称 scalable
+   vector，它的 witness 点随之减少；证据已按新题面重跑并冻结。
+2. `D/spirv`（domain，3,472,080 条）**没有抓到**这个问题：domain 的类型轴
+   只来自声明值域，里面没有 scalable vector。这正是 U-full 存在的理由——
+   domain 测“规则无关的声明空间”，U-full 测“上游 universe 的每个配置”。
 
 ## 未覆盖
 
