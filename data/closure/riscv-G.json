@@ -1,0 +1,66 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 4979
+    },
+    "terminal": {
+      "Bitcast": 21,
+      "Custom": 195,
+      "FewerElements": 8,
+      "Legal": 758,
+      "Libcall": 181,
+      "Lower": 863,
+      "NarrowScalar": 378,
+      "Unsupported": 2982,
+      "WidenScalar": 961
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 1107,
+    "stuck": 0,
+    "successors": 1368
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 6086,
+      "disagree": 0,
+      "new_states": 235,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 235,
+      "disagree": 0,
+      "new_states": 26,
+      "one_sided": 0,
+      "round": 2
+    },
+    {
+      "asked": 26,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 3
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rv.runner.official",
+    "ours": "/tmp/closure/rv.runner.ours"
+  },
+  "seed": "/tmp/closure/seed-rv-G.jsonl",
+  "seed_states": 6086,
+  "states": {
+    "added": 261,
+    "seed": 6086,
+    "total": 6347
+  },
+  "target": "riscv"
+}

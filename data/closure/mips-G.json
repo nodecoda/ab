@@ -1,0 +1,87 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 1445
+    },
+    "terminal": {
+      "Custom": 38,
+      "Legal": 189,
+      "Libcall": 35,
+      "Lower": 118,
+      "NarrowScalar": 85,
+      "Unsupported": 1065,
+      "WidenScalar": 117
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 9
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 202,
+    "stuck": 0,
+    "successors": 202
+  },
+  "ok": true,
+  "one_sided": [
+    {
+      "asserting": "ref",
+      "key": "('mips32', 'G_LOAD', (('scalar', 64), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32r2', 'G_LOAD', (('scalar', 64), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32r5-msa', 'G_LOAD', (('scalar', 64), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32', 'G_LOAD', (('scalar', 33), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32', 'G_LOAD', (('scalar', 63), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32r2', 'G_LOAD', (('scalar', 33), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32r2', 'G_LOAD', (('scalar', 63), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32r5-msa', 'G_LOAD', (('scalar', 33), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('mips32r5-msa', 'G_LOAD', (('scalar', 63), ('pointer', 0, 32)), (('scalar', 32), 8, 'NotAtomic', 'NotAtomic'), ())"
+    }
+  ],
+  "rounds": [
+    {
+      "asked": 1656,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 9,
+      "round": 1
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/mips/runner.official",
+    "ours": "/tmp/closure/rt/mips/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/mips-G.jsonl",
+  "seed_states": 1656,
+  "states": {
+    "added": 0,
+    "seed": 1656,
+    "total": 1656
+  },
+  "target": "mips"
+}

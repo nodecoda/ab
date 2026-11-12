@@ -1,0 +1,58 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 2629146,
+      "unanswerable": 900
+    },
+    "terminal": {
+      "Custom": 986659,
+      "FewerElements": 752636,
+      "Legal": 234691,
+      "Lower": 1122250,
+      "MoreElements": 85990,
+      "Unsupported": 285546,
+      "WidenScalar": 3840
+    },
+    "unanswerable": {
+      "both": 900,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 842034,
+    "stuck": 0,
+    "successors": 842466
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 3472080,
+      "disagree": 0,
+      "new_states": 432,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 432,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 2
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/spirv/runner.official",
+    "ours": "/tmp/closure/rt/spirv/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/spirv-D.jsonl",
+  "seed_states": 3472080,
+  "states": {
+    "added": 432,
+    "seed": 3472080,
+    "total": 3472512
+  },
+  "target": "spirv"
+}

@@ -1,0 +1,60 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 61543,
+      "unanswerable": 648
+    },
+    "terminal": {
+      "Custom": 2458,
+      "FewerElements": 11116,
+      "Legal": 2800,
+      "Libcall": 13477,
+      "Lower": 775,
+      "MoreElements": 82,
+      "NarrowScalar": 9145,
+      "Unsupported": 42033,
+      "WidenScalar": 9598
+    },
+    "unanswerable": {
+      "both": 648,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 29149,
+    "stuck": 0,
+    "successors": 29941
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 91340,
+      "disagree": 0,
+      "new_states": 792,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 792,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 2
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/x86c/runner.official",
+    "ours": "/tmp/closure/x86c/runner.ours"
+  },
+  "seed": "/tmp/closure/seed-x86-D.jsonl",
+  "seed_states": 91340,
+  "states": {
+    "added": 792,
+    "seed": 91340,
+    "total": 92132
+  },
+  "target": "x86"
+}

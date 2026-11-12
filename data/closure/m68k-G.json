@@ -1,0 +1,54 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 29
+    },
+    "terminal": {
+      "Legal": 11,
+      "NarrowScalar": 2,
+      "Unsupported": 18,
+      "WidenScalar": 6
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 6,
+    "stuck": 0,
+    "successors": 8
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 35,
+      "disagree": 0,
+      "new_states": 2,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 2,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 2
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/m68k/runner.official",
+    "ours": "/tmp/closure/rt/m68k/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/m68k-G.jsonl",
+  "seed_states": 35,
+  "states": {
+    "added": 2,
+    "seed": 35,
+    "total": 37
+  },
+  "target": "m68k"
+}

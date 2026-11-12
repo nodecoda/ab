@@ -146,6 +146,11 @@ spirv 的 `D` 种子 3,472,080 条，一轮 ~2 分钟；六 target 合计约 9 �
 
 ## 5 证明了什么，没证明什么
 
+快照已入库：`ab/data/closure/<target>-<seed>.json`（9 target × 2 seed）。
+`EVIDENCE.json` 的 `closure/*` 条目钉住 `seed_states`、`successors`、`stuck`、
+`disagree`、`both/ref_only/ours_only`；`VERIFY_FROZEN=1 ./verify-evidence.sh`
+会重新检查，`ours_only` 必须为 0。
+
 **证明了**：对 `G` 与 `D` 的并集里的每个起点，循环的每一步两侧都给出相同的
 `(action, type_idx, new_type)`；后继不变、集合封闭、没有 stuck。所以对这些起点，
 **多步 legalize 的结果相同**，不是“跑过一遍没出事”。

@@ -1,0 +1,66 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 1793
+    },
+    "terminal": {
+      "Custom": 74,
+      "FewerElements": 198,
+      "Legal": 681,
+      "Libcall": 58,
+      "Lower": 46,
+      "MoreElements": 125,
+      "NarrowScalar": 295,
+      "Unsupported": 934,
+      "WidenScalar": 959
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 1221,
+    "stuck": 0,
+    "successors": 1577
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 3014,
+      "disagree": 0,
+      "new_states": 334,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 334,
+      "disagree": 0,
+      "new_states": 22,
+      "one_sided": 0,
+      "round": 2
+    },
+    {
+      "asked": 22,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 3
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/x86c/runner.official",
+    "ours": "/tmp/closure/x86c/runner.ours"
+  },
+  "seed": "/tmp/closure/seed-x86-G.jsonl",
+  "seed_states": 3014,
+  "states": {
+    "added": 356,
+    "seed": 3014,
+    "total": 3370
+  },
+  "target": "x86"
+}

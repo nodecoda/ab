@@ -1,0 +1,156 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 661686,
+      "unanswerable": 39062
+    },
+    "terminal": {
+      "Bitcast": 31,
+      "Custom": 2881,
+      "FewerElements": 193683,
+      "Legal": 102470,
+      "Libcall": 3073,
+      "Lower": 156723,
+      "MoreElements": 3022,
+      "NarrowScalar": 7545,
+      "Unsupported": 396539,
+      "WidenScalar": 37344
+    },
+    "unanswerable": {
+      "both": 39062,
+      "ours_only": 0,
+      "ref_only": 1696
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 234516,
+    "stuck": 0,
+    "successors": 241625
+  },
+  "ok": true,
+  "one_sided": [
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 16, True, ('integer', 8))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 16, True, ('scalar', 8))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 2, True, ('integer', 64))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 2, True, ('scalar', 64))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 4, True, ('integer', 32))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 4, True, ('scalar', 32))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 8, True, ('integer', 16))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('bf16',), ('vector', 8, True, ('scalar', 16))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 16, True, ('integer', 8))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 16, True, ('scalar', 8))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 2, True, ('integer', 64))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 2, True, ('scalar', 64))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 4, True, ('integer', 32))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 4, True, ('scalar', 32))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 8, True, ('integer', 16))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 16), ('vector', 8, True, ('scalar', 16))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 32), ('vector', 16, True, ('integer', 8))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 32), ('vector', 16, True, ('scalar', 8))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 32), ('vector', 2, True, ('integer', 64))), None, ())"
+    },
+    {
+      "asserting": "ref",
+      "key": "('baseline', 'G_ANYEXT', (('float', 32), ('vector', 2, True, ('scalar', 64))), None, ())"
+    }
+  ],
+  "rounds": [
+    {
+      "asked": 936960,
+      "disagree": 0,
+      "new_states": 6881,
+      "one_sided": 20,
+      "round": 1
+    },
+    {
+      "asked": 6881,
+      "disagree": 0,
+      "new_states": 220,
+      "one_sided": 0,
+      "round": 2
+    },
+    {
+      "asked": 220,
+      "disagree": 0,
+      "new_states": 8,
+      "one_sided": 0,
+      "round": 3
+    },
+    {
+      "asked": 8,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 4
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/a64.runner.official",
+    "ours": "/tmp/closure/a64.runner.ours"
+  },
+  "seed": "/tmp/closure/seed-a64-D.jsonl",
+  "seed_states": 936960,
+  "states": {
+    "added": 7109,
+    "seed": 936960,
+    "total": 944069
+  },
+  "target": "aarch64"
+}

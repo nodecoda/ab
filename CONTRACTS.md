@@ -118,6 +118,8 @@ diff.py REF.jsonl OURS.jsonl [--queries QUERIES.jsonl] [--json]
 2. 注入错变异（改 `new_type` 选择）。
 
 负控必须使 `diff` rc=1 且 `disagree>0`；抓不到则 gate 失败，不允许冻结。
+`EVIDENCE.json` 里负控的 `expect.disagree` 是精确值，不是下限；
+`by_ruleset` 必须非空，且只能落在注入的 ruleset 上。
 
 统一退出码（`env.sh:classify_negative_rc`）：
 
@@ -178,3 +180,26 @@ targets[*].runs 之和 == totals.runs
   没有 `source` 的条目在加载时拒绝（同 `gisel/contract.py` 的规矩）。
 - 条目只描述“如何把一条查询写成合法 MIR”，不描述合法性答案。
 - 不进入 gisel wheel，不属于 `.gisel` 语法，不改变四个出口。
+
+
+## 10 证据 manifest（`EVIDENCE.json` / `evidence.schema.json`）
+
+`evidence.py verify` 是执行器，`evidence.schema.json` 是契约。每条 entry 必须
+带 `kind`，校验规则按 kind 分开：
+
+| kind | 必须的产物 | 关键检查 |
+|---|---|---|
+| `answers` | `diff.json`（+ 答案文件） | 记录值、`answered_equal = agree - unanswerable`、`missing_in_both=unexpected=0` |
+| `neg` | `diff.json`、`attribution.json` | `disagree` 精确相等；`by_ruleset` 非空且只含注入项 |
+| `summary` | `summary.json` | 每配置聚合值与 `assert_sites` |
+| `mir` | `mir-report.json` | bucket 恒等式、每 target、llc sha、恢复基线 |
+| `lit` | 两轮 per-test JSONL | 重新计算状态，不信 `identical` |
+| `closure` | `data/closure/<target>-<seed>.json` | `ok`、`stuck=0`、`disagree=[]`、`ours_only=0` |
+| `adopt` | gisel 的 `<t>.inc` + `docs/ADOPT.md` | inc sha、分支/commit/lib sha 在文档里 |
+
+`verify-evidence.sh [DIRECTION]` 只做转发；`VERIFY_FROZEN=1` 时只读
+`oracle/` 和 `data/closure/`，并显式打印 `official_build not checked (frozen)`。
+非 frozen 模式缺构建目录是失败，不会 SKIP。
+
+`adopt-check.sh` 会 `git fetch --depth=1` 三个采用分支，比较分支内 `.inc` 的
+sha 与 gisel 产物；这是唯一需要网络的证据检查。

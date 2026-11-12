@@ -93,7 +93,9 @@ invocations keep working.  `--record` writes the contract from the run that
 just finished; it is for adding a target, not for refreshing one.
 
 `VERIFY_FROZEN=1 ./verify-evidence.sh` reads only the committed `oracle/`
-copies, so CI proves the repo alone replays the recorded evidence.
+and `data/closure/` copies, so CI proves the repo alone replays the recorded
+evidence.  `./adopt-check.sh` fetches the three adoption branches and
+compares the committed `.inc` bytes with the gisel artifacts.
 
 `--frozen` rebuilds the artifact layout from the committed copies under
 `oracle/` (G/U and both negative controls come from `oracle/<id>/`, the domain

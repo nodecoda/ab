@@ -1,0 +1,59 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 239603,
+      "unanswerable": 1074
+    },
+    "terminal": {
+      "Custom": 30,
+      "FewerElements": 34,
+      "Legal": 1931,
+      "Libcall": 2152,
+      "Lower": 43260,
+      "NarrowScalar": 3984,
+      "Unsupported": 192230,
+      "WidenScalar": 9370
+    },
+    "unanswerable": {
+      "both": 1074,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 13070,
+    "stuck": 0,
+    "successors": 13388
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 253747,
+      "disagree": 0,
+      "new_states": 318,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 318,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 2
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rv.runner.official",
+    "ours": "/tmp/closure/rv.runner.ours"
+  },
+  "seed": "/tmp/closure/seed-rv-D.jsonl",
+  "seed_states": 253747,
+  "states": {
+    "added": 318,
+    "seed": 253747,
+    "total": 254065
+  },
+  "target": "riscv"
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nodecoda/ab/evidence.schema.json",
+  "title": "ab evidence manifest",
+  "description": "A claim per entry. evidence.py is the executable checker; this file is the contract it implements.",
+  "type": "object",
+  "required": ["schema", "entries"],
+  "properties": {
+    "schema": {"const": 1},
+    "generated": {"type": "string"},
+    "notes": {"type": "string"},
+    "official_build": {
+      "type": "object",
+      "required": ["path", "libs"],
+      "properties": {
+        "path": {"type": "string"},
+        "tree": {"type": "string"},
+        "recorded": {"type": "string"},
+        "note": {"type": "string"},
+        "libs": {
+          "type": "object",
+          "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifactMap": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    },
+    "entry": {
+      "type": "object",
+      "required": ["id", "kind", "direction", "target", "dir", "command", "artifacts", "expect"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "kind": {
+          "enum": ["answers", "neg", "summary", "mir", "lit", "closure", "adopt"]
+        },
+        "direction": {
+          "enum": ["G", "G-neg", "U", "U-neg", "D", "MIR", "closure", "adopt"]
+        },
+        "target": {"type": "string"},
+        "dir": {"type": "string"},
+        "command": {"type": "string"},
+        "artifacts": {"$ref": "#/$defs/artifactMap"},
+        "expect": {"type": "object"},
+        "queries": {"type": "object"},
+        "snapshot": {"type": "object"},
+        "runtime": {"type": "object"},
+        "diff": {"type": "string"},
+        "sites": {"type": "string"},
+        "summary": {"type": "string"},
+        "report": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "answers"}}},
+          "then": {"required": ["expect"], "properties": {"expect": {"required": ["agree", "disagree", "unanswerable"]}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "neg"}}},
+          "then": {
+            "properties": {
+              "direction": {"enum": ["G-neg", "U-neg"]},
+              "expect": {"required": ["disagree", "rulesets"]}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"kind": {"const": "summary"}}},
+          "then": {"properties": {"expect": {"required": ["summary"]}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "mir"}}},
+          "then": {"properties": {"expect": {"required": ["mir", "mir_targets"]}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "lit"}}},
+          "then": {"properties": {"expect": {"required": ["lit"]}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "closure"}}},
+          "then": {"properties": {"direction": {"const": "closure"}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "adopt"}}},
+          "then": {
+            "properties": {
+              "direction": {"const": "adopt"},
+              "expect": {"required": ["branch", "commit", "inc", "inc_sha256", "lib_sha256"]}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

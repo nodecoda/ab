@@ -1,0 +1,75 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 8106,
+      "unanswerable": 36
+    },
+    "terminal": {
+      "Bitcast": 10,
+      "Custom": 297,
+      "FewerElements": 2035,
+      "Legal": 2461,
+      "Libcall": 262,
+      "Lower": 2249,
+      "MoreElements": 1424,
+      "NarrowScalar": 776,
+      "Unsupported": 2837,
+      "WidenScalar": 2999
+    },
+    "unanswerable": {
+      "both": 36,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 4417,
+    "stuck": 0,
+    "successors": 7244
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 12559,
+      "disagree": 0,
+      "new_states": 2579,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 2579,
+      "disagree": 0,
+      "new_states": 241,
+      "one_sided": 0,
+      "round": 2
+    },
+    {
+      "asked": 241,
+      "disagree": 0,
+      "new_states": 7,
+      "one_sided": 0,
+      "round": 3
+    },
+    {
+      "asked": 7,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 4
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/a64.runner.official",
+    "ours": "/tmp/closure/a64.runner.ours"
+  },
+  "seed": "/tmp/closure/seed-a64-G.jsonl",
+  "seed_states": 12559,
+  "states": {
+    "added": 2827,
+    "seed": 12559,
+    "total": 15386
+  },
+  "target": "aarch64"
+}

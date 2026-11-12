@@ -32,7 +32,8 @@
     "inc_sha256": "38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442",
     "features": "x86-features.json",
     "features_sha256": "0e4fb878c003b3bf8fe34cfcb88464df6b574079dc7dd9c98453e9db28cf9dec"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/aarch64",
@@ -63,7 +64,8 @@
     "inc_sha256": "0f6dcf0a6b91f105fdea64dcc8f18741f50b2e39fcc26b257cf9ad47ec5e669b",
     "features": "features.json",
     "features_sha256": "6e5257466f1bc03ef1592fa4c3d43fb0d41494436b073f8c74720f814fe71bf6"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/riscv",
@@ -94,7 +96,8 @@
     "inc_sha256": "fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06",
     "features": "riscv-features.json",
     "features_sha256": "38967ab10a020b3c69c4fa4940b257f248588419b16a507dc1317c6398075ecf"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/arm",
@@ -116,7 +119,8 @@
     "agree": 1614,
     "disagree": 0,
     "unanswerable": 0
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/mips",
@@ -139,7 +143,8 @@
     "disagree": 0,
     "unanswerable": 0,
     "ref_asserted": 9
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/ppc",
@@ -161,7 +166,8 @@
     "agree": 94,
     "disagree": 0,
     "unanswerable": 1
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/m68k",
@@ -183,7 +189,8 @@
     "agree": 35,
     "disagree": 0,
     "unanswerable": 0
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/wasm",
@@ -206,7 +213,8 @@
     "disagree": 0,
     "unanswerable": 0,
     "answered_equal": 894
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "G/spirv",
@@ -229,7 +237,8 @@
     "disagree": 0,
     "unanswerable": 4,
     "ref_asserted": 0
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U/x86",
@@ -261,7 +270,8 @@
     "inc_sha256": "38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442",
     "features": "x86-features.json",
     "features_sha256": "0e4fb878c003b3bf8fe34cfcb88464df6b574079dc7dd9c98453e9db28cf9dec"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U/aarch64",
@@ -294,7 +304,8 @@
     "inc_sha256": "0f6dcf0a6b91f105fdea64dcc8f18741f50b2e39fcc26b257cf9ad47ec5e669b",
     "features": "features.json",
     "features_sha256": "6e5257466f1bc03ef1592fa4c3d43fb0d41494436b073f8c74720f814fe71bf6"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U/riscv",
@@ -327,7 +338,8 @@
     "inc_sha256": "fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06",
     "features": "riscv-features.json",
     "features_sha256": "38967ab10a020b3c69c4fa4940b257f248588419b16a507dc1317c6398075ecf"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U/arm",
@@ -352,7 +364,8 @@
     "unanswerable": 0,
     "answered_equal": 15695
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix.",
+   "kind": "answers"
   },
   {
    "id": "U/mips",
@@ -377,7 +390,8 @@
     "unanswerable": 0,
     "answered_equal": 11396
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix.",
+   "kind": "answers"
   },
   {
    "id": "U/ppc",
@@ -402,7 +416,8 @@
     "unanswerable": 0,
     "answered_equal": 2177
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix.",
+   "kind": "answers"
   },
   {
    "id": "U/m68k",
@@ -427,7 +442,8 @@
     "unanswerable": 0,
     "answered_equal": 2182
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix.",
+   "kind": "answers"
   },
   {
    "id": "U/wasm",
@@ -452,7 +468,8 @@
     "unanswerable": 0,
     "answered_equal": 9290
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix.",
+   "kind": "answers"
   },
   {
    "id": "U/spirv",
@@ -477,7 +494,8 @@
     "unanswerable": 0,
     "answered_equal": 15592
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix.",
+   "kind": "answers"
   },
   {
    "id": "U-neg/x86",
@@ -490,15 +508,16 @@
     "attribution.json": "fe8a7c32e4ae7cdcf7bf85446aef4316bb260163db204b8e24fb32c69b8ac44e"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_ADD",
      "G_SUB"
     ],
     "unknown_keys": 0,
-    "answered_equal": 9863
+    "answered_equal": 9863,
+    "disagree": 164
    },
-   "observed_disagree": 164
+   "observed_disagree": 164,
+   "kind": "neg"
   },
   {
    "id": "U-neg/aarch64",
@@ -511,14 +530,15 @@
     "attribution.json": "441c66a71bd824f10d67423f16cfcede124445ba86b25c1e36283b82f2620c11"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_ICMP"
     ],
     "unknown_keys": 0,
-    "answered_equal": 29392
+    "answered_equal": 29392,
+    "disagree": 216
    },
-   "observed_disagree": 216
+   "observed_disagree": 216,
+   "kind": "neg"
   },
   {
    "id": "U-neg/riscv",
@@ -531,15 +551,16 @@
     "attribution.json": "9ca91203b2da24c577a2c7b117b36990e1f47014dda0ad8ea956e83b3f5ae13b"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_ADD",
      "G_SUB"
     ],
     "unknown_keys": 0,
-    "answered_equal": 20293
+    "answered_equal": 20293,
+    "disagree": 152
    },
-   "observed_disagree": 152
+   "observed_disagree": 152,
+   "kind": "neg"
   },
   {
    "id": "U-neg/arm",
@@ -552,16 +573,17 @@
     "attribution.json": "ff684ee624576fe7aa2aff078135e371f48f436e678b356fea3a3d2e4d1a690a"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_LOAD",
      "G_STORE"
     ],
     "unknown_keys": 0,
-    "answered_equal": 15547
+    "answered_equal": 15547,
+    "disagree": 148
    },
    "injected_opcode": "G_LOAD",
-   "observed_disagree": 148
+   "observed_disagree": 148,
+   "kind": "neg"
   },
   {
    "id": "U-neg/mips",
@@ -574,15 +596,16 @@
     "attribution.json": "dd0ad729817e400cf4fd3132ef4e31294a99898b5d5c3604b8aac55af806725f"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_CTPOP"
     ],
     "unknown_keys": 0,
-    "answered_equal": 11356
+    "answered_equal": 11356,
+    "disagree": 40
    },
    "injected_opcode": "G_CTPOP",
-   "observed_disagree": 40
+   "observed_disagree": 40,
+   "kind": "neg"
   },
   {
    "id": "U-neg/ppc",
@@ -595,16 +618,17 @@
     "attribution.json": "f43efef8ea0561e32fbf514ce633ae1bae3ac6d90d3329ebf8c2c7af39975cfa"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_ADD",
      "G_SUB"
     ],
     "unknown_keys": 0,
-    "answered_equal": 2165
+    "answered_equal": 2165,
+    "disagree": 12
    },
    "injected_opcode": "G_SUB",
-   "observed_disagree": 12
+   "observed_disagree": 12,
+   "kind": "neg"
   },
   {
    "id": "U-neg/m68k",
@@ -617,7 +641,6 @@
     "attribution.json": "a79b7446880b258f226a2f901de2bae2dce0b52ad22be291543aadecec8da379"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_ADD",
      "G_AND",
@@ -626,10 +649,12 @@
      "G_UDIV"
     ],
     "unknown_keys": 0,
-    "answered_equal": 2147
+    "answered_equal": 2147,
+    "disagree": 35
    },
    "injected_opcode": "G_MUL",
-   "observed_disagree": 35
+   "observed_disagree": 35,
+   "kind": "neg"
   },
   {
    "id": "U-neg/wasm",
@@ -642,15 +667,16 @@
     "attribution.json": "08a33e9e5bd69ff70f585ac6ab84b98c7536a777c27c796c777d79c561a94cd8"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_SELECT"
     ],
     "unknown_keys": 0,
-    "answered_equal": 9254
+    "answered_equal": 9254,
+    "disagree": 36
    },
    "injected_opcode": "G_SELECT",
-   "observed_disagree": 36
+   "observed_disagree": 36,
+   "kind": "neg"
   },
   {
    "id": "U-neg/spirv",
@@ -663,7 +689,6 @@
     "attribution.json": "fd4cbc27bfdd10079564d9323d966cfed023caef71858c1d390c4b4e5024222e"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "G_ABS",
      "G_BITREVERSE",
@@ -679,10 +704,12 @@
      "G_USUBSAT"
     ],
     "unknown_keys": 0,
-    "answered_equal": 14808
+    "answered_equal": 14808,
+    "disagree": 784
    },
    "injected_opcode": "G_UMIN",
-   "observed_disagree": 784
+   "observed_disagree": 784,
+   "kind": "neg"
   },
   {
    "id": "G-neg/x86",
@@ -697,15 +724,16 @@
     "ours.answers.jsonl": "da678155ea3504f0101442006bec3827e7f913129fd2678eaa9b1a3234155638"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "X_G_ADD"
     ],
     "unknown_keys": 0,
-    "answered_equal": 2887
+    "answered_equal": 2887,
+    "disagree": 127
    },
    "injected_opcode": "G_ADD",
-   "observed_disagree": 127
+   "observed_disagree": 127,
+   "kind": "neg"
   },
   {
    "id": "G-neg/aarch64",
@@ -720,15 +748,16 @@
     "ours.answers.jsonl": "64ea64b7ad2a19b587d525541f6f0f4bfd4009369bb504ef83e973dde2f88001"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "A_G_ZEXT"
     ],
     "unknown_keys": 0,
-    "answered_equal": 12244
+    "answered_equal": 12244,
+    "disagree": 315
    },
    "injected_opcode": "G_ZEXT",
-   "observed_disagree": 315
+   "observed_disagree": 315,
+   "kind": "neg"
   },
   {
    "id": "G-neg/riscv",
@@ -743,15 +772,16 @@
     "ours.answers.jsonl": "e2f892ac2771697c89d5049055477282f163230ecc334c3f796ca5bbf7792614"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "R_G_FPTOSI"
     ],
     "unknown_keys": 0,
-    "answered_equal": 5946
+    "answered_equal": 5946,
+    "disagree": 140
    },
    "injected_opcode": "G_FPTOSI",
-   "observed_disagree": 140
+   "observed_disagree": 140,
+   "kind": "neg"
   },
   {
    "id": "G-neg/arm",
@@ -766,14 +796,15 @@
     "ours.answers.jsonl": "94ac8c085ef9dff94e385c06e6d019aa16790c3f4aa3d33b8aaa00c951a99e7e"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "A_G_LOAD"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "disagree": 71
    },
    "injected_opcode": "G_LOAD",
-   "observed_disagree": 71
+   "observed_disagree": 71,
+   "kind": "neg"
   },
   {
    "id": "G-neg/mips",
@@ -788,14 +819,15 @@
     "ours.answers.jsonl": "e9d04f5f3b4883d150c843acc1f46f7077ea2d35baffbb536ca14f347a001f6f"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "Mips_G_UITOFP"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "disagree": 15
    },
    "injected_opcode": "G_UITOFP",
-   "observed_disagree": 15
+   "observed_disagree": 15,
+   "kind": "neg"
   },
   {
    "id": "G-neg/ppc",
@@ -810,14 +842,15 @@
     "ours.answers.jsonl": "48e924790541b1c287bb422504fe0bcb0604eb8b59599f2fe26d8c75df08a430"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "P_G_ZEXT"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "disagree": 3
    },
    "injected_opcode": "G_ZEXT",
-   "observed_disagree": 3
+   "observed_disagree": 3,
+   "kind": "neg"
   },
   {
    "id": "G-neg/m68k",
@@ -832,14 +865,15 @@
     "ours.answers.jsonl": "401d3977c5ae823264bf7ea7f0ec1511cc9a41beb0f18bb972e5448e11fcffa1"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "M68k_G_ADD"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "disagree": 7
    },
    "injected_opcode": "G_MUL",
-   "observed_disagree": 7
+   "observed_disagree": 7,
+   "kind": "neg"
   },
   {
    "id": "G-neg/wasm",
@@ -854,15 +888,16 @@
     "ours.answers.jsonl": "a498fc0f2a6c2870e363e2768eb08698c84c4795075d4051f1449935b88cce7e"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "Wasm_G_CTLZ"
     ],
     "unknown_keys": 0,
-    "answered_equal": 838
+    "answered_equal": 838,
+    "disagree": 56
    },
    "injected_opcode": "G_CTLZ",
-   "observed_disagree": 56
+   "observed_disagree": 56,
+   "kind": "neg"
   },
   {
    "id": "G-neg/spirv",
@@ -877,14 +912,15 @@
     "ours.answers.jsonl": "9762ccfc55300e8ca54760d737de2801586693f14f20c74ab71fb07dba8e1f7a"
    },
    "expect": {
-    "min_disagree": 1,
     "rulesets": [
      "Spv_G_TRUNC"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "disagree": 83
    },
    "injected_opcode": "G_TRUNC",
-   "observed_disagree": 83
+   "observed_disagree": 83,
+   "kind": "neg"
   },
   {
    "id": "D/x86",
@@ -911,7 +947,8 @@
    "runtime": {
     "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMX86CodeGen.so.24.0git",
     "sha256": "24bf2a5254dc042e6e1145e926ee42a4dd4d613e3947694b6628f2871b4fe357"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "D/aarch64",
@@ -956,7 +993,8 @@
     "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMAArch64CodeGen.so.24.0git",
     "sha256": "e49c03ec2f82ab2a4be80deb57e5ef5dca76daf7065b2498234730cd5cc64c02"
    },
-   "sites": "sites.json"
+   "sites": "sites.json",
+   "kind": "summary"
   },
   {
    "id": "D/riscv",
@@ -989,7 +1027,8 @@
    "runtime": {
     "path": "/home/ubuntu/llvm/builds/explore/lib/libLLVMRISCVCodeGen.so.24.0git",
     "sha256": "f32be744460c8155b7f96ebb9bc8b10655ecf05426fc38627ba6c575bf418eb4"
-   }
+   },
+   "kind": "summary"
   },
   {
    "id": "U-full/x86",
@@ -1014,7 +1053,8 @@
     "sha256": "2eeca0080c44fee913f8326a7363014b18469d85aae15effb7d0c9e9bb13db7a",
     "derived_from": "universe.jsonl (sha 99d6963d60090a6b) expanded by `python3 -m oracle expand --configs C0,C1,C2,C3`"
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. The 1,392 unanswerable rows assert at LowLevelType.h:429 on both sides."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. The 1,392 unanswerable rows assert at LowLevelType.h:429 on both sides.",
+   "kind": "answers"
   },
   {
    "id": "U-full/aarch64",
@@ -1039,7 +1079,8 @@
     "sha256": "8ad32c1f0736cb66839152a450cdcfc5fa61089d60f8768e71df72914b882cb3",
     "derived_from": "universe.jsonl (sha fe1a202ee36231aa) expanded by `python3 -m oracle expand --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve`"
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. See diff.json for the pinned assert sites."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. See diff.json for the pinned assert sites.",
+   "kind": "answers"
   },
   {
    "id": "U-full/riscv",
@@ -1064,7 +1105,8 @@
     "sha256": "71e1011e48816795b22ae7f6904e93af6267c7670fa18abde59102b260ab844d",
     "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs rv64gc,rv32gc,rv64gcv,rv32gcv,rv64zbb,rv64zfh,ristretto,rv32zilsd`"
    },
-   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. See diff.json for the pinned assert sites."
+   "note": "Refreshed 2026-11-12 with tool 513201a after the universe pad fix. See diff.json for the pinned assert sites.",
+   "kind": "answers"
   },
   {
    "id": "MIR-L1/upstream",
@@ -1456,7 +1498,8 @@
     "path": "/tmp/u-full2/m68k/queries.jsonl",
     "sha256": "7f0f810d623c116a9b7dd10acc7050344a0726e7973332fbbc54ac74783f8275",
     "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs default`"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U-full/ppc",
@@ -1482,7 +1525,8 @@
     "path": "/tmp/u-full2/ppc/queries.jsonl",
     "sha256": "7f0f810d623c116a9b7dd10acc7050344a0726e7973332fbbc54ac74783f8275",
     "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs default`"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U-full/arm",
@@ -1505,7 +1549,8 @@
     "path": "/tmp/u-full2/arm/queries.jsonl",
     "sha256": "446f9b146662e56149a9551ddfef6c550357982e444cf7baf7ad85338686133b",
     "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs armv7a-neon,armv7a-nodiv,armv7a-a5,armv6-arm1176,armv4t,thumbv7m,armv7-soft`"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U-full/mips",
@@ -1532,7 +1577,8 @@
     "path": "/tmp/u-full2/mips/queries.jsonl",
     "sha256": "c313d289ffb640b6ae87bda28ef0f9aabf15b1d6d9a15ba1da700e189d171172",
     "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs mips32,mips32r2,mips32r6,mips32r5-msa,mips32r6-msa`"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U-full/wasm",
@@ -1555,7 +1601,8 @@
     "path": "/tmp/u-full2/wasm/queries.jsonl",
     "sha256": "893dd3c6f1682ce6062afcc8d926439f2bc46d5f88ea2a9a809d56a7835b0caa",
     "derived_from": "universe.jsonl (sha e11cba9b8f04b751) expanded by `python3 -m oracle expand --configs wasm32,wasm32-signext,wasm64,wasm64-signext`"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "U-full/spirv",
@@ -1581,7 +1628,8 @@
     "path": "/tmp/u-full2/spirv/queries.jsonl",
     "sha256": "13077fe5ab7570fae73f309c983bf61b0dc4adb4fa59c741070a71883b9a8025",
     "derived_from": "universe.jsonl (sha a20c7fe098f48155) expanded by `python3 -m oracle expand --configs spirv64-kernel,spirv32-kernel,spirv64-shader,spirv32-shader,spirv64-kernel-ext,spirv32-shader-ext`"
-   }
+   },
+   "kind": "answers"
   },
   {
    "id": "MIR-L3/check-llvm",
@@ -2313,6 +2361,450 @@
      }
     },
     "llc_sha256": "ef74d1ab4964eff8a2b0444e2e5c623f352643d8672eb7bfbd39b6915bc78964"
+   }
+  },
+  {
+   "id": "closure/aarch64-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "aarch64",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target aarch64 --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "aarch64-D.json": "b43076204d6068ce6a8b66168f4a5ddb1770bb3efee1d6c7d86fe113de0d42c4"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 936960,
+    "successors": 241625,
+    "revisited": 234516,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 39062,
+    "ref_only_unanswerable": 1696,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/aarch64-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "aarch64",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target aarch64 --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "aarch64-G.json": "e3604a3a12a6eee40c0717955100bfdafe16b82b37006034767c98214cab6af2"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 12559,
+    "successors": 7244,
+    "revisited": 4417,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 36,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/arm-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "arm",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target arm --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "arm-D.json": "1030c95418c298fc538205cf259a3cc656aafcaeb3491fef02556d7dd4614bef"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 9296,
+    "successors": 2219,
+    "revisited": 2219,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/arm-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "arm",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target arm --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "arm-G.json": "9b9d475936fb13766d8310ffda9f0b2b1029246b74dcc9136ebd6fde99e1113c"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 1614,
+    "successors": 186,
+    "revisited": 175,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/m68k-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "m68k",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target m68k --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "m68k-D.json": "06a36925252d2e57eff18014e9369d752e62f9df9f7e72c26bfd26645e7d61eb"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 112,
+    "successors": 2,
+    "revisited": 2,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/m68k-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "m68k",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target m68k --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "m68k-G.json": "c772b493b41c25cd52a5826f09d2c2173885aacac2cabdaa622431b2982a296e"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 35,
+    "successors": 8,
+    "revisited": 6,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/mips-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "mips",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target mips --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "mips-D.json": "eea137b8acb6c90521d73f101091d1707ca267a2bf0609cabf17619e8c707ad0"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 18745,
+    "successors": 2970,
+    "revisited": 2970,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/mips-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "mips",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target mips --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "mips-G.json": "ea8e37e64e939878a9983aeb85064832726f925a1a3ec31215622c5782dad454"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 1656,
+    "successors": 202,
+    "revisited": 202,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 9,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/ppc-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "ppc",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target ppc --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "ppc-D.json": "b9e9be52a62d0adddcd967e854f354e598e0b86d834fd52b79cfdc777900f4d8"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 1005,
+    "successors": 152,
+    "revisited": 152,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 3,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/ppc-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "ppc",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target ppc --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "ppc-G.json": "402dd356520b209cd373a3879b51ea7aebffd32e8ff2591e64ea645302d7fa5f"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 94,
+    "successors": 12,
+    "revisited": 11,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 1,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/riscv-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "riscv",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target riscv --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "riscv-D.json": "5eda8e05bf39c4c3c221a612edcfa92dc0dcfe6faed26d9790f30bc08cfbc08e"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 253747,
+    "successors": 13388,
+    "revisited": 13070,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 1074,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/riscv-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "riscv",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target riscv --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "riscv-G.json": "8f20ae5cd95ff53c6ffc615cec4c3f9132f4f90155878e9fa5e1c8bfce06ea71"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 6086,
+    "successors": 1368,
+    "revisited": 1107,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/spirv-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "spirv",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target spirv --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "spirv-D.json": "9646be87f9aa3281b6b2e825c6fce7571e32e0689aa11cfc9047c63cfcf85b57"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 3472080,
+    "successors": 842466,
+    "revisited": 842034,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 900,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/spirv-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "spirv",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target spirv --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "spirv-G.json": "c719260958c8b7309c34ba41c7d62d2e379392f1e0b21a4db7315130404bd3c4"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 5689,
+    "successors": 944,
+    "revisited": 685,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 8,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/wasm-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "wasm",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target wasm --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "wasm-D.json": "4c4759a7ccb807e7ae5da316419f0143c06bed742a11301fcc0335d7a22a52da"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 11996,
+    "successors": 5148,
+    "revisited": 5124,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 132,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/wasm-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "wasm",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target wasm --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "wasm-G.json": "b6a0482323da60105a2e42a919260b23749c1b133f575f5350338b2facea817a"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 894,
+    "successors": 452,
+    "revisited": 302,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/x86-D",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "x86",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target x86 --seed <D seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "x86-D.json": "6dcbe26a1a899dbc1a21cabd7303a6f8fc3d062b9d318041e19e5365cd0d3542"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 91340,
+    "successors": 29941,
+    "revisited": 29149,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 648,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "closure/x86-G",
+   "kind": "closure",
+   "direction": "closure",
+   "target": "x86",
+   "dir": "data/closure",
+   "command": "python3 closure.py --target x86 --seed <G seed> (see docs/CLOSURE.md)",
+   "artifacts": {
+    "x86-G.json": "e29ee2b8a3af83f758ec5b465e3d4668a3ee1d0175dfed121ff2739d7fc39778"
+   },
+   "expect": {
+    "ok": true,
+    "seed_states": 3014,
+    "successors": 1577,
+    "revisited": 1221,
+    "stuck": 0,
+    "disagree": 0,
+    "both_unanswerable": 0,
+    "ref_only_unanswerable": 0,
+    "ours_only_unanswerable": 0
+   }
+  },
+  {
+   "id": "adopt/x86",
+   "kind": "adopt",
+   "direction": "adopt",
+   "target": "x86",
+   "dir": "/home/ubuntu/llvm/gisel/tests/artifacts",
+   "command": "./adopt-check.sh x86",
+   "artifacts": {},
+   "expect": {
+    "branch": "explore/x86-adopt",
+    "commit": "4b8a026249c2",
+    "inc": "x86.inc",
+    "inc_sha256": "38b278dd2a10fe42fa699b3661fbee575657bf8e9cdb1399a0d031a7c05b1442",
+    "lib_sha256": "085928fa26a5e772ff250f045ad4874cd5e8cbbc8046fbeeb2406f7394a9c432"
+   }
+  },
+  {
+   "id": "adopt/aarch64",
+   "kind": "adopt",
+   "direction": "adopt",
+   "target": "aarch64",
+   "dir": "/home/ubuntu/llvm/gisel/tests/artifacts",
+   "command": "./adopt-check.sh aarch64",
+   "artifacts": {},
+   "expect": {
+    "branch": "explore/aarch64-adopt",
+    "commit": "a355d055cf28",
+    "inc": "aarch64.inc",
+    "inc_sha256": "0f6dcf0a6b91f105fdea64dcc8f18741f50b2e39fcc26b257cf9ad47ec5e669b",
+    "lib_sha256": "123cd6d80d8df1cbb9cf695f4cb27b9ca5d0fbbe12192fe8d205dece1f0fc2dd"
+   }
+  },
+  {
+   "id": "adopt/riscv",
+   "kind": "adopt",
+   "direction": "adopt",
+   "target": "riscv",
+   "dir": "/home/ubuntu/llvm/gisel/tests/artifacts",
+   "command": "./adopt-check.sh riscv",
+   "artifacts": {},
+   "expect": {
+    "branch": "explore/riscv-adopt",
+    "commit": "0feeca6a2b68",
+    "inc": "riscv.inc",
+    "inc_sha256": "fe6427bdf480143c3ec1d5b35ebba2bda637cce650d83db4f44e4cdcec520e06",
+    "lib_sha256": "d44d873e01080f3007ecd57a52099fe54c6c43af9de12a8d3fd48d2b42bfff16"
    }
   }
  ],

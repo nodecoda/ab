@@ -1,0 +1,50 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 7077
+    },
+    "terminal": {
+      "Custom": 38,
+      "Legal": 576,
+      "Libcall": 197,
+      "Lower": 534,
+      "NarrowScalar": 329,
+      "Unsupported": 5732,
+      "WidenScalar": 1890
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 2219,
+    "stuck": 0,
+    "successors": 2219
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 9296,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 1
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/arm/runner.official",
+    "ours": "/tmp/closure/rt/arm/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/arm-D.jsonl",
+  "seed_states": 9296,
+  "states": {
+    "added": 0,
+    "seed": 9296,
+    "total": 9296
+  },
+  "target": "arm"
+}

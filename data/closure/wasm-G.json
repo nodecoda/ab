@@ -1,0 +1,62 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 592
+    },
+    "terminal": {
+      "Legal": 224,
+      "Lower": 140,
+      "NarrowScalar": 190,
+      "Unsupported": 228,
+      "WidenScalar": 262
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 302,
+    "stuck": 0,
+    "successors": 452
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 894,
+      "disagree": 0,
+      "new_states": 142,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 142,
+      "disagree": 0,
+      "new_states": 8,
+      "one_sided": 0,
+      "round": 2
+    },
+    {
+      "asked": 8,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 3
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/wasm/runner.official",
+    "ours": "/tmp/closure/rt/wasm/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/wasm-G.jsonl",
+  "seed_states": 894,
+  "states": {
+    "added": 150,
+    "seed": 894,
+    "total": 1044
+  },
+  "target": "wasm"
+}

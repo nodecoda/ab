@@ -1,0 +1,49 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 850,
+      "unanswerable": 3
+    },
+    "terminal": {
+      "Bitcast": 9,
+      "Legal": 144,
+      "Lower": 21,
+      "Unsupported": 685,
+      "WidenScalar": 143
+    },
+    "unanswerable": {
+      "both": 3,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 152,
+    "stuck": 0,
+    "successors": 152
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 1005,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 1
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/ppc/runner.official",
+    "ours": "/tmp/closure/rt/ppc/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/ppc-D.jsonl",
+  "seed_states": 1005,
+  "states": {
+    "added": 0,
+    "seed": 1005,
+    "total": 1005
+  },
+  "target": "ppc"
+}

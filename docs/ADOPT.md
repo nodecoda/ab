@@ -72,7 +72,16 @@ riscv   /tmp/riscv-adopt/runner/runner.official
 | 由谁生成 | **人工**，命令写进 commit message 与本文件；CI 侧只有 gisel 仓库的 `verify-evidence.sh` 会从 corpus 重生成并比对 | 采用分支不在 LLVM 项目 CI 里；加生成 job 等于把 gisel 塞进上游构建。漂移检测靠一条 sha 对比 |
 | 怎么回滚 | `git revert <commit>`（每个分支一个 commit） | 无构建系统改动、无其它文件依赖该 inc |
 
-漂移检测（改规则前后都跑）：
+一键漂移检测（会 fetch 三个分支，需要网络）：
+
+```sh
+cd /home/ubuntu/llvm/ab && ./adopt-check.sh
+```
+
+它比较分支内 `.inc` 的 sha 与 `gisel/tests/artifacts/<t>.inc`，并核对
+`EVIDENCE.json` 的 `adopt/*` 条目；三个 target 各自独立，失败不会遮住另一个。
+
+手工检测（改规则前后都跑）：
 
 ```sh
 sha256sum llvm/lib/Target/<T>/GISel/<T>LegalizerInfo.inc \

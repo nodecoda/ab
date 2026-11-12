@@ -1,0 +1,50 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 15775
+    },
+    "terminal": {
+      "Custom": 10,
+      "Legal": 408,
+      "Libcall": 795,
+      "Lower": 281,
+      "NarrowScalar": 765,
+      "Unsupported": 14281,
+      "WidenScalar": 2205
+    },
+    "unanswerable": {
+      "both": 0,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 2970,
+    "stuck": 0,
+    "successors": 2970
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 18745,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 1
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/mips/runner.official",
+    "ours": "/tmp/closure/rt/mips/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/mips-D.jsonl",
+  "seed_states": 18745,
+  "states": {
+    "added": 0,
+    "seed": 18745,
+    "total": 18745
+  },
+  "target": "mips"
+}

@@ -34,6 +34,8 @@ def make_entry(tmp, totals=None, restored=True):
         "id": "MIR-L1/upstream",
         "kind": "mir",
         "direction": "MIR",
+        "target": "x86",
+        "command": "make-entry",
         "dir": str(tmp),
         "artifacts": {"mir-report.json": sha(tmp / "mir-report.json"),
                       "provenance.json": sha(tmp / "provenance.json")},
@@ -95,7 +97,7 @@ class SummaryEvidence(unittest.TestCase):
         (tmp / "summary.json").write_text(json.dumps(summary))
         return {
             "id": "D/m68k", "kind": "summary", "direction": "D",
-            "dir": str(tmp),
+            "target": "m68k", "command": "make-summary", "dir": str(tmp),
             "artifacts": {"summary.json": sha(tmp / "summary.json")},
             "expect": {"summary": {"configs": 1, "queries": 112,
                                    "agree": expected_agree if expected_agree
@@ -140,7 +142,7 @@ def make_lit_entry(tmp, tests=None, swapped_same=False):
     (tmp / "l3-provenance.json").write_text(json.dumps(provenance))
     return {
         "id": "MIR-L3/check-llvm", "kind": "lit", "direction": "MIR",
-        "dir": str(tmp),
+        "target": "x86+aarch64+riscv", "command": "make-lit", "dir": str(tmp),
         "artifacts": {name: sha(tmp / name) for name in (
             "l3-summary.json", "l3-provenance.json",
             "l3-baseline.tests.jsonl", "l3-combined.tests.jsonl")},
@@ -184,7 +186,7 @@ class LitEvidence(unittest.TestCase):
         proc = self.run_verify(make_lit_entry(Path(tempfile.mkdtemp()),
                                               swapped_same=True))
         self.assertEqual(proc.returncode, 1)
-        self.assertIn("the combined round tested nothing", proc.stdout)
+        self.assertIn("library was identical after the swap", proc.stdout)
 
 
 if __name__ == "__main__":

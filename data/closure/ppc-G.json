@@ -1,0 +1,56 @@
+{
+  "answers": {
+    "reasons": {
+      "terminal": 82,
+      "unanswerable": 1
+    },
+    "terminal": {
+      "Legal": 16,
+      "Lower": 8,
+      "NarrowScalar": 4,
+      "Unsupported": 58,
+      "WidenScalar": 8
+    },
+    "unanswerable": {
+      "both": 1,
+      "ours_only": 0,
+      "ref_only": 0
+    }
+  },
+  "disagree": [],
+  "edges": {
+    "revisited": 11,
+    "stuck": 0,
+    "successors": 12
+  },
+  "ok": true,
+  "one_sided": [],
+  "rounds": [
+    {
+      "asked": 94,
+      "disagree": 0,
+      "new_states": 1,
+      "one_sided": 0,
+      "round": 1
+    },
+    {
+      "asked": 1,
+      "disagree": 0,
+      "new_states": 0,
+      "one_sided": 0,
+      "round": 2
+    }
+  ],
+  "runners": {
+    "official": "/tmp/closure/rt/ppc/runner.official",
+    "ours": "/tmp/closure/rt/ppc/runner.ours"
+  },
+  "seed": "/tmp/closure/seeds/ppc-G.jsonl",
+  "seed_states": 94,
+  "states": {
+    "added": 1,
+    "seed": 94,
+    "total": 95
+  },
+  "target": "ppc"
+}
