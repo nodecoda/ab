@@ -1,236 +1,236 @@
 {
-  "schema": 1,
-  "note": "config -> triple/-mattr/extra llc args for the L2 MIR builder.  The feature list mirrors the truth table in gisel tests/cases/{x86,riscv}-features.json and tests/cases/features.json (AArch64); it is a claim, not a proof, and the probe check lives in mir-config-check.py.  A config with no `mattr` field is not realizable and every query for it lands in config_unrealizable.",
-  "targets": {
-    "x86": {
-      "C0": {
-        "triple": "i386-unknown-linux-gnu",
-        "pointer_width": 32,
-        "mattr": [
-          "-sse",
-          "-sse2",
-          "-x87"
-        ],
-        "source": "x86-features.json C0: 32-bit, no SSE, no x87"
-      },
-      "C1": {
-        "triple": "x86_64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "-sse4.1",
-          "-avx",
-          "-avx2",
-          "-avx512f"
-        ],
-        "source": "x86-features.json C1: 64-bit, x87 + SSE2, no SSE4.1/AVX"
-      },
-      "C2": {
-        "triple": "x86_64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+avx2",
-          "+avx512f",
-          "+avx512bw",
-          "+avx512dq",
-          "+avx512vl",
-          "+avx512vpopcntdq",
-          "+popcnt",
-          "+lzcnt",
-          "+bmi"
-        ],
-        "source": "x86-features.json C2: 64-bit, AVX512 + DQI + BWI + VLX + VPOPCNTDQ"
-      },
-      "C3": {
-        "triple": "i386-unknown-linux-gnu",
-        "pointer_width": 32,
-        "mattr": [
-          "-sse",
-          "-sse2",
-          "+x87",
-          "+popcnt",
-          "+lzcnt",
-          "+bmi"
-        ],
-        "source": "x86-features.json C3: 32-bit, x87 + POPCNT/LZCNT/BMI, no SSE"
-      }
-    },
-    "aarch64": {
-      "baseline": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [],
-        "source": "features.json baseline: no optional AArch64 extension"
-      },
-      "small-cm": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [],
-        "args": [
-          "-code-model=small"
-        ],
-        "source": "features.json small-cm: TM.getCodeModel() == Small"
-      },
-      "fullfp16": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+fullfp16"
-        ],
-        "source": "features.json fullfp16: ST.hasFullFP16()"
-      },
-      "sve": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+fullfp16",
-          "+sve"
-        ],
-        "source": "features.json sve: ST.hasSVE() (fullfp16 is also true)"
-      },
-      "bf16": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+bf16"
-        ],
-        "source": "features.json bf16: ST.hasBF16()"
-      },
-      "cssc": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+cssc"
-        ],
-        "source": "features.json cssc: ST.hasCSSC()"
-      },
-      "rcpc3": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+rcpc3"
-        ],
-        "source": "features.json rcpc3: ST.hasRCPC3()"
-      },
-      "lse": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+lse"
-        ],
-        "source": "features.json lse: LSE atomics, outlineAtomics false"
-      },
-      "outline-atomics": {
-        "triple": "aarch64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+outline-atomics"
-        ],
-        "source": "features.json outline-atomics: ST.outlineAtomics() && !ST.hasLSE()"
-      }
-    },
-    "riscv": {
-      "rv64gc": {
-        "triple": "riscv64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c"
-        ],
-        "source": "riscv-features.json rv64gc"
-      },
-      "rv32gc": {
-        "triple": "riscv32-unknown-linux-gnu",
-        "pointer_width": 32,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c"
-        ],
-        "source": "riscv-features.json rv32gc"
-      },
-      "rv64gcv": {
-        "triple": "riscv64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c",
-          "+v"
-        ],
-        "source": "riscv-features.json rv64gcv"
-      },
-      "rv32gcv": {
-        "triple": "riscv32-unknown-linux-gnu",
-        "pointer_width": 32,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c",
-          "+v"
-        ],
-        "source": "riscv-features.json rv32gcv"
-      },
-      "rv64zbb": {
-        "triple": "riscv64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c",
-          "+zbb"
-        ],
-        "source": "riscv-features.json rv64zbb"
-      },
-      "rv64zfh": {
-        "triple": "riscv64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c",
-          "+zfh"
-        ],
-        "source": "riscv-features.json rv64zfh"
-      },
-      "rv32zilsd": {
-        "triple": "riscv32-unknown-linux-gnu",
-        "pointer_width": 32,
-        "mattr": [
-          "+m",
-          "+a",
-          "+f",
-          "+d",
-          "+c",
-          "+zilsd"
-        ],
-        "source": "riscv-features.json rv32zilsd"
-      },
-      "ristretto": {
-        "triple": "riscv64-unknown-linux-gnu",
-        "pointer_width": 64,
-        "source": "riscv-features.json ristretto: LLVM has no 'ristretto' subtarget feature; not realizable by -mattr"
-      }
-    },
-    "ppc": {
-      "default": {
-        "triple": "powerpc64le-unknown-linux-gnu",
-        "pointer_width": 64,
-        "mattr": [],
-        "source": "ppc-features.json default: no optional feature"
-      }
-    }
+ "schema": 1,
+ "note": "config -> triple/-mattr/extra llc args for the L2 MIR builder.  The feature list mirrors the truth table in gisel tests/cases/{x86,riscv}-features.json and tests/cases/features.json (AArch64); it is a claim, not a proof, and the probe check lives in mir-config-check.py.  A config with no `mattr` field is not realizable and every query for it lands in config_unrealizable.",
+ "targets": {
+  "x86": {
+   "C0": {
+    "triple": "i386-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "-sse",
+     "-sse2",
+     "-x87"
+    ],
+    "source": "x86-features.json C0: 32-bit, no SSE, no x87"
+   },
+   "C1": {
+    "triple": "x86_64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "-sse4.1",
+     "-avx",
+     "-avx2",
+     "-avx512f"
+    ],
+    "source": "x86-features.json C1: 64-bit, x87 + SSE2, no SSE4.1/AVX"
+   },
+   "C2": {
+    "triple": "x86_64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+avx2",
+     "+avx512f",
+     "+avx512bw",
+     "+avx512dq",
+     "+avx512vl",
+     "+avx512vpopcntdq",
+     "+popcnt",
+     "+lzcnt",
+     "+bmi"
+    ],
+    "source": "x86-features.json C2: 64-bit, AVX512 + DQI + BWI + VLX + VPOPCNTDQ"
+   },
+   "C3": {
+    "triple": "i386-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "-sse",
+     "-sse2",
+     "+x87",
+     "+popcnt",
+     "+lzcnt",
+     "+bmi"
+    ],
+    "source": "x86-features.json C3: 32-bit, x87 + POPCNT/LZCNT/BMI, no SSE"
+   }
+  },
+  "aarch64": {
+   "baseline": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [],
+    "source": "features.json baseline: no optional AArch64 extension"
+   },
+   "small-cm": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [],
+    "args": [
+     "-code-model=small"
+    ],
+    "source": "features.json small-cm: TM.getCodeModel() == Small"
+   },
+   "fullfp16": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+fullfp16"
+    ],
+    "source": "features.json fullfp16: ST.hasFullFP16()"
+   },
+   "sve": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+fullfp16",
+     "+sve"
+    ],
+    "source": "features.json sve: ST.hasSVE() (fullfp16 is also true)"
+   },
+   "bf16": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+bf16"
+    ],
+    "source": "features.json bf16: ST.hasBF16()"
+   },
+   "cssc": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+cssc"
+    ],
+    "source": "features.json cssc: ST.hasCSSC()"
+   },
+   "rcpc3": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+rcpc3"
+    ],
+    "source": "features.json rcpc3: ST.hasRCPC3()"
+   },
+   "lse": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+lse"
+    ],
+    "source": "features.json lse: LSE atomics, outlineAtomics false"
+   },
+   "outline-atomics": {
+    "triple": "aarch64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+outline-atomics"
+    ],
+    "source": "features.json outline-atomics: ST.outlineAtomics() && !ST.hasLSE()"
+   }
+  },
+  "riscv": {
+   "rv64gc": {
+    "triple": "riscv64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c"
+    ],
+    "source": "riscv-features.json rv64gc"
+   },
+   "rv32gc": {
+    "triple": "riscv32-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c"
+    ],
+    "source": "riscv-features.json rv32gc"
+   },
+   "rv64gcv": {
+    "triple": "riscv64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c",
+     "+v"
+    ],
+    "source": "riscv-features.json rv64gcv"
+   },
+   "rv32gcv": {
+    "triple": "riscv32-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c",
+     "+v"
+    ],
+    "source": "riscv-features.json rv32gcv"
+   },
+   "rv64zbb": {
+    "triple": "riscv64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c",
+     "+zbb"
+    ],
+    "source": "riscv-features.json rv64zbb"
+   },
+   "rv64zfh": {
+    "triple": "riscv64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c",
+     "+zfh"
+    ],
+    "source": "riscv-features.json rv64zfh"
+   },
+   "rv32zilsd": {
+    "triple": "riscv32-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "+m",
+     "+a",
+     "+f",
+     "+d",
+     "+c",
+     "+zilsd"
+    ],
+    "source": "riscv-features.json rv32zilsd"
+   },
+   "ristretto": {
+    "triple": "riscv64-unknown-linux-gnu",
+    "pointer_width": 64,
+    "source": "riscv-features.json ristretto: LLVM has no 'ristretto' subtarget feature; not realizable by -mattr"
+   }
+  },
+  "ppc": {
+   "default": {
+    "triple": "powerpc64le-unknown-linux-gnu",
+    "pointer_width": 64,
+    "mattr": [],
+    "source": "ppc-features.json default: no optional feature"
+   }
   }
+ }
 }
