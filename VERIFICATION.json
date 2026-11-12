@@ -1,0 +1,117 @@
+{
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43305567640
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43305557653
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43305588237
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43305561475
+    }
+  },
+  "cohort": "cohort-2026-11-13-r2",
+  "commits": {
+    "ab": "dcfb8634f5f6dfb124a8240ee5de6730fb6bcf2d",
+    "gisel": "d119ee2cb17ea56bdec551e7944c746aa60a4414",
+    "upstream_source": "8cb4faef597c967ade0c53d0fed6fa56182dc3e8"
+  },
+  "gates": [
+    {
+      "command": "python3 -m unittest discover -q -s tests",
+      "evidence": "290 tests",
+      "rc": 0
+    },
+    {
+      "command": "python3 -m pytest -q",
+      "evidence": "gisel: 290 passed / 383 subtests",
+      "rc": 0
+    },
+    {
+      "command": "bash tools/check-nine-corpora.sh",
+      "evidence": "9 targets byte-identical",
+      "rc": 0
+    },
+    {
+      "command": "bash tools/check-graph-golden.sh",
+      "evidence": "4 configurations byte-identical",
+      "rc": 0
+    },
+    {
+      "command": "bash tools/check-cases-golden.sh",
+      "evidence": "9/9 matches",
+      "rc": 0
+    },
+    {
+      "command": "bash tools/check-nightly-graphs.sh",
+      "evidence": "10/10 matches, 8m46.5s",
+      "rc": 0
+    },
+    {
+      "command": "python3 tools/check-claims.py",
+      "evidence": "13 claims at the tag",
+      "rc": 0
+    },
+    {
+      "command": "python3 import/import-cxx.py --all --pin pin/PIN.json --check",
+      "evidence": "9 targets, 0 refusals",
+      "rc": 0
+    },
+    {
+      "command": "pin/make-base.sh TREE DEST --verify",
+      "evidence": "12 files verified",
+      "rc": 0
+    },
+    {
+      "command": "python3 -m pytest tests -q",
+      "evidence": "ab: 228 passed / 42 subtests",
+      "rc": 0
+    },
+    {
+      "command": "VERIFY_FROZEN=1 ./verify-evidence.sh",
+      "evidence": "97/97 entries pass, 1 skipped",
+      "rc": 0
+    },
+    {
+      "command": "python3 vertical.py --target riscv --verify-only --frozen",
+      "evidence": "riscv contract matches",
+      "rc": 0
+    },
+    {
+      "command": "python3 vertical.py --target x86 --verify-only --frozen",
+      "evidence": "x86 contract matches",
+      "rc": 0
+    },
+    {
+      "command": "python3 vertical.py --target aarch64 --verify-only --frozen",
+      "evidence": "aarch64 contract matches",
+      "rc": 0
+    },
+    {
+      "command": "shellcheck -S warning *.sh",
+      "evidence": "ab entry points",
+      "rc": 0
+    },
+    {
+      "command": "ab/verify-evidence.sh",
+      "evidence": "97/97 entries pass, 1 skipped",
+      "rc": 0
+    }
+  ],
+  "manifest_commit": "dcfb8634f5f6dfb124a8240ee5de6730fb6bcf2d",
+  "recorded_at": "2026-11-13",
+  "schema": 1,
+  "supersedes": "cohort-2026-11-13",
+  "supersedes_reason": "the first tag's upstream CI failed in test collection: the reimport test fell back to /home/ubuntu and Path.exists() raised PermissionError.  The fix is 8cb4fae; the first tag is kept, not rewritten.",
+  "tag": "cohort-2026-11-13-r2"
+}
