@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# run-g-negative.sh TARGET OPCODE OUT
+# run-g-negative.sh TARGET OPCODE OUT [--tree DIR] [--build DIR]
 #
 # G-side negative control: generate the include from the corpus, replace one
 # opcode's builder chain with `.unsupported()`, and run the normal G end-to-end
@@ -11,13 +11,23 @@ set -euo pipefail
 # This reuses the target's own `run-<target>-end-to-end.sh`: the query set is
 # generated from the *unmutated* corpus, so the only changed input is the
 # include our side is built from.
-TARGET=${1:?usage: run-g-negative.sh TARGET OPCODE OUT}
+TARGET=${1:?usage: run-g-negative.sh TARGET OPCODE OUT [--tree DIR] [--build DIR]}
 OPCODE=${2:?}
 OUT=${3:?}
+shift 3
+TREE_ARG=""
+BUILD_ARG=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --tree) TREE_ARG=${2:?}; shift 2 ;;
+    --build) BUILD_ARG=${2:?}; shift 2 ;;
+    *) echo "unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
 
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-TREE=${AB_TREE:-/home/ubuntu/llvm/trees/explore}
-BUILD=${AB_BUILD:-/home/ubuntu/llvm/builds/explore}
+TREE=${TREE_ARG:-${AB_TREE:-/home/ubuntu/llvm/trees/explore}}
+BUILD=${BUILD_ARG:-${AB_BUILD:-/home/ubuntu/llvm/builds/explore}}
 
 if ! python3 "$ROOT/targets.py" env "$TARGET" >/dev/null 2>&1; then
   echo "unsupported target: $TARGET" >&2

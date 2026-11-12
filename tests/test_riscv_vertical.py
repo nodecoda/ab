@@ -95,5 +95,29 @@ class Targets(unittest.TestCase):
                 self.assertGreaterEqual(c["g_neg"]["disagree"], 1)
 
 
+class Provenance(unittest.TestCase):
+    def test_leg_command_names_tree_and_build(self):
+        cmd = rv.leg_command("run-u-end-to-end.sh", "x86", "/q", "/o",
+                             tree="/tmp/tree-A", build="/tmp/build-B")
+        self.assertEqual([str(x) for x in cmd[-4:]],
+                         ["--tree", "/tmp/tree-A", "--build", "/tmp/build-B"])
+        self.assertEqual(str(cmd[0]),
+                         str(ROOT / "run-u-end-to-end.sh"))
+
+    def test_contract_pin_prefers_the_flag_then_the_contract(self):
+        contract = {"mir_l2": {"timeout": 63, "unsupported_run": 0}}
+        self.assertEqual(rv.contract_pin(7, contract, "mir_l2", "timeout"), 7)
+        self.assertEqual(rv.contract_pin(None, contract, "mir_l2", "timeout"),
+                         63)
+        self.assertIsNone(rv.contract_pin(None, None, "mir_l2", "timeout"))
+
+    def test_pins_are_omitted_when_unknown(self):
+        self.assertEqual(rv.pins(None, None), [])
+        self.assertEqual(rv.pins(0, 2),
+                         ["--expect-timeouts", "0",
+                          "--expect-unsupported", "2"])
+
+
+
 if __name__ == "__main__":
     unittest.main()

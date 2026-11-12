@@ -19,6 +19,7 @@ OURS = dict(QUERY, action="Unsupported", type_idx=0, new_type="LLT_invalid")
 def fake_end_to_end() -> str:
     template = '''#!/usr/bin/env bash
 set -euo pipefail
+if [[ -n ${FAKE_RECORD:-} ]]; then printf '%s|%s\\n' "$1" "$2" > "$FAKE_RECORD"; fi
 out=${4:?}
 mkdir -p "$out"
 case ${FAKE_NEG_MODE:-caught} in
@@ -59,6 +60,19 @@ class NegativeScripts(unittest.TestCase):
             ["bash", str(self.dir / "run-g-negative.sh"), "x86", "G_ADD",
              str(self.dir / "out")],
             cwd=self.dir, env=env, capture_output=True, text=True)
+
+    def test_explicit_tree_and_build_reach_the_e2e_script(self):
+        record = self.dir / "record.txt"
+        env = dict(os.environ, GISEL_SRC=str(GISEL), FAKE_NEG_MODE="caught",
+                   FAKE_RECORD=str(record))
+        proc = subprocess.run(
+            ["bash", str(self.dir / "run-g-negative.sh"), "x86", "G_ADD",
+             str(self.dir / "out"), "--tree", "/tmp/tree-A",
+             "--build", "/tmp/build-B"],
+            cwd=self.dir, env=env, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertEqual(record.read_text().strip(),
+                         "/tmp/tree-A|/tmp/build-B")
 
     def test_blind_is_exit_one(self):
         proc = self.run_g("blind")

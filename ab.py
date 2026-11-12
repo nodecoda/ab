@@ -550,6 +550,10 @@ def cmd_mir(args) -> int:
                   "--jobs", str(args.jobs), "--timeout", str(args.timeout)]
     if args.negative_control:
         replay_cmd += ["--negative-control", args.negative_control]
+    if args.expect_timeouts is not None:
+        replay_cmd += ["--expect-timeouts", str(args.expect_timeouts)]
+    if args.expect_unsupported is not None:
+        replay_cmd += ["--expect-unsupported", str(args.expect_unsupported)]
     if args.json:
         replay_cmd.append("--json")
     return subprocess.call(replay_cmd)
@@ -604,6 +608,12 @@ def build_parser():
     mir.add_argument("--limit", type=int)
     mir.add_argument("--jobs", type=int, default=16)
     mir.add_argument("--timeout", type=float, default=60.0)
+    mir.add_argument("--expect-timeouts", type=int, default=None, metavar="N",
+                     help="exact number of timed-out runs; default: fail on any")
+    mir.add_argument("--expect-unsupported", type=int, default=None,
+                     metavar="N",
+                     help="exact number of non-replayable RUN lines; "
+                          "default: fail on any")
     mir.add_argument("--json", action="store_true")
     mir.set_defaults(func=cmd_mir)
 

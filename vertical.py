@@ -82,6 +82,37 @@ def load(path: Path):
     return json.loads(path.read_text())
 
 
+
+def contract_pin(value, contract, section, key):
+    """An explicit flag wins; otherwise reuse the number the contract pinned."""
+    if value is not None:
+        return value
+    if contract is None:
+        return None
+    return contract.get(section, {}).get(key)
+
+
+def pins(timeouts, unsupported):
+    """`mir-replay` flags for the two uncompared buckets, when they are known."""
+    args = []
+    if timeouts is not None:
+        args += ["--expect-timeouts", str(timeouts)]
+    if unsupported is not None:
+        args += ["--expect-unsupported", str(unsupported)]
+    return args
+
+
+def leg_command(script, target, *args, tree, build):
+    """A U / G-negative leg command with its provenance made explicit.
+
+    These legs used to rely on `AB_TREE`/`AB_BUILD` defaults while the contract
+    recorded the `--tree` given to the G leg, so the evidence could name one
+    build and use another.  There is exactly one constructor now.
+    """
+    return [ROOT / script, target, *(str(a) for a in args),
+            "--tree", str(tree), "--build", str(build)]
+
+
 def run_cmd(cmd, cwd=None, log=None, check=True):
     text = " ".join(str(x) for x in cmd)
     print("+ " + text, flush=True)
@@ -480,6 +511,12 @@ def main(argv=None, default_target="riscv"):
                     help="with --verify-only: rebuild the layout from ./oracle")
     ap.add_argument("--record", action="store_true",
                     help="write data/<target>-contract.json from this run")
+    ap.add_argument("--expect-l1-timeouts", type=int, default=None, metavar="N")
+    ap.add_argument("--expect-l1-unsupported", type=int, default=None,
+                    metavar="N")
+    ap.add_argument("--expect-l2-timeouts", type=int, default=None, metavar="N")
+    ap.add_argument("--expect-l2-unsupported", type=int, default=None,
+                    metavar="N")
     args = ap.parse_args(argv)
 
     if args.target not in TARGETS:
@@ -524,24 +561,37 @@ def main(argv=None, default_target="riscv"):
             % (u_queries, args.target, spec["u_prefix"]))
 
     run_cmd([ROOT / spec["end_to_end"], tree, build, inc, out / "g"])
-    run_cmd([ROOT / "run-u-end-to-end.sh", args.target, u_queries, out / "u",
-             "--allow-unanswerable", spec["allow_unanswerable"]])
+    run_cmd(leg_command("run-u-end-to-end.sh", args.target, u_queries,
+                        out / "u", "--allow-unanswerable",
+                        spec["allow_unanswerable"], tree=tree, build=build))
     dest = out / "u" / "queries.jsonl"
     if dest.resolve() != u_queries.resolve():
         dest.write_bytes(u_queries.read_bytes())
-    run_cmd([ROOT / "run-u-end-to-end.sh", args.target, u_queries,
-             out / "u-neg", "--drop-opcode", spec["u_neg"]])
-    run_cmd([ROOT / "run-g-negative.sh", args.target, spec["g_neg"],
-             out / "g-neg"])
+    run_cmd(leg_command("run-u-end-to-end.sh", args.target, u_queries,
+                        out / "u-neg", "--drop-opcode", spec["u_neg"],
+                        tree=tree, build=build))
+    run_cmd(leg_command("run-g-negative.sh", args.target, spec["g_neg"],
+                        out / "g-neg", tree=tree, build=build))
     run_cmd([ROOT / spec["domain"], tree, build, inc, out / "domain"])
+
+    l1_timeouts = contract_pin(args.expect_l1_timeouts, c, "mir_l1",
+                               "timeout")
+    l1_unsupported = contract_pin(args.expect_l1_unsupported, c, "mir_l1",
+                                  "unsupported_run")
+    l2_timeouts = contract_pin(args.expect_l2_timeouts, c, "mir_l2",
+                               "timeout")
+    l2_unsupported = contract_pin(args.expect_l2_unsupported, c, "mir_l2",
+                                  "unsupported_run")
 
     run_cmd([sys.executable, ROOT / "mir-replay.py", "--layer", "upstream",
              "--target", args.target, "--tree", tree, "--build", build,
-             "--out", out / "l1", "--prepare", "--json"])
+             "--out", out / "l1", "--prepare", "--json",
+             *pins(l1_timeouts, l1_unsupported)])
 
     run_cmd([sys.executable, ROOT / "ab.py", "mir", "--target", args.target,
              "--queries", out / "g" / "queries.jsonl", "--tree", tree,
-             "--build", build, "--out", out / "l2", "--json"])
+             "--build", build, "--out", out / "l2", "--json",
+             *pins(l2_timeouts, l2_unsupported)])
 
     if args.l3:
         apply = [sys.executable, ROOT / "swap-source-ctor.py", "apply",

@@ -247,5 +247,73 @@ class Aggregate(unittest.TestCase):
             mr.check_identity(totals)
 
 
+class UnaccountedIsNotGreen(unittest.TestCase):
+    """MIR buckets that were counted but not compared must fail the run."""
+
+    LIB = "libLLVMX86CodeGen.so.24.0git"
+
+    def totals(self, **kw):
+        base = {"runs": 0, "same": 0, "both_abort": 0, "diff": 0,
+                "timeout": 0, "unsupported_run": 0}
+        base.update(kw)
+        return base
+
+    def test_zero_needs_no_pin(self):
+        self.assertEqual(mr.unaccounted(self.totals()), [])
+
+    def test_timeout_without_pin_is_reported(self):
+        self.assertEqual(mr.unaccounted(self.totals(timeout=1)),
+                         [("timeout", 1, None)])
+
+    def test_exact_pin_accepts_the_same_number(self):
+        self.assertEqual(mr.unaccounted(self.totals(timeout=63),
+                                        expect_timeouts=63), [])
+
+    def test_exact_pin_rejects_a_new_timeout(self):
+        self.assertEqual(mr.unaccounted(self.totals(timeout=64),
+                                        expect_timeouts=63),
+                         [("timeout", 64, 63)])
+
+    def test_unsupported_run_is_the_same_rule(self):
+        self.assertEqual(mr.unaccounted(self.totals(unsupported_run=2)),
+                         [("unsupported_run", 2, None)])
+
+    def run_main(self, status, *extra):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tree = root / "tree"
+            tree.mkdir()
+            build = root / "build"
+            (build / "bin").mkdir(parents=True)
+            (build / "bin" / "llc").write_text("")
+            out = root / "out"
+            for side in ("official", "ours"):
+                d = out / side / "x86"
+                d.mkdir(parents=True)
+                (d / self.LIB).write_text(side)
+            fake = [{"target": "x86", "runs": [{"status": status}]}]
+            with mock.patch.object(mr, "discover", return_value=[]), \
+                    mock.patch.object(mr, "run_replay", return_value=fake), \
+                    mock.patch.object(mir_libs, "git_head",
+                                      return_value="deadbeef"):
+                return mr.main(["--layer", "upstream", "--tree", str(tree),
+                                "--build", str(build), "--out", str(out),
+                                "--target", "x86", "--json"] + list(extra))
+
+    def test_cli_timeout_is_not_green(self):
+        self.assertEqual(self.run_main("timeout"), 1)
+
+    def test_cli_timeout_with_a_pin_is_green(self):
+        self.assertEqual(self.run_main("timeout", "--expect-timeouts", "1"), 0)
+
+    def test_cli_timeout_with_a_wrong_pin_is_red(self):
+        self.assertEqual(self.run_main("timeout", "--expect-timeouts", "0"), 1)
+
+    def test_cli_unsupported_with_a_pin_is_green(self):
+        self.assertEqual(
+            self.run_main("unsupported_run", "--expect-unsupported", "1"), 0)
+
+
+
 if __name__ == "__main__":
     unittest.main()

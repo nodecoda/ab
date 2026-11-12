@@ -347,6 +347,29 @@ def check_identity(totals):
                totals["all_run_lines"]))
 
 
+
+def unaccounted(totals, expect_timeouts=None, expect_unsupported=None):
+    """Buckets that were counted but never compared.
+
+    A run that timed out, or whose RUN line is not a replayable `llc` call, did
+    not produce an answer on one or both sides.  Treating `diff == 0` as green
+    while those buckets are non-zero is the MIR version of "truncation is
+    agreement": the missing comparisons are exactly where a regression would
+    hide.  Zero is green only when it is pinned explicitly, so a new timeout is
+    a failure rather than a silently larger denominator.
+    """
+    problems = []
+    for key, expected in (("timeout", expect_timeouts),
+                          ("unsupported_run", expect_unsupported)):
+        actual = totals.get(key, 0)
+        if expected is None:
+            if actual:
+                problems.append((key, actual, None))
+        elif actual != expected:
+            problems.append((key, actual, expected))
+    return problems
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="mir-replay", description="Replay legalizer MIR against two libraries")
@@ -367,6 +390,14 @@ def main(argv=None) -> int:
                         help="snapshot official, build ours, restore baseline")
     parser.add_argument("--negative-control", metavar="OPCODE",
                         help="build a mutant include and require diff > 0")
+    parser.add_argument("--expect-timeouts", type=int, default=None,
+                        metavar="N",
+                        help="exact number of timed-out runs; without it, "
+                             "any timeout is a failure")
+    parser.add_argument("--expect-unsupported", type=int, default=None,
+                        metavar="N",
+                        help="exact number of non-replayable RUN lines; "
+                             "without it, any is a failure")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
 
@@ -428,6 +459,8 @@ def main(argv=None) -> int:
                                  args.max_details, tree)
             per_target, totals = aggregate(results, targets)
             check_identity(totals)
+            uncompared = unaccounted(totals, args.expect_timeouts,
+                                     args.expect_unsupported)
 
             report = {
                 "schema": 1,
@@ -438,6 +471,14 @@ def main(argv=None) -> int:
                 "llc": str(llc),
                 "llc_sha256": provenance["llc_sha256"],
                 "negative_control": args.negative_control,
+                "expect": {
+                    "timeouts": args.expect_timeouts,
+                    "unsupported": args.expect_unsupported,
+                },
+                "unaccounted": [
+                    {"bucket": key, "actual": actual, "expected": expected}
+                    for key, actual, expected in uncompared
+                ],
                 "totals": totals,
                 "targets": per_target,
                 "inputs": {
@@ -477,6 +518,20 @@ def main(argv=None) -> int:
                          totals["unsupported_run"], totals["out_of_layer"],
                          totals["abort0_compared"]))
                 print("report=%s" % report_path)
+
+            if uncompared:
+                for key, actual, expected in uncompared:
+                    if expected is None:
+                        flag = {"timeout": "--expect-timeouts",
+                                "unsupported_run": "--expect-unsupported"}[key]
+                        print("mir-replay: %d run(s) counted as %s, not "
+                              "compared; pass %s N to pin this"
+                              % (actual, key, flag), file=sys.stderr)
+                    else:
+                        print("mir-replay: %d run(s) counted as %s, "
+                              "expected %d" % (actual, key, expected),
+                              file=sys.stderr)
+                return 1
 
             if args.negative_control:
                 caught = totals["diff"] > 0

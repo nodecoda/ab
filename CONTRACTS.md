@@ -145,6 +145,8 @@ L1/L2 的产物，字段固定：
 ```json
 {"schema": 1, "layer": "upstream", "generated_at": "...",
  "llc": "...", "llc_sha256": "...",
+ "expect": {"timeouts": null, "unsupported": null},
+ "unaccounted": [],
  "totals": {"runs": 0, "same": 0, "both_abort": 0, "diff": 0,
             "timeout": 0, "unsupported_run": 0},
  "targets": {"x86": {"files": 0, "runs": 0, "same": 0, "both_abort": 0,
@@ -168,7 +170,13 @@ targets[*].runs 之和 == totals.runs
 - `timeout`：任一侧超过 `--timeout`。
 - `unsupported_run`：RUN 行不是可重放的 `llc` 调用（例如 `FileCheck` 单独行）。
 
-退出码：0 = `diff == 0` 且负控未触发；1 = 有 `diff`、单边 abort、或负控没抓到；
+`timeout` 和 `unsupported_run` 是**没有被比较**的输入，不是“一致”。默认两者
+非零就是 rc=1；只有 `--expect-timeouts N` / `--expect-unsupported N` 显式钉住
+同一个数字才允许继续。新增一个 timeout 因此是回归，不是分母变大。`unaccounted`
+列出没钉住的桶，`expect` 记录这次的钉值。
+
+退出码：0 = `diff == 0`、`unaccounted == []` 且负控未触发；
+1 = 有 `diff`、单边 abort、未钉住的 timeout/unsupported、或负控没抓到；
 2 = 输入/参数/库错误。
 
 ## 9 MIR 形状表（`data/mir-shapes.jsonc`）
