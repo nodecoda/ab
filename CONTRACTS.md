@@ -64,6 +64,10 @@ RUNNER --queries QUERIES.jsonl
 - 答案写 stdout，一行一个 JSON 对象，逐行 flush（崩溃前的答案必须保留）。
 - 进度/诊断写 stderr（`answered N queries`）。
 - 坏输入、未知 opcode、坏 LLT：exit 2，不产生半行 JSON。
+- `run-queries.py`：0 = 每条查询都有答案或信号型 `unanswerable`；2 = runner
+  以非断言信号退出（缺库、用法错、构建坏）。exit 2 时仍写答案文件和
+  `--report`，第一条未答查询标 `runner-error`，报告带 `failed_at`/`error`。
+  “坏输入但 rc=0 且没有产物”不再是可能的状态。
 - runner 必须是纯函数：同一查询、同一二进制、同一配置，答案相同。
 - 构建元数据（二进制 sha256、target、config、inc sha256、pin commit）记录在
   run state 里，作为 `EVIDENCE.json` 的输入。
@@ -71,11 +75,17 @@ RUNNER --queries QUERIES.jsonl
 ## 5 diff 协议
 
 ```sh
-diff.py REF.jsonl OURS.jsonl [--json] [--compare action|full]
-        [--allow-ref-asserts N] [--expect-unanswerable N] [--details N]
+diff.py REF.jsonl OURS.jsonl [--queries QUERIES.jsonl] [--json]
+        [--compare action|full] [--allow-ref-asserts N]
+        [--expect-unanswerable N] [--details N]
 ```
 
-退出码：0 = 同 key 集且同答案；1 = 有差异或缺 key；2 = 坏行/重复 key 冲突。
+`--queries` 是题面分母：两侧答案的 key 集必须与它完全相等。没有这个参数时
+只能比较两侧的交集，两份被同样截断的答案会显示 `agree=N, disagree=0`；
+所有生产调用点都必须传。
+
+退出码：0 = 同 key 集且同答案；1 = 有差异、缺 key、`missing_in_both>0` 或
+`unexpected>0`；2 = 坏行/重复 key 冲突/题面读不了。
 
 判定字段（JSON 报告）：
 
@@ -87,6 +97,9 @@ diff.py REF.jsonl OURS.jsonl [--json] [--compare action|full]
 | `unanswerable` | 两侧都 `unanswerable` 且理由相同 |
 | `disagree` | 答案不同 |
 | `missing_ref` / `missing_ours` | 单侧缺失的 key |
+| `query_count` | `--queries` 的 key 数（未传为 null） |
+| `missing_in_both` | 题面有、两侧答案都没有的 key 数（截断探测器） |
+| `unexpected` | 答案有、题面没有的 key 数（越界探测器） |
 | `ref_asserted` | 官方侧断言、我方有答案；只有显式 `--allow-ref-asserts` 才计为已知类 |
 | `ref_asserted_by_site` | 上面这批的 `file:line`（fatal 消息则记消息）分布 |
 | `ref_asserted_by_opcode` | 同一批按 opcode 的分布 |
@@ -105,6 +118,17 @@ diff.py REF.jsonl OURS.jsonl [--json] [--compare action|full]
 2. 注入错变异（改 `new_type` 选择）。
 
 负控必须使 `diff` rc=1 且 `disagree>0`；抓不到则 gate 失败，不允许冻结。
+
+统一退出码（`env.sh:classify_negative_rc`）：
+
+| rc | 含义 | 包装脚本返回 |
+|---|---|---|
+| 0 | diff 仍一致，注入没被观察到（blind） | 1 |
+| 1 | 被抓到，且归因落在被注入的 ruleset | 0 |
+| 2 | 输入/基础设施错（文件坏、构建挂、没有 diff.json） | 2 |
+| 其他 | 一律按输入错处理，不算“抓到” | 2 |
+
+负控只会把 rc=1 当成功；崩溃、缺文件、runner 非断言退出都不会伪装成证据。
 
 ## 7 版本演进
 
