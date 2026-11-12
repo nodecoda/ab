@@ -15,6 +15,12 @@ O(lines) and each restart replays at most one chunk.
 
 Neither the queries nor the answers are held in memory: both are streamed, so
 peak RSS does not scale with the domain size.
+
+Exit codes: 0 = every query got an answer or a signal-derived ``unanswerable``
+row; 2 = the runner failed in a way that is not an assertion (a missing
+library, a usage error, a broken build).  On exit 2 the output and report are
+still written, with the first unanswered query marked ``runner-error`` and the
+failure recorded, so the run never disappears behind a non-zero status.
 """
 
 from __future__ import annotations
@@ -75,14 +81,17 @@ def run(runner, queries, out, report=None):
     aborted = bytearray(total)
     aborted_lines = []
     aborted_sites = {}
+    failure = None
+    failed_at = None
 
     raw_answers = tempfile.NamedTemporaryFile(
         "w", suffix=".answers", delete=False)
     try:
         base = 0
+        stopped = False
         stream = _lines(queries)
         chunk_lines = list(islice(stream, CHUNK))
-        while chunk_lines:
+        while chunk_lines and not stopped:
             offset = 0
             while True:
                 chunk_path = None
@@ -101,12 +110,6 @@ def run(runner, queries, out, report=None):
                 if proc.returncode == 0:
                     raw_answers.write("".join(line + "\n" for line in got))
                     break
-                if proc.returncode not in (-6, -11, 134, 139):
-                    # SIGABRT/SIGSEGV are the expected assertion deaths.
-                    print("%s: exit %d on query %d:\n%s"
-                          % (runner, proc.returncode, base + offset + len(got) + 1,
-                             proc.stderr.strip()), file=sys.stderr)
-                    return aborted_lines
                 # A signal can land while the runner is writing its current
                 # answer, leaving half a JSON object in stdout.  That partial
                 # line belongs to the query that killed the process; it is not
@@ -114,6 +117,19 @@ def run(runner, queries, out, report=None):
                 # answer by one.
                 if got and not _is_json(got[-1]):
                     got.pop()
+                if proc.returncode not in (-6, -11, 134, 139):
+                    # SIGABRT/SIGSEGV are the expected assertion deaths.  Any
+                    # other status is an infrastructure failure: keep what was
+                    # answered, but never report success.
+                    raw_answers.write("".join(line + "\n" for line in got))
+                    bad = base + offset + len(got)
+                    failure = ("%s: exit %d on query %d"
+                               % (runner, proc.returncode, bad + 1))
+                    print("%s:\n%s" % (failure, proc.stderr.strip()),
+                          file=sys.stderr)
+                    failed_at = bad
+                    stopped = True
+                    break
                 raw_answers.write("".join(line + "\n" for line in got))
                 bad = base + offset + len(got)
                 if bad >= base + len(chunk_lines):
@@ -126,10 +142,13 @@ def run(runner, queries, out, report=None):
                 offset = bad - base + 1
                 if offset >= len(chunk_lines):
                     break
+            if stopped:
+                break
             base += len(chunk_lines)
             chunk_lines = list(islice(stream, CHUNK))
         raw_answers.flush()
 
+        failed_unanswered = 0
         with out.open("w") as answer_stream, \
                 open(raw_answers.name) as answered:
             for index, line in enumerate(_lines(queries)):
@@ -143,6 +162,13 @@ def run(runner, queries, out, report=None):
                     answer_stream.write(json.dumps(record) + "\n")
                     continue
                 answer = answered.readline()
+                if failed_at is not None and index >= failed_at:
+                    record = json.loads(line)
+                    record["status"] = "unanswerable"
+                    record["reason"] = "runner-error"
+                    answer_stream.write(json.dumps(record) + "\n")
+                    failed_unanswered += 1
+                    continue
                 # A short answer file leaves the query itself as the row; that
                 # keeps the correspondence visible instead of silently
                 # shifting every later row.
@@ -151,14 +177,22 @@ def run(runner, queries, out, report=None):
         raw_answers.close()
         Path(raw_answers.name).unlink(missing_ok=True)
 
+    report_data = {
+        "queries": total,
+        "answered": total - len(aborted_lines) - failed_unanswered,
+        "unanswerable": len(aborted_lines),
+        "lines": [index + 1 for index in aborted_lines],
+    }
+    if failure is not None:
+        report_data.update({"failed_at": failed_at + 1,
+                            "failed_queries": failed_unanswered,
+                            "error": failure})
     if report is not None:
-        report.write_text(json.dumps(
-            {"queries": total, "answered": total - len(aborted_lines),
-             "unanswerable": len(aborted_lines),
-             "lines": [index + 1 for index in aborted_lines]}, indent=1) + "\n")
-    print("%s: %d queries, %d unanswerable"
-          % (runner, total, len(aborted_lines)), file=sys.stderr)
-    return aborted_lines
+        report.write_text(json.dumps(report_data, indent=1) + "\n")
+    print("%s: %d queries, %d unanswerable%s"
+          % (runner, total, len(aborted_lines),
+             "" if failure is None else ", FAILED"), file=sys.stderr)
+    return failure
 
 
 def main(argv=None):
@@ -168,9 +202,13 @@ def main(argv=None):
     parser.add_argument("out")
     parser.add_argument("--report")
     args = parser.parse_args(argv)
-    run(Path(args.runner), Path(args.queries), Path(args.out),
-        Path(args.report) if args.report else None)
-    return 0
+    try:
+        failure = run(Path(args.runner), Path(args.queries), Path(args.out),
+                      Path(args.report) if args.report else None)
+    except OSError as exc:
+        print("run-queries: %s" % exc, file=sys.stderr)
+        return 2
+    return 2 if failure else 0
 
 
 if __name__ == "__main__":
