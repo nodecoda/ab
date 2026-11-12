@@ -237,6 +237,15 @@ class SwapSourceCtor(unittest.TestCase):
         self.assertEqual(self.swap("restore").returncode, 0)
         self.assertEqual(self.src.read_text(), newer)
 
+    def test_a_build_only_swap_is_rejected(self):
+        # Upstream X86 has no X86LegalizerInfo.inc: the old --build path copied
+        # a file nothing included, rebuilt nothing, and reported success.
+        argv = [sys.executable, str(SWAP), "apply", "--target", "x86",
+                "--build", str(self.tree), "--inc", str(self.inc)]
+        proc = subprocess.run(argv, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 2)
+        self.assertIn("--build", proc.stderr)
+
     def test_a_second_apply_refreshes_a_stale_backup(self):
         self.assertEqual(self.swap("apply").returncode, 0)
         newer = self.original.replace("legal(s32);",

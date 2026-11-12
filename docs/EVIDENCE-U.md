@@ -339,8 +339,8 @@ D 方向的 AArch64 题面都不含 `nxv2p0` 的 `G_SHUFFLE_VECTOR`，所以那�
 
 ```sh
 cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./verify-evidence.sh
-# PASS G/x86 … PASS U-full/spirv, 58/58 entries pass
-# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 9 + U-full 9 + MIR 4）
+# PASS G/x86 … PASS MIR-L3/check-llvm, 59/59 entries pass
+# （G 9 + G-neg 9 + U 9 + U-neg 9 + D 9 + U-full 9 + MIR 5）
 ```
 
 `VERIFY_FROZEN=1` 只读仓库里的 `oracle/`，不读 /tmp。CI 跑的就是这一条

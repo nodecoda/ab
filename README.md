@@ -11,6 +11,10 @@ compares the official legalizer with one that includes the generated fragment.
   `(opcode, types, mem, imms) -> (action, type_idx, new_type)`.
 - **MIR/llc (`mir-replay.py`)** replays real `.mir` through
   `llc -run-pass=legalizer` and diffs the official and replaced libraries.
+- **L3 (`l3.py`)** runs the whole `check-llvm` twice (baseline, then with the
+  three constructors pointing at gisel's `.inc`) and compares lit's per-test
+  results, not just the totals.  `l3.py compare` fails on a test that exists
+  on one side only or whose result changed.
 
 L0 is the rule-translation gate. The MIR layer is the behavior gate: it also
 covers multi-step legalization, custom actions and the downstream verifier.

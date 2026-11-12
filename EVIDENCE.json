@@ -1498,6 +1498,58 @@
     "sha256": "13077fe5ab7570fae73f309c983bf61b0dc4adb4fa59c741070a71883b9a8025",
     "derived_from": "universe.jsonl (sha a20c7fe098f48155) expanded by `python3 -m oracle expand --configs spirv64-kernel,spirv32-kernel,spirv64-shader,spirv32-shader,spirv64-kernel-ext,spirv32-shader-ext`"
    }
+  },
+  {
+   "id": "MIR-L3/check-llvm",
+   "kind": "lit",
+   "direction": "MIR",
+   "target": "x86+aarch64+riscv",
+   "dir": "/tmp/l3-final3",
+   "command": "python3 l3.py run --out /tmp/l3-final3 && python3 l3.py compare /tmp/l3-final3 --json /tmp/l3-final3/l3-summary.json",
+   "artifacts": {
+    "l3-summary.json": "4c9acbe71ff587135f9fdea005f6ab31889e3b27180a8149ba595c09b91c885c",
+    "l3-provenance.json": "0c9304be411a7c085b375bbf7f1a55c66e9cb0994851bf819fd4d76aabd69d32",
+    "l3-baseline.tests.jsonl": "043bc666fd4e200290ea13424f5d92e3641d7964d1d1b720a2ec12b284a9e7c8",
+    "l3-combined.tests.jsonl": "043bc666fd4e200290ea13424f5d92e3641d7964d1d1b720a2ec12b284a9e7c8"
+   },
+   "expect": {
+    "lit": {
+     "baseline": {
+      "aborted": 0,
+      "failed": 0,
+      "passed": 64916,
+      "tests": 80596,
+      "unsupported": 15534,
+      "xfail": 146,
+      "xpass": 0
+     },
+     "combined": {
+      "aborted": 0,
+      "failed": 0,
+      "passed": 64916,
+      "tests": 80596,
+      "unsupported": 15534,
+      "xfail": 146,
+      "xpass": 0
+     },
+     "log.baseline": {
+      "discovered": 80655,
+      "passed": 64916,
+      "skipped": 59,
+      "unsupported": 15534,
+      "xfail": 146
+     },
+     "log.combined": {
+      "discovered": 80655,
+      "passed": 64916,
+      "skipped": 59,
+      "unsupported": 15534,
+      "xfail": 146
+     },
+     "tests_compared": 80596,
+     "identical": true
+    }
+   }
   }
  ],
  "official_build": {

@@ -97,8 +97,19 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 
 ### 6.3 L3：全量 check-llvm
 
-- 基线一轮 + 组合替换一轮：`ninja all` 后 `ninja check-llvm`。
-- 判据是与**本次基线**逐条相同，不是“0 failed”。
+- `./l3.py run --out DIR` 跑基线轮、换三个构造函数、组合轮、恢复重编，写
+  `DIR/l3-provenance.json`；`./l3.py compare DIR --json DIR/l3-summary.json`
+  做逐条对比。
+- 判据是与**本次基线**逐条相同，不是“0 failed”，也不是五个汇总数相同：
+  `PASS->XFAIL` 与 `XFAIL->PASS` 互换在两份汇总里完全抵消。
+- 逐条数据取 lit 的 `--resultdb-output`（`(status, expected)`）；
+  `--xunit-xml-output` 把 XFAIL 打印成普通通过用例，不够用。
+  ResultDB 不含 EXCLUDED/SKIPPED（本次 59 条），Skipped 数由日志钉住。
+- 组合轮的三个库必须与基线**不同**：`.inc` 没接上时两轮读的是同一个库，
+  汇总照样全绿。`verify-evidence.sh` 把这一条当失败。
+- 换源一律走源码替换（`swap-source-ctor.py --tree`）：上游没有
+  `X86LegalizerInfo.inc`，往构建目录拷一个谁都不 include 的文件不产生任何
+  依赖，`ninja` 不会重编。
 - 失败必须拆单 target 归因，不允许用重跑掩盖。
 
 ### 6.4 退出码与负控
@@ -133,7 +144,7 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 | U-full | 上游题面按全部配置展开 | 9 个 | x86 1,121,728 / aarch64 3,505,608 / riscv 3,028,496 / spirv 4,082,382 / arm 1,769,782 / mips 1,264,130 / wasm 1,011,304 / m68k 252,826 / ppc 252,826 | `EVIDENCE.json` `U-full/*` |
 | MIR L1 | 上游 `-run-pass=legalizer` MIR 回放 | x86, aarch64, riscv | 624 条 RUN（611 same + 13 双端 abort，diff 0） | `docs/REPORT-mir.md` §2 |
 | MIR L2 | 由查询合成 MIR 回放 | x86, aarch64, riscv | 15,367 建成（14,298 same + 1,004 双端 abort + 65 timeout，diff 0） | `docs/REPORT-mir.md` §3、`data/riscv-contract.json` |
-| MIR L3 | `ninja check-llvm` 全量 | x86, aarch64, riscv 组合 | 80,655 个 lit 测试 | `docs/REPORT-mir.md` §6 |
+| MIR L3 | `ninja check-llvm` 全量 | x86, aarch64, riscv 组合 | 80,655 个 lit 测试（逐条比 80,596） | `EVIDENCE.json` `MIR-L3/check-llvm`、`docs/REPORT-mir.md` §6 |
 
 约束：
 
@@ -146,6 +157,7 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 - `targets/*.json` 的 `query_count` 是**当前生成器的输出**，由
   `./refresh-counts.py --check` 校验；它不等于 `EVIDENCE.json` 里某次冻结运行
   的条数（证据绑定的是它自己的 queries 文件与 sha）。
-- MIR 的 **L1**（`MIR-L1/upstream`）和 **L2**（`MIR-L2/{x86,aarch64,riscv}`）进了
-  `EVIDENCE.json`；**L3** 的证据仍只在 `docs/REPORT-mir.md` §6。`verify-evidence.sh`
-  全绿覆盖 L0 + D + MIR L1/L2，不等于“L3 也验过了”。
+- MIR 的 **L1**（`MIR-L1/upstream`）、**L2**（`MIR-L2/{x86,aarch64,riscv}`）和
+  **L3**（`MIR-L3/check-llvm`）都进了 `EVIDENCE.json`；L3 的证据是两轮
+  `(status, expected)` 的逐条记录，`verify-evidence.sh` 会从冻结的 per-test
+  文件重算比较结果，并拒绝“换了 `.inc` 但库没变”的组合轮。

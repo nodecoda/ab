@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 """Point a legalizer constructor at a gisel-generated .inc.
 
-    swap-source-ctor.py apply   --target aarch64 --tree TREE --inc INC
-    swap-source-ctor.py restore --target aarch64 --tree TREE
-    swap-source-ctor.py apply   --target x86 --build BUILD --inc INC
+    swap-source-ctor.py apply   --target x86 --tree TREE --inc INC
+    swap-source-ctor.py restore --target x86 --tree TREE
 
-AArch64 and RISC-V spell the rules inline in the constructor, so there is no
-generated .inc to replace.  ``apply`` swaps the constructor body for an
-``#include`` of the generated fragment and leaves the rest of the translation
-unit (custom legalization, helpers) untouched.  X86 already includes a
-generated .inc; for it ``apply`` only replaces that file inside the build.
+All three targets spell the rules inline in the constructor: upstream has no
+``X86LegalizerInfo.inc`` (checked at ``462829fdac83``), so copying a file into
+the build tree changes nothing and the build system never sees a dependency.
+``apply`` therefore always edits the source: it replaces the constructor body
+with an ``#include`` of the generated fragment and leaves the rest of the
+translation unit (custom legalization, helpers) untouched.
 
-The original is kept under ``TREE/.gisel-swap`` (or ``BUILD/.gisel-swap``) so
-``restore`` is byte exact.
+The original is kept under ``TREE/.gisel-swap`` so ``restore`` is byte exact.
 """
 
 from __future__ import annotations
@@ -94,19 +93,6 @@ def _tuple_target(name):
 
 
 def cmd_apply(args):
-    if args.target == "x86" and args.build and not args.tree:
-        if not args.build:
-            raise SystemExit("x86 needs --build or --tree")
-        build = Path(args.build).resolve()
-        dest = build / "lib" / "Target" / "X86" / "X86LegalizerInfo.inc"
-        backup = build / ".gisel-swap" / "X86LegalizerInfo.inc"
-        backup.parent.mkdir(parents=True, exist_ok=True)
-        if not backup.exists():
-            shutil.copyfile(dest, backup)
-        shutil.copyfile(args.inc, dest)
-        print("x86: %s <- %s (original in %s)" % (dest, args.inc, backup))
-        return 0
-
     spec = _tuple_target(args.target)
     tree = Path(args.tree).resolve()
     source = tree / spec["source"]
@@ -128,8 +114,8 @@ def cmd_apply(args):
     inc_path = source.parent / spec["inc"]
     shutil.copyfile(args.inc, inc_path)
     template = spec.get("body")
-    body = (template.replace("__INC__", spec["inc"])
-            if template else _body(spec["subtarget"], spec["inc"]))
+    body = (template.replace("__INC__", spec["inc"]) if template
+            else _body(spec["subtarget"], spec["inc"]))
     source.write_text(text[:brace] + body + text[end + 1:])
     print("%s: %s patched, %s written (original in %s)"
           % (args.target, source, inc_path, backup))
@@ -137,16 +123,6 @@ def cmd_apply(args):
 
 
 def cmd_restore(args):
-    if args.target == "x86" and args.build and not args.tree:
-        build = Path(args.build).resolve()
-        dest = build / "lib" / "Target" / "X86" / "X86LegalizerInfo.inc"
-        backup = build / ".gisel-swap" / "X86LegalizerInfo.inc"
-        if not backup.exists():
-            raise SystemExit("no backup at %s" % backup)
-        shutil.copyfile(backup, dest)
-        print("x86: restored %s" % dest)
-        return 0
-
     spec = _tuple_target(args.target)
     tree = Path(args.tree).resolve()
     source = tree / spec["source"]
@@ -171,12 +147,13 @@ def main(argv=None):
     parser.add_argument("--target", required=True,
                         choices=sorted(TARGETS))
     parser.add_argument("--tree")
-    parser.add_argument("--build")
     parser.add_argument("--inc")
     args = parser.parse_args(argv)
     if args.mode == "apply" and not args.inc:
         parser.error("apply needs --inc")
-    if not args.tree and args.target != "x86":
+    if not args.tree:
+        # There is no build-tree .inc for any target; a build-only swap used
+        # to be accepted for x86 and silently did nothing.
         parser.error("%s needs --tree" % args.target)
     return cmd_apply(args) if args.mode == "apply" else cmd_restore(args)
 

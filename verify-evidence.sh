@@ -8,7 +8,7 @@ set -euo pipefail
 # negative control still attributes all of its disagreements to the rulesets it
 # injected.
 #
-#   DIRECTION   G | G-neg | U | U-neg | D   (default: all)
+#   DIRECTION   G | G-neg | U | U-neg | D | MIR   (default: all)
 #
 # VERIFY_FROZEN=1 ignores the live /tmp artifacts and reads only the committed
 # copies under oracle/.  That is what CI uses: it proves the repo alone can
@@ -102,6 +102,110 @@ def check_mir(entry, expect):
     return bad
 
 
+def per_test(path):
+    got = {}
+    for line in read(path).decode().splitlines():
+        row = json.loads(line)
+        got[row["test"]] = (row["status"], row["expected"])
+    return got
+
+
+def per_test_counts(tests):
+    got = {"tests": len(tests), "passed": 0, "xfail": 0, "failed": 0,
+           "xpass": 0, "unsupported": 0, "aborted": 0}
+    for status, expected in tests.values():
+        if status == "PASS":
+            got["passed" if expected else "xpass"] += 1
+        elif status == "FAIL":
+            got["xfail" if expected else "failed"] += 1
+        elif status == "SKIP":
+            got["unsupported"] += 1
+        else:
+            got["aborted"] += 1
+    return got
+
+
+def check_lit(entry, expect):
+    """A whole check-llvm round pair, re-derived from the per-test records.
+
+    `l3.py compare` leaves one line per test per round; this recomputes the
+    comparison instead of trusting summary["identical"].  The provenance must
+    also say the three libraries were different while the .inc was in place
+    and came back to the baseline bytes afterwards: a green summary is also
+    what two runs against the same build would produce.
+    """
+    bad = 0
+    summary_path = resolve(entry, entry.get("summary", "l3-summary.json"))
+    if summary_path is None:
+        return fail(entry, "missing l3-summary.json")
+    summary = json.loads(read(summary_path).decode())
+    want = expect.get("lit") or {}
+    for side in ("baseline", "combined"):
+        got = summary.get(side) or {}
+        for key, value in (want.get(side) or {}).items():
+            if got.get(key) != value:
+                bad += fail(entry, "%s %s=%r, expected %r"
+                            % (side, key, got.get(key), value))
+        got = summary.get("log.%s" % side) or {}
+        for key, value in (want.get("log.%s" % side) or {}).items():
+            if got.get(key) != value:
+                bad += fail(entry, "log.%s %s=%r, expected %r"
+                            % (side, key, got.get(key), value))
+    for key in ("tests_compared", "identical"):
+        if key in want and summary.get(key) != want[key]:
+            bad += fail(entry, "%s=%r, expected %r"
+                        % (key, summary.get(key), want[key]))
+
+    sides = {}
+    for side in ("baseline", "combined"):
+        path = resolve(entry, "l3-%s.tests.jsonl" % side)
+        if path is None:
+            bad += fail(entry, "missing l3-%s.tests.jsonl" % side)
+            continue
+        sides[side] = per_test(path)
+        got = per_test_counts(sides[side])
+        for key, value in (want.get(side) or {}).items():
+            if got.get(key) != value:
+                bad += fail(entry, "%s recomputed %s=%r, expected %r"
+                            % (side, key, got.get(key), value))
+    if len(sides) == 2:
+        base, swap = sides["baseline"], sides["combined"]
+        extra = set(base) - set(swap)
+        missing = set(swap) - set(base)
+        changed = [name for name in set(base) & set(swap)
+                   if base[name] != swap[name]]
+        if extra:
+            bad += fail(entry, "%d tests only in baseline (first: %s)"
+                        % (len(extra), sorted(extra)[0]))
+        if missing:
+            bad += fail(entry, "%d tests only in combined (first: %s)"
+                        % (len(missing), sorted(missing)[0]))
+        if changed:
+            bad += fail(entry, "%d tests changed result (first: %s %r -> %r)"
+                        % (len(changed), sorted(changed)[0],
+                           base[sorted(changed)[0]], swap[sorted(changed)[0]]))
+        if len(set(base) & set(swap)) != want.get("tests_compared"):
+            bad += fail(entry, "tests_compared recomputes to %d"
+                        % len(set(base) & set(swap)))
+
+    prov_path = resolve(entry, "l3-provenance.json")
+    if prov_path is None:
+        return bad + fail(entry, "missing l3-provenance.json")
+    prov = json.loads(read(prov_path).decode())
+    if prov.get("tree_clean_after") is not True:
+        bad += fail(entry, "tree was not clean after the restore")
+    libs = prov.get("libs") or {}
+    for target, restored in (libs.get("restored_exactly") or {}).items():
+        if restored is not True:
+            bad += fail(entry, "%s library did not come back to baseline bytes"
+                        % target)
+    for target in (libs.get("baseline") or {}):
+        if (libs.get("swapped") or {}).get(target) == libs["baseline"][target]:
+            bad += fail(entry, "%s library was identical after the .inc swap: "
+                               "the combined round tested nothing" % target)
+    return bad
+
+
 def check(entry):
     d = pathlib.Path(entry["dir"])
     bad = 0
@@ -151,6 +255,12 @@ def check(entry):
     expect = entry["expect"]
     if entry.get("kind") == "mir":
         bad += check_mir(entry, expect)
+        if not bad:
+            ok(entry)
+        return bad
+
+    if entry.get("kind") == "lit":
+        bad += check_lit(entry, expect)
         if not bad:
             ok(entry)
         return bad

@@ -115,5 +115,77 @@ class SummaryEvidence(unittest.TestCase):
         self.assertIn("summary agree=111, expected 112", proc.stdout)
 
 
+def make_lit_entry(tmp, tests=None, swapped_same=False):
+    tests = tests or {"LLVM :: a.ll": ("PASS", True),
+                      "LLVM :: b.ll": ("FAIL", True)}
+    counts = {"tests": len(tests), "passed": 1, "xfail": 1, "failed": 0,
+              "xpass": 0, "unsupported": 0, "aborted": 0}
+    log = {"discovered": 3, "skipped": 1, "unsupported": 0, "passed": 1,
+           "xfail": 1}
+    summary = {"baseline": counts, "combined": counts,
+               "log.baseline": log, "log.combined": log,
+               "tests_compared": len(tests), "identical": True,
+               "only_in_baseline": [], "only_in_combined": [], "changed": []}
+    libs = {"baseline": {"x86": "aa"}, "swapped": {"x86": "aa" if swapped_same
+                                                   else "bb"},
+            "restored": {"x86": "aa"},
+            "restored_exactly": {"x86": True}}
+    provenance = {"tree_clean_after": True, "libs": libs}
+    for side in ("baseline", "combined"):
+        (tmp / ("l3-%s.tests.jsonl" % side)).write_text("".join(
+            json.dumps({"test": name, "status": status, "expected": expected},
+                       sort_keys=True) + "\n"
+            for name, (status, expected) in sorted(tests.items())))
+    (tmp / "l3-summary.json").write_text(json.dumps(summary))
+    (tmp / "l3-provenance.json").write_text(json.dumps(provenance))
+    return {
+        "id": "MIR-L3/check-llvm", "kind": "lit", "direction": "MIR",
+        "dir": str(tmp),
+        "artifacts": {name: sha(tmp / name) for name in (
+            "l3-summary.json", "l3-provenance.json",
+            "l3-baseline.tests.jsonl", "l3-combined.tests.jsonl")},
+        "expect": {"lit": {"baseline": counts, "combined": counts,
+                           "log.baseline": log, "log.combined": log,
+                           "tests_compared": len(tests), "identical": True}},
+    }
+
+
+class LitEvidence(unittest.TestCase):
+    """L3 is re-derived from the per-test records, not from the summary."""
+
+    def run_verify(self, entry):
+        tmp = Path(tempfile.mkdtemp())
+        manifest = tmp / "EVIDENCE.json"
+        manifest.write_text(json.dumps({"schema": 1, "entries": [entry]}))
+        env = dict(os.environ, VERIFY_MANIFEST=str(manifest))
+        return subprocess.run([str(SCRIPT), "MIR"], capture_output=True,
+                              text=True, env=env)
+
+    def test_matching_rounds_pass(self):
+        proc = self.run_verify(make_lit_entry(Path(tempfile.mkdtemp())))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("1/1 entries pass", proc.stdout)
+
+    def test_a_changed_test_fails_even_when_the_summary_claims_identity(self):
+        tmp = Path(tempfile.mkdtemp())
+        entry = make_lit_entry(tmp)
+        # Flip one test in the frozen combined round; the summary still says
+        # identical because it was written before the edit, and its sha is
+        # re-recorded so only the recomputation can catch this.
+        path = tmp / "l3-combined.tests.jsonl"
+        path.write_text(path.read_text().replace(
+            '"status": "FAIL"', '"status": "PASS"'))
+        entry["artifacts"]["l3-combined.tests.jsonl"] = sha(path)
+        proc = self.run_verify(entry)
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("changed result", proc.stdout)
+
+    def test_a_noop_swap_fails(self):
+        proc = self.run_verify(make_lit_entry(Path(tempfile.mkdtemp()),
+                                              swapped_same=True))
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("the combined round tested nothing", proc.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
