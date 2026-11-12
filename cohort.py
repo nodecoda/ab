@@ -348,8 +348,9 @@ def _run_one(gate, clones, out_dir, timeout):
         "AB_SRC": str(pathlib.Path(clones) / "ab"),
         "UPSTREAM_SOURCE": str(pathlib.Path(clones) / "upstream_source"),
         "PYTHONDONTWRITEBYTECODE": "1",
-        "VERIFY_FROZEN": "1",
     })
+    if gate["name"] == "./verify-evidence.sh":
+        env["VERIFY_FROZEN"] = "1"
     started = time.time()
     try:
         found = subprocess.run(["bash", "-lc", command], cwd=str(repo),

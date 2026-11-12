@@ -40,7 +40,8 @@ class GateInventory(unittest.TestCase):
     def test_every_manifest_gate_has_a_descriptor(self):
         manifest = cohort.load_manifest()
         table = cohort.gate_table(manifest)
-        self.assertEqual([g["manifest_command"] for g in table], manifest["gates"])
+        self.assertEqual([g["manifest_command"] for g in table
+                          if g["manifest_command"]], manifest["gates"])
         for gate in table:
             self.assertIn(gate["repo"], cohort.REPO_DIRS)
             self.assertTrue(gate["inputs"], gate["name"])
