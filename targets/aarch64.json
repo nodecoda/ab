@@ -35,5 +35,6 @@
   "mir": {
     "swappable": true,
     "strategy": "swap-source"
-  }
+  },
+  "u_builder": "build-aarch64-runner.sh"
 }

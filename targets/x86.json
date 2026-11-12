@@ -35,5 +35,6 @@
   "mir": {
     "swappable": true,
     "strategy": "swap-source"
-  }
+  },
+  "u_builder": "build-x86-ctor-runner.sh"
 }

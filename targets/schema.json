@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nodecoda/ab/targets/schema.json",
+  "title": "ab target registry entry",
+  "description": "One file per adapter. Every field must have a consumer in ab/; the W2 tests fail on an orphan field. Strategy-specific requirements are in allOf at the bottom.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "name",
+    "source",
+    "strategy",
+    "baseline_inc",
+    "swap_inc",
+    "inc_name",
+    "library",
+    "ninja_target",
+    "touch_source",
+    "runner",
+    "u_builder",
+    "features",
+    "axes",
+    "query_count",
+    "test_dir",
+    "artifact",
+    "contract",
+    "e2e",
+    "domain",
+    "g_neg",
+    "u_neg",
+    "u_prefix",
+    "allow_unanswerable",
+    "l3",
+    "diff_policy",
+    "mir"
+  ],
+  "properties": {
+    "schema": {
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "strategy": {
+      "enum": [
+        "swap-source",
+        "generated-ctor"
+      ]
+    },
+    "baseline_inc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "swap_inc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "inc_name": {
+      "type": "string",
+      "pattern": "\\.inc$"
+    },
+    "library": {
+      "type": "string",
+      "pattern": "^lib/"
+    },
+    "ninja_target": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "touch_source": {
+      "type": "string"
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "builder",
+        "mode"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "builder": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "enum": [
+            "shipping",
+            "dual"
+          ]
+        }
+      }
+    },
+    "features": {
+      "type": "string",
+      "minLength": 1
+    },
+    "axes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "query_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "test_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact": {
+      "type": "string",
+      "pattern": "\\.inc$"
+    },
+    "contract": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "e2e": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "domain": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "g_neg": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "u_neg": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "u_prefix": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "allow_unanswerable": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "l3": {
+      "type": "boolean"
+    },
+    "diff_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allow_ref_asserts",
+        "expect_unanswerable",
+        "expected_queries"
+      ],
+      "properties": {
+        "allow_ref_asserts": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "expect_unanswerable": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "expected_queries": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "mir": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "swappable",
+        "strategy"
+      ],
+      "properties": {
+        "swappable": {
+          "type": "boolean"
+        },
+        "strategy": {
+          "enum": [
+            "swap-source",
+            "generated-ctor",
+            null
+          ]
+        }
+      }
+    },
+    "u_builder": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "strategy": {
+            "const": "swap-source"
+          }
+        },
+        "required": [
+          "strategy"
+        ]
+      },
+      "then": {
+        "required": [
+          "ninja_target",
+          "touch_source"
+        ],
+        "properties": {
+          "ninja_target": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "strategy": {
+            "const": "generated-ctor"
+          }
+        },
+        "required": [
+          "strategy"
+        ]
+      },
+      "then": {
+        "required": [
+          "runner"
+        ]
+      }
+    }
+  ]
+}

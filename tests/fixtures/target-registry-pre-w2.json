@@ -1,0 +1,283 @@
+{
+  "_comment": "Pre-W2 embedded target tables. Generated from git 32d66ce plus the unchanged helper modules. Do not edit to make a migration pass: a mismatch is the signal that a consumer rewrite changed behaviour.",
+  "e2e": {
+    "aarch64": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 12559,
+      "script": "run-aarch64-end-to-end.sh"
+    },
+    "arm": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 1614,
+      "script": "run-arm-end-to-end.sh"
+    },
+    "m68k": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 35,
+      "script": "run-m68k-end-to-end.sh"
+    },
+    "mips": {
+      "allow_ref_asserts": 9,
+      "expect_unanswerable": null,
+      "expected_queries": 1656,
+      "script": "run-mips-end-to-end.sh"
+    },
+    "ppc": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 94,
+      "script": "run-ppc-end-to-end.sh"
+    },
+    "riscv": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 6086,
+      "script": "run-riscv-end-to-end.sh"
+    },
+    "spirv": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": 4,
+      "expected_queries": 5689,
+      "script": "run-spirv-end-to-end.sh"
+    },
+    "wasm": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 894,
+      "script": "run-wasm-end-to-end.sh"
+    },
+    "x86": {
+      "allow_ref_asserts": null,
+      "expect_unanswerable": null,
+      "expected_queries": 3014,
+      "script": "run-x86-end-to-end.sh"
+    }
+  },
+  "l3": {
+    "names": {
+      "aarch64": "AArch64",
+      "riscv": "RISCV",
+      "x86": "X86"
+    },
+    "targets": [
+      "x86",
+      "aarch64",
+      "riscv"
+    ]
+  },
+  "mir_libs": {
+    "swappable": [
+      "x86",
+      "aarch64",
+      "riscv",
+      "arm",
+      "ppc",
+      "mips",
+      "m68k",
+      "wasm",
+      "spirv"
+    ],
+    "test_dir": {
+      "aarch64": "AArch64",
+      "arm": "ARM",
+      "m68k": "M68k",
+      "mips": "Mips",
+      "ppc": "PowerPC",
+      "riscv": "RISCV",
+      "spirv": "SPIRV",
+      "wasm": "WebAssembly",
+      "x86": "X86"
+    }
+  },
+  "run_g_negative": {
+    "aarch64": {
+      "corpus": "$GISEL/tests/corpus/AArch64LegalizerInfo.gisel",
+      "script": "$PWD/run-aarch64-end-to-end.sh"
+    },
+    "arm": {
+      "corpus": "$GISEL/tests/corpus/ARMLegalizerInfo.gisel",
+      "script": "$PWD/run-arm-end-to-end.sh"
+    },
+    "m68k": {
+      "corpus": "$GISEL/tests/corpus/M68kLegalizerInfo.gisel",
+      "script": "$PWD/run-m68k-end-to-end.sh"
+    },
+    "mips": {
+      "corpus": "$GISEL/tests/corpus/MipsLegalizerInfo.gisel",
+      "script": "$PWD/run-mips-end-to-end.sh"
+    },
+    "ppc": {
+      "corpus": "$GISEL/tests/corpus/PowerPCLegalizerInfo.gisel",
+      "script": "$PWD/run-ppc-end-to-end.sh"
+    },
+    "riscv": {
+      "corpus": "$GISEL/tests/corpus/RISCVLegalizerInfo.gisel",
+      "script": "$PWD/run-riscv-end-to-end.sh"
+    },
+    "spirv": {
+      "corpus": "$GISEL/tests/corpus/SPIRVLegalizerInfo.gisel",
+      "script": "$PWD/run-spirv-end-to-end.sh"
+    },
+    "wasm": {
+      "corpus": "$GISEL/tests/corpus/WebAssemblyLegalizerInfo.gisel",
+      "script": "$PWD/run-wasm-end-to-end.sh"
+    },
+    "x86": {
+      "corpus": "$GISEL/tests/corpus/X86LegalizerInfo.gisel",
+      "script": "$PWD/run-x86-end-to-end.sh"
+    }
+  },
+  "run_u": {
+    "aarch64": {
+      "builder": "$ROOT/build-aarch64-runner.sh",
+      "corpus": "$GISEL/tests/corpus/AArch64LegalizerInfo.gisel",
+      "inc_name": "AArch64LegalizerInfo.inc"
+    },
+    "arm": {
+      "builder": "$ROOT/build-arm-runner.sh",
+      "corpus": "$GISEL/tests/corpus/ARMLegalizerInfo.gisel",
+      "inc_name": "ARMLegalizerInfo.inc"
+    },
+    "m68k": {
+      "builder": "$ROOT/build-m68k-runner.sh",
+      "corpus": "$GISEL/tests/corpus/M68kLegalizerInfo.gisel",
+      "inc_name": "M68kLegalizerInfo.inc"
+    },
+    "mips": {
+      "builder": "$ROOT/build-mips-runner.sh",
+      "corpus": "$GISEL/tests/corpus/MipsLegalizerInfo.gisel",
+      "inc_name": "MipsLegalizerInfo.inc"
+    },
+    "ppc": {
+      "builder": "$ROOT/build-ppc-runner.sh",
+      "corpus": "$GISEL/tests/corpus/PowerPCLegalizerInfo.gisel",
+      "inc_name": "PowerPCLegalizerInfo.inc"
+    },
+    "riscv": {
+      "builder": "$ROOT/build-riscv-runner.sh",
+      "corpus": "$GISEL/tests/corpus/RISCVLegalizerInfo.gisel",
+      "inc_name": "RISCVLegalizerInfo.inc"
+    },
+    "spirv": {
+      "builder": "$ROOT/build-spirv-runner.sh",
+      "corpus": "$GISEL/tests/corpus/SPIRVLegalizerInfo.gisel",
+      "inc_name": "SPIRVLegalizerInfo.inc"
+    },
+    "wasm": {
+      "builder": "$ROOT/build-wasm-runner.sh",
+      "corpus": "$GISEL/tests/corpus/WebAssemblyLegalizerInfo.gisel",
+      "inc_name": "WebAssemblyLegalizerInfo.inc"
+    },
+    "x86": {
+      "builder": "$ROOT/build-x86-ctor-runner.sh",
+      "corpus": "$GISEL/tests/corpus/X86LegalizerInfo.gisel",
+      "inc_name": "X86LegalizerInfo.inc"
+    }
+  },
+  "swap_source_ctor": {
+    "aarch64": {
+      "ctor": "AArch64LegalizerInfo::AArch64LegalizerInfo(const AArch64Subtarget &ST)",
+      "has_body": false,
+      "inc": "AArch64LegalizerInfo.inc",
+      "source": "llvm/lib/Target/AArch64/GISel/AArch64LegalizerInfo.cpp",
+      "subtarget": "AArch64Subtarget"
+    },
+    "arm": {
+      "ctor": "ARMLegalizerInfo::ARMLegalizerInfo(const ARMSubtarget &ST)",
+      "has_body": true,
+      "inc": "ARMLegalizerInfo.inc",
+      "source": "llvm/lib/Target/ARM/ARMLegalizerInfo.cpp",
+      "subtarget": "ARMSubtarget"
+    },
+    "m68k": {
+      "ctor": "M68kLegalizerInfo::M68kLegalizerInfo(const M68kSubtarget &ST)",
+      "has_body": true,
+      "inc": "M68kLegalizerInfo.inc",
+      "source": "llvm/lib/Target/M68k/GISel/M68kLegalizerInfo.cpp",
+      "subtarget": "M68kSubtarget"
+    },
+    "mips": {
+      "ctor": "MipsLegalizerInfo::MipsLegalizerInfo(const MipsSubtarget &ST)",
+      "has_body": true,
+      "inc": "MipsLegalizerInfo.inc",
+      "source": "llvm/lib/Target/Mips/MipsLegalizerInfo.cpp",
+      "subtarget": "MipsSubtarget"
+    },
+    "ppc": {
+      "ctor": "PPCLegalizerInfo::PPCLegalizerInfo(const PPCSubtarget &ST)",
+      "has_body": true,
+      "inc": "PowerPCLegalizerInfo.inc",
+      "source": "llvm/lib/Target/PowerPC/GISel/PPCLegalizerInfo.cpp",
+      "subtarget": "PPCSubtarget"
+    },
+    "riscv": {
+      "ctor": "RISCVLegalizerInfo::RISCVLegalizerInfo(const RISCVSubtarget &ST)",
+      "has_body": false,
+      "inc": "RISCVLegalizerInfo.inc",
+      "source": "llvm/lib/Target/RISCV/GISel/RISCVLegalizerInfo.cpp",
+      "subtarget": "RISCVSubtarget"
+    },
+    "spirv": {
+      "ctor": "SPIRVLegalizerInfo::SPIRVLegalizerInfo(const SPIRVSubtarget &ST)",
+      "has_body": true,
+      "inc": "SPIRVLegalizerInfo.inc",
+      "source": "llvm/lib/Target/SPIRV/SPIRVLegalizerInfo.cpp",
+      "subtarget": "SPIRVSubtarget"
+    },
+    "wasm": {
+      "ctor": "WebAssemblyLegalizerInfo::WebAssemblyLegalizerInfo(\n    const WebAssemblySubtarget &ST)",
+      "has_body": true,
+      "inc": "WebAssemblyLegalizerInfo.inc",
+      "source": "llvm/lib/Target/WebAssembly/GISel/WebAssemblyLegalizerInfo.cpp",
+      "subtarget": "WebAssemblySubtarget"
+    },
+    "x86": {
+      "ctor": "X86LegalizerInfo::X86LegalizerInfo(",
+      "has_body": true,
+      "inc": "X86LegalizerInfo.inc",
+      "source": "llvm/lib/Target/X86/GISel/X86LegalizerInfo.cpp",
+      "subtarget": "X86Subtarget"
+    }
+  },
+  "vertical": {
+    "aarch64": {
+      "allow_unanswerable": 0,
+      "contract": "data/aarch64-contract.json",
+      "corpus": "AArch64LegalizerInfo.gisel",
+      "domain": "run-aarch64-domain.sh",
+      "end_to_end": "run-aarch64-end-to-end.sh",
+      "features": "features.json",
+      "g_neg": "G_ZEXT",
+      "inc": "aarch64.inc",
+      "u_neg": "G_ICMP",
+      "u_prefix": "a64"
+    },
+    "riscv": {
+      "allow_unanswerable": 0,
+      "contract": "data/riscv-contract.json",
+      "corpus": "RISCVLegalizerInfo.gisel",
+      "domain": "run-riscv-domain.sh",
+      "end_to_end": "run-riscv-end-to-end.sh",
+      "features": "riscv-features.json",
+      "g_neg": "G_FPTOSI",
+      "inc": "riscv.inc",
+      "u_neg": "G_ADD",
+      "u_prefix": "rvb"
+    },
+    "x86": {
+      "allow_unanswerable": 0,
+      "contract": "data/x86-contract.json",
+      "corpus": "X86LegalizerInfo.gisel",
+      "domain": "run-x86-domain.sh",
+      "end_to_end": "run-x86-end-to-end.sh",
+      "features": "x86-features.json",
+      "g_neg": "G_ADD",
+      "inc": "x86.inc",
+      "u_neg": "G_SUB",
+      "u_prefix": "x86"
+    }
+  }
+}

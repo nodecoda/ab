@@ -37,8 +37,8 @@ sys.path.insert(0, str(AB_ROOT))
 from gisel import jsonl as J  # noqa: E402
 
 import attribute  # noqa: E402
+import targets as target_registry  # noqa: E402
 
-TARGET_DIR = AB_ROOT / "targets"
 NINJA = os.environ.get("NINJA", "ninja")
 
 
@@ -63,24 +63,11 @@ def sha256_text(text: str) -> str:
 
 
 def load_target(name: str) -> dict:
-    path = TARGET_DIR / ("%s.json" % name)
-    if not path.exists():
-        known = sorted(p.stem for p in TARGET_DIR.glob("*.json"))
-        raise HarnessError("unknown target %r (known: %s)"
-                           % (name, ", ".join(known) or "none"))
-    doc = read_json(path)
-    required = ("schema", "name", "source", "strategy", "baseline_inc",
-                "inc_name", "library", "runner", "features")
-    missing = [key for key in required if key not in doc]
-    if missing:
-        raise HarnessError("%s: missing %s" % (path, ", ".join(missing)))
-    if doc["schema"] != 1:
-        raise HarnessError("%s: unsupported schema %r" % (path, doc["schema"]))
-    if doc["strategy"] not in ("swap-library", "swap-source",
-                               "generated-ctor"):
-        raise HarnessError("%s: unknown strategy %r"
-                           % (path, doc["strategy"]))
-    return doc
+    """Load one validated targets/<name>.json; no embedded tables."""
+    try:
+        return target_registry.load(name)
+    except target_registry.TargetError as exc:
+        raise HarnessError(str(exc))
 
 
 def git_head(tree: Path) -> str:
@@ -281,39 +268,6 @@ def swap_source(mode: str, target: dict, tree: Path, inc: Path | None = None):
                            % (mode, proc.stderr.strip()))
 
 
-def install_inc(target: dict, tree: Path, build: Path, inc: Path):
-    dest = build / target["swap_inc"]
-    if not dest.parent.exists():
-        raise HarnessError("swap target directory does not exist: %s"
-                           % dest.parent)
-    shutil.copyfile(inc, dest)
-    touch(dest)
-    source = tree / target["touch_source"]
-    if source.exists():
-        touch(source)
-    ninja(build, target["ninja_target"])
-    want = sha256(inc)
-    got = sha256(dest)
-    if want != got:
-        raise HarnessError("installed include was overwritten: %s != %s"
-                           % (got[:12], want[:12]))
-
-
-def restore_inc(target: dict, tree: Path, build: Path, baseline: Path,
-                prov: dict):
-    dest = build / target["swap_inc"]
-    shutil.copyfile(baseline / target["inc_name"], dest)
-    touch(dest)
-    source = tree / target["touch_source"]
-    if source.exists():
-        touch(source)
-    ninja(build, target["ninja_target"])
-    got = sha256(dest)
-    if got != prov["inc_sha256"]:
-        raise HarnessError("restore did not reproduce the baseline inc "
-                           "(%s != %s)" % (got[:12], prov["inc_sha256"][:12]))
-
-
 def generate_core(target: dict, source: Path, out: Path) -> Path:
     dest = out / "core.json"
     run_checked([sys.executable, "-m", "gisel", "gen", source,
@@ -378,8 +332,8 @@ def cmd_run(args) -> int:
 
     with Lock(state / "lock"):
         count = validate_queries(queries, features, target.get("query_count"))
-        baseline, prov = ensure_baseline(target, tree, build, state,
-                                         args.refresh_baseline)
+        _baseline, prov = ensure_baseline(target, tree, build, state,
+                                          args.refresh_baseline)
         if args.inc:
             inc = out / target["inc_name"]
             shutil.copyfile(Path(args.inc).resolve(), inc)
@@ -472,30 +426,6 @@ def cmd_run(args) -> int:
                 raise HarnessError("restore failed after run: %s" % exc)
             if body_error is not None:
                 raise body_error
-        elif target["strategy"] == "swap-library":
-            if cache_hit:
-                shutil.copyfile(cache_path, official)
-            else:
-                runner = build_swap_runner(target, tree, build, out,
-                                           "runner.official")
-                answer(runner, queries, official)
-                record["official_runner_sha256"] = sha256(runner)
-                shutil.copyfile(official, cache_path)
-            body_error = None
-            try:
-                install_inc(target, tree, build, inc)
-                runner = build_swap_runner(target, tree, build, out,
-                                           "runner.ours")
-                record["ours_runner_sha256"] = sha256(runner)
-                answer(runner, queries, ours)
-            except BaseException as exc:  # keep the build restorable
-                body_error = exc
-            try:
-                restore_inc(target, tree, build, baseline, prov)
-            except BaseException as exc:
-                raise HarnessError("restore failed after run: %s" % exc)
-            if body_error is not None:
-                raise body_error
         elif target["strategy"] == "generated-ctor":
             runner_official, runner_ours = build_ctor_runners(
                 target, tree, build, inc, out)
@@ -561,7 +491,12 @@ def cmd_verify(args) -> int:
     if not prov_path.exists():
         raise HarnessError("no baseline in %s" % state)
     prov = read_json(prov_path)
-    inc = build / target["baseline_inc"]
+    rel_inc = target.get("baseline_inc")
+    if not rel_inc:
+        raise HarnessError(
+            "%s: no baseline_inc; this target has no generated inc to verify"
+            % target["name"])
+    inc = build / rel_inc
     if not inc.exists():
         raise HarnessError("baseline inc not found: %s" % inc)
     got = sha256(inc)

@@ -15,6 +15,7 @@
     "mode": "dual"
   },
   "features": "tests/cases/ppc-features.json",
+  "axes": null,
   "query_count": 94,
   "test_dir": "PowerPC",
   "artifact": "ppc.inc",
@@ -34,5 +35,6 @@
   "mir": {
     "swappable": true,
     "strategy": "swap-source"
-  }
+  },
+  "u_builder": "build-ppc-runner.sh"
 }

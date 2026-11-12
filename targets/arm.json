@@ -15,6 +15,7 @@
     "mode": "dual"
   },
   "features": "tests/cases/arm-features.json",
+  "axes": null,
   "query_count": 1614,
   "test_dir": "ARM",
   "artifact": "arm.inc",
@@ -34,5 +35,6 @@
   "mir": {
     "swappable": true,
     "strategy": "swap-source"
-  }
+  },
+  "u_builder": "build-arm-runner.sh"
 }
