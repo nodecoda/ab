@@ -231,6 +231,132 @@
     "mattr": [],
     "source": "ppc-features.json default: no optional feature"
    }
+  },
+  "arm": {
+   "armv7a-neon": {
+    "triple": "armv7a-unknown-linux-gnueabihf",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "-mcpu=cortex-a15"
+    ],
+    "source": "armv7a-neon: cortex-a15 (NEON, VFP4, hwdiv-arm)"
+   },
+   "armv7a-nodiv": {
+    "triple": "armv7a-unknown-linux-gnueabihf",
+    "pointer_width": 32,
+    "mattr": [
+     "-hwdiv-arm"
+    ],
+    "args": [
+     "-mcpu=cortex-a15"
+    ],
+    "source": "armv7a-nodiv: cortex-a15 without ARM divide"
+   },
+   "armv7a-a5": {
+    "triple": "armv7a-unknown-linux-gnueabi",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "-mcpu=cortex-a5"
+    ],
+    "source": "armv7a-a5: cortex-a5 (NEON, VFP4, no divide)"
+   },
+   "armv6-arm1176": {
+    "triple": "armv6-unknown-linux-gnueabi",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "-mcpu=arm1176jzf-s"
+    ],
+    "source": "armv6-arm1176: arm1176jzf-s (VFP2, no NEON)"
+   },
+   "armv4t": {
+    "triple": "armv4t-unknown-linux-gnueabi",
+    "pointer_width": 32,
+    "mattr": [
+     "+soft-float"
+    ],
+    "args": [
+     "-mcpu=arm7tdmi"
+    ],
+    "source": "armv4t: arm7tdmi, soft float, no V5T"
+   },
+   "thumbv7m": {
+    "triple": "thumbv7m-unknown-linux-gnueabi",
+    "pointer_width": 32,
+    "mattr": [
+     "+hwdiv"
+    ],
+    "args": [
+     "-mcpu=cortex-m3"
+    ],
+    "source": "thumbv7m: cortex-m3 + Thumb divide"
+   },
+   "armv7-soft": {
+    "triple": "armv7-unknown-linux-gnueabi",
+    "pointer_width": 32,
+    "mattr": [
+     "+soft-float"
+    ],
+    "args": [
+     "-mcpu=cortex-a15"
+    ],
+    "source": "armv7-soft: cortex-a15 with soft float"
+   }
+  },
+  "mips": {
+   "mips32": {
+    "triple": "mips-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "-mcpu=mips32"
+    ],
+    "source": "mips32: baseline MIPS32"
+   },
+   "mips32r2": {
+    "triple": "mips-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "-mcpu=mips32r2"
+    ],
+    "source": "mips32r2"
+   },
+   "mips32r6": {
+    "triple": "mips-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [],
+    "args": [
+     "-mcpu=mips32r6"
+    ],
+    "source": "mips32r6 (unaligned access at system level)"
+   },
+   "mips32r5-msa": {
+    "triple": "mips-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "+msa",
+     "+fp64"
+    ],
+    "args": [
+     "-mcpu=mips32r5"
+    ],
+    "source": "mips32r5 + MSA"
+   },
+   "mips32r6-msa": {
+    "triple": "mips-unknown-linux-gnu",
+    "pointer_width": 32,
+    "mattr": [
+     "+msa",
+     "+fp64"
+    ],
+    "args": [
+     "-mcpu=mips32r6"
+    ],
+    "source": "mips32r6 + MSA"
+   }
   }
  }
 }

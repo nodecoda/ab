@@ -42,7 +42,7 @@
 `llc` sha、以及每个 target 的 `baseline_lib_restored_exactly`。报告里带
 `generated_at`，所以重跑不会复现同一个文件 sha；`verify-evidence.sh` 先比
 sha（证明冻结的就是这次运行），再比桶计数（这是重跑后应当复现的东西）。
-L2 的三份报告是 `MIR-L2/{x86,aarch64,riscv}`，L3 是 `MIR-L3/check-llvm`
+L2 的六份报告是 `MIR-L2/{x86,aarch64,riscv,arm,mips,ppc}`，L3 是 `MIR-L3/check-llvm`
 （`kind: "lit"`：两轮 per-test 记录，`verify-evidence.sh` 会重算比较结果）。
 
 `provenance.json` 里记录两侧库与恢复后的基线库 sha。x86 的恢复重编是字节
@@ -453,15 +453,52 @@ python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl \
 
 五个新条目已进 `EVIDENCE.json`（`MIR-L1/arm`、`MIR-L1/arm-neg`、
 `MIR-L1/ppc`、`MIR-L1/mips`、`MIR-L1/mips-neg`）；`VERIFY_FROZEN=1
-./verify-evidence.sh` 现在是 64/64。
+./verify-evidence.sh` 当时是 64/64（见 §6.7 后的 70/70）。
+
+### 6.7 2026-11-12：ARM / Mips 的 L2（新增）
+
+`data/mir-configs.json` 增加了 `arm`（7 个配置）与 `mips`（5 个配置）。
+`python3 mir-config-check.py --target arm|mips --features …` 对每个配置各探一次
+`llc`，两个 target 都返回 `ok`；mips 的 msa 配置必须同时给 `+msa,+fp64`，
+否则 `llc` 直接报 `MSA requires 64-bit FPU register file`。
+
+```sh
+python3 ab.py mir --target arm --queries /tmp/arm.queries.jsonl \
+  --tree … --build … --out /tmp/l2-arm --json
+# arm: 1,614 queries -> 1,141 MIR (424 shape, 49 type, 0 config)
+python3 ab.py mir --target mips --queries /tmp/mips.queries.jsonl \
+  --tree … --build … --out /tmp/l2-mips --json
+# mips: 1,656 queries -> 1,311 MIR (310 shape, 35 type, 0 config)
+```
+
+| target | files | runs | same | diff | abort0 compared |
+|---|---:|---:|---:|---:|---:|
+| ARM | 1,141 | 1,141 | 1,141 | 0 | 1,106 |
+| Mips | 1,311 | 1,311 | 1,311 | 0 | 1,121 |
+
+负控都用 `G_LOAD`：
+
+| target | 注入 | 结果 |
+|---|---|---|
+| ARM | `G_LOAD` → unsupported | `diff=64`（same 1,077） |
+| Mips | `G_LOAD` → unsupported | `diff=105`（same 1,179；both_abort 27） |
+
+用 `G_LOAD` 而不是 `G_FADD`：ARM 的生成 include 把 `G_FADD` 拆成两条 builder
+链，`inject-missing-opcode.py` 按设计拒绝（rc=2）；`G_LOAD` 是单链且题面最大
+（ARM 71 条、Mips 146 条查询）。注入把与 `G_LOAD` 共用 builder 的 `G_STORE`
+一起换成 `.unsupported()`，这是规则集粒度，不是单条规则。
+
+四条新条目（`MIR-L2/{arm,arm-neg,mips,mips-neg}`）已冻结；
+`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 16/16。
 
 ## 7 未覆盖
 
 - **多步 legalize 与 result 层面的等价性**：L1/L2 只看
   `-run-pass=legalizer` 的输出文本；L3 用 `check-llvm` 补了“真实 IR 的下游
   可观测结果”，但仍不是任意 IR 上的语义证明。
-- **MIR 覆盖**：L1 六个（x86/aarch64/riscv/arm/mips，PPC 名义 1 条）；L2/L3 仍
-  只有 x86/aarch64/riscv。M68k/WebAssembly/SPIR-V 只有 L0 适配器。
+- **MIR 覆盖**：L1 六个（x86/aarch64/riscv/arm/mips，PPC 名义 1 条）；L2 六个
+  （x86/aarch64/riscv/ppc/arm/mips），L3 只有三个。M68k/WebAssembly/SPIR-V
+  只有 L0 适配器。
 - **`-mtriple` 之外的 config 轴**：回放用的是 MIR 文件自带的
   `-mtriple`/`-mattr`；没有按 gisel 的配置矩阵重跑 L1。
 
