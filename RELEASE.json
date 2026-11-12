@@ -1,0 +1,67 @@
+{
+  "cases_sha256": {
+    "aarch64.cases.jsonl": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98",
+    "riscv.cases.jsonl": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6",
+    "x86.cases.jsonl": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
+  },
+  "cohort": "v0.3.0",
+  "corpus_sha256": {
+    "AArch64LegalizerInfo.gisel": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
+    "ARMLegalizerInfo.gisel": "b8b68a01f9058d00ed5ff0db570847c61847237562a64c4d496ecf4528448844",
+    "M68kLegalizerInfo.gisel": "c9cd4a22344b2da99d3ca62a7ddee9cd09d328098c8f99b8e1a0af713007780c",
+    "MipsLegalizerInfo.gisel": "974922a6920f6a46a9628c0093322e7b4c2825b40891779e73983706e9c30e15",
+    "PowerPCLegalizerInfo.gisel": "c2416f67366bc4e1711e5ab9ec2969a36ea5b5da242262c2779ecbf4256ec9fb",
+    "RISCVLegalizerInfo.gisel": "3293f26167ee694b688297852dea3abe3305179b9e1baf1bb2d050991d12dd33",
+    "SPIRVLegalizerInfo.gisel": "1585c281cb9d769dc23ed4afce233d1035279760c8852cf5079557935e8371a3",
+    "WebAssemblyLegalizerInfo.gisel": "e4e7e81c996a3046704217d59ab30ea7afedafa9d14976ffe5b98fe66708de0a",
+    "X86LegalizerInfo.gisel": "934a935659e7aff3b0d8cec3a33b013846a12683d776cb4d7156507ef2b78f70"
+  },
+  "gates": [
+    "python3 -m unittest discover -q -s tests",
+    "bash tools/check-nine-corpora.sh",
+    "bash tools/check-graph-golden.sh",
+    "bash tools/check-cases-golden.sh",
+    "bash tools/check-nightly-graphs.sh",
+    "python3 tools/check-claims.py",
+    "python3 import/import-cxx.py --all --pin pin/PIN.json --check",
+    "pin/make-base.sh TREE DEST --verify",
+    "ab/verify-evidence.sh"
+  ],
+  "graph_goldens_sha256": {
+    "riscv-rv64gc-refine.json": "93d974049dbfce76d90316f5d7fe2e3750f3d0771c6a12aad2a5a1ddb890a91f",
+    "riscv-rv64gc.json": "47cc8e22c8b69fcf21df2cefbcea008ab7e10d8ab43d23762ef462c10386b5e6",
+    "x86-none-refine.json": "06d395180319a48ecae2837ed8966fb409529beed58753c45aa81b64c866cdb4",
+    "x86-none.json": "f08149cd0c8e185660dc112ed7d6c4d2911dd96c47351a151da1bd86ac4c6b48"
+  },
+  "nightly_graphs_sha256": {
+    "aarch64-baseline.json": "07d3efcc2656063e476e3c34ae130928add96cabd245965c519187b4eb4f2a0c",
+    "x86-C0.json": "fc556701d810659e549c8063c0ade8383107059c483152734d7de53b36ce6d18",
+    "x86-C1.json": "e93383662816c4dd51c2b6e5744757d9b87cc5e7d5defc3653d82d0c61bae53b",
+    "x86-C2.json": "cefe4ea1c77f83df76a2f5bc4c6c9cc87dca34c8abdcd5b8c13e4c105be119d3",
+    "x86-C3.json": "9ad6af1b5d9894cddafd85853c3601ef735d7b5f00b8c522205f0d2990fbe317"
+  },
+  "note": "Commits are the code commits; the release tag adds only this manifest.  Re-run the gates at those commits, not after.",
+  "pin": {
+    "commit": "9bfc850b9940566bef17a34601826775349ba0e6",
+    "official_base_files": {
+      "llvm/include/llvm/CodeGen/GlobalISel/LegalizerInfo.h": "b6c79535ad9a1b4bb52afaf77c6c33d030d3df415ea3d0f053967ef1a0c2d847",
+      "llvm/lib/CodeGen/GlobalISel/LegalityPredicates.cpp": "a632050937f159bd464e4f345a624fe3682727caa3079efb9a8f10f740747611",
+      "llvm/lib/CodeGen/GlobalISel/LegalizerInfo.cpp": "27cf91e365bc90e523a3de7fdeb44f054db673f4b816f4fa780d2616b0a6b4db",
+      "llvm/lib/Target/AArch64/GISel/AArch64LegalizerInfo.cpp": "91ef7c82b67c69829d2b5c32bfda8b51c62864cb872e26c83392915afdba86d0",
+      "llvm/lib/Target/ARM/ARMLegalizerInfo.cpp": "b86441eb03f4e50291053f61da8a94c542224767d705933d54b2fd3761a59b02",
+      "llvm/lib/Target/M68k/GISel/M68kLegalizerInfo.cpp": "f796bb977e0b77f56374c10243acb24e3818df7d9637eed2fc0df4c6e0295c36",
+      "llvm/lib/Target/Mips/MipsLegalizerInfo.cpp": "3660b66b709c5eec9431e54010d1da9e241a460aa528ff213b444ebc0e96b525",
+      "llvm/lib/Target/PowerPC/GISel/PPCLegalizerInfo.cpp": "4ca6a62b6f435c6e3e8ce1d576458a111026bdcbd35d978c22160f840cc3aa2a",
+      "llvm/lib/Target/RISCV/GISel/RISCVLegalizerInfo.cpp": "ad529e1f1a9e62fa8bbd3a7d68f2b46f41f3cf8f1e74556c709bffbd43b9e889",
+      "llvm/lib/Target/SPIRV/SPIRVLegalizerInfo.cpp": "e404ba675047cbc8eb48bf87bbc2a67d4d7c926d2ce5ad4f59e3fe0a33361208",
+      "llvm/lib/Target/WebAssembly/GISel/WebAssemblyLegalizerInfo.cpp": "c6409b1d4eb1b44a7e8d0b9fbb4332497e4cb6d7f2c74ba42482ccb392a5edd8",
+      "llvm/lib/Target/X86/GISel/X86LegalizerInfo.cpp": "3b3e8ee85189a04476eda78eb054e9d477f4929b4a24128cdbaf78b61a60aeeb"
+    }
+  },
+  "repos": {
+    "ab": "557acd86fedb12d4c92f238dc7c626f882fde3c3",
+    "gisel": "127f83363f68881f23b3ca6bede7d5b8f48bf430",
+    "upstream_source": "3e77e6552573b1f2fd97ca42f1f048a61ddf3023"
+  },
+  "schema": 1
+}
