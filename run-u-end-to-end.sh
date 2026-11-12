@@ -84,23 +84,39 @@ case "$TARGET" in
   *) echo "unsupported target: $TARGET" >&2; exit 2 ;;
 esac
 
-test -f "$QUERIES"
+if [[ ! -f $QUERIES ]]; then
+  echo "input error: queries not found: $QUERIES" >&2
+  exit 2
+fi
 
 if [[ -n ${U_INC:-} ]]; then
   BASE_INC=$U_INC
 else
   BASE_INC=$OUT/$INC_NAME
-  python3 -m gisel gen "$CORPUS" --emit=inc --out "$BASE_INC" >/dev/null
+  if ! python3 -m gisel gen "$CORPUS" --emit=inc --out "$BASE_INC" >/dev/null; then
+    echo "input error: gisel gen failed for $CORPUS" >&2
+    exit 2
+  fi
 fi
-test -f "$BASE_INC"
+if [[ ! -s $BASE_INC ]]; then
+  echo "input error: include not found or empty: $BASE_INC" >&2
+  exit 2
+fi
 
 OURS_INC=$BASE_INC
 EXPECT=""
 if [[ -n $DROP ]]; then
   OURS_INC=$OUT/$INC_NAME.injected
   EXPECT=$OUT/expected-rulesets.json
-  python3 "$ROOT/inject-missing-opcode.py" "$BASE_INC" "$DROP" \
-    "$OURS_INC" --expect "$EXPECT" >/dev/null
+  if ! python3 "$ROOT/inject-missing-opcode.py" "$BASE_INC" "$DROP" \
+      "$OURS_INC" --expect "$EXPECT" >/dev/null; then
+    echo "input error: could not inject $DROP into $BASE_INC" >&2
+    exit 2
+  fi
+  if [[ ! -s $OURS_INC || ! -s $EXPECT ]]; then
+    echo "input error: missing injected include or expectation" >&2
+    exit 2
+  fi
 fi
 
 echo "[1/4] build runners ($TARGET${DROP:+, drop $DROP})" >&2
@@ -121,24 +137,36 @@ if [[ -n $ALLOW_REF_ASSERTS ]]; then
   DIFF_ARGS+=(--allow-ref-asserts "$ALLOW_REF_ASSERTS")
 fi
 python3 "$ROOT/diff.py" "$OUT/official.answers.jsonl" \
-  "$OUT/ours.answers.jsonl" "${DIFF_ARGS[@]}" > "$OUT/diff.json"
+  "$OUT/ours.answers.jsonl" --queries "$QUERIES" \
+  "${DIFF_ARGS[@]}" > "$OUT/diff.json"
 DIFF_RC=$?
 set -e
+if [[ $DIFF_RC -ne 0 && $DIFF_RC -ne 1 ]]; then
+  echo "input error: diff rc=$DIFF_RC; see $OUT/diff.json" >&2
+  exit 2
+fi
 
+set +e
 python3 "$ROOT/u-attribution.py" --diff "$OUT/diff.json" \
   --queries "$QUERIES" --json ${EXPECT:+--expect "$EXPECT"} \
   | tee "$OUT/attribution.json"
+ATTR_RC=${PIPESTATUS[0]}
+set -e
 
 UNANS=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['unanswerable'])" "$OUT/diff.json")
-echo "diff_rc=$DIFF_RC unanswerable=$UNANS" >&2
+echo "diff_rc=$DIFF_RC unanswerable=$UNANS attr_rc=$ATTR_RC" >&2
+
+if [[ $ATTR_RC -eq 2 ]]; then
+  echo "input error: attribution could not read its inputs" >&2
+  exit 2
+fi
 
 if [[ -n $DROP ]]; then
-  # The control passes only when the diff *does* disagree and the attribution
-  # blamed the injected builder; u-attribution.py already enforced both.
-  if [[ $DIFF_RC -eq 0 ]]; then
-    echo "negative control: diff agreed, injection was not observed" >&2
+  if [[ $ATTR_RC -ne 0 ]]; then
+    echo "negative control: disagreements were not attributed to $DROP" >&2
     exit 1
   fi
+  classify_negative_rc "$DIFF_RC" "u-negative $TARGET $DROP" || exit $?
   exit 0
 fi
 

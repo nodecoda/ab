@@ -47,14 +47,38 @@ BASE_INC=$OUT/base.inc
 MUTATED_INC=$OUT/mutated.inc
 EXPECT=$OUT/expected-rulesets.json
 
-python3 -m gisel gen "$CORPUS" --emit=inc --out "$BASE_INC" >/dev/null
-python3 "$PWD/inject-predicate.py" "$BASE_INC" "$OPCODE" "$MODE" \
-  "$MUTATED_INC" --rule "$RULE" --expect "$EXPECT" >/dev/null
+if ! python3 -m gisel gen "$CORPUS" --emit=inc --out "$BASE_INC" >/dev/null; then
+  echo "input error: gisel gen failed for $CORPUS" >&2
+  exit 2
+fi
+if ! python3 "$PWD/inject-predicate.py" "$BASE_INC" "$OPCODE" "$MODE" \
+    "$MUTATED_INC" --rule "$RULE" --expect "$EXPECT" >/dev/null; then
+  echo "input error: could not inject $OPCODE/$MODE into $BASE_INC" >&2
+  exit 2
+fi
+if [[ ! -s $MUTATED_INC || ! -s $EXPECT ]]; then
+  echo "input error: missing mutated include or expectation" >&2
+  exit 2
+fi
 
 set +e
 "$SCRIPT" "$TREE" "$BUILD" "$MUTATED_INC" "$OUT/run" >"$OUT/run.log" 2>&1
 RC=$?
 set -e
+
+# 0 = blind, 1 = caught, 2 = input error.  A crash mid-build is 1 to bash but
+# has no diff.json; that is an input error, never evidence that the control
+# fired.
+if [[ $RC -eq 0 ]]; then
+  classify_negative_rc 0 "predicate-negative $TARGET $OPCODE" || exit $?
+fi
+if [[ $RC -ne 1 ]]; then
+  classify_negative_rc "$RC" "predicate-negative $TARGET $OPCODE" || exit $?
+fi
+if [[ ! -s $OUT/run/diff.json || ! -s $OUT/run/queries.jsonl ]]; then
+  echo "input error: end-to-end run produced no diff (see $OUT/run.log)" >&2
+  exit 2
+fi
 
 DIFF_ARGS=(--json --details 200000)
 if [[ $TARGET == mips ]]; then
@@ -62,14 +86,26 @@ if [[ $TARGET == mips ]]; then
 fi
 set +e
 python3 "$PWD/diff.py" "$OUT/run/official.answers.jsonl" \
-  "$OUT/run/ours.answers.jsonl" "${DIFF_ARGS[@]}" > "$OUT/run/diff.json"
+  "$OUT/run/ours.answers.jsonl" --queries "$OUT/run/queries.jsonl" \
+  "${DIFF_ARGS[@]}" > "$OUT/run/diff.json"
+DIFF_RC=$?
 set -e
+if [[ $DIFF_RC -ne 1 ]]; then
+  echo "input error: re-diff rc=$DIFF_RC, expected 1" >&2
+  exit 2
+fi
 
+set +e
 python3 "$PWD/g-attribution.py" "$OUT/run/diff.json" "$OUT/run/queries.jsonl" \
   "$EXPECT" "$OUT/run/attribution.json"
-
-if [[ $RC -eq 0 ]]; then
-  echo "negative control: diff agreed, predicate injection was not observed" >&2
+ATTR_RC=$?
+set -e
+if [[ $ATTR_RC -eq 2 ]]; then
+  echo "input error: attribution could not read its inputs" >&2
+  exit 2
+fi
+if [[ $ATTR_RC -ne 0 ]]; then
+  echo "negative control: disagreements were not attributed to $OPCODE" >&2
   exit 1
 fi
-echo "predicate-negative $TARGET $OPCODE $MODE: rc=$RC disagreed as expected" >&2
+classify_negative_rc "$RC" "predicate-negative $TARGET $OPCODE" || exit $?
