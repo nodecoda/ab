@@ -260,24 +260,26 @@
    "id": "U/riscv",
    "direction": "U",
    "target": "riscv",
-   "dir": "/tmp/rv-vertical4/u",
+   "dir": "/tmp/rv-vertical/u",
    "queries": {
-    "path": "/tmp/rv-vertical4/u/queries.jsonl",
-    "sha256": "14a196f5b25d5652cfd53d9522982d8b7c8646777691922a96685f9951049609"
+    "path": "/tmp/u-gen/rvb/queries.jsonl",
+    "sha256": "63c220a92ddc05c118c59eb71a9231ee01842afe94c7b14a031698f040aa7880"
    },
-   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/rv-vertical/u --allow-unanswerable 0",
    "artifacts": {
-    "diff.json": "a149257031db728593be139fb960f713a199b14b7db8c4e6d88c25e9507001aa",
-    "official.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
-    "ours.answers.jsonl": "82d2bf30de6983a02cbf3b1228598185dbc4429817af4cca481c31959516ac84",
+    "diff.json": "81d136e9d3d825d8945533a45f01f5e4800c981c3e36c59ea4d89b3f357fd94d",
+    "official.answers.jsonl": "283b8972e3d5ef90a6af65caa05f537539c44eff0feea1c611651100564bc58c",
+    "ours.answers.jsonl": "283b8972e3d5ef90a6af65caa05f537539c44eff0feea1c611651100564bc58c",
     "attribution.json": "4f193241307a00b3914d046b304f09852cd1dbae3ca34ff36ce2c0975d919397"
    },
    "expect": {
     "answers_identical": true,
+    "agree": 20445,
     "disagree": 0,
     "unanswerable": 0,
-    "agree": 20445
-   }
+    "answered_equal": 20445
+   },
+   "note": "Refreshed 2026-11-12 with tool 513201a (universe padding fix): same 20,445 queries, 240 sampled points re-drawn from the corrected universe, A/B agree 20,445 / disagree 0."
   },
   {
    "id": "U/arm",
@@ -468,10 +470,10 @@
    "id": "U-neg/riscv",
    "direction": "U-neg",
    "target": "riscv",
-   "dir": "/tmp/rv-vertical4/u-neg",
-   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb2/queries.jsonl /tmp/rv-vertical4/u-neg --drop-opcode G_ADD",
+   "dir": "/tmp/rv-vertical/u-neg",
+   "command": "./run-u-end-to-end.sh riscv /tmp/u-gen/rvb/queries.jsonl /tmp/rv-vertical/u-neg --drop-opcode G_ADD",
    "artifacts": {
-    "diff.json": "9ee7d0d80f2746ff4126a5451cb1f640618bc2a6601127669c896a36c1b1b787",
+    "diff.json": "4f7a85e350236d9bd206ec26ccc97f19065b9e0ac0756e9110e6104f67e62386",
     "attribution.json": "9ca91203b2da24c577a2c7b117b36990e1f47014dda0ad8ea956e83b3f5ae13b"
    },
    "expect": {
@@ -480,7 +482,8 @@
      "G_ADD",
      "G_SUB"
     ],
-    "unknown_keys": 0
+    "unknown_keys": 0,
+    "answered_equal": 20293
    },
    "observed_disagree": 152
   },

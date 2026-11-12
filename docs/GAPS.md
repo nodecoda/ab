@@ -68,9 +68,11 @@ L1 214 runs / L2 8,576 runs，全部 disagree 0。负控 G_ZEXT 315、G_ICMP 216
 但 `oracle/U/aarch64` 还是修复前的 29,561 条。2026-11-12 重新生成
 （29,608 条，A/B agree 29,608 / disagree 0），并同步刷新 `U-neg/aarch64`。
 
-其余 target 的 U 冻结物是否早于 `ac98717` 没有逐一下结论；按“只跟 pin”的
-政策，这属于证据迁移，动哪个 target 就在哪次改动里一并刷新并在 commit
-信息里写明。
+RISC-V 同样命中（112 个 opcode 有 3 个类型槽）：2026-11-12 一并刷新，
+题面仍 20,445 条，240 条 sample 按修正后的 universe 重抽，A/B agree
+20,445 / disagree 0，负控 G_ADD 仍 152。其余 target 的 U 冻结物是否早于
+`ac98717` 没有逐一下结论；按“只跟 pin”的政策，这属于证据迁移，动哪个
+target 就在哪次改动里一并刷新并在 commit 信息里写明。
 
 ### O9 多步 / 动态 legalize 的等价性没有证明
 
