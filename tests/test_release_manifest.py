@@ -79,9 +79,11 @@ class ReleaseManifest(unittest.TestCase):
 
     def test_the_golden_manifests_are_named(self):
         self.assertEqual(set(self.data["cases_sha256"]), {
-            "x86.cases.jsonl", "aarch64.cases.jsonl", "riscv.cases.jsonl"})
+            "x86.cases.jsonl", "aarch64.cases.jsonl", "riscv.cases.jsonl",
+            "arm.cases.jsonl", "mips.cases.jsonl", "ppc.cases.jsonl",
+            "m68k.cases.jsonl", "wasm.cases.jsonl", "spirv.cases.jsonl"})
         self.assertEqual(len(self.data["graph_goldens_sha256"]), 4)
-        self.assertEqual(len(self.data["nightly_graphs_sha256"]), 5)
+        self.assertEqual(len(self.data["nightly_graphs_sha256"]), 10)
         self.assertEqual(len(self.data["pin"]["official_base_files"]), 12)
 
 
