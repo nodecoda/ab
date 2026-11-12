@@ -44,20 +44,11 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 | C8 | U-full 的展开题面没有冻结，容易被读成丢文件 | `verify-evidence.sh` 在跑 U-full 时打印 NOTE：只冻结 universe + expand 命令，展开文件按需生成 |
 | C9 | `run-x86-end-to-end.sh` 在打补丁后建 ours runner，同样被 `check-pin.sh` 拒绝 | ours 的 build 设 `GIT_DSL_SKIP_PIN_CHECK=1`；official build 仍在还原树上校验。实测整条脚本 rc=0、3,014 条 agree |
 | C10 | O1：MIR/llc 层只覆盖 7/9，arm/mips 缺 L2，m68k/wasm/spirv 没有 MIR | 2026-11-12 补齐：arm 1,141、mips 1,311、m68k 25、wasm 588、spirv 2,625 条，diff 全 0，负控全部抓到；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 22/22 |
+| C11 | O6：pin 漂移没有政策 | `upstream-source` 明确“只跟 pin”：`README.md` + `PIN.json` 的 comment 写死四步显式迁移；不建自动同步 job（见该仓库 README「pin 政策」） |
 
 ## 3 还缺的
 
 按“价值 / 成本”排序。
-
-### O6 pin 漂移没有自动检测
-
-pin 停在 `9bfc850b`，带 6 个 PR；其中 #237753、#238306 已在 2026-11 合入上游。
-现在只有“官方侧内容变了 → `check-pin.sh` 报错”，没有“上游 main 动了 → 重新
-导入并 diff 语料”。规划 §9 要求二选一：定期同步，或明确只跟 pin。
-
-- 成本：中。一个 job 把 pin 前移到最近 tag，跑 `import-cxx --all --check`，
-  语料 diff 作为报告。
-- 建议：先写“只跟 pin”的政策进 `PIN.json`/`CORPORA.md`，把同步当独立任务。
 
 ### O7 只有 RISC-V 有一条龙的 vertical slice
 
