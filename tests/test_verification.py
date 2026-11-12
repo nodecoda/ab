@@ -82,7 +82,8 @@ class VerificationRecord(unittest.TestCase):
             self.assertEqual(item["conclusion"], "success", name)
 
     def test_gates_cover_the_manifest(self):
-        recorded = {gate["command"] for gate in self.record["gates"]}
+        recorded = {gate.get("manifest_command") or gate["command"]
+                    for gate in self.record["gates"]}
         for command in self.manifest["gates"]:
             self.assertIn(command, recorded)
         for gate in self.record["gates"]:

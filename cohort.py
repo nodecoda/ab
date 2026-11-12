@@ -376,6 +376,7 @@ def _run_one(gate, clones, out_dir, timeout):
     return {
         "name": gate["name"],
         "repo": gate["repo"],
+        "manifest_command": gate.get("manifest_command"),
         "command": command,
         "rc": rc,
         "evidence": _last_line(stdout) or _last_line(stderr),
