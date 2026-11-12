@@ -4,7 +4,7 @@
     "riscv.cases.jsonl": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6",
     "x86.cases.jsonl": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
   },
-  "cohort": "v0.3.0",
+  "cohort": "cohort-2026-11-13",
   "corpus_sha256": {
     "AArch64LegalizerInfo.gisel": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
     "ARMLegalizerInfo.gisel": "b8b68a01f9058d00ed5ff0db570847c61847237562a64c4d496ecf4528448844",
@@ -40,7 +40,7 @@
     "x86-C2.json": "cefe4ea1c77f83df76a2f5bc4c6c9cc87dca34c8abdcd5b8c13e4c105be119d3",
     "x86-C3.json": "9ad6af1b5d9894cddafd85853c3601ef735d7b5f00b8c522205f0d2990fbe317"
   },
-  "note": "Commits are the code commits; the release tag adds only this manifest.  Re-run the gates at those commits, not after.",
+  "note": "Commits are the code commits.  `repos.ab` is the commit before this manifest: the manifest commit adds only this file, so it cannot name itself.  Re-run the gates at those commits, not after.",
   "pin": {
     "commit": "9bfc850b9940566bef17a34601826775349ba0e6",
     "official_base_files": {
@@ -59,9 +59,10 @@
     }
   },
   "repos": {
-    "ab": "557acd86fedb12d4c92f238dc7c626f882fde3c3",
-    "gisel": "127f83363f68881f23b3ca6bede7d5b8f48bf430",
-    "upstream_source": "3e77e6552573b1f2fd97ca42f1f048a61ddf3023"
+    "ab": "fa07dbc9ada6fa59870b10f1b925001d3231e57d",
+    "gisel": "4c7651341648e6d89434cf39cc81dcd537dae6f6",
+    "upstream_source": "b186b1149c0176e51b3bd59e6135ed142063c360"
   },
-  "schema": 1
+  "schema": 1,
+  "version": "0.3.0"
 }
