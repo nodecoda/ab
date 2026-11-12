@@ -10,7 +10,7 @@
     "wasm.cases.jsonl": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c",
     "x86.cases.jsonl": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
   },
-  "cohort": "cohort-2026-11-13-r2",
+  "cohort": "cohort-2026-11-13-r3",
   "corpus_sha256": {
     "AArch64LegalizerInfo.gisel": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
     "ARMLegalizerInfo.gisel": "b8b68a01f9058d00ed5ff0db570847c61847237562a64c4d496ecf4528448844",
@@ -36,6 +36,7 @@
   "graph_goldens_sha256": {
     "riscv-rv64gc-refine.json": "93d974049dbfce76d90316f5d7fe2e3750f3d0771c6a12aad2a5a1ddb890a91f",
     "riscv-rv64gc.json": "47cc8e22c8b69fcf21df2cefbcea008ab7e10d8ab43d23762ef462c10386b5e6",
+    "wasm-wasm32.json": "c69983633c32ef1deb92296a7c7b28756612250595e5a2ec1e56d1bec5e1e947",
     "x86-none-refine.json": "06d395180319a48ecae2837ed8966fb409529beed58753c45aa81b64c866cdb4",
     "x86-none.json": "f08149cd0c8e185660dc112ed7d6c4d2911dd96c47351a151da1bd86ac4c6b48"
   },
@@ -70,9 +71,9 @@
     }
   },
   "repos": {
-    "ab": "733c7db1b714ba5e442dafa3acc2ebc97e51895e",
-    "gisel": "d119ee2cb17ea56bdec551e7944c746aa60a4414",
-    "upstream_source": "8cb4faef597c967ade0c53d0fed6fa56182dc3e8"
+    "ab": "01f3bc7f151ae54630c48cdabaaa49243aeea189",
+    "gisel": "a2005d24fd54e44e105a7f132c5f876d9ac6c13e",
+    "upstream_source": "1631e4d238729765b26e18c28637ada7ef692562"
   },
   "schema": 1,
   "version": "0.3.0"
