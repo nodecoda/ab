@@ -2,6 +2,7 @@
 """Verify EVIDENCE.json: the manifest is the claim, the artifacts are proof.
 
     evidence.py verify [--manifest PATH] [--direction D] [--frozen]
+    evidence.py fetch [--tag T] [--dir D] [--force]
 
 Kinds are checked differently on purpose:
 
@@ -20,20 +21,27 @@ Exit codes: 0 = every selected entry passes; 1 = a shape or value failure;
 
 from __future__ import annotations
 
+from gisel_ab import gisel_package, gisel_src
+
 import argparse
 import gzip
 import hashlib
 import json
 import os
 import pathlib
+import shutil
+import tarfile
+import tempfile
+import urllib.request
 import subprocess
 import sys
-import tempfile
 
 PKG = pathlib.Path(__file__).resolve().parent
 AB = PKG.parents[1]
 DATA = PKG / "data"
 EVIDENCE = AB / "evidence"
+EVIDENCE_REPO = "nodecoda/gisel-ab"
+EVIDENCE_BASE = "https://github.com"
 KINDS = {"answers", "neg", "summary", "mir", "lit", "closure", "adopt"}
 ADOPT_INC = {
     "x86": "llvm/lib/Target/X86/GISel/X86LegalizerInfo.inc",
@@ -55,10 +63,113 @@ def read(path: pathlib.Path) -> bytes:
 
 
 def gisel_root() -> pathlib.Path:
-    env = os.environ.get("GISEL_SRC")
-    if env:
-        return pathlib.Path(env)
-    return AB.parent / "gisel"
+    return gisel_src()
+
+
+def gisel_path(rel: str) -> pathlib.Path:
+    """A gisel-repo path, from a checkout or from the wheel's data copies.
+
+    ``tests/corpus/X.gisel`` becomes ``gisel/data/corpus/X.gisel`` when the
+    checkout is not there; the wheel ships byte-identical copies.
+    """
+    path = gisel_root() / rel
+    if path.exists():
+        return path
+    package = gisel_package()
+    parts = pathlib.PurePosixPath(rel).parts
+    if package is not None and len(parts) > 2 and parts[0] == "tests":
+        candidate = package / "data"
+        for part in parts[1:]:
+            candidate = candidate / part
+        if candidate.exists():
+            return candidate
+    return path
+
+
+def default_tag() -> str:
+    """The cohort the checkout names, so ``fetch`` matches its own record."""
+    manifest = AB / "RELEASE.json"
+    try:
+        return json.loads(manifest.read_text()).get("cohort", "")
+    except (OSError, ValueError):
+        return ""
+
+
+def cache_dir(tag: str) -> pathlib.Path:
+    base = os.environ.get("XDG_CACHE_HOME") or (pathlib.Path.home() / ".cache")
+    return pathlib.Path(base) / "gisel-ab" / "evidence" / tag
+
+
+def asset_url(tag: str, name: str, base: str = EVIDENCE_BASE,
+              repo: str = EVIDENCE_REPO) -> str:
+    return "%s/%s/releases/download/%s/%s" % (base.rstrip("/"), repo, tag, name)
+
+
+def file_sha256(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as stream:
+        for chunk in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _download(url: str, dest: pathlib.Path) -> None:
+    with urllib.request.urlopen(url) as response, open(dest, "wb") as out:
+        shutil.copyfileobj(response, out)
+
+
+def _check_members(archive: pathlib.Path) -> None:
+    with tarfile.open(archive) as tar:
+        for member in tar.getmembers():
+            name = pathlib.PurePosixPath(member.name)
+            if name.is_absolute() or ".." in name.parts:
+                raise ValueError("unsafe path in asset: %s" % member.name)
+            if member.issym() or member.islnk():
+                raise ValueError("links are not allowed in the evidence asset: %s"
+                                 % member.name)
+
+
+def fetch_evidence(tag: str = "", dest: pathlib.Path | None = None,
+                   force: bool = False, base: str = EVIDENCE_BASE,
+                   repo: str = EVIDENCE_REPO) -> pathlib.Path:
+    """Download and unpack ``evidence-<tag>.tar.gz`` from the release."""
+    tag = tag or default_tag()
+    if not tag:
+        raise ValueError("no --tag and RELEASE.json names no cohort")
+    dest = pathlib.Path(dest) if dest else cache_dir(tag)
+    marker = dest / ".fetched"
+    if marker.is_file() and not force:
+        return dest
+    if dest.exists() and force:
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    asset = "evidence-%s.tar.gz" % tag
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = pathlib.Path(tmp) / asset
+        checksum = pathlib.Path(tmp) / (asset + ".sha256")
+        _download(asset_url(tag, asset, base, repo), archive)
+        _download(asset_url(tag, asset + ".sha256", base, repo), checksum)
+        want = checksum.read_text().split()[0].lower()
+        got = file_sha256(archive)
+        if got != want:
+            raise ValueError("sha256 %s != %s (asset %s)"
+                             % (got[:16], want[:16], asset))
+        _check_members(archive)
+        with tarfile.open(archive) as tar:
+            tar.extractall(dest)
+    if not (dest / "EVIDENCE.json").is_file():
+        raise ValueError("%s has no EVIDENCE.json" % asset)
+    if not (dest / "evidence").is_dir():
+        raise ValueError("%s has no evidence/ tree" % asset)
+    marker.write_text(tag + "\n")
+    return dest
+
+
+def default_manifest() -> pathlib.Path:
+    root = os.environ.get("GISEL_AB_EVIDENCE")
+    if root:
+        return pathlib.Path(root).expanduser() / "EVIDENCE.json"
+    return AB / "EVIDENCE.json"
 
 
 class Verifier:
@@ -157,10 +268,11 @@ class Verifier:
             return 0
         root = gisel_root()
         bad = 0
-        for label, rel, key in (
-                ("corpus", "tests/corpus/" + snap["corpus"], "corpus_sha256"),
-                ("features", "tests/cases/" + snap["features"], "features_sha256")):
-            path = root / rel
+        corpus = gisel_path("tests/corpus/" + snap["corpus"])
+        features = gisel_path("tests/cases/" + snap["features"])
+        for label, path, key in (
+                ("corpus", corpus, "corpus_sha256"),
+                ("features", features, "features_sha256")):
             if not path.exists():
                 bad += self.fail(entry, "snapshot %s missing: %s" % (label, path))
                 continue
@@ -168,7 +280,7 @@ class Verifier:
             if got != snap[key]:
                 bad += self.fail(entry, "snapshot %s sha256 %s != %s"
                                  % (label, got[:16], snap[key][:16]))
-        inc = root / "tests" / "artifacts" / snap["inc"]
+        inc = gisel_path("tests/artifacts/" + snap["inc"])
         if not inc.exists():
             bad += self.fail(entry, "snapshot inc missing: %s" % inc)
         elif sha256(inc.read_bytes()) != snap["inc_sha256"]:
@@ -176,8 +288,7 @@ class Verifier:
         with tempfile.TemporaryDirectory() as tmp:
             out = pathlib.Path(tmp) / "regen.inc"
             proc = subprocess.run(
-                [sys.executable, "-m", "gisel", "gen",
-                 str(root / "tests" / "corpus" / snap["corpus"]),
+                [sys.executable, "-m", "gisel", "gen", str(corpus),
                  "--emit=inc", "--out", str(out)],
                 cwd=str(root), capture_output=True, text=True)
             if proc.returncode:
@@ -532,7 +643,7 @@ class Verifier:
 
     def check_adopt(self, entry) -> int:
         expect = entry["expect"]
-        inc = gisel_root() / "tests" / "artifacts" / expect["inc"]
+        inc = gisel_path("tests/artifacts/" + expect["inc"])
         if not inc.exists():
             return self.fail(entry, "missing gisel artifact %s" % inc)
         got = sha256(inc.read_bytes())
@@ -542,6 +653,12 @@ class Verifier:
                              % (got[:16], expect["inc_sha256"][:16]))
         doc = AB / "docs" / "ADOPT.md"
         if not doc.exists():
+            # The prose that names the fork's branch is checkout-only.  The
+            # artifact sha above is the claim a wheel can still check.
+            if not (AB / "RELEASE.json").is_file():
+                print("NOTE %-20s docs/ADOPT.md is checkout-only; artifact "
+                      "hash checked" % entry["id"])
+                return bad
             return bad + self.fail(entry, "missing docs/ADOPT.md")
         text = doc.read_text()
         for label, value in (("branch", expect["branch"]),
@@ -717,26 +834,53 @@ def adopt_check(manifest_path: pathlib.Path, fork: str, targets) -> int:
     return 1 if failures else 0
 
 
+def _manifest_or_none(path) -> pathlib.Path:
+    return pathlib.Path(path) if path else default_manifest()
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="evidence.py")
     sub = parser.add_subparsers(dest="cmd", required=True)
+    fetch = sub.add_parser("fetch")
+    fetch.add_argument("--tag", default="",
+                       help="cohort tag (default: RELEASE.json's cohort)")
+    fetch.add_argument("--dir", type=pathlib.Path, default=None,
+                       help="destination (default: the user cache)")
+    fetch.add_argument("--force", action="store_true")
+    fetch.add_argument("--base", default=EVIDENCE_BASE, help=argparse.SUPPRESS)
+    fetch.add_argument("--repo", default=EVIDENCE_REPO, help=argparse.SUPPRESS)
     verify = sub.add_parser("verify")
-    verify.add_argument("--manifest", type=pathlib.Path,
-                        default=AB / "EVIDENCE.json")
+    verify.add_argument("--manifest", type=pathlib.Path, default=None)
     verify.add_argument("--direction", default="all")
     verify.add_argument("--frozen", action="store_true")
     adopt = sub.add_parser("adopt-check")
-    adopt.add_argument("--manifest", type=pathlib.Path,
-                       default=AB / "EVIDENCE.json")
+    adopt.add_argument("--manifest", type=pathlib.Path, default=None)
     adopt.add_argument("--fork", default=os.environ.get("AB_FORK", ADOPT_FORK))
     adopt.add_argument("--target", action="append", default=None)
     args = parser.parse_args(argv)
     try:
+        if args.cmd == "fetch":
+            dest = fetch_evidence(args.tag, args.dir, args.force,
+                                  args.base, args.repo)
+            print("fetched %s -> %s" % (args.tag or default_tag(), dest))
+            print("verify: gisel-ab evidence verify --manifest %s"
+                  % (dest / "EVIDENCE.json"))
+            return 0
+        manifest = _manifest_or_none(args.manifest)
+        if not manifest.is_file():
+            print("evidence.py: %s is missing" % manifest, file=sys.stderr)
+            print("  run: gisel-ab evidence fetch --tag <cohort>", file=sys.stderr)
+            print("  or:  gisel-ab evidence verify --manifest <dir>/EVIDENCE.json",
+                  file=sys.stderr)
+            return 2
         if args.cmd == "verify":
-            return Verifier(args.manifest, args.direction, args.frozen).run()
+            return Verifier(manifest, args.direction, args.frozen).run()
         if args.cmd == "adopt-check":
-            return adopt_check(args.manifest, args.fork, args.target)
+            return adopt_check(manifest, args.fork, args.target)
     except OSError as exc:
+        print("evidence.py: %s" % exc, file=sys.stderr)
+        return 2
+    except ValueError as exc:
         print("evidence.py: %s" % exc, file=sys.stderr)
         return 2
     parser.error("unknown command")

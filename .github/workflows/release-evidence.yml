@@ -1,0 +1,32 @@
+name: release-evidence
+
+# The wheel deliberately ships no evidence tree.  A cohort tag publishes the
+# frozen tree and its checksum as release assets, which is what
+# `gisel-ab evidence fetch` downloads.
+on:
+  push:
+    tags: ["cohort-*"]
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: pack
+        run: |
+          tar -czf "evidence-${GITHUB_REF_NAME}.tar.gz" EVIDENCE.json evidence
+          sha256sum "evidence-${GITHUB_REF_NAME}.tar.gz" \
+            > "evidence-${GITHUB_REF_NAME}.tar.gz.sha256"
+          ls -lh evidence-*.tar.gz*
+      - name: upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag \
+            --title "$GITHUB_REF_NAME" \
+            --notes "Frozen evidence and checksum for $GITHUB_REF_NAME." || true
+          gh release upload "$GITHUB_REF_NAME" \
+            evidence-*.tar.gz evidence-*.tar.gz.sha256 --clobber
