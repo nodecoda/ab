@@ -18,6 +18,26 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _is_dir(path):
+    """`is_dir` for a path that may sit under a directory we cannot enter.
+
+    The dev-machine test names an absolute path that does not exist on CI.
+    On some runners `/home/ubuntu` exists but is not readable, and an
+    unguarded `is_dir()` there raises PermissionError at import time.
+    """
+    try:
+        return path.is_dir()
+    except OSError:
+        return False
+
+
+def _is_file(path):
+    try:
+        return path.is_file()
+    except OSError:
+        return False
+
+
 def run(*args, env=None):
     base = {k: v for k, v in os.environ.items()
             if k not in ("AB_TREE", "AB_BUILD")}
@@ -67,8 +87,8 @@ class TheRealMachine(unittest.TestCase):
     TREE = Path("/home/ubuntu/llvm/trees/explore")
     BUILD = Path("/home/ubuntu/llvm/builds/explore")
 
-    @unittest.skipUnless((TREE / "llvm").is_dir()
-                         and (BUILD / "build.ninja").is_file(),
+    @unittest.skipUnless(_is_dir(TREE / "llvm")
+                         and _is_file(BUILD / "build.ninja"),
                          "needs the pinned tree and build")
     def test_dev_machine_is_healthy(self):
         done = run(env={"AB_TREE": str(self.TREE),
@@ -76,8 +96,8 @@ class TheRealMachine(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertIn("0 failed", done.stdout)
 
-    @unittest.skipUnless((TREE / "llvm").is_dir()
-                         and (BUILD / "build.ninja").is_file(),
+    @unittest.skipUnless(_is_dir(TREE / "llvm")
+                         and _is_file(BUILD / "build.ninja"),
                          "needs the pinned tree and build")
     def test_json_reports_the_same_verdict(self):
         doc = json.loads(run("--json", env={
