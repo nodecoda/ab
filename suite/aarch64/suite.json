@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "target": "aarch64",
+  "pin": "9bfc850b9940566bef17a34601826775349ba0e6",
+  "official_base": "700e551714ccb7357a191fd41837ff1b4784abf2",
+  "corpus": "../../../gisel/tests/corpus/AArch64LegalizerInfo.gisel",
+  "features": "../../../gisel/tests/cases/features.json",
+  "corpus_sha256": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
+  "features_sha256": "6e5257466f1bc03ef1592fa4c3d43fb0d41494436b073f8c74720f814fe71bf6",
+  "queries": "queries.jsonl",
+  "queries_sha256": "63e072063fd00d34e21103e926a657b462bebdabd1e81bb9b699b5704644da98",
+  "answers": "official.answers.jsonl",
+  "answers_sha256": "fcd67a14c26da3a3a2b3b38ac2c5665bc5542a8e2f7d39bf6cbf8dbb48f3f040",
+  "query_count": 12559,
+  "configs": [
+    "baseline",
+    "small-cm",
+    "fullfp16",
+    "sve",
+    "bf16",
+    "cssc",
+    "rcpc3",
+    "lse",
+    "outline-atomics"
+  ],
+  "allow_unanswerable": 0,
+  "generated_by": "gisel cases --corpus aarch64; ab.py run --target aarch64",
+  "source_run": {
+    "artifacts": "/tmp/a64-ab",
+    "command": "python3 ab.py run --target aarch64 --tree <AB_TREE> --build <AB_BUILD> --queries <cases> --out /tmp/a64-ab --state /tmp/a64-ab-state"
+  },
+  "pointer_width": {
+    "baseline": 64,
+    "small-cm": 64,
+    "fullfp16": 64,
+    "sve": 64,
+    "bf16": 64,
+    "cssc": 64,
+    "rcpc3": 64,
+    "lse": 64,
+    "outline-atomics": 64
+  }
+}

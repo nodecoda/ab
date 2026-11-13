@@ -109,5 +109,87 @@ class RefuseThenReport(unittest.TestCase):
         self.assertIn("Unsupported", shown)
 
 
+class TheFrozenManifests(unittest.TestCase):
+    """Every snapshot names its inputs, its denominator, and its widths."""
+
+    def test_every_suite_is_complete(self):
+        targets = suite.targets()
+        self.assertGreaterEqual(len(targets), 4)
+        for target in targets:
+            with self.subTest(target=target):
+                doc, directory = suite.load(target)
+                self.assertEqual(doc["schema"], 1)
+                self.assertEqual(doc["target"], target)
+                self.assertRegex(doc["pin"], r"^[0-9a-f]{40}$")
+                self.assertRegex(doc["official_base"], r"^[0-9a-f]{40}$")
+
+                queries = directory / doc["queries"]
+                answers = directory / doc["answers"]
+                self.assertEqual(sha(queries), doc["queries_sha256"])
+                self.assertEqual(sha(answers), doc["answers_sha256"])
+
+                rows, errors = suite._read_jsonl(queries)
+                self.assertEqual(errors, [])
+                self.assertEqual(len(rows), doc["query_count"])
+                self.assertEqual(len(suite._read_jsonl(answers)[0]),
+                                 doc["query_count"])
+                self.assertEqual(
+                    sorted(doc["configs"]),
+                    sorted({row["config"] for row in rows}))
+
+                widths = suite._pointer_widths(doc, target)
+                need = {row["config"] for row in rows
+                        if suite._has_wildcard(row.get("types"))
+                        or suite._has_wildcard(row.get("mem"))}
+                self.assertLessEqual(
+                    need, set(widths),
+                    "%s: p0:* configs %s lack a declared width"
+                    % (target, sorted(need - set(widths))))
+
+    def test_a_missing_pointer_width_is_refused(self):
+        doc, directory = suite.load("x86")
+        rows, _ = suite._read_jsonl(directory / doc["queries"])
+        broken = json.loads(json.dumps(doc))
+        del broken["pointer_width"]["C0"]
+        with self.assertRaises(suite.SuiteError) as caught:
+            suite._validate_pointer_widths(broken, rows, "x86")
+        self.assertIn("C0", str(caught.exception))
+        self.assertIn("pointer_width", str(caught.exception))
+
+    def test_a_bad_pointer_width_is_refused(self):
+        doc, _ = suite.load("x86")
+        for bad in (0, -1, True, "64"):
+            with self.subTest(bad=bad):
+                broken = json.loads(json.dumps(doc))
+                broken["pointer_width"]["C0"] = bad
+                with self.assertRaises(suite.SuiteError):
+                    suite._pointer_widths(broken, "x86")
+
+    def test_wildcards_expand_to_the_config_width(self):
+        row = {"config": "C0", "name": "G_MERGE_VALUES",
+               "types": ["s32", "p0:*"], "mem": ["v2p0:*", 1],
+               "imms": []}
+        out = suite._expand_row(row, {"C0": 32})
+        self.assertEqual(out["types"], ["s32", "p0:32"])
+        self.assertEqual(out["mem"], ["v2p0:32", 1])
+        # The declared width is not a formatting detail: it decides the
+        # answer.  C0 is i386, so this query is a 32-bit pointer query.
+        self.assertNotIn("p0:*", repr(out))
+
+
+class AllFrozenTargetsAgree(unittest.TestCase):
+    """The four committed snapshots are the regression gate for the corpus."""
+
+    def test_every_suite_answers_the_frozen_queries(self):
+        for target in suite.targets():
+            with self.subTest(target=target):
+                result = suite.check(target)
+                self.assertEqual(result["disagree"], 0,
+                                 result["first"][:3])
+                self.assertEqual(result["missing_ref"], 0)
+                self.assertEqual(result["missing_ours"], 0)
+                self.assertEqual(result["unanswerable"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

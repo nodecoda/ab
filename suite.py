@@ -10,6 +10,13 @@ when the snapshot was taken, generates the normal form with ``gisel gen``,
 answers the same queries with ``gisel eval``, and compares the two answer
 files with the same full-set contract the A/B harness uses.
 
+A ``p0:*`` query is the one thing the frozen files cannot answer by
+themselves: the width is a target property, and the compiled runner resolves
+it per configuration before the legalizer sees it.  ``suite.json`` therefore
+declares ``pointer_width`` per configuration.  ``check`` expands ``p0:*`` in
+both the queries and the frozen answers before evaluation; a configuration
+that has wildcard queries but no declared width is refused, not guessed.
+
 What it proves: the corpus in `gisel` still reproduces the actions the
 official legalizer produced on this query set -- rules, predicates and
 evaluation semantics together.  What it does not prove: anything about
@@ -27,6 +34,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -37,6 +45,8 @@ GISEL = Path(os.environ.get("GISEL_SRC", AB_ROOT.parent / "gisel")).resolve()
 SUITE = AB_ROOT / "suite"
 
 import diff as differ  # noqa: E402  (same directory, after AB_ROOT exists)
+
+POINTER_WILDCARD = re.compile(r"p(\d+):\*")
 
 
 def sha256(path: Path) -> str:
@@ -91,6 +101,103 @@ def _gisel(*args: str, cwd: Path) -> None:
                          % (args[0], (done.stderr or done.stdout).strip()))
 
 
+def _read_jsonl(path: Path) -> tuple[list[dict], list[str]]:
+    rows, errors = [], []
+    with open(path) as stream:
+        for lineno, line in enumerate(stream, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except ValueError as exc:
+                errors.append("%s:%d: %s" % (path, lineno, exc))
+                continue
+            if not isinstance(row, dict):
+                errors.append("%s:%d: row is not an object" % (path, lineno))
+                continue
+            rows.append(row)
+    return rows, errors
+
+
+def _pointer_widths(doc: dict, target: str) -> dict[str, int]:
+    table = doc.get("pointer_width", {})
+    if not isinstance(table, dict):
+        raise SuiteError("%s: pointer_width must be an object" % target)
+    widths = {}
+    for config, bits in table.items():
+        if isinstance(bits, bool) or not isinstance(bits, int) or bits <= 0:
+            raise SuiteError("%s: pointer_width[%r] must be a positive integer"
+                             % (target, config))
+        widths[str(config)] = bits
+    return widths
+
+
+def _has_wildcard(value) -> bool:
+    if isinstance(value, str):
+        return POINTER_WILDCARD.search(value) is not None
+    if isinstance(value, (list, tuple)):
+        return any(_has_wildcard(item) for item in value)
+    return False
+
+
+def _expand(value, bits: int):
+    if isinstance(value, str):
+        return POINTER_WILDCARD.sub(
+            lambda match: "p%s:%d" % (match.group(1), bits), value)
+    if isinstance(value, list):
+        return [_expand(item, bits) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_expand(item, bits) for item in value)
+    return value
+
+
+def _expand_row(row: dict, widths: dict[str, int]) -> dict:
+    bits = widths.get(row.get("config"))
+    if bits is None:
+        return row
+    out = dict(row)
+    if "types" in out:
+        out["types"] = _expand(out["types"], bits)
+    if out.get("mem") is not None:
+        out["mem"] = _expand(out["mem"], bits)
+    if isinstance(out.get("new_type"), str):
+        out["new_type"] = _expand(out["new_type"], bits)
+    return out
+
+
+def _write_jsonl(path: Path, rows: list[dict]) -> None:
+    with open(path, "w") as stream:
+        for row in rows:
+            stream.write(json.dumps(row, sort_keys=True) + "\n")
+
+
+def _validate_configs(doc: dict, rows: list[dict], target: str) -> None:
+    recorded = doc.get("configs")
+    if recorded is None:
+        return
+    actual = sorted({row.get("config") for row in rows
+                     if isinstance(row.get("config"), str)})
+    if sorted(recorded) != actual:
+        raise SuiteError("%s: manifest configs %r do not match the query file "
+                         "(%r)" % (target, recorded, actual))
+
+
+def _validate_pointer_widths(doc: dict, rows: list[dict],
+                             target: str) -> dict[str, int]:
+    widths = _pointer_widths(doc, target)
+    need = {row.get("config") for row in rows
+            if _has_wildcard(row.get("types"))
+            or _has_wildcard(row.get("mem"))}
+    missing = sorted(config for config in need if config not in widths)
+    if missing:
+        raise SuiteError(
+            "%s: p0:* queries in %s, but suite.json has no pointer_width for "
+            "them; the width is a target property and is not guessed"
+            % (target, ", ".join(missing)))
+    return widths
+
+
 def check(target: str, verbose: bool = False) -> dict:
     doc, directory = load(target)
     queries = _check_sha(directory, doc, "queries_sha256", doc["queries"])
@@ -108,17 +215,36 @@ def check(target: str, verbose: bool = False) -> dict:
                 "%s); the frozen answers describe the old rules"
                 % (target, label, sha256(path)[:16], doc[key][:16]))
 
+    query_rows, query_errors = _read_jsonl(queries)
+    if query_errors:
+        raise SuiteError("%s: %d unreadable query line(s): %s"
+                         % (target, len(query_errors), query_errors[0]))
+    _validate_configs(doc, query_rows, target)
+    widths = _validate_pointer_widths(doc, query_rows, target)
+
+    answer_rows, answer_errors = _read_jsonl(answers)
+    if answer_errors:
+        raise SuiteError("%s: %d unreadable answer line(s): %s"
+                         % (target, len(answer_errors), answer_errors[0]))
+
+    expanded_queries = [_expand_row(row, widths) for row in query_rows]
+    expanded_answers = [_expand_row(row, widths) for row in answer_rows]
+
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         core = tmp / "core.json"
+        frozen = tmp / "answers.jsonl"
+        asked = tmp / "queries.jsonl"
         ours = tmp / "ours.answers.jsonl"
+        _write_jsonl(asked, expanded_queries)
+        _write_jsonl(frozen, expanded_answers)
         _gisel("gen", str(corpus), "--emit=core", "--out", str(core), cwd=tmp)
         _gisel("eval", "--doc", str(core), "--features", str(features),
-               "--cases", str(queries), "--answers", str(ours), cwd=tmp)
+               "--cases", str(asked), "--answers", str(ours), cwd=tmp)
 
-        ref = _load_answers(answers)
+        ref = _load_answers(frozen)
         got = _load_answers(ours)
-        query_keys, rows, errors = differ.collect_keys(queries)
+        query_keys, rows, errors = differ.collect_keys(asked)
         if errors or rows != doc.get("query_count", rows):
             raise SuiteError("%s: query file has %d rows (%d unreadable), the "
                              "manifest says %s"

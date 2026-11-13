@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "target": "x86",
+  "pin": "9bfc850b9940566bef17a34601826775349ba0e6",
+  "official_base": "700e551714ccb7357a191fd41837ff1b4784abf2",
+  "corpus": "../../../gisel/tests/corpus/X86LegalizerInfo.gisel",
+  "features": "../../../gisel/tests/cases/x86-features.json",
+  "corpus_sha256": "934a935659e7aff3b0d8cec3a33b013846a12683d776cb4d7156507ef2b78f70",
+  "features_sha256": "0e4fb878c003b3bf8fe34cfcb88464df6b574079dc7dd9c98453e9db28cf9dec",
+  "queries": "queries.jsonl",
+  "queries_sha256": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6",
+  "answers": "official.answers.jsonl",
+  "answers_sha256": "acb009f11a38bf3b9eed9296a120c0be0923e9f12f0433bd9d7675607f9a268a",
+  "query_count": 3014,
+  "configs": [
+    "C0",
+    "C1",
+    "C2",
+    "C3"
+  ],
+  "allow_unanswerable": 0,
+  "generated_by": "gisel cases --corpus x86; ab.py run --target x86",
+  "source_run": {
+    "artifacts": "/tmp/x86-ab",
+    "command": "python3 ab.py run --target x86 --tree <AB_TREE> --build <AB_BUILD> --queries <cases> --out /tmp/x86-ab --state /tmp/x86-ab-state"
+  },
+  "pointer_width": {
+    "C0": 32,
+    "C1": 64,
+    "C2": 64,
+    "C3": 32
+  }
+}

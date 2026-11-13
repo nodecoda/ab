@@ -13,12 +13,29 @@
   "answers_sha256": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
   "query_count": 6086,
   "configs": [
-    "default"
+    "ristretto",
+    "rv32gc",
+    "rv32gcv",
+    "rv32zilsd",
+    "rv64gc",
+    "rv64gcv",
+    "rv64zbb",
+    "rv64zfh"
   ],
   "allow_unanswerable": 0,
   "generated_by": "gisel cases --corpus riscv; ab.py run --target riscv",
   "source_run": {
     "artifacts": "/tmp/riscv-ab",
     "command": "python3 ab.py run --target riscv --tree <AB_TREE> --build <AB_BUILD> --queries <cases> --out /tmp/riscv-ab --state /tmp/riscv-ab-state"
+  },
+  "pointer_width": {
+    "rv32gc": 32,
+    "rv32gcv": 32,
+    "rv32zilsd": 32,
+    "rv64gc": 64,
+    "rv64gcv": 64,
+    "rv64zbb": 64,
+    "rv64zfh": 64,
+    "ristretto": 64
   }
 }

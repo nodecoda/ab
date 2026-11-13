@@ -53,3 +53,27 @@ jobs:
           sudo apt-get -qq update
           sudo apt-get -qq install -y shellcheck
           shellcheck -S warning ab/*.sh
+
+  suite:
+    # The offline suites answer the frozen queries with the current gisel,
+    # independently of the evidence cohort pin above.  `p0:*` resolution and
+    # the WIP that this replaces are gisel changes after a2005d2, so this job
+    # pins the gisel the suites were checked with instead of moving the
+    # evidence record.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ab
+      - uses: actions/checkout@v7
+        with:
+          repository: nodecoda/gisel
+          path: gisel
+          ref: 6671815aa6799b66943c1760deacff47d3a37bde
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: frozen offline suites
+        working-directory: ab
+        run: |
+          GISEL_SRC="$GITHUB_WORKSPACE/gisel" python3 suite.py check --all
