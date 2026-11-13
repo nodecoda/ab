@@ -126,8 +126,11 @@ repo and input files for each gate and stores a git-blob fingerprint in
 `check --worktree` compares it with what is on disk now, which is how a
 changed corpus shows up before anyone tags again.
 
-The record is a child of the tag: the tag commit has no r3 record yet, so
-`test_verification` skips there and runs on the record commit.  Do not edit
+The record is a child of the tag: the tag commit still carries the previous
+cohort's `VERIFICATION.json`, so `check` prints `record is ...; skipping`
+and exits 0 there, and `test_verification` skips too.  The check is only
+evidence once the record names the same cohort as the manifest; `--worktree`
+has no such grace state and still fails on a mismatch.  Do not edit
 `RELEASE.json` after its manifest commit; the record shape is in
 `CONTRACTS.md` §11.
 

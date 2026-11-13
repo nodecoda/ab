@@ -7,6 +7,8 @@ changed-input report, and the refusal to tag a dirty tree.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import subprocess
 import tempfile
@@ -118,6 +120,79 @@ class Fingerprints(unittest.TestCase):
         cohort._CACHE.clear()
         self.assertEqual(cohort.changed_inputs(self.gate, record),
                          ["gisel:gisel/b.py"])
+
+
+class CheckSkip(unittest.TestCase):
+    """The tag commit still carries the previous cohort's record."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.manifest = self.root / "RELEASE.json"
+        self.record = self.root / "VERIFICATION.json"
+        self.patches = [
+            mock.patch.object(cohort, "MANIFEST", self.manifest),
+            mock.patch.object(cohort, "VERIFICATION", self.record),
+        ]
+        for patch in self.patches:
+            patch.start()
+
+    def tearDown(self):
+        for patch in self.patches:
+            patch.stop()
+        self.tmp.cleanup()
+
+    def write(self, record_cohort, manifest_cohort="cohort-new"):
+        self.manifest.write_text(json.dumps({
+            "schema": 1,
+            "cohort": manifest_cohort,
+            "repos": {"gisel": "a" * 40, "upstream_source": "b" * 40,
+                      "ab": "c" * 40},
+            "gates": [],
+        }, indent=2) + "\n")
+        self.record.write_text(json.dumps({
+            "schema": 2,
+            "cohort": record_cohort,
+            "commits": {"gisel": "a" * 40, "upstream_source": "b" * 40,
+                        "ab": "c" * 40},
+            "gates": [],
+        }, indent=2) + "\n")
+
+    def check(self, worktree=False, as_json=False):
+        args = mock.Mock()
+        args.worktree = worktree
+        args.json = as_json
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            rc = cohort.cmd_check(args)
+        return rc, out.getvalue(), err.getvalue()
+
+    def test_record_for_the_previous_cohort_is_skipped(self):
+        self.write("cohort-old")
+        rc, out, _ = self.check()
+        self.assertEqual(rc, 0)
+        self.assertIn("skipping", out)
+        self.assertIn("cohort-old", out)
+
+    def test_json_reports_the_skip(self):
+        self.write("cohort-old")
+        rc, out, _ = self.check(as_json=True)
+        self.assertEqual(rc, 0)
+        payload = json.loads(out)
+        self.assertTrue(payload["skipped"])
+        self.assertNotIn("gates", payload)
+
+    def test_worktree_check_refuses_a_mismatched_record(self):
+        self.write("cohort-old")
+        rc, _, err = self.check(worktree=True)
+        self.assertEqual(rc, 2)
+        self.assertIn("worktree check", err)
+
+    def test_current_record_is_not_skipped(self):
+        self.write("cohort-new")
+        rc, out, _ = self.check()
+        self.assertEqual(rc, 0)
+        self.assertNotIn("skipping", out)
 
 
 class Tagging(unittest.TestCase):

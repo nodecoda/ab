@@ -27,6 +27,11 @@ which are generated and must not be hand-edited.
   evidence tree is repository-only.
 - CI gains a packaging job (install the wheel, run `--help` and the offline
   suite, assert `evidence/` is absent) and a cohort check job.
+- `cohort check` treats a record that names an older cohort as "not written
+  yet" (rc=0, one line saying so) instead of drift.  The record commit is a
+  child of the tag, so at the tag the manifest is already the new cohort while
+  `VERIFICATION.json` still names the previous one.  `--worktree` keeps
+  failing in that state: a drift check needs a record for this cohort.
 
 ## Earlier
 

@@ -17,6 +17,11 @@ record.  `check` proves that a record still matches the commits it names;
 `check --worktree` compares it with the current worktrees instead, which is
 how a changed corpus shows up as a STALE gate before anyone tags again.
 
+The record commit is a child of the cohort tag, so at the tag itself the
+checked-in VERIFICATION.json still names the previous cohort.  `check` skips
+that state with rc=0 and says so; only a record that names the current
+cohort is evidence about the current cohort.
+
 Exit codes: 0 = ok; 1 = a gate failed / a fingerprint is stale; 2 = usage,
 missing manifest, dirty tree, or a tag that already exists.
 """
@@ -602,6 +607,21 @@ def cmd_check(args):
         return fail("VERIFICATION.json is schema %r; check needs schema 2"
                     % record.get("schema"))
     manifest = load_manifest()
+    # The tag commit carries the previous cohort's record (the record commit
+    # is its child).  Treat that as "not written yet", not as drift: there is
+    # no record to compare against the manifest we are looking at.
+    if record.get("cohort") != manifest["cohort"]:
+        reason = ("record is %s, manifest is %s; the record commit lands "
+                  "after the tag" % (record.get("cohort"), manifest["cohort"]))
+        if args.worktree:
+            return fail(reason + "; a worktree check needs a record for this "
+                        "cohort")
+        if args.json:
+            print(json.dumps({"cohort": manifest["cohort"], "worktree": False,
+                              "skipped": True, "reason": reason}, indent=2))
+        else:
+            print("cohort: %s; skipping" % reason)
+        return 0
     table = gate_table(manifest)
     by_name = {gate["name"]: gate for gate in table}
     stale = []
