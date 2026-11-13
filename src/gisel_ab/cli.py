@@ -23,6 +23,8 @@ from pathlib import Path
 VERBS = {
     "doctor": (("gisel_ab.doctor", "main", False),
                "check tree/build/gisel/state before a run (read-only)"),
+    "setup": (("gisel_ab.setup", "main", False),
+              "record the LLVM tree/build/evidence paths (no export)"),
     "run": (("gisel_ab.l0.run", "main", True),
             "build both sides, answer, diff, restore"),
     "mir": (("gisel_ab.l0.run", "main", True),
@@ -87,16 +89,33 @@ def _version() -> str:
     return "unknown"
 
 
+# What a verb needs before it can run; the help groups by this so a reader
+# can start with the offline half.
+NEEDS_BUILD = {"run", "mir", "verify", "l3", "vertical"}
+NEEDS_TREE = {"cohort"}
+
+
 def _usage() -> str:
     width = max(len(name) for name in VERBS)
-    lines = ["  %-*s  %s" % (width, name, desc)
-             for name, (_, desc) in VERBS.items()]
+    groups = (
+        ("without LLVM", [name for name in VERBS
+                          if name not in NEEDS_BUILD | NEEDS_TREE]),
+        ("with an LLVM tree and build", [name for name in VERBS
+                                         if name in NEEDS_BUILD]),
+        ("with a git tree (no build)", [name for name in VERBS
+                                        if name in NEEDS_TREE]),
+    )
+    chunks = []
+    for title, names in groups:
+        chunks.append("  %s:" % title)
+        for name in names:
+            chunks.append("    %-*s  %s" % (width, name, VERBS[name][1]))
     return (
         "usage: gisel-ab <verb> [options]\n"
         "       (checkout: python3 ab.py <verb>)\n"
         "\n"
-        "verbs (each takes --help):\n"
-        + "\n".join(lines)
+        "verbs (each takes --help; gisel-ab --version):\n"
+        + "\n".join(chunks)
         + "\n\n"
         "Internals stay callable for reproduction: %s\n"
         % ", ".join(sorted(INTERNALS))

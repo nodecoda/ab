@@ -17,7 +17,7 @@ evidence/                   frozen artifacts; repo-only, never in the wheel
 tests/  docs/               the suite and the write-ups
 ```
 
-`ab.py --help` is the verb table: `doctor run mir verify diff l3 suite
+`ab.py --help` is the verb table: `doctor setup run mir verify diff l3 suite
 vertical cohort evidence plan`.  Each verb keeps its own parser and its own
 exit codes; `ab.py` only routes.  `pip install .` gives the same table as
 `gisel-ab`, and the installed wheel carries the code, the target registry,
@@ -69,8 +69,17 @@ A pass in one is not a pass in the other; the contracts are `SCOPE.md` §3 and
 
 There is no default checkout: a default pointing at the machine the harness
 was written on either fails obscurely or swaps files in someone else's tree.
-Export the pin-compatible LLVM tree and its build, or pass `--tree`/`--build`
-on every command:
+Record the paths once:
+
+```sh
+gisel-ab setup --llvm /path/to/llvm-project --build /path/to/build
+gisel-ab doctor
+```
+
+The config lives in `$XDG_CONFIG_HOME/gisel-ab/config.json` (usually
+`~/.config/gisel-ab/config.json`); `--show` prints it, `--unset build` removes
+one key.  Precedence is flag > environment > config, so an existing shell keeps
+working:
 
 ```sh
 export AB_TREE=/path/to/llvm-project      # pin-compatible checkout

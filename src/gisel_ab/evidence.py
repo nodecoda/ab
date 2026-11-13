@@ -21,7 +21,7 @@ Exit codes: 0 = every selected entry passes; 1 = a shape or value failure;
 
 from __future__ import annotations
 
-from gisel_ab import gisel_package, gisel_src
+from gisel_ab import gisel_package, gisel_src, paths
 
 import argparse
 import gzip
@@ -167,6 +167,8 @@ def fetch_evidence(tag: str = "", dest: pathlib.Path | None = None,
 
 def default_manifest() -> pathlib.Path:
     root = os.environ.get("GISEL_AB_EVIDENCE")
+    if not root:
+        root = paths.load_config().get("evidence")
     if root:
         return pathlib.Path(root).expanduser() / "EVIDENCE.json"
     return AB / "EVIDENCE.json"

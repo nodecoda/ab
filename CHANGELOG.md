@@ -4,6 +4,22 @@ This file records shape changes to the workbench, not results.  Counts,
 commits and gate outcomes live in `RELEASE.json` and `VERIFICATION.json`,
 which are generated and must not be hand-edited.
 
+## Unreleased — usability (cohort r12)
+
+- `gisel-ab setup --llvm DIR --build DIR [--evidence DIR]` records the paths in
+  `$XDG_CONFIG_HOME/gisel-ab/config.json` (or `~/.config/...`; `GISEL_AB_CONFIG`
+  moves it), so a shell no longer needs `export AB_TREE=... AB_BUILD=...`.
+  Resolution is unchanged at the bottom: flag > environment > config > sibling.
+- `doctor` prints where each path came from (`(from AB_TREE)`, `(from
+  /path/config.json)`) and its fix line now names `gisel-ab setup` first.
+  Failures with nothing configured stay rc=2.
+- `gisel-ab --help` groups verbs by what they need: without LLVM, with an LLVM
+  tree and build, with a git tree.  `--version` reports 0.9.0.
+- `doctor` gains `gisel-pin`: the installed gisel must match the cohort's
+  `RELEASE.json` version.  A site-packages mismatch fails with the exact
+  `pip install gisel==...` line; a checkout mismatch only warns.
+- `gisel graph` is unchanged in this cohort.
+
 ## Unreleased — productization (cohorts r8, r9)
 
 - One entry point: `python3 ab.py <verb>` (or `gisel-ab` after

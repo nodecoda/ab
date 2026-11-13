@@ -124,18 +124,19 @@ def _pin() -> Check:
 
 
 def _tree(tree: Path | None, pin_commit: str | None) -> Check:
+    tree, where = paths.locate_tree(tree)
     if tree is None:
-        return Check("tree", FAIL, "AB_TREE is not set",
-                     "export AB_TREE=/path/to/llvm-project (a pin-compatible "
-                     "checkout); --tree overrides it")
+        return Check("tree", FAIL, "not configured",
+                     "run: gisel-ab setup --llvm DIR   (or export AB_TREE)")
+    tree = tree.resolve()
     if not (tree / "llvm").is_dir():
         return Check("tree", FAIL, "%s has no llvm/ directory" % tree,
-                     "point AB_TREE at the llvm-project checkout root")
+                     "point --llvm/AB_TREE at the llvm-project checkout root")
     head = _git(tree, "rev-parse", "HEAD")
     if head is None:
         return Check("tree", FAIL, "%s is not a git checkout" % tree,
                      "the pin check reads the commit; clone llvm-project")
-    detail = "HEAD %s" % head[:12]
+    detail = "HEAD %s (from %s)" % (head[:12], where)
 
     # Ancestry is not the check: PIN.json freezes the *content* of twelve
     # files, because a main that contains the pin commit can still carry a
@@ -168,10 +169,11 @@ def _tree(tree: Path | None, pin_commit: str | None) -> Check:
 
 
 def _build(build: Path | None) -> Check:
+    build, where = paths.locate_build(build)
     if build is None:
-        return Check("build", FAIL, "AB_BUILD is not set",
-                     "export AB_BUILD=/path/to/build (its ninja build); "
-                     "--build overrides it")
+        return Check("build", FAIL, "not configured",
+                     "run: gisel-ab setup --build DIR   (or export AB_BUILD)")
+    build = build.resolve()
     if not (build / "build.ninja").is_file():
         return Check("build", FAIL, "%s has no build.ninja" % build,
                      "point AB_BUILD at a configured ninja build directory")
@@ -179,7 +181,7 @@ def _build(build: Path | None) -> Check:
     if not llc.is_file():
         return Check("build", FAIL, "no bin/llc in %s" % build,
                      "run `ninja -C %s llc`" % build)
-    return Check("build", OK, "%s (llc present)" % build)
+    return Check("build", OK, "%s (llc present, from %s)" % (build, where))
 
 
 def _ninja() -> Check:
@@ -191,6 +193,7 @@ def _ninja() -> Check:
 
 
 def _disk(build: Path | None) -> Check:
+    build = paths.locate_build(build)[0]
     probe = build if build and build.is_dir() else AB_ROOT
     try:
         free = shutil.disk_usage(probe).free
@@ -253,12 +256,35 @@ def _targets() -> Check:
                                             " ".join(p[:-5] for p in found)))
 
 
+def _gisel_compat() -> Check:
+    """The installed gisel must be the version the cohort was gated against."""
+    manifest = AB_ROOT / "RELEASE.json"
+    if not manifest.is_file():
+        return Check("gisel-pin", OK, "no RELEASE.json (checkout)")
+    want = json.loads(manifest.read_text()).get("version")
+    try:
+        import gisel
+    except ImportError:
+        return Check("gisel-pin", FAIL, "gisel is not importable",
+                     "pip install gisel==%s" % (want or "<version>"))
+    got = getattr(gisel, "__version__", "unknown")
+    location = str(Path(gisel.__file__).resolve().parent)
+    if not want or got == want:
+        return Check("gisel-pin", OK, "%s matches the cohort" % got)
+    installed = any(part in ("site-packages", "dist-packages")
+                    for part in Path(location).parts)
+    return Check("gisel-pin", FAIL if installed else WARN,
+                 "gisel %s at %s, cohort pins %s" % (got, location, want),
+                 "pip install gisel==%s, or export GISEL_SRC=<checkout>"
+                 % want)
+
+
 def checks(tree: Path | None = None, build: Path | None = None) -> list[Check]:
     pin = _pin()
     pin_commit = None
     if pin.status == OK:
         pin_commit = json.loads(_pin_path().read_text())["commit"]
-    return [_python(), _gisel(), pin, _tree(tree, pin_commit),
+    return [_python(), _gisel(), _gisel_compat(), pin, _tree(tree, pin_commit),
             _build(build), _ninja(), _disk(build), _state(), _locks(),
             _targets()]
 
@@ -273,14 +299,7 @@ def main(argv=None) -> int:
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
-    tree = Path(args.tree).resolve() if args.tree else (
-        Path(os.environ["AB_TREE"]).expanduser().resolve()
-        if os.environ.get("AB_TREE") else None)
-    build = Path(args.build).resolve() if args.build else (
-        Path(os.environ["AB_BUILD"]).expanduser().resolve()
-        if os.environ.get("AB_BUILD") else None)
-
-    found = checks(tree, build)
+    found = checks(args.tree, args.build)
     failed = [c for c in found if c.status == FAIL]
     if args.json:
         print(json.dumps({"ok": not failed,

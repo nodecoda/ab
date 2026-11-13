@@ -47,11 +47,13 @@ def run(*args, env=None):
 
 
 class EmptyEnvironment(unittest.TestCase):
-    def test_it_fails_with_the_export_lines(self):
+    def test_it_fails_with_the_setup_lines(self):
         done = run()
         self.assertEqual(done.returncode, 2, done.stdout)
-        self.assertIn("export AB_TREE=/path/to/llvm-project", done.stdout)
-        self.assertIn("export AB_BUILD=/path/to/build", done.stdout)
+        self.assertIn("gisel-ab setup --llvm DIR", done.stdout)
+        self.assertIn("gisel-ab setup --build DIR", done.stdout)
+        self.assertIn("(or export AB_TREE)", done.stdout)
+        self.assertIn("(or export AB_BUILD)", done.stdout)
 
     def test_json_mode_names_every_failure_and_its_fix(self):
         doc = json.loads(run("--json").stdout)

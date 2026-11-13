@@ -12,6 +12,7 @@ and ``ab.py`` use for input errors.
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
@@ -19,6 +20,48 @@ from pathlib import Path
 TREE_ENVS = ("AB_TREE", "COHORT_TREE")
 BUILD_ENVS = ("AB_BUILD",)
 LLVM_ENVS = ("COHORT_LLVM", "AB_LLVM_REPO")
+
+
+def config_path() -> Path:
+    """The file ``gisel-ab setup`` writes; env can move it for tests/CI."""
+    explicit = os.environ.get("GISEL_AB_CONFIG")
+    if explicit:
+        return Path(explicit).expanduser()
+    base = os.environ.get("XDG_CONFIG_HOME")
+    root = Path(base).expanduser() if base else Path.home() / ".config"
+    return root / "gisel-ab" / "config.json"
+
+
+def load_config() -> dict:
+    path = config_path()
+    try:
+        return json.loads(path.read_text())
+    except FileNotFoundError:
+        return {}
+    except ValueError as exc:
+        raise SystemExit("input error: %s is not JSON: %s" % (path, exc))
+
+
+def _locate(explicit, envs, key):
+    """(path, where) for one setting: flag, env, config file, then nothing."""
+    if explicit:
+        return Path(explicit).expanduser(), "argument"
+    for name in envs:
+        value = os.environ.get(name)
+        if value:
+            return Path(value).expanduser(), name
+    value = load_config().get(key)
+    if value:
+        return Path(value).expanduser(), str(config_path())
+    return None, ""
+
+
+def locate_tree(explicit=None):
+    return _locate(explicit, TREE_ENVS, "tree")
+
+
+def locate_build(explicit=None):
+    return _locate(explicit, BUILD_ENVS, "build")
 
 
 def sibling(root, env, *names) -> Path:
@@ -64,10 +107,11 @@ def _bad_shape(label, path, detail):
 
 def require_tree(explicit=None) -> Path:
     """The llvm-project checkout (``llvm/`` and ``.git`` live here)."""
-    path = Path(explicit).expanduser() if explicit else _from_env(TREE_ENVS)
+    path, _ = locate_tree(explicit)
     if path is None:
         _fail("AB_TREE (LLVM source checkout)", TREE_ENVS,
-              "/path/to/llvm-project", "or pass --tree DIR")
+              "/path/to/llvm-project",
+              "or pass --tree DIR, or run: gisel-ab setup --llvm DIR")
     path = path.resolve()
     if not (path / "llvm" / "include" / "llvm").is_dir():
         _bad_shape("AB_TREE", path, "an llvm-project checkout")
@@ -76,10 +120,11 @@ def require_tree(explicit=None) -> Path:
 
 def require_build(explicit=None) -> Path:
     """The LLVM build directory (``build.ninja`` or ``CMakeCache.txt``)."""
-    path = Path(explicit).expanduser() if explicit else _from_env(BUILD_ENVS)
+    path, _ = locate_build(explicit)
     if path is None:
         _fail("AB_BUILD (LLVM build directory)", BUILD_ENVS,
-              "/path/to/build", "or pass --build DIR")
+              "/path/to/build",
+              "or pass --build DIR, or run: gisel-ab setup --build DIR")
     path = path.resolve()
     if not ((path / "build.ninja").is_file()
             or (path / "CMakeCache.txt").is_file()):
