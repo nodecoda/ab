@@ -1,5 +1,28 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43425328226
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43425313807
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43426605003
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43425323202
+    }
+  },
+  "ci_notes": [
+    "All four r7 runs are green: ci on the three tag commits (gisel d194df4, gisel-anchor 518779c, gisel-ab 0a471d3) and a nightly dispatched against the gisel r7 tag.  The record commit itself passed ci as run 43425328226; no publish run was triggered."
+  ],
   "cohort": "cohort-2026-11-13-r7",
   "commits": {
     "ab": "0a471d31fe6dabd7c41cc75ad4d50589a9031e57",
