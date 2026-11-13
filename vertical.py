@@ -582,7 +582,7 @@ def main(argv=None, default_target="riscv"):
         raise SystemExit(
             "U queries missing: %s\nGenerate them with:\n"
             "  cd ${UPSTREAM_SOURCE:-../gisel-anchor}\n"
-            "  ./oracle/scripts/gen-u.sh %s /tmp/u-gen/%s"
+            "  ./scripts/oracle/gen-u.sh %s /tmp/u-gen/%s"
             % (u_queries, args.target, spec["u_prefix"]))
 
     run_cmd([ROOT / spec["end_to_end"], tree, build, inc, out / "g"])

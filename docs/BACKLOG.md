@@ -21,4 +21,4 @@ only at a real cut (release, claim change, adoption update).
   “当时快照”。
 - 引用覆盖范围时按层说：L0 / D / U / U-full / MIR L1/L2/L3 的分母不同。
 - 上游缺陷进 `gisel-anchor/docs/UPSTREAM-ISSUES.json`，规则遮蔽/未覆盖进
-  `gisel-anchor/oracle/known-gaps/`，两者不混。
+  `gisel-anchor/src/gisel_anchor/oracle/known-gaps/`，两者不混。

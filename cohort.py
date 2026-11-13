@@ -97,6 +97,19 @@ GATES = {
         "inputs": ["pin/**/*"],
         "expand": "make-base",
     },
+    # r7 moved the anchor's entry points into scripts/ (the code itself lives
+    # under src/gisel_anchor).  The r6 spellings above stay for replaying r6.
+    "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check": {
+        "repo": "upstream_source",
+        "inputs": ["src/**/*", "scripts/**/*", "pin/**/*",
+                   "gisel:tests/corpus/*.gisel"],
+        "expand": "import-check",
+    },
+    "scripts/pin/make-base.sh TREE DEST --verify": {
+        "repo": "upstream_source",
+        "inputs": ["pin/**/*", "scripts/pin/**/*"],
+        "expand": "make-base",
+    },
     # r5 names the harness by its repository name; r4 and earlier manifests
     # said `ab/verify-evidence.sh`.  Both point at the same gate.
     "gisel-ab/verify-evidence.sh": VERIFY_EVIDENCE,
@@ -330,7 +343,8 @@ def _expand_command(gate, clone_root, out_dir):
         dest = pathlib.Path(out_dir) / "pin-base"
         if dest.exists():
             shutil.rmtree(dest)
-        command = "pin/make-base.sh %s %s --verify" % (tree, dest)
+        command = gate["command"].replace("TREE", str(tree)).replace(
+            "DEST", str(dest))
     elif gate.get("expand") == "import-check":
         llvm = paths.llvm_repo(
             fallback=os.environ.get("COHORT_TREE")

@@ -131,7 +131,7 @@ Proves, for this snapshot:
 
 Does not prove:
 
-- **U coverage still has dead rules.** `upstream-source/oracle/known-gaps/riscv.json`
+- **U coverage still has dead rules.** `gisel-anchor/src/gisel_anchor/oracle/known-gaps/riscv.json`
   now lists 13 rules that can never become the first match. They are redundant
   clauses behind a broader earlier rule (Zfa-legal behind libcall, `{s64,s32}`
   behind `legalFor(D)`, `widenScalarIf` ordering), not missing questions. The

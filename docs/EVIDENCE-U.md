@@ -19,9 +19,9 @@
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-./oracle/scripts/gen-u.sh x86     /tmp/u-gen/x86d
-./oracle/scripts/gen-u.sh aarch64 /tmp/u-gen/a64d
-./oracle/scripts/gen-u.sh riscv   /tmp/u-gen/rvb2
+./scripts/oracle/gen-u.sh x86     /tmp/u-gen/x86d
+./scripts/oracle/gen-u.sh aarch64 /tmp/u-gen/a64d
+./scripts/oracle/gen-u.sh riscv   /tmp/u-gen/rvb2
 ```
 
 | target | raw | kept | dropped | `queries.jsonl` sha256 |
@@ -116,12 +116,12 @@ ARM / Mips / PPC / M68k / WebAssembly / SPIR-V。AMDGPU 按决定不接。
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-./oracle/scripts/gen-u.sh arm     /tmp/u-gen/armd
-./oracle/scripts/gen-u.sh mips    /tmp/u-gen/mipsd
-./oracle/scripts/gen-u.sh ppc     /tmp/u-gen/ppcd
-./oracle/scripts/gen-u.sh m68k    /tmp/u-gen/m68kd
-./oracle/scripts/gen-u.sh wasm    /tmp/u-gen/wasmd
-./oracle/scripts/gen-u.sh spirv   /tmp/u-gen/spirvd
+./scripts/oracle/gen-u.sh arm     /tmp/u-gen/armd
+./scripts/oracle/gen-u.sh mips    /tmp/u-gen/mipsd
+./scripts/oracle/gen-u.sh ppc     /tmp/u-gen/ppcd
+./scripts/oracle/gen-u.sh m68k    /tmp/u-gen/m68kd
+./scripts/oracle/gen-u.sh wasm    /tmp/u-gen/wasmd
+./scripts/oracle/gen-u.sh spirv   /tmp/u-gen/spirvd
 ```
 
 | target | 配置 | rules | witnessed | shadowed | unexercised | 全配置 unex | raw | kept | dropped | `queries.jsonl` sha256 |
@@ -184,7 +184,7 @@ cd /home/ubuntu/llvm/ab
 
 ### 这一轮修掉的题面缺口
 
-`oracle/src/universe.py` 有三处是**真实缺口**，不是为了让数字好看：
+`src/gisel_anchor/oracle/universe.py` 有三处是**真实缺口**，不是为了让数字好看：
 
 1. SPIR-V 用 14 个地址空间（`SPIRV_POINTER_AS = range(14)`）；其余 target 仍是
    `POINTER_AS = [0,1,2,3,4]`。
@@ -301,7 +301,7 @@ disagree == matched`）。对外报数用 `answered_equal = agree - unanswerable
 分支直接 append 2 元组，没有按 `type_slots` 补长。3 槽 opcode 收到 2 个类型，
 上游规则读 `Query.Types[2]` 就越界。
 
-修法（`upstream-source/oracle/src/universe.py`）：三处向量对分支改成按槽数补长，
+修法（`upstream-source/src/gisel_anchor/oracle/universe.py`）：三处向量对分支改成按槽数补长，
 并在函数末尾加一道 `len(c) == type_slots` 兜底；`oracle/tests/test_universe.py`
 新增两条回归（每个 target × 1–4 槽，combo 长度必须等于槽数）。修后 AArch64 的
 `unanswerable` 从 39,660 降到 35,316，题面里不再有畸形查询。
@@ -419,7 +419,7 @@ cd /home/ubuntu/llvm/ab && ./run-u-end-to-end.sh <t> .../queries.jsonl <out> [pi
 - 已做 9 个 target：X86 / AArch64 / RISC-V（U4）+ ARM / Mips / PPC / M68k /
   WebAssembly / SPIR-V（U5）。AMDGPU 按决定不接。
 - 覆盖门禁是跨配置口径，`(opcode, rule_index)` 并集是覆盖下界；逐条 gap 在
-  `upstream-source/oracle/known-gaps/<target>.json`（X86 6 条 shadowed，
+  `gisel-anchor/src/gisel_anchor/oracle/known-gaps/<target>.json`（X86 6 条 shadowed，
   AArch64 59、RISC-V 13 条 unexercised/shadowed）。
 - U 方向证明“上游规则 gisel 没漏”，不证明“gisel 每题都答对”；后者由 G 方向
   与 `disagree=0` 共同承担。
