@@ -15,8 +15,10 @@ action 或下游 verifier，那已经超出“规则”的范围了；L3 是最�
 ## 0 先过 doctor（1 秒）
 
 ```sh
-export AB_TREE=<workspace>/llvm-project
-export AB_BUILD=<workspace>/build
+gisel-ab setup --llvm <workspace>/llvm-project --build <workspace>/build
+# 也可以继续用环境变量（优先级更高）：
+# export AB_TREE=<workspace>/llvm-project
+# export AB_BUILD=<workspace>/build
 python3 ab.py doctor
 ```
 
@@ -27,7 +29,7 @@ build      ok   /path/to/build (llc present)
 ```
 
 `tree` 这一项跑的是 `check-pin.sh`：`PIN.json` 冻结十二个文件的**内容**，
-所以“main 里含有 pin 的 commit”不算数。没设环境变量时它直接告诉你要 export 什么。
+所以“main 里含有 pin 的 commit”不算数。没配置时它直接告诉你要跑哪条 `gisel-ab setup`。
 
 ## 1 出题
 
