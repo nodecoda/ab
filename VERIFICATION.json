@@ -1445,6 +1445,9 @@
   "online_gates": [],
   "recorded_at": "2026-11-13",
   "schema": 2,
+  "supersedes": "cohort-2026-11-13-r4",
+  "supersedes_reason": "r5 renames the workbench repositories: upstream-source -> gisel-anchor and ab -> gisel-ab.  The logical keys in RELEASE.json stay `upstream_source` and `ab`, so historical fingerprints remain checkable; the verify-evidence gate is now named `gisel-ab/verify-evidence.sh` and the old `ab/verify-evidence.sh` name is accepted as an alias for r4 and earlier.  No product behaviour, corpus byte, or golden changed.",
+  "tag": "cohort-2026-11-13-r5",
   "tags": {
     "ab": "cohort-2026-11-13-r5",
     "gisel": "cohort-2026-11-13-r5",
