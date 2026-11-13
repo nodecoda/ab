@@ -13,6 +13,10 @@ include, comparison, negative control, and the check that the tree was put
 back.  X86 is the same loop with 3,014 queries; M68k is the one you can
 finish while the kettle boils.
 
+`docs/QUICKSTART-with-llvm.md` is the shorter decision page: which layer
+answers which question (L0 `ab.py run`, MIR replay, L3 `check-llvm`), what
+each costs, and what a green result does and does not prove.
+
 ## Two layers
 
 - **L0 (`ab.py run` / `diff.py`)** compares `getAction()` for one query:
