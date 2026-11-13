@@ -43,7 +43,7 @@ gisel domain --corpus m68k --out /tmp/m68k.domain.jsonl   # 112 条，规则无�
 ## 2 L0：一条命令的端到端对拍
 
 ```sh
-cd ../ab
+cd ../gisel-ab
 python3 ab.py run --target m68k \
   --tree "$AB_TREE" --build "$AB_BUILD" \
   --queries /tmp/m68k.cases.jsonl \

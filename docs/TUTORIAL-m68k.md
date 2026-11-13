@@ -89,7 +89,7 @@ python3 -m gisel gen tests/corpus/M68kLegalizerInfo.gisel \
 ## 4 对拍（约 30 秒）
 
 ```sh
-cd ../ab
+cd ../gisel-ab
 python3 ab.py run --target m68k \
   --tree "$AB_TREE" --build "$AB_BUILD" \
   --queries /tmp/m68k.cases.jsonl \
