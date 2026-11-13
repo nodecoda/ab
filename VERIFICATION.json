@@ -1,5 +1,28 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43402811447
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43402807617
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43403945371
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43402807195
+    }
+  },
+  "ci_notes": [
+    "All four r5 runs are green: ci on the three tag commits (gisel 7a4e67a, gisel-anchor f810dfa, gisel-ab 244f086) and a nightly dispatched against the gisel r5 tag.  The gisel-ab run on 50f020d failed test_verification because the draft record had not yet named tag/supersedes; effc019 adds those fields and is green."
+  ],
   "cohort": "cohort-2026-11-13-r5",
   "commits": {
     "ab": "244f08614f5e6deec9a8ad3981d31daacc9b3c0b",
