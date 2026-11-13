@@ -1,5 +1,32 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43479031437,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43479031437"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43479042593,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43479042593"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43480809810,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43480809810"
+      },
+      "run": 43479042694,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43479042694"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43479036492,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43479036492"
+    }
+  },
+  "ci_notes": "r14 CI: all three tagged runs green, including the first-answer job; the ab main run that follows the verification record is green.  r13 is superseded because its cookbook fix landed after the tag and `check-claims` treats docs as gate input.",
   "cohort": "cohort-2026-11-14-r14",
   "commits": {
     "ab": "0c7c3e0661ce77d3108862eb5f940708dbdca54e",
