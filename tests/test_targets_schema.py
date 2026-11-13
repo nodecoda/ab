@@ -28,10 +28,7 @@ def norm(value):
 
 
 def load_ab():
-    spec = importlib.util.spec_from_file_location("ab_harness_targets",
-                                                  ROOT / "ab.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    from gisel_ab.l0 import run as module
     return module
 
 
@@ -40,7 +37,7 @@ class SchemaTest(unittest.TestCase):
         self.assertEqual(targets.check_all(), [])
 
     def test_every_target_file_has_a_schema_name(self):
-        for path in sorted((ROOT / "targets").glob("*.json")):
+        for path in sorted((ROOT / "src" / "gisel_ab" / "data" / "targets").glob("*.json")):
             if path.name == "schema.json":
                 continue
             doc = json.loads(path.read_text())
@@ -74,16 +71,16 @@ class SchemaTest(unittest.TestCase):
         self.assertIn("unknown target", str(caught.exception))
 
     def test_cli_check_and_env(self):
-        proc = subprocess.run([sys.executable, str(ROOT / "targets.py"),
+        proc = subprocess.run([sys.executable, "-m", "gisel_ab.targets",
                                "check"], cwd=ROOT, capture_output=True,
                               text=True)
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("10 files valid", proc.stdout)
-        proc = subprocess.run([sys.executable, str(ROOT / "targets.py"),
+        proc = subprocess.run([sys.executable, "-m", "gisel_ab.targets",
                                "get", "mips", "diff_policy.allow_ref_asserts"],
                               cwd=ROOT, capture_output=True, text=True)
         self.assertEqual((proc.returncode, proc.stdout.strip()), (0, "9"))
-        proc = subprocess.run([sys.executable, str(ROOT / "targets.py"),
+        proc = subprocess.run([sys.executable, "-m", "gisel_ab.targets",
                                "env", "x86"], cwd=ROOT, capture_output=True,
                               text=True)
         self.assertEqual(proc.returncode, 0, proc.stderr)
@@ -92,7 +89,10 @@ class SchemaTest(unittest.TestCase):
         self.assertEqual(namespace["T_TARGET"], "x86")
         self.assertEqual(namespace["T_U_NEG"], "G_SUB")
         self.assertEqual(namespace["T_EXPECTED_QUERIES"], "3014")
-        self.assertEqual(namespace["T_U_BUILDER"], "build-x86-ctor-runner.sh")
+        self.assertTrue(namespace["T_U_BUILDER"].endswith(
+            "/scripts/runners/build-x86-ctor-runner.sh"),
+            namespace["T_U_BUILDER"])
+        self.assertTrue(namespace["T_U_BUILDER"].startswith("/"))
 
     def test_verify_without_any_baseline_anchor_is_a_clean_error(self):
         # A target with no generated baseline inc is anchored by the library
@@ -138,7 +138,7 @@ def leaves(value, prefix=""):
 class OrphanTest(unittest.TestCase):
     def test_every_field_has_a_consumer(self):
         for name, doc in {p.stem: json.loads(p.read_text())
-                          for p in (ROOT / "targets").glob("*.json")
+                          for p in (ROOT / "src" / "gisel_ab" / "data" / "targets").glob("*.json")
                           if p.name != "schema.json"}.items():
             with self.subTest(target=name):
                 self.assertEqual(set(leaves(doc)), CONSUMED)
@@ -149,7 +149,7 @@ class ParityTest(unittest.TestCase):
     def setUpClass(cls):
         cls.old = json.loads(FIXTURE.read_text())
         cls.doc = {path.stem: json.loads(path.read_text())
-                   for path in (ROOT / "targets").glob("*.json")
+                   for path in (ROOT / "src" / "gisel_ab" / "data" / "targets").glob("*.json")
                    if path.name != "schema.json"}
 
     def test_vertical_table(self):

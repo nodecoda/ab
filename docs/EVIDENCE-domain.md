@@ -7,7 +7,7 @@ space enumerates, including combinations no rule mentions.
 ## Command
 
 ```sh
-./run-x86-domain.sh TREE BUILD /tmp/ab-domain/x86-r2/X86LegalizerInfo.inc \
+./scripts/domain/run-x86-domain.sh TREE BUILD /tmp/ab-domain/x86-r2/X86LegalizerInfo.inc \
   /tmp/ab-domain/x86-r2/out
 ```
 
@@ -108,7 +108,7 @@ Those are the U direction and the strict-coverage numbers.
 ## AArch64 domain：9 个配置，全量 A/B
 
 ```sh
-./run-aarch64-domain.sh TREE BUILD \
+./scripts/domain/run-aarch64-domain.sh TREE BUILD \
   /tmp/ab-domain/inc/AArch64LegalizerInfo.inc /tmp/ab-domain/a64-domain-r5
 ```
 
@@ -281,7 +281,7 @@ runner）时才可达；从 IR 编译过来的 MIR 不会出现它们。
 ## RISC-V domain：8 个配置，全量 A/B
 
 ```sh
-./run-riscv-domain.sh TREE BUILD \
+./scripts/domain/run-riscv-domain.sh TREE BUILD \
   /tmp/ab-domain/inc/RISCVLegalizerInfo.inc /tmp/ab-domain/rv-domain-r6
 ```
 
@@ -362,14 +362,14 @@ key：270,967 条查询只剩 255,313 个 key，15,654 条被 `diff.py` 静默�
 ## 5 其余六个 target（`run-domain.sh`）
 
 x86 / aarch64 / riscv 各有自己的脚本；其余六个用统一的
-`run-domain.sh TARGET TREE BUILD INC OUT`，契约在 `data/domain.json`
+`run-domain.sh TARGET TREE BUILD INC OUT`，契约在 `src/gisel_ab/data/domain.json`
 （每个 target 每个 config 的题面条数、双端断言数、单边断言数）。
 缺失一个 target 的 section 时脚本只报数、不钉数；审过之后再写进去。
 
 ```sh
 python3 -m gisel gen tests/corpus/<T>LegalizerInfo.gisel --emit=inc \
   --out /tmp/dom-inc/<T>LegalizerInfo.inc
-./run-domain.sh <target> /home/ubuntu/llvm/trees/explore \
+./scripts/domain/run-domain.sh <target> /home/ubuntu/llvm/trees/explore \
   /home/ubuntu/llvm/builds/explore /tmp/dom-inc/<T>LegalizerInfo.inc \
   /tmp/ab-domain/<target>
 ```

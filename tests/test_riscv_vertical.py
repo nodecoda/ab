@@ -7,9 +7,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("vertical", ROOT / "vertical.py")
-rv = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(rv)
+DATA = ROOT / "src" / "gisel_ab" / "data"
+from gisel_ab import vertical as rv  # noqa: E402
 
 
 class L3Parser(unittest.TestCase):
@@ -52,17 +51,17 @@ class FrozenSlice(unittest.TestCase):
     """
 
     def test_frozen_artifacts_match_the_contract(self):
-        c = json.loads((ROOT / "data" / "riscv-contract.json").read_text())
+        c = json.loads((DATA / "riscv-contract.json").read_text())
         out = rv.materialize_frozen("riscv")
         self.assertEqual(
             rv.verify(out, c, out / "u" / "queries.jsonl", "riscv",
-                      ROOT / "data" / "riscv-contract.json",
+                      DATA / "riscv-contract.json",
                       l3_required=False), 0)
 
 
 class Contract(unittest.TestCase):
     def test_contract_is_complete(self):
-        c = json.loads((ROOT / "data" / "riscv-contract.json").read_text())
+        c = json.loads((DATA / "riscv-contract.json").read_text())
         self.assertEqual(c["target"], "riscv")
         self.assertEqual(len(c["snapshot"]["inc_sha256"]), 64)
         self.assertEqual(c["g"]["queries"], 6086)
@@ -79,13 +78,13 @@ class Targets(unittest.TestCase):
         for name, spec in rv.TARGETS.items():
             with self.subTest(target=name):
                 self.assertEqual(set(spec), keys)
-                self.assertTrue((ROOT / spec["contract"]).exists(),
+                self.assertTrue((DATA / Path(spec["contract"]).name).exists(),
                                 "no contract for %s" % name)
 
     def test_every_contract_names_its_target(self):
         for name in rv.TARGETS:
             with self.subTest(target=name):
-                c = json.loads((ROOT / "data" / ("%s-contract.json" % name))
+                c = json.loads((DATA / ("%s-contract.json" % name))
                                .read_text())
                 self.assertEqual(c["target"], name)
                 self.assertEqual(c["g"]["disagree"], 0)
@@ -97,12 +96,12 @@ class Targets(unittest.TestCase):
 
 class Provenance(unittest.TestCase):
     def test_leg_command_names_tree_and_build(self):
-        cmd = rv.leg_command("run-u-end-to-end.sh", "x86", "/q", "/o",
+        cmd = rv.leg_command("e2e/run-u-end-to-end.sh", "x86", "/q", "/o",
                              tree="/tmp/tree-A", build="/tmp/build-B")
         self.assertEqual([str(x) for x in cmd[-4:]],
                          ["--tree", "/tmp/tree-A", "--build", "/tmp/build-B"])
         self.assertEqual(str(cmd[0]),
-                         str(ROOT / "run-u-end-to-end.sh"))
+                         str(ROOT / "scripts" / "e2e" / "run-u-end-to-end.sh"))
 
     def test_contract_pin_prefers_the_flag_then_the_contract(self):
         contract = {"mir_l2": {"timeout": 63, "unsupported_run": 0}}

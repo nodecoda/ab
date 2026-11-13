@@ -30,10 +30,7 @@ class TargetSpecs(unittest.TestCase):
         # SWAPPABLE drives mir-replay --target; the swap script is the other
         # half of the same contract.  A target in one and not the other fails
         # at the end of a rebuild instead of here.
-        spec = importlib.util.spec_from_file_location(
-            "swap_source_ctor", ROOT / "swap-source-ctor.py")
-        swap = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(swap)
+        from gisel_ab.l0 import swap
         self.assertEqual(set(mir_libs.SWAPPABLE), set(swap.TARGETS))
 
     def test_unknown_target_is_an_error(self):
@@ -75,19 +72,19 @@ class PrepareTarget(unittest.TestCase):
         self.calls.append(cmd)
         if "status" in cmd:
             return completed()
-        if any(part.endswith("swap-source-ctor.py") for part in cmd):
+        if "gisel_ab.l0.swap" in cmd:
             if "apply" in cmd:
                 self.source.write_text("// generated constructor\n")
             else:
                 self.source.write_text("// official constructor\n")
             return completed()
+        if "gisel_ab.l0.inject_opcode" in cmd:
+            Path(cmd[-1]).write_text("// mutant inc\n")
+            return completed()
         if any(part.endswith("gisel") or part == "-m" for part in cmd):
             out = Path(cmd[cmd.index("--out") + 1])
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text("// inc\n")
-            return completed()
-        if any(part.endswith("inject-missing-opcode.py") for part in cmd):
-            Path(cmd[-1]).write_text("// mutant inc\n")
             return completed()
         if cmd and cmd[0] == mir_libs.NINJA:
             body = self.source.read_text()

@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-RUN = ROOT / "run-queries.py"
+RUN = [sys.executable, "-m", "gisel_ab.l0.queries"]
 
 FAKE = '''#!/usr/bin/env python3
 import json
@@ -62,7 +62,7 @@ class RunQueries(unittest.TestCase):
         report = self.dir / "report.json"
         env = dict(os.environ, CRASH_ON=crash_on or "", ASSERT_TEXT=assert_text,
                    EXIT_ON=exit_on or "", EXIT_CODE=str(exit_code))
-        proc = subprocess.run([sys.executable, str(RUN), str(self.runner),
+        proc = subprocess.run([*RUN, str(self.runner),
                                str(self.queries), str(out),
                                "--report", str(report)],
                               check=False, env=env, capture_output=True,
@@ -126,7 +126,7 @@ class RunQueries(unittest.TestCase):
 
     def test_an_unreadable_runner_is_rc_two(self):
         out = self.dir / "out.jsonl"
-        proc = subprocess.run([sys.executable, str(RUN),
+        proc = subprocess.run([*RUN,
                                str(self.dir / "no-such-runner"),
                                str(self.queries), str(out)],
                               capture_output=True, text=True)

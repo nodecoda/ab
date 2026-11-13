@@ -202,11 +202,11 @@ targets[*].runs 之和 == totals.runs
 | `summary` | `summary.json` | 每配置聚合值与 `assert_sites` |
 | `mir` | `mir-report.json` | bucket 恒等式、每 target、llc sha、恢复基线 |
 | `lit` | 两轮 per-test JSONL | 重新计算状态，不信 `identical` |
-| `closure` | `data/closure/<target>-<seed>.json` | `ok`、`stuck=0`、`disagree=[]`、`ours_only=0` |
+| `closure` | `src/gisel_ab/data/closure/<target>-<seed>.json` | `ok`、`stuck=0`、`disagree=[]`、`ours_only=0` |
 | `adopt` | gisel 的 `<t>.inc` + `docs/ADOPT.md` | inc sha、分支/commit/lib sha 在文档里 |
 
 `verify-evidence.sh [DIRECTION]` 只做转发；`VERIFY_FROZEN=1` 时只读
-`oracle/` 和 `data/closure/`，并显式打印
+`evidence/` 和 `src/gisel_ab/data/closure/`，并显式打印
 `SKIP official_build  frozen mode verifies artifacts, not the build`；
 汇总行另报 `N check(s) skipped`。SKIP 不是 PASS：冻结模式只证明产物字节，
 不证明产生它们的构建身份。非 frozen 模式缺构建目录或库哈希不符都是失败。

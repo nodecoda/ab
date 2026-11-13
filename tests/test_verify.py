@@ -16,11 +16,10 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("ab_harness", ROOT / "ab.py")
-ab = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(ab)
+from gisel_ab.l0 import run as ab  # noqa: E402
 
-M68K = json.loads((ROOT / "targets" / "m68k.json").read_text())
+M68K = json.loads((ROOT / "src" / "gisel_ab" / "data" / "targets" /
+                   "m68k.json").read_text())
 
 
 class ShaPrefix(unittest.TestCase):

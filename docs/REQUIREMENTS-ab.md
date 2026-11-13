@@ -5,7 +5,7 @@
 # 需求：LLVM legalizer 差分对拍工作台（AB harness）
 
 状态：需求草案 v0.1。**这是工作台需求，不是 gisel 产品需求**；边界见
-`docs/SCOPE.md`。实现对现有 `gisel-ab/` 的归纳与缺口清单，不改变 gisel 的
+`SCOPE.md`。实现对现有 `gisel-ab/` 的归纳与缺口清单，不改变 gisel 的
 两个功能。
 
 ## 0 名称

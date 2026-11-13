@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SCRIPT = ROOT / "l3.py"
+SCRIPT = [sys.executable, "-m", "gisel_ab.l3"]
 
 LOG = """\
 -- Testing: 3 tests, 3 workers --
@@ -39,7 +39,7 @@ class Compare(unittest.TestCase):
         write_round(self.dir, "baseline", baseline, **kwargs)
         write_round(self.dir, "combined", combined, **kwargs)
         proc = subprocess.run(
-            [sys.executable, str(SCRIPT), "compare", str(self.dir),
+            [*SCRIPT, "compare", str(self.dir),
              "--json", str(self.dir / "l3-summary.json")],
             capture_output=True, text=True)
         summary = json.loads((self.dir / "l3-summary.json").read_text())

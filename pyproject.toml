@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gisel-ab"
+version = "0.8.0"
+description = "A/B workbench for LLVM GlobalISel legalizer rules"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0 WITH LLVM-exception" }
+authors = [{ name = "nodecoda" }]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Compilers",
+  "Topic :: Software Development :: Testing",
+]
+# Deliberately empty: the harness imports only the standard library and
+# `gisel`, which is a sibling checkout (or its own install).
+dependencies = []
+
+[project.scripts]
+gisel-ab = "gisel_ab.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+gisel_ab = [
+  "cpp/*.cpp",
+  "cpp/*.h",
+  "data/*.json",
+  "data/*.jsonc",
+  "data/closure/*.json",
+  "data/targets/*.json",
+  "data/suite/README.md",
+  "data/suite/*/suite.json",
+  "data/suite/*/*.jsonl",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

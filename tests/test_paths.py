@@ -138,7 +138,7 @@ class ScriptsRefuseMissingRoots(unittest.TestCase):
     def test_run_g_negative_without_roots(self):
         with tempfile.TemporaryDirectory() as out:
             done = subprocess.run(
-                ["bash", str(ROOT / "run-g-negative.sh"), "x86", "G_ADD", out],
+                ["bash", str(ROOT / "scripts" / "negative" / "run-g-negative.sh"), "x86", "G_ADD", out],
                 capture_output=True, text=True, env=self.clean_env())
         self.assertEqual(done.returncode, 2, done.stderr)
         self.assertIn("AB_TREE", done.stderr)
@@ -147,7 +147,7 @@ class ScriptsRefuseMissingRoots(unittest.TestCase):
     def test_run_u_end_to_end_without_roots(self):
         with tempfile.TemporaryDirectory() as out:
             done = subprocess.run(
-                ["bash", str(ROOT / "run-u-end-to-end.sh"), "x86",
+                ["bash", str(ROOT / "scripts" / "e2e" / "run-u-end-to-end.sh"), "x86",
                  "/nonexistent/queries.jsonl", out],
                 capture_output=True, text=True, env=self.clean_env())
         self.assertEqual(done.returncode, 2, done.stderr)

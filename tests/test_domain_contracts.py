@@ -18,12 +18,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GISEL = Path(__file__).resolve().parents[2] / "gisel"
 FEATURES = GISEL / "tests" / "cases"
-DOMAIN = ROOT / "data" / "domain.json"
+DATA = ROOT / "src" / "gisel_ab" / "data"
+DOMAIN = DATA / "domain.json"
 GENERIC = {"m68k", "ppc", "arm", "mips", "wasm", "spirv"}
 
 
 def configs(script: str):
-    text = (ROOT / script).read_text()
+    text = (ROOT / "scripts" / "domain" / script).read_text()
     match = re.search(r"^CONFIGS=\$\{CONFIGS:-([^}]*)\}", text, re.M)
     return match.group(1).split() if match else []
 
@@ -34,14 +35,14 @@ def feature_keys(name: str):
 
 
 def pin(script: str, name: str):
-    text = (ROOT / script).read_text()
+    text = (ROOT / "scripts" / "domain" / script).read_text()
     match = re.search(r"^%s=(.*)$" % re.escape(name), text, re.M)
     return match.group(1).strip() if match else None
 
 
 def plan(target: str):
     r = subprocess.run(
-        ["bash", str(ROOT / "run-domain.sh"), target, "--plan"],
+        ["bash", str(ROOT / "scripts" / "domain" / "run-domain.sh"), target, "--plan"],
         cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
     return json.loads(r.stdout)
@@ -65,7 +66,7 @@ class DomainEntryPoints(unittest.TestCase):
         self.assertEqual(set(mapping), set(feature_keys("riscv")))
 
     def test_x86_uses_every_declared_config(self):
-        text = (ROOT / "run-x86-domain.sh").read_text()
+        text = (ROOT / "scripts" / "domain" / "run-x86-domain.sh").read_text()
         self.assertIsNotNone(pin("run-x86-domain.sh", "EXPECTED_QUERIES"))
         self.assertNotIn("--config", text,
                          "x86 domain asks every config; a --config pin would "
@@ -76,9 +77,9 @@ class DomainEntryPoints(unittest.TestCase):
         self.assertEqual(set(domain), GENERIC)
         for name, doc in domain.items():
             self.assertEqual(set(doc["configs"]), set(feature_keys(name)), name)
-            target = json.loads((ROOT / "targets" / (name + ".json")).read_text())
+            target = json.loads((DATA / "targets" / (name + ".json")).read_text())
             runner = target.get("domain") or "run-domain.sh"
-            self.assertTrue((ROOT / runner).exists(), name)
+            self.assertTrue((ROOT / "scripts" / "domain" / runner).exists(), name)
 
     def test_plan_names_every_config_without_a_tree(self):
         for name in ("x86", "aarch64", "riscv", "mips"):
@@ -87,7 +88,7 @@ class DomainEntryPoints(unittest.TestCase):
                 self.assertEqual(set(doc["configs"]), set(feature_keys(name)))
                 self.assertEqual(doc["target"], name)
                 spec = json.loads(
-                    (ROOT / "targets" / (name + ".json")).read_text())
+                    (DATA / "targets" / (name + ".json")).read_text())
                 self.assertEqual(doc["runner"], spec.get("domain") or "run-domain.sh")
 
     def test_plan_keeps_the_special_contracts(self):

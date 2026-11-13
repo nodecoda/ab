@@ -13,13 +13,11 @@ sys.path.insert(0, str(ROOT))
 
 import importlib.util  # noqa: E402
 
-spec = importlib.util.spec_from_file_location(
-    "mir_from_query", ROOT / "mir-from-query.py")
-mfq = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(mfq)
+from gisel_ab.mir import from_query as mfq  # noqa: E402
 
-SHAPES = mfq.load_jsonc(ROOT / "data" / "mir-shapes.jsonc")["opcodes"]
-CONFIGS = json.loads((ROOT / "data" / "mir-configs.json").read_text())
+DATA = ROOT / "src" / "gisel_ab" / "data"
+SHAPES = mfq.load_jsonc(DATA / "mir-shapes.jsonc")["opcodes"]
+CONFIGS = json.loads((DATA / "mir-configs.json").read_text())
 X86 = CONFIGS["targets"]["x86"]["C1"]
 
 
@@ -187,7 +185,7 @@ class Preflight(unittest.TestCase):
 
 class ShapeContract(unittest.TestCase):
     def test_table_loads_and_cites_every_entry(self):
-        doc = mfq.load_jsonc(ROOT / "data" / "mir-shapes.jsonc")
+        doc = mfq.load_jsonc(DATA / "mir-shapes.jsonc")
         opcodes = mfq.validate_shapes(doc)
         self.assertGreater(len(opcodes), 100)
 

@@ -41,7 +41,7 @@ class Snapshot(unittest.TestCase):
         for target in TARGETS:
             with self.subTest(target=target):
                 contract = json.loads(
-                    (ROOT / "data" / ("%s-contract.json" % target)).read_text())
+                    (ROOT / "src" / "gisel_ab" / "data" / ("%s-contract.json" % target)).read_text())
                 for direction in ("G", "U"):
                     snap = self.entries["%s/%s" % (direction, target)]["snapshot"]
                     self.assertEqual(snap["inc_sha256"],

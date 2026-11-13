@@ -15,7 +15,7 @@ NAMES = [name for name in targets.names() if name != "x86-ctor"]
 
 def plan(target):
     proc = subprocess.run(
-        ["bash", str(ROOT / "run-e2e.sh"), "--print-plan", target,
+        ["bash", str(ROOT / "scripts" / "e2e" / "run-e2e.sh"), "--print-plan", target,
          "/tmp/tree", "/tmp/build", "/tmp/inc", "/tmp/out"],
         cwd=ROOT, capture_output=True, text=True)
     if proc.returncode:
@@ -39,7 +39,9 @@ class RunE2E(unittest.TestCase):
                 self.assertEqual(values["SOURCE"], doc["source"])
                 self.assertEqual(values["FEATURES"], doc["features"])
                 self.assertEqual(values["AXES"], doc["axes"] or "")
-                self.assertEqual(values["BUILDER"], doc["runner"]["builder"])
+                self.assertEqual(Path(values["BUILDER"]).name,
+                                 doc["runner"]["builder"])
+                self.assertTrue(Path(values["BUILDER"]).is_file())
                 self.assertEqual(values["EXPECTED_QUERIES"],
                                  str(doc["diff_policy"]["expected_queries"]))
                 self.assertEqual(values["ALLOW_REF_ASSERTS"],
@@ -53,11 +55,11 @@ class RunE2E(unittest.TestCase):
 
     def test_shims_are_thin(self):
         for name in NAMES:
-            path = ROOT / ("run-%s-end-to-end.sh" % name)
+            path = ROOT / "scripts" / "e2e" / ("run-%s-end-to-end.sh" % name)
             lines = path.read_text().splitlines()
             self.assertLessEqual(len(lines), 6, path.name)
             self.assertIn("run-e2e.sh", path.read_text())
-        self.assertFalse((ROOT / "run-end-to-end.sh").exists())
+        self.assertFalse((ROOT / "scripts" / "e2e" / "run-end-to-end.sh").exists())
 
 
 if __name__ == "__main__":

@@ -30,13 +30,13 @@ X86 的 3,019 → 3,013（6 条）与 RISC-V 的 6,086 → 6,084（2 条）是�
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./build-inc.sh <gisel>/tests/corpus/X86LegalizerInfo.gisel /tmp/ab-x86/x86.inc
-./build-inc.sh <gisel>/tests/corpus/AArch64LegalizerInfo.gisel /tmp/ab-a64/a64.inc
-./build-inc.sh <gisel>/tests/corpus/RISCVLegalizerInfo.gisel /tmp/ab-rv/rv.inc
+./scripts/inc/build-inc.sh <gisel>/tests/corpus/X86LegalizerInfo.gisel /tmp/ab-x86/x86.inc
+./scripts/inc/build-inc.sh <gisel>/tests/corpus/AArch64LegalizerInfo.gisel /tmp/ab-a64/a64.inc
+./scripts/inc/build-inc.sh <gisel>/tests/corpus/RISCVLegalizerInfo.gisel /tmp/ab-rv/rv.inc
 
-./run-x86-end-to-end.sh     TREE BUILD /tmp/ab-x86/x86.inc /tmp/ab-x86/out
-./run-aarch64-end-to-end.sh TREE BUILD /tmp/ab-a64/a64.inc /tmp/ab-a64/out
-./run-riscv-end-to-end.sh   TREE BUILD /tmp/ab-rv/rv.inc   /tmp/ab-rv/out
+./scripts/e2e/run-x86-end-to-end.sh     TREE BUILD /tmp/ab-x86/x86.inc /tmp/ab-x86/out
+./scripts/e2e/run-aarch64-end-to-end.sh TREE BUILD /tmp/ab-a64/a64.inc /tmp/ab-a64/out
+./scripts/e2e/run-riscv-end-to-end.sh   TREE BUILD /tmp/ab-rv/rv.inc   /tmp/ab-rv/out
 ```
 
 ## SHA256
@@ -108,16 +108,16 @@ WP2 记录。
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./run-x86-end-to-end.sh     TREE BUILD /tmp/g-run/x86/X86LegalizerInfo.inc /tmp/g-run/x86/out
-./run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64/AArch64LegalizerInfo.inc /tmp/g-run/a64/out
-./run-riscv-end-to-end.sh   TREE BUILD /tmp/g-run/rv/RISCVLegalizerInfo.inc   /tmp/g-run/rv/out
-./run-arm-end-to-end.sh     TREE BUILD /tmp/g-run/arm/ARMLegalizerInfo.inc   /tmp/g-run/arm/out
-./run-mips-end-to-end.sh    TREE BUILD /tmp/g-run/mips/MipsLegalizerInfo.inc /tmp/g-run/mips/out
-./run-ppc-end-to-end.sh     TREE BUILD /tmp/g-run/ppc/PowerPCLegalizerInfo.inc /tmp/g-run/ppc/out
-./run-m68k-end-to-end.sh    TREE BUILD /tmp/g-run/m68k/M68kLegalizerInfo.inc /tmp/g-run/m68k/out
-./run-wasm-end-to-end.sh    TREE BUILD /tmp/g-run/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-run/wasm/out
-./run-spirv-end-to-end.sh   TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out
-VERIFY_FROZEN=1 ./verify-evidence.sh   # 39/39 entries pass
+./scripts/e2e/run-x86-end-to-end.sh     TREE BUILD /tmp/g-run/x86/X86LegalizerInfo.inc /tmp/g-run/x86/out
+./scripts/e2e/run-aarch64-end-to-end.sh TREE BUILD /tmp/g-run/a64/AArch64LegalizerInfo.inc /tmp/g-run/a64/out
+./scripts/e2e/run-riscv-end-to-end.sh   TREE BUILD /tmp/g-run/rv/RISCVLegalizerInfo.inc   /tmp/g-run/rv/out
+./scripts/e2e/run-arm-end-to-end.sh     TREE BUILD /tmp/g-run/arm/ARMLegalizerInfo.inc   /tmp/g-run/arm/out
+./scripts/e2e/run-mips-end-to-end.sh    TREE BUILD /tmp/g-run/mips/MipsLegalizerInfo.inc /tmp/g-run/mips/out
+./scripts/e2e/run-ppc-end-to-end.sh     TREE BUILD /tmp/g-run/ppc/PowerPCLegalizerInfo.inc /tmp/g-run/ppc/out
+./scripts/e2e/run-m68k-end-to-end.sh    TREE BUILD /tmp/g-run/m68k/M68kLegalizerInfo.inc /tmp/g-run/m68k/out
+./scripts/e2e/run-wasm-end-to-end.sh    TREE BUILD /tmp/g-run/wasm/WebAssemblyLegalizerInfo.inc /tmp/g-run/wasm/out
+./scripts/e2e/run-spirv-end-to-end.sh   TREE BUILD /tmp/g-run/spirv/SPIRVLegalizerInfo.inc /tmp/g-run/spirv/out
+VERIFY_FROZEN=1 ./scripts/verify-evidence.sh   # 39/39 entries pass
 ```
 
 ## 2026-11-11 G 侧刷新（gisel `de8dbbf`）

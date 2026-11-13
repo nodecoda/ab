@@ -4,6 +4,13 @@ on:
   push:
   pull_request:
 
+env:
+  # The evidence cohort's gisel; `verify-evidence` is content-addressed, so
+  # this pin only decides which gisel answers the offline suites.  Keep the
+  # value in one place: every job below inherits it.
+  GISEL_REF: e5610768e86d6aac3ffad5902d44937d5286c230
+  ANCHOR_REF: 518779ca9a23bf8ea5a615d887cce6dc30d80417
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,33 +21,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          # `ab` is a local checkout alias, not the repository name.  The
-          # repository is nodecoda/gisel-ab; scripts still resolve the
-          # pre-rename sibling name during the transition.
           path: ab
-          # The release-manifest test walks RELEASE.json's history, and the
+          # The release-manifest test walks RELEASE.json's history and the
           # verification test resolves the cohort tag.
           fetch-depth: 0
           fetch-tags: true
-      # The harness only imports `gisel.jsonl` from gisel, but the tests and
-      # `env.sh` resolve it as a sibling checkout.
       - uses: actions/checkout@v7
         with:
           repository: nodecoda/gisel
           path: gisel
-          # The release-manifest test checks that the recorded cohort commit
-          # is an ancestor of this checkout, so the history must be present.
           fetch-depth: 0
-          # The tests and the offline suites need the gisel that resolves
-          # p0:* per configuration and re-records the RISC-V goldens.  This
-          # is the commit r4 names; verify-evidence is content-addressed, so
-          # it checks the artifacts, not this pin.
-          ref: d194df4813197b4d50efd519a0ef0f32a454eaf8
-      - name: show the gisel pin
-        run: git -C gisel rev-parse HEAD
+          ref: ${{ env.GISEL_REF }}
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
+      - name: show the gisel pin
+        run: git -C gisel rev-parse HEAD
       - name: unit tests
         working-directory: ab
         run: |
@@ -48,26 +44,26 @@ jobs:
           GISEL_SRC="$GITHUB_WORKSPACE/gisel" python3 -m pytest tests -q
       - name: frozen evidence still matches
         working-directory: ab
-        run: VERIFY_FROZEN=1 ./verify-evidence.sh
+        run: VERIFY_FROZEN=1 ./scripts/verify-evidence.sh
       - name: vertical slice from frozen artifacts
         working-directory: ab
         run: |
           for target in riscv x86 aarch64; do
-            python3 vertical.py --target "$target" \
+            python3 ab.py vertical --target "$target" \
               --out "$RUNNER_TEMP/no-live-artifacts-$target" --verify-only --frozen
           done
-      - name: shellcheck the harness entry points
+      - name: single-entry help needs no LLVM
+        working-directory: ab
+        run: python3 ab.py --help
+      - name: shellcheck the shell entry points
         run: |
           sudo apt-get -qq update
           sudo apt-get -qq install -y shellcheck
-          shellcheck -S warning ab/*.sh
+          shellcheck -S warning ab/scripts/*.sh ab/scripts/*/*.sh
 
   suite:
-    # The offline suites answer the frozen queries with the current gisel,
-    # independently of the evidence cohort pin above.  `p0:*` resolution and
-    # the WIP that this replaces are gisel changes after a2005d2, so this job
-    # pins the gisel the suites were checked with instead of moving the
-    # evidence record.
+    # The offline suites answer the frozen queries with gisel, independently
+    # of the evidence cohort: they check the rules, not the recorded answers.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -77,11 +73,78 @@ jobs:
         with:
           repository: nodecoda/gisel
           path: gisel
-          ref: d194df4813197b4d50efd519a0ef0f32a454eaf8
+          ref: ${{ env.GISEL_REF }}
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: frozen offline suites
         working-directory: ab
+        run: GISEL_SRC="$GITHUB_WORKSPACE/gisel" python3 ab.py suite check --all
+
+  packaging:
+    # The wheel must be installable and must not carry the evidence tree.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ab
+      - uses: actions/checkout@v7
+        with:
+          repository: nodecoda/gisel
+          path: gisel
+          ref: ${{ env.GISEL_REF }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: build wheel and sdist
+        working-directory: ab
         run: |
-          GISEL_SRC="$GITHUB_WORKSPACE/gisel" python3 suite.py check --all
+          python3 -m pip install -q build
+          python3 -m build --wheel --sdist --outdir dist
+      - name: evidence is not in the wheel
+        working-directory: ab
+        run: |
+          test "$(unzip -l dist/*.whl | grep -c 'evidence/')" = 0
+          test "$(tar -tzf dist/*.tar.gz | grep -c '/evidence/')" = 0
+      - name: install and smoke
+        working-directory: ab
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q dist/*.whl
+          "$RUNNER_TEMP/venv/bin/gisel-ab" --help
+          GISEL_SRC="$GITHUB_WORKSPACE/gisel" \
+            "$RUNNER_TEMP/venv/bin/gisel-ab" suite check --target m68k
+          # doctor must fail with an actionable rc=2, not a traceback
+          if "$RUNNER_TEMP/venv/bin/gisel-ab" doctor; then exit 1; fi
+
+  cohort:
+    # Fingerprints only: no gate is re-run.  A tracked input that changed
+    # without a new cohort makes this red.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ab
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/checkout@v7
+        with:
+          repository: nodecoda/gisel
+          path: gisel
+          fetch-depth: 0
+          ref: ${{ env.GISEL_REF }}
+      - uses: actions/checkout@v7
+        with:
+          repository: nodecoda/gisel-anchor
+          path: gisel-anchor
+          fetch-depth: 0
+          ref: ${{ env.ANCHOR_REF }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: cohort fingerprints
+        working-directory: ab
+        env:
+          GISEL_SRC: ${{ github.workspace }}/gisel
+          UPSTREAM_SOURCE: ${{ github.workspace }}/gisel-anchor
+        run: python3 ab.py cohort check

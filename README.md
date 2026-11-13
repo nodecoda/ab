@@ -1,9 +1,33 @@
 # gisel-ab — differential harness
 
 This is the workbench entry point for the LLVM legalizer differential loop.
-It is **not** part of gisel; the boundary is `docs/SCOPE.md`.  It consumes a
+It is **not** part of gisel; the boundary is `SCOPE.md`.  It consumes a
 `.gisel` source (or a prebuilt `.inc`) and an answerless query JSONL, and
 compares the official legalizer with one that includes the generated fragment.
+
+## Layout and entry points
+
+One command surface, one package, three layers of files:
+
+```text
+ab.py                       the checkout entry point: python3 ab.py <verb>
+src/gisel_ab/               the package (cli, l0/, mir/, cpp/, data/)
+scripts/                    shell entry points (runners, domain, e2e, negative, inc)
+evidence/                   frozen artifacts; repo-only, never in the wheel
+tests/  docs/               the suite and the write-ups
+```
+
+`ab.py --help` is the verb table: `doctor run mir verify diff l3 suite
+vertical cohort evidence plan`.  Each verb keeps its own parser and its own
+exit codes; `ab.py` only routes.  `pip install .` gives the same table as
+`gisel-ab`, and the installed wheel carries the code, the target registry,
+the suite snapshots and the C++ runner sources -- but not `evidence/`, which
+a verifier must be able to see in a checkout.
+
+The internals stay addressable for reproduction: `ab.py closure`,
+`ab.py attribute`, `ab.py queries`, `ab.py swap`, `ab.py inject`,
+`ab.py baseline`, `ab.py replay-frozen`, `ab.py refresh-counts`,
+`ab.py mir-from-query`, `ab.py mir-replay`, `ab.py mir-config-check`.
 
 ## Ten minutes
 
@@ -19,21 +43,21 @@ each costs, and what a green result does and does not prove.
 
 ## Offline check
 
-`suite.py check --all` compares our answers with a frozen official snapshot
+`ab.py suite check --all` compares our answers with a frozen official snapshot
 per target -- no LLVM, no build, no network.  It is the cheapest way to ask
 "do the rules still say what the official legalizer said?" and it refuses to
 run when the snapshot's shas no longer match the corpus.  Format and how to
-add a target: `suite/README.md`.
+add a target: `src/gisel_ab/data/suite/README.md`.
 
 ## Two layers
 
-- **L0 (`ab.py run` / `diff.py`)** compares `getAction()` for one query:
+- **L0 (`ab.py run` / `ab.py diff`)** compares `getAction()` for one query:
   `(opcode, types, mem, imms) -> (action, type_idx, new_type)`.
-- **MIR/llc (`mir-replay.py`)** replays real `.mir` through
+- **MIR/llc (`ab.py mir-replay`)** replays real `.mir` through
   `llc -run-pass=legalizer` and diffs the official and replaced libraries.
-- **L3 (`l3.py`)** runs the whole `check-llvm` twice (baseline, then with the
+- **L3 (`ab.py l3`)** runs the whole `check-llvm` twice (baseline, then with the
   three constructors pointing at gisel's `.inc`) and compares lit's per-test
-  results, not just the totals.  `l3.py compare` fails on a test that exists
+  results, not just the totals.  `ab.py l3 compare` fails on a test that exists
   on one side only or whose result changed.
 
 L0 is the rule-translation gate. The MIR layer is the behavior gate: it also
@@ -53,7 +77,7 @@ export AB_TREE=/path/to/llvm-project      # pin-compatible checkout
 export AB_BUILD=/path/to/build            # its ninja build
 ```
 
-`cohort.py` additionally accepts `COHORT_TREE` and `COHORT_LLVM`.  A missing
+`ab.py cohort` additionally accepts `COHORT_TREE` and `COHORT_LLVM`.  A missing
 root is an input error (rc=2) with the exact `export` line to run.
 
 Start here, before any run:
@@ -81,22 +105,22 @@ python3 ab.py run --target x86-ctor \
   --compare full
 ```
 
-`run-x86-end-to-end.sh TREE BUILD x86.inc OUT STATE` does the same
+`scripts/e2e/run-x86-end-to-end.sh TREE BUILD x86.inc OUT STATE` does the same
 without the ledger: official from the pinned constructor, ours after swapping
 the body, then `diff.json`.
 
 ## Cohort
 
-`cohort.py` turns a release cut into four verbs:
+`ab.py cohort` turns a release cut into four verbs:
 
 ```sh
-python3 cohort.py plan                 # gates, repos, inputs, online gates
-python3 cohort.py tag cohort-YYYY-MM-DD-rN
-python3 cohort.py verify --clone /tmp/cohort --jobs 2
-python3 cohort.py check [--worktree]   # FRESH / STALE per gate, no re-run
+python3 ab.py cohort plan                 # gates, repos, inputs, online gates
+python3 ab.py cohort tag cohort-YYYY-MM-DD-rN
+python3 ab.py cohort verify --clone /tmp/cohort --jobs 2
+python3 ab.py cohort check [--worktree]   # FRESH / STALE per gate, no re-run
 ```
 
-`RELEASE.json` names the commits and gate commands.  `cohort.py` adds the
+`RELEASE.json` names the commits and gate commands.  `ab.py cohort` adds the
 repo and input files for each gate and stores a git-blob fingerprint in
 `VERIFICATION.json`.  `check` compares the record with the tagged commits;
 `check --worktree` compares it with what is on disk now, which is how a
@@ -109,22 +133,22 @@ The record is a child of the tag: the tag commit has no r3 record yet, so
 
 ## Full domain
 
-`run-domain.sh TARGET TREE BUILD INC OUT` asks every point the declared value
+`scripts/domain/run-domain.sh TARGET TREE BUILD INC OUT` asks every point the declared value
 space enumerates, per config, for the six adapters without a dedicated script
 (x86, aarch64 and riscv keep their own).  The shape is pinned in
 `data/domain.json`: per config, how many queries, how many both sides refuse,
 how many only the reference refuses.  A drift fails; it does not absorb.
 
-`run-g-negative.sh TARGET OPCODE OUT` is the G-side negative control:
+`scripts/negative/run-g-negative.sh TARGET OPCODE OUT` is the G-side negative control:
 replace one builder chain with `.unsupported()`, run the target script, and
 require every disagreement to be attributed to that builder.
 
 ## Frozen replay
 
-`replay-frozen.py TARGET --tree TREE --build BUILD --out OUT --direction both`
+`ab.py replay-frozen TARGET --tree TREE --build BUILD --out OUT --direction both`
 rebuilds the target's include and runner, answers the frozen `G`/`U` query
 sets, and requires the same numbers as the committed official answers.  This
-is the gate to run after editing a `.gisel` file: `verify-evidence.sh` only
+is the gate to run after editing a `.gisel` file: `scripts/verify-evidence.sh` only
 proves the old artifacts did not change.  See `docs/REPLAY-FROZEN.md`.
 
 ## Adoption branches
@@ -138,7 +162,7 @@ the inc-generation policy and the rollback rule are in `docs/ADOPT.md`.
 
 ## Multi-step closure
 
-`closure.py` answers the question a one-step A/B leaves open: does the whole
+`ab.py closure` answers the question a one-step A/B leaves open: does the whole
 `legalize` loop agree?  It feeds every non-terminal answer's `new_type` back in
 as a new query, asks both builds, and stops at a fixed point.  Because the
 resulting state set is closed under the successor, one-step equality there
@@ -149,28 +173,27 @@ so both are needed.  Numbers, the pinned AArch64 asserts and the boundary are in
 
 ## Vertical slice
 
-`vertical.py` is the end-to-end slice for one target: G/U questions, both
+`ab.py vertical` is the end-to-end slice for one target: G/U questions, both
 negative controls, the full domain, MIR L1/L2, and optionally L3, all checked
 against `data/<target>-contract.json`.
 
 ```sh
-python3 vertical.py --target riscv   --tree TREE --build BUILD --out /tmp/rv [--l3]
-python3 vertical.py --target x86     --out /tmp/x --verify-only [--l3]
-python3 vertical.py --target aarch64 --out /tmp/a --verify-only --frozen
+python3 ab.py vertical --target riscv   --tree TREE --build BUILD --out /tmp/rv [--l3]
+python3 ab.py vertical --target x86     --out /tmp/x --verify-only [--l3]
+python3 ab.py vertical --target aarch64 --out /tmp/a --verify-only --frozen
 ```
 
-`riscv_vertical.py` stays as a thin shim over the same code, so the older
-invocations keep working.  `--record` writes the contract from the run that
-just finished; it is for adding a target, not for refreshing one.
+`--record` writes the contract from the run that just finished; it is for
+adding a target, not for refreshing one.
 
-`VERIFY_FROZEN=1 ./verify-evidence.sh` reads only the committed `oracle/`
+`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh` reads only the committed `evidence/`
 and `data/closure/` copies, so CI proves the repo alone replays the recorded
-evidence.  `./adopt-check.sh` fetches the three adoption branches and
+evidence.  `./scripts/adopt-check.sh` fetches the three adoption branches and
 compares the committed `.inc` bytes with the gisel artifacts.
 
 `--frozen` rebuilds the artifact layout from the committed copies under
-`oracle/` (G/U and both negative controls come from `oracle/<id>/`, the domain
-summary and the two MIR reports from `oracle/<target>-vertical/`). It needs no
+`evidence/` (G/U and both negative controls come from `evidence/<id>/`, the domain
+summary and the two MIR reports from `evidence/<target>-vertical/`). It needs no
 build tree and no `/tmp` state, so CI runs it for all three targets on every
 push (`.github/workflows/ci.yml`).
 
@@ -179,7 +202,7 @@ Evidence: `docs/EVIDENCE-riscv.md`, `docs/EVIDENCE-domain.md`.
 ## MIR/llc regression
 
 ```sh
-python3 mir-replay.py --layer upstream \
+python3 ab.py mir-replay --layer upstream \
   --target x86 --target aarch64 --target riscv \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore \
@@ -187,13 +210,13 @@ python3 mir-replay.py --layer upstream \
 ```
 
 `--prepare` snapshots the official `libLLVM<T>CodeGen.so`, applies the
-generated `.inc` through `swap-source-ctor.py`, rebuilds only that library,
+generated `.inc` through `ab.py swap`, rebuilds only that library,
 snapshots the replaced one, restores the source and rebuilds the baseline.
 Replay then runs one `bin/llc` against both snapshots via `LD_LIBRARY_PATH`,
 so the tree is never left patched while tests run.
 
 `--negative-control OPCODE` rebuilds a mutant include with
-`inject-missing-opcode.py` and requires the replay to report `diff > 0`;
+`ab.py inject` and requires the replay to report `diff > 0`;
 otherwise the control fails and the command exits 1.
 
 ### L2: queries become MIR
@@ -205,7 +228,7 @@ python3 ab.py mir --target x86 --queries /tmp/x86.cases.jsonl \
   --out /tmp/l2-x86 [--negative-control G_ADD] [--limit N] --json
 ```
 
-`mir-from-query.py` turns each answerless query into a minimal `.mir` (one
+`ab.py mir-from-query` turns each answerless query into a minimal `.mir` (one
 `# RUN:` line each) using `data/mir-shapes.jsonc` and `data/mir-configs.json`;
 queries that cannot be spelled as real MIR are counted, not dropped.  Every
 def of the instruction under test gets a `COPY` sink, because the legalizer
@@ -214,7 +237,7 @@ preflighted with `-run-pass=none` (parse + machine verifier only), then
 replayed with the same buckets as L1.  Runs that abort on both sides are
 retried with `-global-isel-abort=0` so the unlegalized MIR is still compared.
 
-`mir-config-check.py --target T --features F` checks that every gisel config
+`ab.py mir-config-check --target T --features F` checks that every gisel config
 has a realizable llc spelling; `--mutate CONFIG` is its negative control.
 
 `--compare action` is the coarse smoke gate; `full` (default) compares
@@ -237,20 +260,20 @@ is back on the baseline include.
 | `mips` | generated constructor object | 1,656 queries; 5 configs across MSA / MIPS32r2 / unaligned access; 9 queries abort upstream (`--allow-ref-asserts 9`) |
 | `spirv` | generated constructor object | 5,689 queries; 6 configs across kernel/shader × spirv32/64 × extension sets; 4 queries abort on both sides (`--expect-unanswerable 4`, upstream `changeElementSizeTo` overload) |
 
-Adapters live in `targets/*.json`: include path, library, ninja
+Adapters live in `src/gisel_ab/data/targets/*.json`: include path, library, ninja
 target, runner builder, feature table, optional axes, query-count contract.
 
 `query_count` is the current generator's output, not a hand-written constant:
-`./refresh-counts.py --check` recomputes every adapter and exits 1 on drift.
+`ab.py refresh-counts --check` recomputes every adapter and exits 1 on drift.
 A frozen `EVIDENCE.json` entry keeps the count of *its own* query file, so the
 two can differ after the corpus changes and both are still correct.
 
 A new target's runner is a ~30 line file: include its subtarget and legalizer
 headers, alias `TargetSubtarget`/`TargetLegalizer`, include
 `query_runner_common.h`, then return the config table, the target
-initializers, and the legalizer constructor.  `build-query-runner.sh` derives
+initializers, and the legalizer constructor.  `scripts/runners/build-runner.sh` derives
 the include paths and the `libLLVM<TARGET>{CodeGen,Desc,Info}` list from the
-target name; `build-m68k-runner.sh` is the thin per-target wrapper the adapter
+target name; `scripts/runners/build-m68k-runner.sh` is the thin per-target wrapper the adapter
 names.
 
 ## Artifacts
@@ -266,7 +289,7 @@ STATE/ledger.jsonl        one line per run (input hashes, counts, rc)
 Assertions do not kill the batch: the runner arms a `sigsetjmp` recovery point
 around `getAction()`, writes `status:"unanswerable"` for a query that aborts,
 and keeps answering (AArch64's full domain aborts 39,056 times per config).
-`run-queries.py` still restarts on a real crash (SIGSEGV) and marks that query
+`ab.py queries` still restarts on a real crash (SIGSEGV) and marks that query
 the same way, so the answer file stays parallel to the query file.  A one-sided
 assertion is a difference (`ref_asserted`), not agreement.
 

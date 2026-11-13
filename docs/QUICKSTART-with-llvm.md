@@ -63,9 +63,9 @@ target=m68k compare=full queries=35 agree=35 disagree=0 unanswerable=0 ... rc=0
 ## 3 MIR 层：真实 `.mir`
 
 ```sh
-python3 mir-from-query.py --target m68k --queries /tmp/m68k.cases.jsonl \
+python3 ab.py mir-from-query --target m68k --queries /tmp/m68k.cases.jsonl \
   --out /tmp/mir-m68k
-python3 mir-replay.py --target m68k --mir /tmp/mir-m68k \
+python3 ab.py mir-replay --target m68k --mir /tmp/mir-m68k \
   --tree "$AB_TREE" --build "$AB_BUILD" --out /tmp/mir-out
 ```
 
@@ -75,8 +75,8 @@ python3 mir-replay.py --target m68k --mir /tmp/mir-m68k \
 ## 4 L3：整树回归
 
 ```sh
-python3 l3.py run --out /tmp/l3
-python3 l3.py compare /tmp/l3 --json /tmp/l3/summary.json
+python3 ab.py l3 run --out /tmp/l3
+python3 ab.py l3 compare /tmp/l3 --json /tmp/l3/summary.json
 ```
 
 `run` 在恢复后的树上跑一遍 lit，再换成我们的构造器跑一遍；`compare` 逐条

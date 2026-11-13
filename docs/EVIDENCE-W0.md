@@ -2,7 +2,7 @@
 
 > 2026-11-12。对应规划 `2026-11-12-architecture-remediation.md` 的 M1。
 > 证据绑定提交 `9c0391fff960f7f77064cfe6bcb0dcf71731f21b`。
-> 基线文件：`data/baseline-2026-11-12.json`
+> 基线文件：`src/gisel_ab/data/baseline-2026-11-12.json`
 > sha256 `edd96ea3bb75b3d8f26918f8c1f787481ed1539d98bedfe8cb5c07ea80ad837e`。
 
 ## 1 结论
@@ -102,7 +102,7 @@ unanswerable。九个 target 的 `missing_in_both` 和 `unexpected` 全为 0。
 
 ### 3.2 冻结 oracle 回放（不重建）
 
-对 `oracle/{G,U}/<target>` 的官方/我方答案重跑
+对 `evidence/{G,U}/<target>` 的官方/我方答案重跑
 `diff.py --queries`，九个 target 全部 `missing_in_both=0, unexpected=0`。
 `D/x86`（91,340 key）同样为 0/0。唯一 rc=1 是 `G/mips` 的 9 条已登记
 ref-assert，不是新差异。

@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SCRIPT = ROOT / "verify-evidence.sh"
+SCRIPT = ROOT / "scripts" / "verify-evidence.sh"
 
 
 def sha(path):

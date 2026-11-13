@@ -15,10 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GISEL = ROOT.parent / "gisel"
 sys.path.insert(0, str(GISEL))
 
-_spec = importlib.util.spec_from_file_location("u_attribution",
-                                               ROOT / "u-attribution.py")
-u_attribution = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(u_attribution)
+from gisel_ab.l0 import u_attribution  # noqa: E402
 
 query_key = u_attribution.query_key
 

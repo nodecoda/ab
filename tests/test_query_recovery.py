@@ -134,7 +134,7 @@ class QueryRecovery(unittest.TestCase):
                         unreachable[2])
 
     def test_source_keeps_the_fatal_handler_installed(self):
-        text = (ROOT / "query-recovery.h").read_text()
+        text = (ROOT / "src" / "gisel_ab" / "cpp" / "query-recovery.h").read_text()
         self.assertIn("install_fatal_error_handler", text)
         self.assertIn('dlsym(RTLD_NEXT, "__assert_fail")', text)
 

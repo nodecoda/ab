@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 GISEL = Path(os.environ.get("GISEL_SRC") or ROOT.parent / "gisel")
-SCRIPT = ROOT / "closure.py"
+SCRIPT = [sys.executable, "-m", "gisel_ab.l0.closure"]
 
 RUNNER = '''\
 #!/usr/bin/env python3
@@ -96,7 +96,7 @@ class Loop(unittest.TestCase):
     def run_closure(self, ref, ours, *extra):
         out = self.dir / "out"
         proc = subprocess.run(
-            [sys.executable, str(SCRIPT), "--target", "x86",
+            [*SCRIPT, "--target", "x86",
              "--seed", str(self.seed), "--official", str(ref),
              "--ours", str(ours), "--out", str(out), *extra],
             capture_output=True, text=True)

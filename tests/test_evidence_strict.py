@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EVIDENCE = ROOT / "evidence.py"
+EVIDENCE = [sys.executable, "-m", "gisel_ab.evidence"]
 
 
 def sha(path):
@@ -21,7 +21,7 @@ def run_manifest(entries, direction="all", frozen=True, gisel=None):
     tmp = Path(tempfile.mkdtemp())
     manifest = tmp / "EVIDENCE.json"
     manifest.write_text(json.dumps({"schema": 1, "entries": entries}))
-    args = [sys.executable, str(EVIDENCE), "verify", "--manifest", str(manifest),
+    args = [*EVIDENCE, "verify", "--manifest", str(manifest),
             "--direction", direction]
     if frozen:
         args.append("--frozen")
@@ -184,7 +184,7 @@ class Shape(unittest.TestCase):
             "official_build": {"path": str(tmp / "no-build"), "libs": {}},
         }))
         proc = subprocess.run(
-            [sys.executable, str(EVIDENCE), "verify", "--manifest", str(manifest),
+            [*EVIDENCE, "verify", "--manifest", str(manifest),
              "--frozen"], capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stdout)
         self.assertIn("SKIP official_build", proc.stdout)
@@ -198,7 +198,7 @@ class Shape(unittest.TestCase):
             "official_build": {"path": str(tmp / "no-build"), "libs": {}},
         }))
         proc = subprocess.run(
-            [sys.executable, str(EVIDENCE), "verify", "--manifest", str(manifest)],
+            [*EVIDENCE, "verify", "--manifest", str(manifest)],
             capture_output=True, text=True)
         self.assertEqual(proc.returncode, 1, proc.stdout)
         self.assertIn("is not present", proc.stdout)
@@ -240,7 +240,7 @@ class AdoptFetch(unittest.TestCase):
 
     def run_check(self, manifest, repo):
         return subprocess.run(
-            [sys.executable, str(EVIDENCE), "adopt-check",
+            [*EVIDENCE, "adopt-check",
              "--manifest", str(manifest), "--fork", "file://" + str(repo),
              "--target", "x86"], capture_output=True, text=True)
 

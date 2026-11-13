@@ -57,7 +57,7 @@ aarch64 / riscv 在独立重链后 `.so` 字节不同（`e49c03ec…` / `f32be74
 
 ```sh
 cd /home/ubuntu/llvm/gisel-ab
-python3 mir-replay.py --layer upstream --target x86 --target aarch64 --target riscv \
+python3 ab.py mir-replay --layer upstream --target x86 --target aarch64 --target riscv \
   --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore \
   --out /tmp/mir-l1-final5 --prepare --json
 ```
@@ -99,12 +99,12 @@ L1 的题面是上游自己写的 MIR。L2 把 gisel 的无答案查询变成最
 
 ```sh
 # 一、查询 -> MIR（自检：解析 + 机器验证器）
-python3 mir-from-query.py --target aarch64 --queries /tmp/a64.cases.jsonl \
+python3 ab.py mir-from-query --target aarch64 --queries /tmp/a64.cases.jsonl \
   --out /tmp/mir-a64 --preflight-llc $BUILD/bin/llc \
   --preflight-lib /tmp/mir-l1-final5/official/aarch64
 
 # 二、回放（快照官方库、换源重建、恢复基线）
-python3 mir-replay.py --layer generated --mir /tmp/mir-a64 --target aarch64 \
+python3 ab.py mir-replay --layer generated --mir /tmp/mir-a64 --target aarch64 \
   --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore \
   --out /tmp/mir-l2-a64 --prepare
 
@@ -153,7 +153,7 @@ python3 -m gisel cases tests/corpus/RISCVLegalizerInfo.gisel \
 `312a9a6` 现生成）：三个 target 的分母和桶与上表逐项相同——x86 3,014 → 2,390、
 aarch64 12,226 → 8,774、riscv 6,086 → 4,203；`diff` 全 0，timeout 仍是
 0 / 63 / 2。查询文件 sha256 分别是 `f6923a39…` / `3fbf0178…` / `4f027ac8…`
-（riscv 与 `data/riscv-contract.json` 记录的一致）。三份报告连同
+（riscv 与 `src/gisel_ab/data/riscv-contract.json` 记录的一致）。三份报告连同
 `provenance.json` 冻结为 `EVIDENCE.json` 的 `MIR-L2/x86`、`MIR-L2/aarch64`、
 `MIR-L2/riscv`。
 
@@ -170,7 +170,7 @@ aarch64 12,226 → 8,774、riscv 6,086 → 4,203；`diff` 全 0，timeout 仍是
 ### 3.4 负控（三个 target 各一条）
 
 ```sh
-python3 mir-replay.py --layer generated --mir /tmp/mir-a64 --target aarch64 \
+python3 ab.py mir-replay --layer generated --mir /tmp/mir-a64 --target aarch64 \
   --tree … --build … --out /tmp/mir-l2-a64-neg --prepare \
   --negative-control G_ADD
 ```
@@ -224,7 +224,7 @@ L2 第一版在两个 target 上都报 `diff=0`，但那三个 0 都是假的：
 ## 4 L1 负控
 
 ```sh
-python3 mir-replay.py --layer upstream --target x86 \
+python3 ab.py mir-replay --layer upstream --target x86 \
   --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore \
   --out /tmp/mir-l1-neg5 --prepare --negative-control G_ADD --json
 ```
@@ -291,8 +291,8 @@ AArch64 `legalize-load-store-vector.mir` 的第一条 RUN 写成
 
 ```sh
 cd /home/ubuntu/llvm/gisel-ab
-python3 l3.py run --out /tmp/l3-final3
-python3 l3.py compare /tmp/l3-final3 --json /tmp/l3-final3/l3-summary.json
+python3 ab.py l3 run --out /tmp/l3-final3
+python3 ab.py l3 compare /tmp/l3-final3 --json /tmp/l3-final3/l3-summary.json
 ```
 
 `run` 依次做：基线轮（恢复后的树）→ 三个构造函数换成 `#include` 生成的
@@ -420,7 +420,7 @@ include 它，`ninja` 也不知道该重编。
 三个扩到六个。命令与 x86 相同：
 
 ```sh
-python3 mir-replay.py --layer upstream --target arm \
+python3 ab.py mir-replay --layer upstream --target arm \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore --out /tmp/mir-arm2 --prepare --json
 # rc=0, 13 s; official lib 45f4737b…, ours f47cf316…
@@ -447,18 +447,18 @@ python3 ab.py mir --target ppc --queries /tmp/ppc.queries.jsonl \
 # 94 queries -> 71 MIR; runs=71 same=70 both_abort=1 diff=0; abort0 compared 64
 ```
 
-`data/mir-configs.json` 增加了 `ppc/default`（powerpc64le，无 mattr）。
+`src/gisel_ab/data/mir-configs.json` 增加了 `ppc/default`（powerpc64le，无 mattr）。
 负控用 `G_FADD`（1 diff）；`G_ZEXT` / `G_BITCAST` 抓不到，因为 Unsupported
 和 Legal 在 legalizer 输出里都可能原样保留指令——负控要选会改变输出的动作。
 
 五个新条目已进 `EVIDENCE.json`（`MIR-L1/arm`、`MIR-L1/arm-neg`、
 `MIR-L1/ppc`、`MIR-L1/mips`、`MIR-L1/mips-neg`）；`VERIFY_FROZEN=1
-./verify-evidence.sh` 当时是 64/64（见 §6.7–§6.9 后的 76/76）。
+./scripts/verify-evidence.sh` 当时是 64/64（见 §6.7–§6.9 后的 76/76）。
 
 ### 6.7 2026-11-12：ARM / Mips 的 L2（新增）
 
-`data/mir-configs.json` 增加了 `arm`（7 个配置）与 `mips`（5 个配置）。
-`python3 mir-config-check.py --target arm|mips --features …` 对每个配置各探一次
+`src/gisel_ab/data/mir-configs.json` 增加了 `arm`（7 个配置）与 `mips`（5 个配置）。
+`python3 ab.py mir-config-check --target arm|mips --features …` 对每个配置各探一次
 `llc`，两个 target 都返回 `ok`；mips 的 msa 配置必须同时给 `+msa,+fp64`，
 否则 `llc` 直接报 `MSA requires 64-bit FPU register file`。
 
@@ -489,13 +489,13 @@ python3 ab.py mir --target mips --queries /tmp/mips.queries.jsonl \
 一起换成 `.unsupported()`，这是规则集粒度，不是单条规则。
 
 四条新条目（`MIR-L2/{arm,arm-neg,mips,mips-neg}`）已冻结；
-`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 16/16。
+`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh MIR` 是 16/16。
 
 ### 6.8 2026-11-12：M68k / WebAssembly 的 L2（新增）
 
 这两个 target 的构造函数只有规则表（没有 Thumb1 提前返回一类的结构，也没有
 libcall 数据表），所以 `swap-source-ctor.py` 用通用函数体即可；`mir_libs.SWAPPABLE`
-扩到八个 target。`data/mir-configs.json` 新增 `m68k/default` 与 wasm 的四个配置
+扩到八个 target。`src/gisel_ab/data/mir-configs.json` 新增 `m68k/default` 与 wasm 的四个配置
 （`wasm32`/`wasm32-signext`/`wasm64`/`wasm64-signext`，`-mattr=+sign-ext` 对应
 `ST.hasSignExt()`）；`mir-config-check.py` 两个 target 都返回 `ok`。
 
@@ -525,13 +525,13 @@ M68k 的 10 条未建成是 8 条形状 + 2 条类型：原因集中在 `gep off
 Wasm 的 306 条未建成主要是 `G_ASHR`/`G_ROTL` 没有形状、以及机器验证器拒绝的位宽不匹配（48 条
 `operand types must be all-vector or all-scalar`、44 条 `bitcast sizes must match`）。
 
-四条新条目已冻结；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 20/20，
+四条新条目已冻结；`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh MIR` 是 20/20，
 全量 74/74。
 
 ### 6.9 2026-11-12：SPIR-V 的 L2（新增，O1 收口）
 
 SPIR-V 的配置轴与别的 target 不同：环境（kernel/shader）来自 triple，扩展走
-`--spirv-ext=+...`，不是 `-mattr`。`data/mir-configs.json` 的 `spirv` 段因此用
+`--spirv-ext=+...`，不是 `-mattr`。`src/gisel_ab/data/mir-configs.json` 的 `spirv` 段因此用
 `args` 表达 6 个配置：
 
 | 配置 | triple | 环境 | args |
@@ -566,7 +566,7 @@ python3 ab.py mir --target spirv --queries /tmp/spirv.queries.jsonl \
 `Types[4]`/`Types[16]` 越界（issue #17，已记为潜在 bug）。跳过使 `diff` 从 4
 变成 0，同时把这 41 条计入 `unbuildable_shape`，不是静默丢弃。
 
-两条新条目已冻结；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 是 22/22，
+两条新条目已冻结；`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh MIR` 是 22/22，
 全量 76/76。
 
 ## 7 未覆盖
@@ -598,7 +598,7 @@ cd /home/ubuntu/llvm/gisel && python3 -m unittest discover -q -s tests  # 246 te
 | L3 | `/tmp/l3-final3/`（`l3-summary.json`、`l3-provenance.json`） | `verify-evidence.sh` 拒绝 `swapped == baseline` 的组合轮 |
 
 MIR 题面本身在 `/tmp/mir-{x86,a64,rv}/<target>/`（`index.jsonl` 记每条查询
-落到 `built` 还是哪个 `unbuildable_*` 桶）。L3 的冻结证据在 `oracle/MIR-L3/`
+落到 `built` 还是哪个 `unbuildable_*` 桶）。L3 的冻结证据在 `evidence/MIR-L3/`
 （两轮 per-test JSONL + 汇总 + provenance，1.1 MiB gzip）；2026-11-11 的两份
 旧日志（`/tmp/l3-baseline.log`、`/tmp/l3-combined2.log`）只留作历史，它们只有
 汇总、没有逐条。

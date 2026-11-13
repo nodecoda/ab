@@ -19,11 +19,9 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("ab_suite", ROOT / "suite.py")
-suite = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(suite)
+from gisel_ab import suite  # noqa: E402
 
-M68K = ROOT / "suite" / "m68k"
+M68K = ROOT / "src" / "gisel_ab" / "data" / "suite" / "m68k"
 
 
 def sha(path):
@@ -42,10 +40,11 @@ class TheFrozenM68kSuite(unittest.TestCase):
         # The check shells out to gisel twice and reads three files; if it
         # ever grew a compiler dependency this would fail on PATH.
         done = subprocess.run(
-            [sys.executable, str(ROOT / "suite.py"), "check", "--target",
+            [sys.executable, "-m", "gisel_ab.suite", "check", "--target",
              "m68k"],
             cwd=ROOT, capture_output=True, text=True,
-            env={"PATH": "/usr/bin:/bin", "HOME": "/tmp"})
+            env={"PATH": "/usr/bin:/bin", "HOME": "/tmp",
+                 "PYTHONPATH": str(ROOT / "src")})
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertIn("agree=35", done.stdout)
 

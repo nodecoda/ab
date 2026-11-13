@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def classify(rc):
     proc = subprocess.run(
         ["bash", "-c",
-         'source "$1/env.sh"; classify_negative_rc "$2" "control"',
+         'source "$1/scripts/lib.sh"; classify_negative_rc "$2" "control"',
          "_", str(ROOT), str(rc)],
         capture_output=True, text=True)
     return proc.returncode, proc.stderr

@@ -43,7 +43,7 @@ python3 -m gisel gen tests/corpus/<T>LegalizerInfo.gisel --emit=inc --out <T>Leg
 ```text
 1) 构建 sha   采用分支编出的 <T>CodeGen 库 == MIR-L3 记录里 libs.swapped.<t>
 2) 全量回归   llvm-lit 一轮，80,596 条逐条与官方基线比 (status, expected)
-3) 冻结回放   oracle/{G,U}/<t> 的官方答案流上重放，flip 必须为 0
+3) 冻结回放   evidence/{G,U}/<t> 的官方答案流上重放，flip 必须为 0
 ```
 
 | target | 库 sha 与 L3 swapped 一致 | lit 逐条 | G 回放 | U 回放 |
@@ -75,7 +75,7 @@ riscv   /tmp/riscv-adopt/runner/runner.official
 一键漂移检测（会 fetch 三个分支，需要网络）：
 
 ```sh
-cd /home/ubuntu/llvm/gisel-ab && ./adopt-check.sh
+cd /home/ubuntu/llvm/gisel-ab && ./scripts/adopt-check.sh
 ```
 
 它比较分支内 `.inc` 的 sha 与 `gisel/tests/artifacts/<t>.inc`，并核对
@@ -98,7 +98,7 @@ sha256sum llvm/lib/Target/<T>/GISel/<T>LegalizerInfo.inc \
   （sha256 `6b2b6af0a02058a4ec5a4c4630ddadee0b822da9b0df44e04524e5934254f619`）。
   规则再变时，官方答案还能现场问出来。
 - **aarch64 / riscv**：树内没有对应的参照构造器。采用之后，官方答案只剩两条路：
-  `ab/oracle/{G,U}/<t>` 的冻结答案流（这就是回放用的参照），或 `git revert` 后重建。
+  `ab/evidence/{G,U}/<t>` 的冻结答案流（这就是回放用的参照），或 `git revert` 后重建。
   这是已知差异，不是“参照齐全”。
 
 ## 6 采用之后怎么改规则

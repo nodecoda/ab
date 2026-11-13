@@ -1,12 +1,12 @@
 # 改语料之后的 frozen 回放
 
 `verify-evidence.sh` 证明冻结物没变；这里证明**新生成物**还能回答同一批问题。
-`replay-frozen.py` 不重算官方侧：它把 `oracle/<G|U>/<target>/` 里的
+`replay-frozen.py` 不重算官方侧：它把 `evidence/<G|U>/<target>/` 里的
 `queries.jsonl` 和 `official.answers.jsonl` 解出来，用当前 `.gisel` 重新生成
 `inc`、重建 ours runner，再和冻结的官方答案逐条比较。
 
 ```sh
-python3 replay-frozen.py TARGET \
+python3 ab.py replay-frozen TARGET \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore \
   --out /tmp/replay-TARGET --direction both

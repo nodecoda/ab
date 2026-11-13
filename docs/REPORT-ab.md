@@ -7,7 +7,7 @@
 > 历史快照：文中的 `*.table.inc` 与 `--emit=table` 已于 2026-11-09 移除；
 > 冻结产物现在是 9 份（3 target × inc/check/core）+ `SHA256`。过程与结论不变。
 
-这是**工作台报告**，不是 gisel 的功能报告（边界见 `docs/SCOPE.md`）。它记录的
+这是**工作台报告**，不是 gisel 的功能报告（边界见 `SCOPE.md`）。它记录的
 是“拿 gisel 生成的 `.inc` 去替换现网实现，然后逐条比较答案”的过程和结论：
 
 - 工具链是 `gisel-ab/`（双 runner）和 `tools/refresh-oracle.sh`；

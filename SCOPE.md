@@ -92,7 +92,7 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 - 判据与 L1 相同；额外要求
   `built + unbuildable_shape + unbuildable_type + config_unrealizable == 输入查询数`。
 - config 自检：`mir-config-check.py` 要求每个 gisel 配置名在
-  `data/mir-configs.json` 里要么有 `mattr`、要么显式标成不可实现，并验证
+  `src/gisel_ab/data/mir-configs.json` 里要么有 `mattr`、要么显式标成不可实现，并验证
   `llc` 接受该 triple/flags；它**不**证明特征真值一致，那由 L2 回放本身证明。
 
 ### 6.3 L3：全量 check-llvm
@@ -143,7 +143,7 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 | D | 规则无关的声明值域全量对拍 | 9 个 | x86 91,340 / aarch64 8,432,640 / riscv 2,029,976 / spirv 3,472,080 / mips 18,745 / wasm 11,996 / arm 9,296 / ppc 1,005 / m68k 112（agree；unanswerable 另计） | `EVIDENCE.json` `D/*` |
 | U-full | 上游题面按全部配置展开 | 9 个 | x86 1,121,728 / aarch64 3,505,608 / riscv 3,028,496 / spirv 4,082,382 / arm 1,769,782 / mips 1,264,130 / wasm 1,011,304 / m68k 252,826 / ppc 252,826 | `EVIDENCE.json` `U-full/*` |
 | MIR L1 | 上游 `-run-pass=legalizer` MIR 回放 | x86, aarch64, riscv, arm, mips, ppc（名义） | x86/a64/rv 624 条 RUN（611 same + 13 双端 abort）；arm 43、mips 72、ppc 1（无 generic 指令）；diff 全 0 | `docs/REPORT-mir.md` §2、§6.6 |
-| MIR L2 | 由查询合成 MIR 回放 | 九个 target | 21,128 建成（20,016 same + 1,047 双端 abort + 65 timeout，diff 0） | `docs/REPORT-mir.md` §3、§6.6–§6.9、`data/riscv-contract.json` |
+| MIR L2 | 由查询合成 MIR 回放 | 九个 target | 21,128 建成（20,016 same + 1,047 双端 abort + 65 timeout，diff 0） | `docs/REPORT-mir.md` §3、§6.6–§6.9、`src/gisel_ab/data/riscv-contract.json` |
 | MIR L3 | `ninja check-llvm` 全量 | x86, aarch64, riscv 组合 | 80,655 个 lit 测试（逐条比 80,596） | `EVIDENCE.json` `MIR-L3/check-llvm`、`docs/REPORT-mir.md` §6 |
 
 约束：

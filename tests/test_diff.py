@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DIFF = ROOT / "diff.py"
+DIFF = [sys.executable, "-m", "gisel_ab.l0.diff"]
 
 
 def row(name, types, action="Legal", new_type="LLT_invalid", config="C0"):
@@ -32,7 +32,7 @@ def query(name, types, config="C0"):
 class Diff(unittest.TestCase):
     def run_diff(self, a, b, *flags, queries=None):
         pa, pb = write(a), write(b)
-        args = [sys.executable, str(DIFF), pa, pb, "--json", *flags]
+        args = [*DIFF, pa, pb, "--json", *flags]
         if queries is not None:
             args += ["--queries", write(queries)]
         r = subprocess.run(args, capture_output=True, text=True)
@@ -82,7 +82,7 @@ class Diff(unittest.TestCase):
                    query("G_SUB", ["s32"]), query("G_SUB", ["s64"])]
         pa, pb = write(prefix), write(prefix)
         r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--json",
+            [*DIFF, pa, pb, "--json",
              "--queries", write(queries)],
             capture_output=True, text=True)
         self.assertEqual(r.returncode, 1, r.stderr)
@@ -97,7 +97,7 @@ class Diff(unittest.TestCase):
         queries = [query("G_ADD", ["s32"]), query("G_ADD", ["s64"])]
         pa, pb = write(answers), write(answers)
         r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--json",
+            [*DIFF, pa, pb, "--json",
              "--queries", write(queries)],
             capture_output=True, text=True)
         self.assertEqual(r.returncode, 1, r.stderr)
@@ -111,7 +111,7 @@ class Diff(unittest.TestCase):
         queries = [query("G_ADD", ["s32"])]
         pa, pb = write(answers), write(answers)
         r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--json",
+            [*DIFF, pa, pb, "--json",
              "--queries", write(queries)],
             capture_output=True, text=True)
         self.assertEqual(r.returncode, 1, r.stderr)
@@ -125,7 +125,7 @@ class Diff(unittest.TestCase):
         qpath = Path(write([]))
         qpath.write_text('{"config": "C0", "name": "G_ADD"}\nnot json\n')
         r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--queries", str(qpath)],
+            [*DIFF, pa, pb, "--queries", str(qpath)],
             capture_output=True, text=True)
         self.assertEqual(r.returncode, 2, r.stderr)
 
@@ -202,7 +202,7 @@ class RefAssertSites(unittest.TestCase):
     def run_diff(self, a, b, *flags):
         pa, pb = write(a), write(b)
         r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--json", *flags],
+            [*DIFF, pa, pb, "--json", *flags],
             capture_output=True, text=True)
         self.assertIn(r.returncode, (0, 1, 2), r.stderr)
         return r.returncode, json.loads(r.stdout)
@@ -259,7 +259,7 @@ class RefAssertSites(unittest.TestCase):
                                    "LowLevelType.h:429": 1}))
         pa, pb = write(a), write(b)
         r = subprocess.run(
-            [sys.executable, str(DIFF), pa, pb, "--json",
+            [*DIFF, pa, pb, "--json",
              "--allow-ref-asserts", "@" + str(pin)],
             capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
@@ -270,7 +270,7 @@ class Command(unittest.TestCase):
 
     def run_diff(self, a, b):
         pa, pb = write(a), write(b)
-        return subprocess.run([sys.executable, str(DIFF), pa, pb],
+        return subprocess.run([*DIFF, pa, pb],
                               capture_output=True, text=True)
 
     def test_agree_returns_zero(self):
@@ -290,7 +290,7 @@ class Command(unittest.TestCase):
         pa, pb = write([row("G_ADD", ["s32"])]), write([row("G_ADD", ["s32"])])
         with open(pa, "a") as f:
             f.write("not json\n")
-        r = subprocess.run([sys.executable, str(DIFF), pa, pb],
+        r = subprocess.run([*DIFF, pa, pb],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 2)
 

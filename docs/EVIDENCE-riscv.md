@@ -16,7 +16,7 @@ python3 riscv_vertical.py \
 # rerun only the checks: python3 riscv_vertical.py --out OUT --verify-only --l3
 ```
 
-The expected numbers and hashes live in `data/riscv-contract.json`; the script
+The expected numbers and hashes live in `src/gisel_ab/data/riscv-contract.json`; the script
 fails if any of them drifts. A clean run takes 12m09s (without L3).
 
 ## Snapshot
@@ -131,7 +131,7 @@ Proves, for this snapshot:
 
 Does not prove:
 
-- **U coverage still has dead rules.** `gisel-anchor/src/gisel_anchor/oracle/known-gaps/riscv.json`
+- **U coverage still has dead rules.** `gisel-anchor/src/gisel_anchor/evidence/known-gaps/riscv.json`
   now lists 13 rules that can never become the first match. They are redundant
   clauses behind a broader earlier rule (Zfa-legal behind libcall, `{s64,s32}`
   behind `legalFor(D)`, `widenScalarIf` ordering), not missing questions. The

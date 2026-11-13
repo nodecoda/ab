@@ -10,15 +10,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 AB = ROOT
-DIFF = AB / "diff.py"
+DIFF = ROOT / "src" / "gisel_ab" / "l0" / "diff.py"
 
-spec = importlib.util.spec_from_file_location("ab_harness", AB / "ab.py")
-ab = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(ab)
-
-spec = importlib.util.spec_from_file_location("ab_attribute", AB / "attribute.py")
-attribute = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(attribute)
+from gisel_ab.l0 import attribute  # noqa: E402
+from gisel_ab.l0 import run as ab  # noqa: E402
 
 
 def write_jsonl(rows):
@@ -190,7 +185,7 @@ class Queries(unittest.TestCase):
                 ab.validate_queries(queries, features)
 
 
-SWAP = AB / "swap-source-ctor.py"
+SWAP = ROOT / "src" / "gisel_ab" / "l0" / "swap.py"
 
 
 class SwapSourceCtor(unittest.TestCase):

@@ -1,69 +1,40 @@
-"""The U leg must build from the same tree/build the contract names."""
+"""The U leg must build from the same tree/build the contract names.
 
-import os
-import subprocess
+The leg used to rely on ``AB_TREE``/``AB_BUILD`` defaults while the contract
+recorded the ``--tree`` given to the G leg, so the evidence could name one
+build and use another.  There is exactly one constructor now
+(``vertical.leg_command``); this test pins that the command carries both roots
+and that the script hands them to the builder.
+"""
+
 import tempfile
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-GISEL = Path(os.environ.get("GISEL_SRC") or ROOT.parent / "gisel")
+SCRIPT = ROOT / "scripts" / "e2e" / "run-u-end-to-end.sh"
 
-BUILDER = """#!/usr/bin/env bash
-set -euo pipefail
-printf '%s|%s\\n' "$1" "$2" > "$FAKE_RECORD"
-: > "${4}.official"
-: > "${4}.ours"
-"""
-
-RUN_QUERIES = """#!/usr/bin/env python3
-import pathlib, sys
-pathlib.Path(sys.argv[3]).write_text("")
-"""
-
-DIFF = """#!/usr/bin/env python3
-print('{"agree": 0, "disagree": 0, "unanswerable": 0}')
-"""
-
-ATTRIBUTION = """#!/usr/bin/env python3
-print('{}')
-"""
+from gisel_ab import vertical  # noqa: E402
 
 
 class ULegProvenance(unittest.TestCase):
-    def setUp(self):
-        self.dir = Path(tempfile.mkdtemp(prefix="ab-u-leg-"))
-        for name in ("run-u-end-to-end.sh", "env.sh", "targets.py"):
-            (self.dir / name).symlink_to(ROOT / name)
-        for name, body in (("build-x86-ctor-runner.sh", BUILDER),
-                           ("run-queries.py", RUN_QUERIES),
-                           ("diff.py", DIFF),
-                           ("u-attribution.py", ATTRIBUTION)):
-            path = self.dir / name
-            path.write_text(body)
-            path.chmod(0o755)
-        self.tree = self.dir / "tree"
-        (self.tree / "llvm" / "include" / "llvm").mkdir(parents=True)
-        self.build = self.dir / "build"
-        self.build.mkdir()
-        (self.build / "build.ninja").write_text("")
-        self.queries = self.dir / "queries.jsonl"
-        self.queries.write_text('{"config": "C0"}\n')
-        self.inc = self.dir / "X86LegalizerInfo.inc"
-        self.inc.write_text("// generated\n")
-        self.record = self.dir / "record.txt"
+    def test_leg_command_names_tree_and_build(self):
+        cmd = vertical.leg_command(
+            "e2e/run-u-end-to-end.sh", "x86", "/q.jsonl", "/out",
+            "--allow-unanswerable", "0", tree="/t", build="/b")
+        self.assertEqual(cmd[0], ROOT / "scripts" / "e2e" / "run-u-end-to-end.sh")
+        self.assertEqual(cmd[cmd.index("--tree") + 1], "/t")
+        self.assertEqual(cmd[cmd.index("--build") + 1], "/b")
 
-    def test_explicit_tree_and_build_reach_the_builder(self):
-        env = dict(os.environ, GISEL_SRC=str(GISEL),
-                   U_INC=str(self.inc), FAKE_RECORD=str(self.record))
-        proc = subprocess.run(
-            ["bash", str(self.dir / "run-u-end-to-end.sh"), "x86",
-             str(self.queries), str(self.dir / "out"),
-             "--tree", str(self.tree), "--build", str(self.build)],
-            cwd=self.dir, env=env, capture_output=True, text=True)
-        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-        self.assertEqual(self.record.read_text().strip(),
-                         "%s|%s" % (self.tree, self.build))
+    def test_the_builder_receives_tree_and_build(self):
+        text = SCRIPT.read_text()
+        self.assertIn('"$BUILDER" "$TREE" "$BUILD"', text)
+        self.assertIn('require_roots "$TREE" "$BUILD"', text)
+
+    def test_the_negative_leg_does_not_reuse_defaults(self):
+        text = (ROOT / "scripts" / "negative" / "run-g-negative.sh").read_text()
+        self.assertIn('require_roots "$TREE" "$BUILD"', text)
+        self.assertIn('"$SCRIPT" "$TREE" "$BUILD"', text)
 
 
 if __name__ == "__main__":

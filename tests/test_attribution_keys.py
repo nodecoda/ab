@@ -7,15 +7,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _load(name):
-    spec = importlib.util.spec_from_file_location(name, ROOT / (name + ".py"))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-ua = _load("u-attribution")
-ga = _load("g-attribution")
+from gisel_ab.l0 import g_attribution as ga  # noqa: E402
+from gisel_ab.l0 import u_attribution as ua  # noqa: E402
 
 
 class AttributionKeysTest(unittest.TestCase):

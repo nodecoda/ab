@@ -47,12 +47,18 @@ def link(src: Path, dst: Path):
 class NegativeScripts(unittest.TestCase):
     def setUp(self):
         self.dir = Path(tempfile.mkdtemp(prefix="ab-neg-"))
-        for name in ("env.sh", "inject-missing-opcode.py", "diff.py",
-                     "g-attribution.py", "u-attribution.py",
-                     "run-g-negative.sh", "targets.py"):
-            link(ROOT / name, self.dir / name)
-        (self.dir / "run-x86-end-to-end.sh").write_text(fake_end_to_end())
-        (self.dir / "run-x86-end-to-end.sh").chmod(0o755)
+        # A fake checkout: the scripts and lib.sh are real, the per-target
+        # end-to-end script is a stub.  targets.py reads AB_ROOT/AB_SCRIPTS
+        # from the environment, so T_E2E points into this tree.
+        scripts = self.dir / "scripts"
+        (scripts / "negative").mkdir(parents=True)
+        (scripts / "e2e").mkdir(parents=True)
+        link(ROOT / "scripts" / "lib.sh", scripts / "lib.sh")
+        link(ROOT / "scripts" / "negative" / "run-g-negative.sh",
+             scripts / "negative" / "run-g-negative.sh")
+        stub = scripts / "e2e" / "run-x86-end-to-end.sh"
+        stub.write_text(fake_end_to_end())
+        stub.chmod(0o755)
         self.tree = self.dir / "tree"
         (self.tree / "llvm" / "include" / "llvm").mkdir(parents=True)
         self.build = self.dir / "build"
@@ -62,7 +68,7 @@ class NegativeScripts(unittest.TestCase):
     def run_g(self, mode):
         env = dict(os.environ, GISEL_SRC=str(GISEL), FAKE_NEG_MODE=mode)
         return subprocess.run(
-            ["bash", str(self.dir / "run-g-negative.sh"), "x86", "G_ADD",
+            ["bash", str(self.dir / "scripts" / "negative" / "run-g-negative.sh"), "x86", "G_ADD",
              str(self.dir / "out"), "--tree", str(self.tree),
              "--build", str(self.build)],
             cwd=self.dir, env=env, capture_output=True, text=True)
@@ -72,7 +78,7 @@ class NegativeScripts(unittest.TestCase):
         env = dict(os.environ, GISEL_SRC=str(GISEL), FAKE_NEG_MODE="caught",
                    FAKE_RECORD=str(record))
         proc = subprocess.run(
-            ["bash", str(self.dir / "run-g-negative.sh"), "x86", "G_ADD",
+            ["bash", str(self.dir / "scripts" / "negative" / "run-g-negative.sh"), "x86", "G_ADD",
              str(self.dir / "out"), "--tree", str(self.tree),
              "--build", str(self.build)],
             cwd=self.dir, env=env, capture_output=True, text=True)

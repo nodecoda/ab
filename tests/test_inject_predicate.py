@@ -7,14 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _load(name):
-    spec = importlib.util.spec_from_file_location(name, ROOT / (name + ".py"))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-ip = _load("inject-predicate")
+from gisel_ab.l0 import inject_predicate as ip  # noqa: E402
 
 
 INC = """\

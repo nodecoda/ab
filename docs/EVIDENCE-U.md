@@ -19,9 +19,9 @@
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-./scripts/oracle/gen-u.sh x86     /tmp/u-gen/x86d
-./scripts/oracle/gen-u.sh aarch64 /tmp/u-gen/a64d
-./scripts/oracle/gen-u.sh riscv   /tmp/u-gen/rvb2
+./scripts/evidence/gen-u.sh x86     /tmp/u-gen/x86d
+./scripts/evidence/gen-u.sh aarch64 /tmp/u-gen/a64d
+./scripts/evidence/gen-u.sh riscv   /tmp/u-gen/rvb2
 ```
 
 | target | raw | kept | dropped | `queries.jsonl` sha256 |
@@ -40,9 +40,9 @@ cd /home/ubuntu/llvm/upstream-source
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./run-u-end-to-end.sh x86     /tmp/u-gen/x86d/queries.jsonl     /tmp/u-run/x86d
-./run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl  /tmp/u-run/a64d
-./run-u-end-to-end.sh riscv   /tmp/u-gen/rvb2/queries.jsonl     /tmp/rv-vertical4/u
+./scripts/e2e/run-u-end-to-end.sh x86     /tmp/u-gen/x86d/queries.jsonl     /tmp/u-run/x86d
+./scripts/e2e/run-u-end-to-end.sh aarch64 /tmp/u-gen/a64d/queries.jsonl  /tmp/u-run/a64d
+./scripts/e2e/run-u-end-to-end.sh riscv   /tmp/u-gen/rvb2/queries.jsonl     /tmp/rv-vertical4/u
 ```
 
 | target | queries | agree | disagree | unanswerable | 两侧答案文件 |
@@ -116,12 +116,12 @@ ARM / Mips / PPC / M68k / WebAssembly / SPIR-V。AMDGPU 按决定不接。
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-./scripts/oracle/gen-u.sh arm     /tmp/u-gen/armd
-./scripts/oracle/gen-u.sh mips    /tmp/u-gen/mipsd
-./scripts/oracle/gen-u.sh ppc     /tmp/u-gen/ppcd
-./scripts/oracle/gen-u.sh m68k    /tmp/u-gen/m68kd
-./scripts/oracle/gen-u.sh wasm    /tmp/u-gen/wasmd
-./scripts/oracle/gen-u.sh spirv   /tmp/u-gen/spirvd
+./scripts/evidence/gen-u.sh arm     /tmp/u-gen/armd
+./scripts/evidence/gen-u.sh mips    /tmp/u-gen/mipsd
+./scripts/evidence/gen-u.sh ppc     /tmp/u-gen/ppcd
+./scripts/evidence/gen-u.sh m68k    /tmp/u-gen/m68kd
+./scripts/evidence/gen-u.sh wasm    /tmp/u-gen/wasmd
+./scripts/evidence/gen-u.sh spirv   /tmp/u-gen/spirvd
 ```
 
 | target | 配置 | rules | witnessed | shadowed | unexercised | 全配置 unex | raw | kept | dropped | `queries.jsonl` sha256 |
@@ -141,12 +141,12 @@ rule_index)` 并集判定（`CONTRACTS.md` §5）。SPIR-V 的 344 条 unexercis
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./run-u-end-to-end.sh arm   /tmp/u-gen/armd/queries.jsonl   /tmp/u-run/armd
-./run-u-end-to-end.sh mips  /tmp/u-gen/mipsd/queries.jsonl  /tmp/u-run/mipsd
-./run-u-end-to-end.sh ppc   /tmp/u-gen/ppcd/queries.jsonl   /tmp/u-run/ppcd
-./run-u-end-to-end.sh m68k  /tmp/u-gen/m68kd/queries.jsonl  /tmp/u-run/m68kd
-./run-u-end-to-end.sh wasm  /tmp/u-gen/wasmd/queries.jsonl  /tmp/u-run/wasmd
-./run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd
+./scripts/e2e/run-u-end-to-end.sh arm   /tmp/u-gen/armd/queries.jsonl   /tmp/u-run/armd
+./scripts/e2e/run-u-end-to-end.sh mips  /tmp/u-gen/mipsd/queries.jsonl  /tmp/u-run/mipsd
+./scripts/e2e/run-u-end-to-end.sh ppc   /tmp/u-gen/ppcd/queries.jsonl   /tmp/u-run/ppcd
+./scripts/e2e/run-u-end-to-end.sh m68k  /tmp/u-gen/m68kd/queries.jsonl  /tmp/u-run/m68kd
+./scripts/e2e/run-u-end-to-end.sh wasm  /tmp/u-gen/wasmd/queries.jsonl  /tmp/u-run/wasmd
+./scripts/e2e/run-u-end-to-end.sh spirv /tmp/u-gen/spirvd/queries.jsonl /tmp/u-run/spirvd
 ```
 
 | target | queries | agree | disagree | unanswerable | 两侧答案文件 |
@@ -184,7 +184,7 @@ cd /home/ubuntu/llvm/ab
 
 ### 这一轮修掉的题面缺口
 
-`src/gisel_anchor/oracle/universe.py` 有三处是**真实缺口**，不是为了让数字好看：
+`src/gisel_anchor/evidence/universe.py` 有三处是**真实缺口**，不是为了让数字好看：
 
 1. SPIR-V 用 14 个地址空间（`SPIRV_POINTER_AS = range(14)`）；其余 target 仍是
    `POINTER_AS = [0,1,2,3,4]`。
@@ -230,7 +230,7 @@ python3 -m oracle expand --universe /tmp/u-full2/aarch64-all.jsonl \
     --configs baseline,small-cm,bf16,lse,rcpc3,outline-atomics,cssc,fullfp16,sve \
     --out /tmp/u-full2/aarch64-full.jsonl
 cd /home/ubuntu/llvm/ab
-./run-u-end-to-end.sh aarch64 /tmp/u-full-new/aarch64/queries.jsonl \
+./scripts/e2e/run-u-end-to-end.sh aarch64 /tmp/u-full-new/aarch64/queries.jsonl \
     /tmp/u-full-new/aarch64/run \
     --allow-ref-asserts 40014 --allow-unanswerable 43452
 ```
@@ -301,8 +301,8 @@ disagree == matched`）。对外报数用 `answered_equal = agree - unanswerable
 分支直接 append 2 元组，没有按 `type_slots` 补长。3 槽 opcode 收到 2 个类型，
 上游规则读 `Query.Types[2]` 就越界。
 
-修法（`upstream-source/src/gisel_anchor/oracle/universe.py`）：三处向量对分支改成按槽数补长，
-并在函数末尾加一道 `len(c) == type_slots` 兜底；`oracle/tests/test_universe.py`
+修法（`upstream-source/src/gisel_anchor/evidence/universe.py`）：三处向量对分支改成按槽数补长，
+并在函数末尾加一道 `len(c) == type_slots` 兜底；`evidence/tests/test_universe.py`
 新增两条回归（每个 target × 1–4 槽，combo 长度必须等于槽数）。修后 AArch64 的
 `unanswerable` 从 39,660 降到 35,316，题面里不再有畸形查询。
 
@@ -335,7 +335,7 @@ G_SHUFFLE_VECTOR types=["nxv2p0:64","nxv2p0:64"]
 先把 9 个形状单独抽出来验证（每个配置一条，共 9 条）：
 
 ```sh
-./run-u-end-to-end.sh aarch64 /tmp/a64-nine-queries.jsonl /tmp/u-run/a64-nine
+./scripts/e2e/run-u-end-to-end.sh aarch64 /tmp/a64-nine-queries.jsonl /tmp/u-run/a64-nine
 # disagree=0 unanswerable=0, rc=0
 ```
 
@@ -347,12 +347,12 @@ D 方向的 AArch64 题面都不含 `nxv2p0` 的 `G_SHUFFLE_VECTOR`，所以那�
 ## 复核
 
 ```sh
-cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./verify-evidence.sh
+cd /home/ubuntu/llvm/ab && VERIFY_FROZEN=1 ./scripts/verify-evidence.sh
 # PASS G/x86 … PASS MIR-L3/check-llvm, 59/59 entries pass
 # （G 9 + G-neg 9 + U 9 + U-neg 9 + D 9 + U-full 9 + MIR 5）
 ```
 
-`VERIFY_FROZEN=1` 只读仓库里的 `oracle/`，不读 /tmp。CI 跑的就是这一条
+`VERIFY_FROZEN=1` 只读仓库里的 `evidence/`，不读 /tmp。CI 跑的就是这一条
 （`.github/workflows/ci.yml`），所以冻结物和 manifest 一旦对不上，push 就会红。
 
 `EVIDENCE.json` 记录每个产物的 sha256、查询数、期望的 `disagree`/`unanswerable`
@@ -366,10 +366,10 @@ limit（spirv 4000，其余 1200）现生成，展开后逐条跑两侧：
 
 ```sh
 cd /home/ubuntu/llvm/upstream-source
-oracle/out/<t>-dump --dump-arity /tmp/u-full2/<t>/arity.jsonl
+evidence/out/<t>-dump --dump-arity /tmp/u-full2/<t>/arity.jsonl
 python3 -m oracle universe --arity ... --target <t> --limit <limit> --out .../universe.jsonl
 python3 -m oracle expand --universe .../universe.jsonl --configs <cfg,...> --out .../queries.jsonl
-cd /home/ubuntu/llvm/ab && ./run-u-end-to-end.sh <t> .../queries.jsonl <out> [pins]
+cd /home/ubuntu/llvm/ab && ./scripts/e2e/run-u-end-to-end.sh <t> .../queries.jsonl <out> [pins]
 ```
 
 | target | 查询 | agree | 双端断言 | 单边断言 | disagree | 证据 |
@@ -419,7 +419,7 @@ cd /home/ubuntu/llvm/ab && ./run-u-end-to-end.sh <t> .../queries.jsonl <out> [pi
 - 已做 9 个 target：X86 / AArch64 / RISC-V（U4）+ ARM / Mips / PPC / M68k /
   WebAssembly / SPIR-V（U5）。AMDGPU 按决定不接。
 - 覆盖门禁是跨配置口径，`(opcode, rule_index)` 并集是覆盖下界；逐条 gap 在
-  `gisel-anchor/src/gisel_anchor/oracle/known-gaps/<target>.json`（X86 6 条 shadowed，
+  `gisel-anchor/src/gisel_anchor/evidence/known-gaps/<target>.json`（X86 6 条 shadowed，
   AArch64 59、RISC-V 13 条 unexercised/shadowed）。
 - U 方向证明“上游规则 gisel 没漏”，不证明“gisel 每题都答对”；后者由 G 方向
   与 `disagree=0` 共同承担。

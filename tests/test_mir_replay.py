@@ -11,10 +11,8 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-spec = importlib.util.spec_from_file_location("mir_replay", ROOT / "mir-replay.py")
-mr = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(mr)
-import mir_libs  # noqa: E402
+from gisel_ab.mir import libs as mir_libs  # noqa: E402
+from gisel_ab.mir import replay as mr  # noqa: E402
 
 
 def run_line(*lines):

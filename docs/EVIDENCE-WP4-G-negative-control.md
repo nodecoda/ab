@@ -37,8 +37,8 @@ legal in(slot(0), [X_s8])
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./build-inc.sh /tmp/ab-neg/mutated.gisel /tmp/ab-neg/x86-mutated.inc
-./run-x86-end-to-end.sh TREE BUILD /tmp/ab-neg/x86-mutated.inc /tmp/ab-neg/out
+./scripts/inc/build-inc.sh /tmp/ab-neg/mutated.gisel /tmp/ab-neg/x86-mutated.inc
+./scripts/e2e/run-x86-end-to-end.sh TREE BUILD /tmp/ab-neg/x86-mutated.inc /tmp/ab-neg/out
 # rc=1
 ```
 
@@ -80,14 +80,14 @@ inc 变了）。归因用 `g-attribution.py`：G 题面的 `ruleset` 是语料�
 
 ```sh
 cd /home/ubuntu/llvm/ab
-./run-g-negative.sh x86     G_ADD     /tmp/g-neg/x86
-./run-g-negative.sh aarch64 G_ZEXT    /tmp/g-neg/a64
-./run-g-negative.sh riscv   G_FPTOSI  /tmp/g-neg/rv
-./run-g-negative.sh arm     G_LOAD    /tmp/g-neg/arm
-./run-g-negative.sh mips    G_UITOFP  /tmp/g-neg/mips
-./run-g-negative.sh ppc     G_ZEXT    /tmp/g-neg/ppc
-./run-g-negative.sh m68k    G_MUL     /tmp/g-neg/m68k
-./run-g-negative.sh wasm    G_CTLZ    /tmp/g-neg/wasm
-./run-g-negative.sh spirv   G_TRUNC   /tmp/g-neg/spirv
-./verify-evidence.sh G-neg   # 9/9
+./scripts/negative/run-g-negative.sh x86     G_ADD     /tmp/g-neg/x86
+./scripts/negative/run-g-negative.sh aarch64 G_ZEXT    /tmp/g-neg/a64
+./scripts/negative/run-g-negative.sh riscv   G_FPTOSI  /tmp/g-neg/rv
+./scripts/negative/run-g-negative.sh arm     G_LOAD    /tmp/g-neg/arm
+./scripts/negative/run-g-negative.sh mips    G_UITOFP  /tmp/g-neg/mips
+./scripts/negative/run-g-negative.sh ppc     G_ZEXT    /tmp/g-neg/ppc
+./scripts/negative/run-g-negative.sh m68k    G_MUL     /tmp/g-neg/m68k
+./scripts/negative/run-g-negative.sh wasm    G_CTLZ    /tmp/g-neg/wasm
+./scripts/negative/run-g-negative.sh spirv   G_TRUNC   /tmp/g-neg/spirv
+./scripts/verify-evidence.sh G-neg   # 9/9
 ```

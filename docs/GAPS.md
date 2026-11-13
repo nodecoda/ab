@@ -2,7 +2,7 @@
 
 > 2026-11-12 快照。规划原文在 `gisel/docs/PLAN-internal-authority.md`；这里只记
 > “现在到哪了、还差什么”，不重复论证。数字全部来自 `EVIDENCE.json`
-> （`VERIFY_FROZEN=1 ./verify-evidence.sh` → 76/76）和 `SCOPE.md §7`。
+> （`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh` → 76/76）和 `SCOPE.md §7`。
 
 三根柱子：
 
@@ -43,7 +43,7 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 | C7 | `agree` 把“谁都没答”算成一致 | 对外报 `answered_equal`；U-full 表加列（AArch64 3,475,458 → 3,440,142）；`EVIDENCE.json` 的 28 个答案类条目钉住该字段 |
 | C8 | U-full 的展开题面没有冻结，容易被读成丢文件 | `verify-evidence.sh` 在跑 U-full 时打印 NOTE：只冻结 universe + expand 命令，展开文件按需生成 |
 | C9 | `run-x86-end-to-end.sh` 在打补丁后建 ours runner，同样被 `check-pin.sh` 拒绝 | ours 的 build 设 `GIT_DSL_SKIP_PIN_CHECK=1`；official build 仍在还原树上校验。实测整条脚本 rc=0、3,014 条 agree |
-| C10 | O1：MIR/llc 层只覆盖 7/9，arm/mips 缺 L2，m68k/wasm/spirv 没有 MIR | 2026-11-12 补齐：arm 1,141、mips 1,311、m68k 25、wasm 588、spirv 2,625 条，diff 全 0，负控全部抓到；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 22/22 |
+| C10 | O1：MIR/llc 层只覆盖 7/9，arm/mips 缺 L2，m68k/wasm/spirv 没有 MIR | 2026-11-12 补齐：arm 1,141、mips 1,311、m68k 25、wasm 588、spirv 2,625 条，diff 全 0，负控全部抓到；`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh MIR` 22/22 |
 | C11 | O6：pin 漂移没有政策 | `gisel-anchor` 明确“只跟 pin”：`README.md` + `PIN.json` 的 comment 写死四步显式迁移；不建自动同步 job（见该仓库 README「pin 政策」） |
 | C12 | 采用分支不存在：L3 只是“换了再还原”，fork 里没有一处真的是 gisel 的规则 | 三个 L4 target 都有采用分支：`explore/{x86,aarch64,riscv}-adopt`（`4b8a026249c2` / `a355d055cf28` / `0feeca6a2b68`），构造函数体换成 `#include "<T>LegalizerInfo.inc"`。每个分支：inc sha 与 `EVIDENCE.json` 绑定值逐位相同；构建出的 CodeGen 库 sha 与 MIR-L3 “swapped” 记录逐位相同；80,596 条 lit 逐条一致；冻结 G/U 回放 x86 3,014/10,027、aarch64 12,559/29,608、riscv 6,086/20,445，disagree 全 0。决定与回滚见 `docs/ADOPT.md` |
 
@@ -55,7 +55,7 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 
 `vertical.py --target {riscv,x86,aarch64}` 把 G/U/负控/domain/MIR L1/L2
 串成一条命令，每一步都对 `data/<target>-contract.json` 复核。x86 与
-aarch64 的 contract 与冻结副本（`oracle/<target>-vertical/`）已提交，
+aarch64 的 contract 与冻结副本（`evidence/<target>-vertical/`）已提交，
 CI 用 `--verify-only --frozen` 在没有构建树和 `/tmp` 的机器上重放。
 
 AArch64 速记：G 12,559 / U 29,608 / domain 8,432,640（双端断言 351,504）/

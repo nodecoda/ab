@@ -16,14 +16,11 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERTICAL = ROOT / "vertical.py"
+from gisel_ab import vertical  # noqa: E402
 
 
 def load():
-    spec = importlib.util.spec_from_file_location("vertical", VERTICAL)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    return importlib.import_module("gisel_ab.vertical")
 
 
 class FakeLlc(unittest.TestCase):

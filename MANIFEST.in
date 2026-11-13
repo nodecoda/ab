@@ -1,0 +1,14 @@
+include README.md SCOPE.md CONTRACTS.md CHANGELOG.md CONTRIBUTING.md
+include RELEASE.json VERIFICATION.json EVIDENCE.json evidence.schema.json
+include .editorconfig
+recursive-include src/gisel_ab/cpp *.cpp *.h
+recursive-include src/gisel_ab/data *
+recursive-include scripts *.sh
+recursive-include tests *.py *.json *.md
+recursive-include docs *.md
+# The evidence tree is 102 MB of frozen artifacts.  `verify-evidence` and
+# `vertical --frozen` need a checkout; an sdist must not carry it.
+prune evidence
+prune .ab
+prune .omx
+global-exclude __pycache__ *.pyc *.pyo

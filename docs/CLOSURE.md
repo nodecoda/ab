@@ -79,7 +79,7 @@ x86 实测：`G` 闭包 3,370 个状态，`D` 闭包 92,132 个，交集只有 1
 - `mips` 的 9 条单边断言是冻结 `G` 证据里已有的那一类（`G_LOAD` 值类型为
   `s64`/`s33`/`s63`、mem 为 `s32`/align 8），`--allow-ref-asserts 9` 与原证据同数。
 - 六个 target 的 `D` 种子由 `run-domain.sh` 同一条路径生成（`gisel domain` 逐配置），
-  条数与 `data/domain.json` 的钉数逐一相等；`domain` 打印的 “dropped ill-formed”
+  条数与 `src/gisel_ab/data/domain.json` 的钉数逐一相等；`domain` 打印的 “dropped ill-formed”
   是生成期就丢掉的点，不进题面。
 - 六个 target 的 G/D 并集没有单独量（需要两侧 key 拼写的交集）；三个 L4 target
   的并集在 §3.4。
@@ -102,14 +102,14 @@ x86 实测：`G` 闭包 3,370 个状态，`D` 闭包 92,132 个，交集只有 1
 ```sh
 # 种子（冻结题面）
 python3 -c "import gzip,pathlib; pathlib.Path('seed.jsonl').write_bytes(
-  gzip.decompress(open('oracle/G/x86/queries.jsonl.gz','rb').read()))"
+  gzip.decompress(open('evidence/G/x86/queries.jsonl.gz','rb').read()))"
 
 # 两侧 runner：x86 用 ctor runner（官方 ctor 在库里，ours 在可执行文件里），
 # aarch64/riscv 用 build-<t>-runner.sh 的 official/ours 对
 ./build-x86-ctor-runner.sh TREE BUILD gisel/tests/artifacts/x86.inc OUT/x86
 ./build-aarch64-runner.sh  TREE BUILD gisel/tests/artifacts/aarch64.inc OUT/a64
 
-python3 closure.py --target x86 --seed seed.jsonl \
+python3 ab.py closure --target x86 --seed seed.jsonl \
     --official OUT/x86.official --ours OUT/x86.ours --out /tmp/closure-x86
 ```
 
@@ -148,7 +148,7 @@ spirv 的 `D` 种子 3,472,080 条，一轮 ~2 分钟；六 target 合计约 9 �
 
 快照已入库：`ab/data/closure/<target>-<seed>.json`（9 target × 2 seed）。
 `EVIDENCE.json` 的 `closure/*` 条目钉住 `seed_states`、`successors`、`stuck`、
-`disagree`、`both/ref_only/ours_only`；`VERIFY_FROZEN=1 ./verify-evidence.sh`
+`disagree`、`both/ref_only/ours_only`；`VERIFY_FROZEN=1 ./scripts/verify-evidence.sh`
 会重新检查，`ours_only` 必须为 0。
 
 **证明了**：对 `G` 与 `D` 的并集里的每个起点，循环的每一步两侧都给出相同的
