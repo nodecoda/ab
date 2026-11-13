@@ -1,5 +1,28 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43409635646
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43409634975
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43410645178
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43409635924
+    }
+  },
+  "ci_notes": [
+    "All four r6 runs are green: ci on the three tag commits (gisel 2a7b9d4, gisel-anchor ab01ed6, gisel-ab bacc8cf) and a nightly dispatched against the gisel r6 tag.  The transitional sibling symlinks are gone; every live path resolves to gisel-anchor / gisel-ab."
+  ],
   "cohort": "cohort-2026-11-13-r6",
   "commits": {
     "ab": "bacc8cfba1e65b5ec79b968cb8a4458d44a439db",
