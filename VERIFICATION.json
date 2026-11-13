@@ -1,38 +1,15 @@
 {
-  "ci": {
-    "ab": {
-      "conclusion": "success",
-      "run": 43402811447
-    },
-    "gisel": {
-      "conclusion": "success",
-      "run": 43402807617
-    },
-    "nightly": {
-      "conclusion": "success",
-      "run": 43403945371
-    },
-    "publish": {
-      "runs": 0
-    },
-    "upstream_source": {
-      "conclusion": "success",
-      "run": 43402807195
-    }
-  },
-  "ci_notes": [
-    "All four r5 runs are green: ci on the three tag commits (gisel 7a4e67a, gisel-anchor f810dfa, gisel-ab 244f086) and a nightly dispatched against the gisel r5 tag.  The gisel-ab run on 50f020d failed test_verification because the draft record had not yet named tag/supersedes; effc019 adds those fields and is green."
-  ],
-  "cohort": "cohort-2026-11-13-r5",
+  "ci": {},
+  "cohort": "cohort-2026-11-13-r6",
   "commits": {
-    "ab": "244f08614f5e6deec9a8ad3981d31daacc9b3c0b",
-    "gisel": "7a4e67a7b6f7c3e760355c0db42dcf4bbe0e4831",
-    "upstream_source": "f810dfa7348c7d83c8b65dab00e72962354f2a95"
+    "ab": "bacc8cfba1e65b5ec79b968cb8a4458d44a439db",
+    "gisel": "2a7b9d47bd54efe6ce87ee0e738d324a25177fe5",
+    "upstream_source": "ab01ed641ff242df7af07172105426dbe7821af6"
   },
   "gate_commits": {
-    "ab": "244f08614f5e6deec9a8ad3981d31daacc9b3c0b",
-    "gisel": "7a4e67a7b6f7c3e760355c0db42dcf4bbe0e4831",
-    "upstream_source": "f810dfa7348c7d83c8b65dab00e72962354f2a95"
+    "ab": "bacc8cfba1e65b5ec79b968cb8a4458d44a439db",
+    "gisel": "2a7b9d47bd54efe6ce87ee0e738d324a25177fe5",
+    "upstream_source": "ab01ed641ff242df7af07172105426dbe7821af6"
   },
   "gates": [
     {
@@ -154,10 +131,10 @@
         "gisel:tests/test_scope.py": "1904edbcaed829c9726a3a1cd9ad6c2780a71508"
       },
       "command": "python3 -m unittest discover -q -s tests",
-      "duration_s": 205.6,
+      "duration_s": 206.0,
       "evidence": "rules=2 witnessed=1 shadowed=0 unexercised=3",
       "fingerprint": "bf2d854db556ca53e394f4bcf0ae235040f845af18a1c2bfebee9adc0ded0521",
-      "log": "/tmp/cohort-r5-out/python3 -m unittest discover -q -s tests.log",
+      "log": "/tmp/cohort-r6-out/python3 -m unittest discover -q -s tests.log",
       "manifest_command": "python3 -m unittest discover -q -s tests",
       "name": "python3 -m unittest discover -q -s tests",
       "rc": 0,
@@ -238,10 +215,10 @@
         "gisel:tools/sync-package-data.py": "e5688a38780e7ed3723e957e0123209d1dee3442"
       },
       "command": "bash tools/check-nine-corpora.sh",
-      "duration_s": 4.8,
+      "duration_s": 4.9,
       "evidence": "nine corpora: 9 targets byte-identical",
       "fingerprint": "b3788315270f2812849b92e522f291042a64598ad02141fd202837f471ad7ab1",
-      "log": "/tmp/cohort-r5-out/bash tools_check-nine-corpora.sh.log",
+      "log": "/tmp/cohort-r6-out/bash tools_check-nine-corpora.sh.log",
       "manifest_command": "bash tools/check-nine-corpora.sh",
       "name": "bash tools/check-nine-corpora.sh",
       "rc": 0,
@@ -320,10 +297,10 @@
         "gisel:tools/sync-package-data.py": "e5688a38780e7ed3723e957e0123209d1dee3442"
       },
       "command": "bash tools/check-graph-golden.sh",
-      "duration_s": 247.6,
+      "duration_s": 249.0,
       "evidence": "graph goldens: 5 configurations byte-identical (3 default, 2 refined)",
       "fingerprint": "f3eb0c36feecc2ced6bd57ed56f0a45f223acf70b5d25ed2fd0e8f4c86272036",
-      "log": "/tmp/cohort-r5-out/bash tools_check-graph-golden.sh.log",
+      "log": "/tmp/cohort-r6-out/bash tools_check-graph-golden.sh.log",
       "manifest_command": "bash tools/check-graph-golden.sh",
       "name": "bash tools/check-graph-golden.sh",
       "rc": 0,
@@ -395,10 +372,10 @@
         "gisel:tools/sync-package-data.py": "e5688a38780e7ed3723e957e0123209d1dee3442"
       },
       "command": "bash tools/check-cases-golden.sh",
-      "duration_s": 425.7,
+      "duration_s": 429.3,
       "evidence": "cases spirv: 583af2c0019af248b597963119fcbbb0084046924a0f028e75b709127e559c53 matches",
       "fingerprint": "447044c2264ec6152431639b7442a66aa964565ced0ac8cb53069be847e1341c",
-      "log": "/tmp/cohort-r5-out/bash tools_check-cases-golden.sh.log",
+      "log": "/tmp/cohort-r6-out/bash tools_check-cases-golden.sh.log",
       "manifest_command": "bash tools/check-cases-golden.sh",
       "name": "bash tools/check-cases-golden.sh",
       "rc": 0,
@@ -476,10 +453,10 @@
         "gisel:tools/sync-package-data.py": "e5688a38780e7ed3723e957e0123209d1dee3442"
       },
       "command": "bash tools/check-nightly-graphs.sh",
-      "duration_s": 579.1,
+      "duration_s": 577.4,
       "evidence": "nightly wasm32: 8e01df0f4c6539ecd43deef9be0871380738becae1e790e1b2e50e447ff4ddef matches",
       "fingerprint": "754746bf7119f31af3f32f9d5fc8126b39630ef4a4648ae73a0f3f00841489e4",
-      "log": "/tmp/cohort-r5-out/bash tools_check-nightly-graphs.sh.log",
+      "log": "/tmp/cohort-r6-out/bash tools_check-nightly-graphs.sh.log",
       "manifest_command": "bash tools/check-nightly-graphs.sh",
       "name": "bash tools/check-nightly-graphs.sh",
       "rc": 0,
@@ -505,11 +482,11 @@
         "gisel:docs/REPORT-coverage.md": "b43a040918f9ad35184fa4f29939394c07978b81",
         "gisel:docs/REPORT-cxx-corpus.md": "2bf09c4a95d36ee3aaa3d2b0fa1bf5953507923b",
         "gisel:docs/REPORT-graph.md": "9c207c9cdb27d30ed7791a87e12beccc42ec7e1b",
-        "gisel:docs/REPORT-jsonl.md": "10abceff9cf40af9b854e031d0aa72cbc0613423",
+        "gisel:docs/REPORT-jsonl.md": "56acb103a0a9a90d2c09e60ad81fb9f58d5f762f",
         "gisel:docs/REPORT-no-td.md": "2f5b2e2aa5e28a421d14678fdaefef5a4fad7dce",
         "gisel:docs/REPORT-riscv.md": "7bf047e4c76e7f3b44b76b84c98abf5725e0e496",
         "gisel:docs/REPORT-wasm.md": "5a3d7b3c79790169a95e2fd9d5acbd9092e6bc9a",
-        "gisel:docs/REQUIREMENTS-ab.md": "27abf0c608c3f17ecb40abf89c99b2d7cf58604f",
+        "gisel:docs/REQUIREMENTS-ab.md": "906fd64e2930c991fab442f06cd1cda9a7e3785d",
         "gisel:docs/SCOPE.md": "1762947bcd44daaf36f7e5ae2840978df3f087eb",
         "gisel:gisel/__init__.py": "28ae2d13c6b43e4a37c53ed3bdeb4fd7fdfeccbe",
         "gisel:gisel/__main__.py": "dbdd066172160ef2d47b29f0caa00e27c62ebc20",
@@ -568,8 +545,8 @@
       "command": "python3 tools/check-claims.py",
       "duration_s": 0.0,
       "evidence": "check-claims: 15 claims, every cited path exists",
-      "fingerprint": "1d58082d6c1c7d70c307029ee6f52558058424287cc5b455257a1ac1cb6255d4",
-      "log": "/tmp/cohort-r5-out/python3 tools_check-claims.py.log",
+      "fingerprint": "06b5cb07138527cfe8cd9667aed0adb07aa532bf322d0550e36b3d3c261358cf",
+      "log": "/tmp/cohort-r6-out/python3 tools_check-claims.py.log",
       "manifest_command": "python3 tools/check-claims.py",
       "name": "python3 tools/check-claims.py",
       "rc": 0,
@@ -641,10 +618,10 @@
         "upstream_source:oracle/known-gaps/wasm.json": "b81761bac1c3e86dbeca028a0d5d8b1b0d6d418a",
         "upstream_source:oracle/known-gaps/x86.json": "a74cf26f3ae941dc9f52b6d8403ae948148e1d16",
         "upstream_source:oracle/patches/llvm-rule-trace.patch": "6f850e8a9b1ddff0d6a79fbea6494e3ce001d189",
-        "upstream_source:oracle/scripts/build-dump-aarch64.sh": "5f5b4ca86b0a280ac105d3185ae9a4f47550c9ae",
-        "upstream_source:oracle/scripts/build-dump-riscv.sh": "77ab9a2ec0979c455f609d364459b1369539637c",
-        "upstream_source:oracle/scripts/build-dump-target.sh": "40c3b93006ee82a115d985635a325fe051afd824",
-        "upstream_source:oracle/scripts/build-dump-x86.sh": "289265f3cdaf869da0f225e710091f25240e3fea",
+        "upstream_source:oracle/scripts/build-dump-aarch64.sh": "c4dc380eacb965b9b86149db69a4823cc966a0e0",
+        "upstream_source:oracle/scripts/build-dump-riscv.sh": "dd7cc1729dcd01969e6a552b5ddee4d0e1aca308",
+        "upstream_source:oracle/scripts/build-dump-target.sh": "f18b54294c5b56d1037fe0593a84904ea9263d49",
+        "upstream_source:oracle/scripts/build-dump-x86.sh": "b7aee51f5ef5da4ab6fcf600388e57fe72a5536c",
         "upstream_source:oracle/scripts/check-hits.py": "6fe48ee68b68a6560485d7b78abef4e0d22d12df",
         "upstream_source:oracle/scripts/gen-u.sh": "3d1d0029cb7bb5e18ab51b1958608b796906c312",
         "upstream_source:oracle/src/__init__.py": "7cd4dc16b0744e71073b67677cf112d359f7d1c2",
@@ -686,9 +663,9 @@
       },
       "command": "python3 importer/import-cxx.py --all --pin pin/PIN.json --check --git-repo /home/ubuntu/llvm/trees/explore",
       "duration_s": 2.1,
-      "evidence": "/tmp/cohort-r5/gisel/tests/corpus/import-report.json: matches",
-      "fingerprint": "b787748b27c79c27d505ea8d994ebae23b0ac780af4865968bf19508e05bd9ca",
-      "log": "/tmp/cohort-r5-out/python3 importer_import-cxx.py --all --pin pin_PIN.json --check.log",
+      "evidence": "/tmp/cohort-r6/gisel/tests/corpus/import-report.json: matches",
+      "fingerprint": "04903d8857c83d59898fe26c963aa08e12d9ae7ae5c1c33a9b753cdbd4eb61d7",
+      "log": "/tmp/cohort-r6-out/python3 importer_import-cxx.py --all --pin pin_PIN.json --check.log",
       "manifest_command": "python3 importer/import-cxx.py --all --pin pin/PIN.json --check",
       "name": "python3 importer/import-cxx.py --all --pin pin/PIN.json --check",
       "rc": 0,
@@ -707,11 +684,11 @@
         "upstream_source:pin/tests/test_verify_base.py": "cec0a3c4baa4c4b8b8070ad8432b767a559020c8",
         "upstream_source:pin/verify-base.py": "20499cd9fe7ece3f9229aea697d2b8927ad62088"
       },
-      "command": "pin/make-base.sh /home/ubuntu/llvm/trees/explore /tmp/cohort-r5-out/pin-base --verify",
-      "duration_s": 20.8,
+      "command": "pin/make-base.sh /home/ubuntu/llvm/trees/explore /tmp/cohort-r6-out/pin-base --verify",
+      "duration_s": 18.5,
       "evidence": "verify-base: verified 12 file(s)",
       "fingerprint": "a3f7d447d64cc0c8739da84bd2c361dd2d4e9964f2aa7606f216b14af2c8a425",
-      "log": "/tmp/cohort-r5-out/pin_make-base.sh TREE DEST --verify.log",
+      "log": "/tmp/cohort-r6-out/pin_make-base.sh TREE DEST --verify.log",
       "manifest_command": "pin/make-base.sh TREE DEST --verify",
       "name": "pin/make-base.sh TREE DEST --verify",
       "rc": 0,
@@ -1061,10 +1038,10 @@
         "gisel:tests/artifacts/x86.inc": "f14e0a0ad4a25a759374f85b002aa42b7662e306"
       },
       "command": "./verify-evidence.sh",
-      "duration_s": 10.8,
+      "duration_s": 10.5,
       "evidence": "NOTE U-full/*: only `universe.jsonl` and the expand command are frozen; the expanded query file is regenerated on demand.",
       "fingerprint": "1b640632494a8769a1246aad2a24bc002ef32b6eb4aa769ecb6559cd10d45abb",
-      "log": "/tmp/cohort-r5-out/._verify-evidence.sh.log",
+      "log": "/tmp/cohort-r6-out/._verify-evidence.sh.log",
       "manifest_command": "gisel-ab/verify-evidence.sh",
       "name": "./verify-evidence.sh",
       "rc": 0,
@@ -1453,10 +1430,10 @@
         "ab:vertical.py": "af690dfd95e503a796cd5de8691b585f9b66bfd8"
       },
       "command": "python3 -m pytest tests -q",
-      "duration_s": 15.2,
-      "evidence": "272 passed, 19 skipped, 64 subtests passed in 15.03s",
+      "duration_s": 15.1,
+      "evidence": "272 passed, 19 skipped, 64 subtests passed in 14.87s",
       "fingerprint": "87208c380c3d81712fdd71057b87336941aae98e31e31d7befe1ba8774d853df",
-      "log": "/tmp/cohort-r5-out/python3 -m pytest tests -q.log",
+      "log": "/tmp/cohort-r6-out/python3 -m pytest tests -q.log",
       "manifest_command": null,
       "name": "python3 -m pytest tests -q",
       "rc": 0,
@@ -1464,16 +1441,16 @@
     }
   ],
   "history": [],
-  "manifest_commit": "244f08614f5e6deec9a8ad3981d31daacc9b3c0b",
+  "manifest_commit": "bacc8cfba1e65b5ec79b968cb8a4458d44a439db",
   "online_gates": [],
   "recorded_at": "2026-11-13",
   "schema": 2,
-  "supersedes": "cohort-2026-11-13-r4",
-  "supersedes_reason": "r5 renames the workbench repositories: upstream-source -> gisel-anchor and ab -> gisel-ab.  The logical keys in RELEASE.json stay `upstream_source` and `ab`, so historical fingerprints remain checkable; the verify-evidence gate is now named `gisel-ab/verify-evidence.sh` and the old `ab/verify-evidence.sh` name is accepted as an alias for r4 and earlier.  No product behaviour, corpus byte, or golden changed.",
-  "tag": "cohort-2026-11-13-r5",
+  "supersedes": "cohort-2026-11-13-r5",
+  "supersedes_reason": "r6 removes the transitional `/home/ubuntu/llvm/upstream-source` and `/home/ubuntu/llvm/ab` symlinks.  Before removal, gisel-anchor's `oracle/scripts/build-dump-*.sh` learned to resolve `../../gisel-ab` first and keep the pre-rename sibling as a fallback, and the last live docs point at the final directory names.  No product behaviour, corpus byte, golden, or rule changed.",
+  "tag": "cohort-2026-11-13-r6",
   "tags": {
-    "ab": "cohort-2026-11-13-r5",
-    "gisel": "cohort-2026-11-13-r5",
-    "upstream_source": "cohort-2026-11-13-r5"
+    "ab": "cohort-2026-11-13-r6",
+    "gisel": "cohort-2026-11-13-r6",
+    "upstream_source": "cohort-2026-11-13-r6"
   }
 }
