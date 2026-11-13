@@ -57,7 +57,7 @@ def _locate(explicit, envs, key):
 
 
 def locate_tree(explicit=None):
-    return _locate(explicit, TREE_ENVS, "tree")
+    return _locate(explicit, TREE_ENVS, "llvm")
 
 
 def locate_build(explicit=None):

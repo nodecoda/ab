@@ -45,7 +45,7 @@ class Priority(unittest.TestCase):
             env_tree = d / "env"
             cfg_tree = d / "cfg"
             cfg = d / "config.json"
-            cfg.write_text(json.dumps({"tree": str(cfg_tree)}))
+            cfg.write_text(json.dumps({"llvm": str(cfg_tree)}))
             with mock.patch.dict(os.environ, {
                     "GISEL_AB_CONFIG": str(cfg),
                     "AB_TREE": str(env_tree)}, clear=True):

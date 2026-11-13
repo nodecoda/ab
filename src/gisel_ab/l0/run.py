@@ -39,6 +39,7 @@ sys.path.insert(0, str(GISEL))
 from gisel import jsonl as J  # noqa: E402
 
 from gisel_ab import child_env  # noqa: E402
+from gisel_ab import paths  # noqa: E402
 from gisel_ab import targets as target_registry  # noqa: E402
 from gisel_ab.l0 import attribute  # noqa: E402
 
@@ -323,8 +324,10 @@ def append_ledger(state: Path, record: dict):
 
 def cmd_run(args) -> int:
     target = load_target(args.target)
-    tree = Path(args.tree).resolve()
-    build = Path(args.build).resolve()
+    tree = (Path(args.tree).expanduser().resolve() if args.tree
+            else paths.require_tree())
+    build = (Path(args.build).expanduser().resolve() if args.build
+             else paths.require_build())
     out = Path(args.out).resolve()
     state = Path(args.state or (AB_ROOT / ".ab" / target["name"])).resolve()
     source = Path(args.source or (GISEL / target["source"])).resolve()
@@ -498,8 +501,10 @@ def cmd_run(args) -> int:
 
 def cmd_verify(args) -> int:
     target = load_target(args.target)
-    tree = Path(args.tree).resolve()
-    build = Path(args.build).resolve()
+    tree = (Path(args.tree).expanduser().resolve() if args.tree
+            else paths.require_tree())
+    build = (Path(args.build).expanduser().resolve() if args.build
+             else paths.require_build())
     state = Path(args.state or (AB_ROOT / ".ab" / target["name"])).resolve()
     prov_path = state / "baseline" / "provenance.json"
     if not prov_path.exists():
@@ -554,7 +559,11 @@ def cmd_mir(args) -> int:
     """
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    llc = Path(args.llc) if args.llc else Path(args.build) / "bin" / "llc"
+    tree = (Path(args.tree).expanduser().resolve() if args.tree
+            else paths.require_tree())
+    build = (Path(args.build).expanduser().resolve() if args.build
+             else paths.require_build())
+    llc = Path(args.llc) if args.llc else build / "bin" / "llc"
     mir_dir = out / "mir"
     builder = ["-m", "gisel_ab.mir.from_query"]
     replay = ["-m", "gisel_ab.mir.replay"]
@@ -576,8 +585,7 @@ def cmd_mir(args) -> int:
 
     replay_cmd = [sys.executable, *replay, "--layer", "generated",
                   "--mir", str(mir_dir), "--target", args.target,
-                  "--tree", str(Path(args.tree).resolve()),
-                  "--build", str(Path(args.build).resolve()),
+                  "--tree", str(tree), "--build", str(build),
                   "--out", str(out / "replay"), "--prepare",
                   "--jobs", str(args.jobs), "--timeout", str(args.timeout)]
     if args.negative_control:
@@ -599,8 +607,8 @@ def build_parser():
     run = sub.add_parser("run", help="build both sides, answer, diff, restore")
     run.add_argument("--target", required=True,
                      help="adapter name under targets/")
-    run.add_argument("--tree", required=True, help="LLVM source tree")
-    run.add_argument("--build", required=True, help="LLVM build directory")
+    run.add_argument("--tree", help="LLVM source tree (default: flag > env > setup)")
+    run.add_argument("--build", help="LLVM build directory (default: flag > env > setup)")
     run.add_argument("--queries", required=True,
                      help="answerless query JSONL")
     run.add_argument("--out", required=True, help="artifact directory")
@@ -629,8 +637,8 @@ def build_parser():
     mir.add_argument("--target", required=True)
     mir.add_argument("--queries", required=True,
                      help="answerless query JSONL (gisel cases output)")
-    mir.add_argument("--tree", required=True, help="LLVM source tree")
-    mir.add_argument("--build", required=True, help="LLVM build directory")
+    mir.add_argument("--tree", help="LLVM source tree (default: flag > env > setup)")
+    mir.add_argument("--build", help="LLVM build directory (default: flag > env > setup)")
     mir.add_argument("--out", required=True, help="artifact directory")
     mir.add_argument("--llc", help="llc to preflight with (default: BUILD/bin)")
     mir.add_argument("--shapes", help="override data/mir-shapes.jsonc")
@@ -651,8 +659,8 @@ def build_parser():
 
     verify = sub.add_parser("verify", help="check the build is back on baseline")
     verify.add_argument("--target", required=True)
-    verify.add_argument("--tree", required=True)
-    verify.add_argument("--build", required=True)
+    verify.add_argument("--tree", help="LLVM source tree (default: flag > env > setup)")
+    verify.add_argument("--build", help="LLVM build directory (default: flag > env > setup)")
     verify.add_argument("--state")
     verify.set_defaults(func=cmd_verify)
 
