@@ -29,12 +29,10 @@ jobs:
           # is an ancestor of this checkout, so the history must be present.
           fetch-depth: 0
           # The tests and the offline suites need the gisel that resolves
-          # p0:* per configuration (6671815).  The evidence *record* still
-          # names a2005d2: moving that needs a new VERIFICATION.json and
-          # cohort tag.  verify-evidence is content-addressed and passes at
-          # 6671815; this pin is what the code is checked against, not the
-          # historical cohort.
-          ref: 6671815aa6799b66943c1760deacff47d3a37bde
+          # p0:* per configuration and re-records the RISC-V goldens.  This
+          # is the commit r4 names; verify-evidence is content-addressed, so
+          # it checks the artifacts, not this pin.
+          ref: 70221152e7b9cbec52e53e319e017efbbaea4dc1
       - name: show the gisel pin
         run: git -C gisel rev-parse HEAD
       - uses: actions/setup-python@v7
@@ -76,7 +74,7 @@ jobs:
         with:
           repository: nodecoda/gisel
           path: gisel
-          ref: 6671815aa6799b66943c1760deacff47d3a37bde
+          ref: 70221152e7b9cbec52e53e319e017efbbaea4dc1
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
