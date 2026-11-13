@@ -94,20 +94,22 @@ class SchemaTest(unittest.TestCase):
         self.assertEqual(namespace["T_EXPECTED_QUERIES"], "3014")
         self.assertEqual(namespace["T_U_BUILDER"], "build-x86-ctor-runner.sh")
 
-    def test_verify_without_baseline_inc_is_a_clean_error(self):
+    def test_verify_without_any_baseline_anchor_is_a_clean_error(self):
+        # A target with no generated baseline inc is anchored by the library
+        # sha instead; only a provenance that recorded neither is unusable.
         ab = load_ab()
         with tempfile.TemporaryDirectory() as tmp:
             state = Path(tmp) / "state" / "baseline"
             state.mkdir(parents=True)
             (state / "provenance.json").write_text(
-                json.dumps({"inc_sha256": None}))
+                json.dumps({"inc_sha256": None, "lib_sha256": None}))
             proc = subprocess.run(
                 [sys.executable, str(ROOT / "ab.py"), "verify",
                  "--target", "m68k", "--tree", tmp, "--build", tmp,
                  "--state", str(Path(tmp) / "state")],
                 cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
-        self.assertIn("no baseline_inc", proc.stderr)
+        self.assertIn("neither an inc nor a library sha", proc.stderr)
         self.assertNotIn("Traceback", proc.stderr)
         self.assertIsNotNone(ab)
 

@@ -5,6 +5,14 @@ It is **not** part of gisel; the boundary is `docs/SCOPE.md`.  It consumes a
 `.gisel` source (or a prebuilt `.inc`) and an answerless query JSONL, and
 compares the official legalizer with one that includes the generated fragment.
 
+## Ten minutes
+
+`docs/TUTORIAL-m68k.md` walks the whole loop on M68k -- 13 rules, 35
+queries, one configuration, about 65 seconds of compute: doctor, questions,
+include, comparison, negative control, and the check that the tree was put
+back.  X86 is the same loop with 3,014 queries; M68k is the one you can
+finish while the kettle boils.
+
 ## Two layers
 
 - **L0 (`ab.py run` / `diff.py`)** compares `getAction()` for one query:

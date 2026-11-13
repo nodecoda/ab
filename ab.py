@@ -46,6 +46,11 @@ class HarnessError(RuntimeError):
     pass
 
 
+def _sha_prefix(value, width: int = 12) -> str:
+    """A sha for humans, `none` when the target has no such baseline."""
+    return value[:width] if value else "none"
+
+
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -190,8 +195,8 @@ def ensure_baseline(target: dict, tree: Path, build: Path, state: Path,
         if prov.get("inc_sha256") != current["inc_sha256"]:
             raise HarnessError(
                 "baseline inc changed (%s -> %s); pass --refresh-baseline"
-                % (prov.get("inc_sha256", "?")[:12],
-                   current["inc_sha256"][:12]))
+                % (_sha_prefix(prov.get("inc_sha256")),
+                   _sha_prefix(current["inc_sha256"])))
         if prov.get("git_head") != current["git_head"]:
             raise HarnessError(
                 "baseline tree HEAD changed (%s -> %s); pass --refresh-baseline"
@@ -375,7 +380,8 @@ def cmd_run(args) -> int:
             print("target=%s strategy=%s tree=%s build=%s"
                   % (target["name"], target["strategy"], tree, build))
             print("inc=%s sha256=%s" % (inc, inc_sha[:16]))
-            print("baseline_inc_sha256=%s" % prov["inc_sha256"][:16])
+            print("baseline_inc_sha256=%s" % _sha_prefix(prov["inc_sha256"],
+                                                         16))
             print("queries=%s count=%d compare=%s"
                   % (queries, count, args.compare))
             print("eval=%s core=%s" % (not args.no_eval, core))
@@ -498,16 +504,29 @@ def cmd_verify(args) -> int:
     prov = read_json(prov_path)
     rel_inc = target.get("baseline_inc")
     if not rel_inc:
-        raise HarnessError(
-            "%s: no baseline_inc; this target has no generated inc to verify"
-            % target["name"])
+        # Hand-written and generated-ctor targets have no generated inc in the
+        # build; the original constructor lives in the library, so the library
+        # sha is the anchor the baseline recorded.
+        expected = prov.get("lib_sha256")
+        if not expected:
+            raise HarnessError(
+                "%s: the baseline recorded neither an inc nor a library sha"
+                % target["name"])
+        lib = build / target["library"]
+        if not lib.exists():
+            raise HarnessError("baseline library not found: %s" % lib)
+        got = sha256(lib)
+        ok = got == expected
+        print("lib=%s sha256=%s baseline=%s %s"
+              % (lib, got[:16], expected[:16], "OK" if ok else "MISMATCH"))
+        return 0 if ok else 1
     inc = build / rel_inc
     if not inc.exists():
         raise HarnessError("baseline inc not found: %s" % inc)
     got = sha256(inc)
     ok = got == prov["inc_sha256"]
     print("inc=%s sha256=%s baseline=%s %s"
-          % (inc, got[:16], prov["inc_sha256"][:16],
+          % (inc, got[:16], _sha_prefix(prov["inc_sha256"], 16),
              "OK" if ok else "MISMATCH"))
     return 0 if ok else 1
 
