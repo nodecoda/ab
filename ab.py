@@ -512,6 +512,16 @@ def cmd_verify(args) -> int:
     return 0 if ok else 1
 
 
+def cmd_doctor(args) -> int:
+    import doctor
+    argv = ["--json"] if args.json else []
+    if args.tree:
+        argv += ["--tree", args.tree]
+    if args.build:
+        argv += ["--build", args.build]
+    return doctor.main(argv)
+
+
 def cmd_mir(args) -> int:
     """L2: answerless queries -> minimal MIR -> replay against both libraries.
 
@@ -623,6 +633,15 @@ def build_parser():
     verify.add_argument("--build", required=True)
     verify.add_argument("--state")
     verify.set_defaults(func=cmd_verify)
+
+    doc = sub.add_parser(
+        "doctor",
+        help="check tree/build/gisel/state before a run (read-only)")
+    doc.add_argument("--tree", help="LLVM checkout (default: AB_TREE)")
+    doc.add_argument("--build", help="ninja build (default: AB_BUILD)")
+    doc.add_argument("--json", action="store_true")
+    doc.set_defaults(func=cmd_doctor)
+
     return ap
 
 

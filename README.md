@@ -36,6 +36,20 @@ export AB_BUILD=/path/to/build            # its ninja build
 `cohort.py` additionally accepts `COHORT_TREE` and `COHORT_LLVM`.  A missing
 root is an input error (rc=2) with the exact `export` line to run.
 
+Start here, before any run:
+
+```sh
+python3 ab.py doctor          # read-only; needs no arguments
+python3 ab.py doctor --json   # {ok, checks:[{name,status,detail,fix}]}
+```
+
+`doctor` checks the interpreter, `gisel`, `PIN.json`, the tree, the build
+(`build.ninja` and `bin/llc`), `ninja`, free disk, the last ledger entry and
+any held lock.  The tree check is the same `check-pin.sh` the run uses: it
+compares the twelve files `PIN.json` freezes by content, so a `main` that
+merely contains the pin commit is rejected before a runner is built.  Exit
+codes: 0 all checks passed (warnings allowed), 2 something failed.
+
 ## One command
 
 ```sh

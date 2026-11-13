@@ -1,0 +1,93 @@
+"""`gisel-ab doctor` is the preflight for a comparison.
+
+A run builds a runner before it discovers that the tree is not the official
+side, so the failure costs minutes and lands far from its cause.  These tests
+pin the three things that make the check usable: exit codes (0 / 2), a `fix`
+on every failure, and the content-based verdict from check-pin.sh -- not a
+HEAD comparison.
+"""
+
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def run(*args, env=None):
+    base = {k: v for k, v in os.environ.items()
+            if k not in ("AB_TREE", "AB_BUILD")}
+    base.update(env or {})
+    return subprocess.run([sys.executable, str(ROOT / "ab.py"), "doctor", *args],
+                          cwd=ROOT, env=base, capture_output=True, text=True)
+
+
+class EmptyEnvironment(unittest.TestCase):
+    def test_it_fails_with_the_export_lines(self):
+        done = run()
+        self.assertEqual(done.returncode, 2, done.stdout)
+        self.assertIn("export AB_TREE=/path/to/llvm-project", done.stdout)
+        self.assertIn("export AB_BUILD=/path/to/build", done.stdout)
+
+    def test_json_mode_names_every_failure_and_its_fix(self):
+        doc = json.loads(run("--json").stdout)
+        self.assertFalse(doc["ok"])
+        failed = [c for c in doc["checks"] if c["status"] == "fail"]
+        self.assertTrue(failed)
+        names = {c["name"] for c in failed}
+        self.assertIn("tree", names)
+        self.assertIn("build", names)
+        for check in failed:
+            self.assertIn("fix", check, check)
+            self.assertTrue(check["fix"])
+
+
+class TreeMustMatchThePinByContent(unittest.TestCase):
+    def test_a_foreign_checkout_is_rejected_with_a_fix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "llvm-project"
+            (repo / "llvm").mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "-c", "user.email=a@b",
+                            "-c", "user.name=t", "commit", "-q", "--allow-empty",
+                            "-m", "empty"], check=True)
+            done = run("--tree", str(repo))
+        self.assertEqual(done.returncode, 2, done.stdout)
+        self.assertIn("tree", done.stdout)
+        self.assertIn("official_base", done.stdout)
+
+
+class TheRealMachine(unittest.TestCase):
+    """"The dev machine passes" is the acceptance criterion for A3."""
+
+    TREE = Path("/home/ubuntu/llvm/trees/explore")
+    BUILD = Path("/home/ubuntu/llvm/builds/explore")
+
+    @unittest.skipUnless((TREE / "llvm").is_dir()
+                         and (BUILD / "build.ninja").is_file(),
+                         "needs the pinned tree and build")
+    def test_dev_machine_is_healthy(self):
+        done = run(env={"AB_TREE": str(self.TREE),
+                        "AB_BUILD": str(self.BUILD)})
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertIn("0 failed", done.stdout)
+
+    @unittest.skipUnless((TREE / "llvm").is_dir()
+                         and (BUILD / "build.ninja").is_file(),
+                         "needs the pinned tree and build")
+    def test_json_reports_the_same_verdict(self):
+        doc = json.loads(run("--json", env={
+            "AB_TREE": str(self.TREE), "AB_BUILD": str(self.BUILD)}).stdout)
+        self.assertTrue(doc["ok"])
+        statuses = {c["name"]: c["status"] for c in doc["checks"]}
+        self.assertEqual(statuses["tree"], "ok")
+        self.assertEqual(statuses["build"], "ok")
+        self.assertEqual(statuses["gisel"], "ok")
+
+
+if __name__ == "__main__":
+    unittest.main()
