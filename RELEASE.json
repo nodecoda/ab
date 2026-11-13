@@ -10,7 +10,7 @@
     "wasm.cases.jsonl": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c",
     "x86.cases.jsonl": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
   },
-  "cohort": "cohort-2026-11-13-r6",
+  "cohort": "cohort-2026-11-13-r7",
   "corpus_sha256": {
     "AArch64LegalizerInfo.gisel": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
     "ARMLegalizerInfo.gisel": "b8b68a01f9058d00ed5ff0db570847c61847237562a64c4d496ecf4528448844",
@@ -29,8 +29,8 @@
     "bash tools/check-cases-golden.sh",
     "bash tools/check-nightly-graphs.sh",
     "python3 tools/check-claims.py",
-    "python3 importer/import-cxx.py --all --pin pin/PIN.json --check",
-    "pin/make-base.sh TREE DEST --verify",
+    "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check",
+    "scripts/pin/make-base.sh TREE DEST --verify",
     "gisel-ab/verify-evidence.sh"
   ],
   "graph_goldens_sha256": {
@@ -71,9 +71,9 @@
     }
   },
   "repos": {
-    "ab": "abffcceb5b3a70b606b6fa7fa12fdc5a96f8b609",
-    "gisel": "2a7b9d47bd54efe6ce87ee0e738d324a25177fe5",
-    "upstream_source": "ab01ed641ff242df7af07172105426dbe7821af6"
+    "ab": "41caa6f777d3f4277ccbcd82a2d30141e12e7726",
+    "gisel": "d194df4813197b4d50efd519a0ef0f32a454eaf8",
+    "upstream_source": "518779ca9a23bf8ea5a615d887cce6dc30d80417"
   },
   "schema": 1,
   "version": "0.3.0"
