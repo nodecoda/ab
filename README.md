@@ -1,4 +1,4 @@
-# AB harness
+# gisel-ab — differential harness
 
 This is the workbench entry point for the LLVM legalizer differential loop.
 It is **not** part of gisel; the boundary is `docs/SCOPE.md`.  It consumes a
@@ -81,7 +81,7 @@ python3 ab.py run --target x86-ctor \
   --compare full
 ```
 
-`tools/ab/run-x86-end-to-end.sh TREE BUILD x86.inc OUT STATE` does the same
+`run-x86-end-to-end.sh TREE BUILD x86.inc OUT STATE` does the same
 without the ledger: official from the pinned constructor, ours after swapping
 the body, then `diff.json`.
 

@@ -126,7 +126,7 @@ class Tagging(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.ab = self.root / "ab"
         self.gisel = self.root / "gisel"
-        self.upstream = self.root / "upstream-source"
+        self.upstream = self.root / "gisel-anchor"
         self.gisel_commit = init_repo(self.gisel, {"gisel/a.py": "A = 1\n"})
         self.upstream_commit = init_repo(self.upstream, {"pin/PIN.json": "{}\n"})
         self.ab_commit = init_repo(self.ab, {"code.py": "x = 1\n"})

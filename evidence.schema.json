@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/nodecoda/ab/evidence.schema.json",
+  "$id": "https://github.com/nodecoda/gisel-ab/evidence.schema.json",
   "title": "ab evidence manifest",
   "description": "A claim per entry. evidence.py is the executable checker; this file is the contract it implements.",
   "type": "object",

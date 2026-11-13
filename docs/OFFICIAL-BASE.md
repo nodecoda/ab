@@ -51,6 +51,6 @@ sha256；`ab/check-pin.sh TREE` 按内容逐个比对，任何一个字节不同
 
 ```sh
 ab/check-pin.sh /home/ubuntu/llvm/trees/explore      # 应 rc=0 且打印冻结点
-python3 ../upstream-source/importer/import-cxx.py --all \
-  --pin ../upstream-source/pin/PIN.json --git-repo /home/ubuntu/llvm/llvm-project --check
+python3 ../gisel-anchor/importer/import-cxx.py --all \
+  --pin ../gisel-anchor/pin/PIN.json --git-repo /home/ubuntu/llvm/llvm-project --check
 ```

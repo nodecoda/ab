@@ -14,7 +14,7 @@ target，而是因为它小到能在一次茶歇里跑完：13 条规则、35 �
 <workspace>/
 ├── llvm-project/      官方树（内容必须等于 PIN.json 的 official_base）
 ├── gisel/             规则 DSL：出题、生成 inc
-├── upstream-source/   PIN.json、importer、oracle
+├── gisel-anchor/      PIN.json、importer、oracle
 └── ab/                这个工作台
 ```
 

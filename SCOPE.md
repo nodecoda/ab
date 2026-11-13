@@ -1,4 +1,4 @@
-# SCOPE：ab 做什么，不做什么
+# SCOPE：gisel-ab 做什么，不做什么
 
 ## 1 做
 
@@ -16,8 +16,8 @@
 | 不做 | 归属 |
 |---|---|
 | 生成 G 题面 | gisel（`cases` / `domain`） |
-| 生成 U 题面 | upstream-source（`oracle`） |
-| 解析/翻译 LLVM C++ 规则 | upstream-source（`import`） |
+| 生成 U 题面 | gisel-anchor（`oracle`） |
+| 解析/翻译 LLVM C++ 规则 | gisel-anchor（`import`） |
 | 修改 `.gisel` 或 `inc` 生成器 | gisel |
 | 把对拍结论说成 gisel 的能力 | 文档规范（gisel `docs/SCOPE.md`） |
 
@@ -138,7 +138,7 @@ L0 证明“规则翻译对了”；§6 证明“换掉规则后，`llc` 在真�
 | 层 | 内容 | target | 题面规模（实测） | 证据位置 |
 |---|---|---|---|---|
 | L0 G | gisel 出题，两侧答 `getAction()` | 9 个 | x86 3,014 / aarch64 12,559 / riscv 6,086 / arm 1,614 / mips 1,647 / ppc 94 / m68k 35 / wasm 894 / spirv 5,734 | `EVIDENCE.json` `G/*` |
-| L0 U | upstream-source 出题（采样） | 9 个 | x86 10,027 / aarch64 29,561 / riscv 20,445 / arm 15,695 / mips 11,396 / ppc 2,177 / m68k 2,182 / wasm 9,290 / spirv 15,580 | `EVIDENCE.json` `U/*` |
+| L0 U | gisel-anchor 出题（采样） | 9 个 | x86 10,027 / aarch64 29,561 / riscv 20,445 / arm 15,695 / mips 11,396 / ppc 2,177 / m68k 2,182 / wasm 9,290 / spirv 15,580 | `EVIDENCE.json` `U/*` |
 | L0 负控 | 注入错 opcode / 错谓词 | 9 个 | 每个 target 一组 | `EVIDENCE.json` `G-neg/*`、`U-neg/*` |
 | D | 规则无关的声明值域全量对拍 | 9 个 | x86 91,340 / aarch64 8,432,640 / riscv 2,029,976 / spirv 3,472,080 / mips 18,745 / wasm 11,996 / arm 9,296 / ppc 1,005 / m68k 112（agree；unanswerable 另计） | `EVIDENCE.json` `D/*` |
 | U-full | 上游题面按全部配置展开 | 9 个 | x86 1,121,728 / aarch64 3,505,608 / riscv 3,028,496 / spirv 4,082,382 / arm 1,769,782 / mips 1,264,130 / wasm 1,011,304 / m68k 252,826 / ppc 252,826 | `EVIDENCE.json` `U-full/*` |

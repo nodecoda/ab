@@ -1,5 +1,5 @@
 > 迁移说明（2026-11-10）：本文件原在 gisel 仓库的 `docs/` 下；文中的
-> `tools/ab/` 指本仓库根目录（`ab/`）。命令里的 `<gisel>` 是相邻的
+> `gisel-ab/` 指本仓库根目录。命令里的 `<gisel>` 是相邻的
 > gisel checkout（可用 `GISEL_SRC` 覆盖）。
 
 # 工作台报告：新旧规则实现的对拍（A/B）
@@ -10,7 +10,7 @@
 这是**工作台报告**，不是 gisel 的功能报告（边界见 `docs/SCOPE.md`）。它记录的
 是“拿 gisel 生成的 `.inc` 去替换现网实现，然后逐条比较答案”的过程和结论：
 
-- 工具链是 `tools/ab/`（双 runner）和 `tools/refresh-oracle.sh`；
+- 工具链是 `gisel-ab/`（双 runner）和 `tools/refresh-oracle.sh`；
 - 题目来自 `gisel cases`，答案来自编译出来的两个 legalizer；
 - 结论只说明**同一批查询上两个实现一致**，不说明规则本身正确，也不说明
   gisel 之外的东西被验证过。
@@ -55,16 +55,16 @@ failure_ordering]`。轴文件 `tests/cases/aarch64-mem-orderings.axes.json` 入
 
 这一轮两个 runner 来自**同一个** explore 构建：`runner.official` 用官方构造
 函数，`runner.ours` 只替换成 gisel 生成的 `AArch64LegalizerInfo.inc`。整个
-流程是一条命令（`tools/ab/run-aarch64-end-to-end.sh`，参数和被替换的文件见
+流程是一条命令（`gisel-ab/run-aarch64-end-to-end.sh`，参数和被替换的文件见
 §2.4）：
 
 ```sh
-tools/ab/run-aarch64-end-to-end.sh "$TREE" "$BUILD" \
+gisel-ab/run-aarch64-end-to-end.sh "$TREE" "$BUILD" \
   tests/artifacts/aarch64.inc /tmp/a64-e2e
 ```
 
 脚本内部先跑 `gisel cases`（`--axes tests/cases/aarch64-mem-orderings.axes.json`）
-生成查询，再分别喂给两个 runner，最后 `tools/ab/diff.py`。
+生成查询，再分别喂给两个 runner，最后 `gisel-ab/diff.py`。
 
 结果分两段。修掉 §2.1 的两个 TypeSize 洞之后是
 `10,005 / 24 / 179`；再把 §2.2 的两条语料 bug 修掉之后是：
@@ -155,7 +155,7 @@ python3 -m gisel eval --doc tests/artifacts/aarch64.core.json \
   --cases /tmp/a64-e2e/queries.jsonl \
   --answers /tmp/a64-e2e/eval.answers.jsonl
 
-python3 tools/ab/diff.py /tmp/a64-e2e/ours.answers.jsonl \
+python3 gisel-ab/diff.py /tmp/a64-e2e/ours.answers.jsonl \
   /tmp/a64-e2e/eval.answers.jsonl --json
 ```
 
@@ -176,14 +176,14 @@ TREE=/home/ubuntu/llvm/trees/explore BUILD=/home/ubuntu/llvm/builds/explore \
   tools/refresh-oracle.sh
 
 # 3) 一条命令：两个 runner + 10,029 条查询 + diff
-tools/ab/run-aarch64-end-to-end.sh "$TREE" "$BUILD" \
+gisel-ab/run-aarch64-end-to-end.sh "$TREE" "$BUILD" \
   tests/artifacts/aarch64.inc /tmp/a64-e2e
 
 # 4) 分母自检（§2.3）
 python3 -m gisel eval --doc tests/artifacts/aarch64.core.json \
   --features tests/cases/features.json \
   --cases /tmp/a64-e2e/queries.jsonl --answers /tmp/a64-e2e/eval.answers.jsonl
-python3 tools/ab/diff.py /tmp/a64-e2e/ours.answers.jsonl \
+python3 gisel-ab/diff.py /tmp/a64-e2e/ours.answers.jsonl \
   /tmp/a64-e2e/eval.answers.jsonl --json
 ```
 
@@ -237,14 +237,14 @@ differential test 仍然 0 分歧（1,191 点 × 9 配置，9,641 条可比较�
 
 ## 3 AB harness 首轮 smoke（2026-11-08）
 
-这一节是 `tools/ab/ab.py` 的首轮运行记录，**不是验收结论**；它证明编排、
+这一节是 `gisel-ab/ab.py` 的首轮运行记录，**不是验收结论**；它证明编排、
 答案文件、全 key diff、恢复和 ledger 能串起来，同时暴露了两处待归因的差异。
 
 ### 3.1 X86：非侵入式 generated-ctor
 
 ```sh
 head -400 /tmp/x86-domain.jsonl > /tmp/x86-400.jsonl
-python3 tools/ab/ab.py run --target x86-ctor \
+python3 gisel-ab/ab.py run --target x86-ctor \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore \
   --queries /tmp/x86-400.jsonl \
@@ -271,7 +271,7 @@ python3 -m gisel cases tests/corpus/AArch64LegalizerInfo.gisel \
   --axes tests/cases/aarch64-mem-orderings.axes.json \
   --out /tmp/a64-queries.jsonl --json
 
-python3 tools/ab/ab.py run --target aarch64 \
+python3 gisel-ab/ab.py run --target aarch64 \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore \
   --queries /tmp/a64-queries.jsonl \
@@ -417,7 +417,7 @@ python3 -m gisel cases tests/corpus/AArch64LegalizerInfo.gisel \
   --axes tests/cases/aarch64-mem-orderings.axes.json \
   --out /tmp/a64-queries2.jsonl --json
 
-python3 tools/ab/ab.py run --target aarch64 \
+python3 gisel-ab/ab.py run --target aarch64 \
   --tree /home/ubuntu/llvm/trees/explore \
   --build /home/ubuntu/llvm/builds/explore \
   --queries /tmp/a64-queries2.jsonl \
@@ -718,7 +718,7 @@ $ (cd tests/artifacts && sha256sum -c SHA256)  # 9/9 OK
 | `tests/artifacts/aarch64.inc` | `dbb97efba96c6f80…` |
 | `tests/artifacts/riscv.inc` | `cbd91241c15878b7…` |
 | `gisel/backend/llvm_inc.py` | `bcf46945678cd661…` |
-| `tools/ab/swap-source-ctor.py` | `a2597b8ab96c284a…` |
+| `gisel-ab/swap-source-ctor.py` | `a2597b8ab96c284a…` |
 | llvm 树 | `e88a24a0fe84` + 工作区（table 后端删除等，尚未提交） |
 
 三份 `.inc` 都是本轮从 `tests/corpus/*.gisel` 重新 `gisel gen --emit=inc` 出来的，
@@ -737,33 +737,33 @@ cd /home/ubuntu/llvm/builds/explore && ninja all && ninja check-llvm
 
 # 每轮：换 -> ninja all（全量构建）-> ninja check-llvm（全量测试）-> 恢复
 cd /home/ubuntu/llvm/gisel
-python3 tools/ab/swap-source-ctor.py apply --target x86 \
+python3 gisel-ab/swap-source-ctor.py apply --target x86 \
   --build /home/ubuntu/llvm/builds/explore --inc /tmp/swapinc/x86.inc
 cd /home/ubuntu/llvm/builds/explore && ninja all && ninja check-llvm
 
 cd /home/ubuntu/llvm/gisel
-python3 tools/ab/swap-source-ctor.py restore --target x86 --build /home/ubuntu/llvm/builds/explore
-python3 tools/ab/swap-source-ctor.py apply --target aarch64 \
+python3 gisel-ab/swap-source-ctor.py restore --target x86 --build /home/ubuntu/llvm/builds/explore
+python3 gisel-ab/swap-source-ctor.py apply --target aarch64 \
   --tree /home/ubuntu/llvm/trees/explore --inc /tmp/swapinc/aarch64.inc
 cd /home/ubuntu/llvm/builds/explore && ninja all && ninja check-llvm
 
 cd /home/ubuntu/llvm/gisel
-python3 tools/ab/swap-source-ctor.py restore --target aarch64 --tree /home/ubuntu/llvm/trees/explore
-python3 tools/ab/swap-source-ctor.py apply --target riscv \
+python3 gisel-ab/swap-source-ctor.py restore --target aarch64 --tree /home/ubuntu/llvm/trees/explore
+python3 gisel-ab/swap-source-ctor.py apply --target riscv \
   --tree /home/ubuntu/llvm/trees/explore --inc /tmp/swapinc/riscv.inc
 cd /home/ubuntu/llvm/builds/explore && ninja all && ninja check-llvm
 
 # 三个同时
 cd /home/ubuntu/llvm/gisel
-python3 tools/ab/swap-source-ctor.py apply --target x86 \
+python3 gisel-ab/swap-source-ctor.py apply --target x86 \
   --build /home/ubuntu/llvm/builds/explore --inc /tmp/swapinc/x86.inc
 cd /home/ubuntu/llvm/builds/explore && ninja all && ninja check-llvm
 
 # 收工，恢复
 cd /home/ubuntu/llvm/gisel
-python3 tools/ab/swap-source-ctor.py restore --target x86     --build /home/ubuntu/llvm/builds/explore
-python3 tools/ab/swap-source-ctor.py restore --target aarch64 --tree  /home/ubuntu/llvm/trees/explore
-python3 tools/ab/swap-source-ctor.py restore --target riscv   --tree  /home/ubuntu/llvm/trees/explore
+python3 gisel-ab/swap-source-ctor.py restore --target x86     --build /home/ubuntu/llvm/builds/explore
+python3 gisel-ab/swap-source-ctor.py restore --target aarch64 --tree  /home/ubuntu/llvm/trees/explore
+python3 gisel-ab/swap-source-ctor.py restore --target riscv   --tree  /home/ubuntu/llvm/trees/explore
 ```
 
 ### 6.7 这轮证明了什么，没证明什么
@@ -796,6 +796,6 @@ python3 tools/ab/swap-source-ctor.py restore --target riscv   --tree  /home/ubun
 
 代价要写清楚：**X86 那 1,408 个点、AArch64 那 1,190 个点的差分单测没有了**。
 它们的分母来自 `-gen-legalizer-table-points`，正是这次删掉的东西。现在这三个
-target 的等价性证据只剩两条：全量 `check-llvm`（端到端行为）和 `tools/ab/` 的
+target 的等价性证据只剩两条：全量 `check-llvm`（端到端行为）和 `gisel-ab/` 的
 两条实现逐条对拍（答案级）。要把“上游规则一条都没漏”重新变成可检查的命题，
 分母必须改由 C++ 导入器生成——这是下一步，不在这轮的清理里。

@@ -47,6 +47,13 @@ VERIFICATION = AB / "VERIFICATION.json"
 # A gate command from RELEASE.json -> where it runs and what it reads.
 # Cross-repo inputs are written "repo:pathspec"; pathspecs are passed to
 # `git ls-tree` / `git ls-files`, so globs and directories both work.
+VERIFY_EVIDENCE = {
+    "repo": "ab",
+    "command": "./verify-evidence.sh",
+    "inputs": ["EVIDENCE.json", "evidence.py", "evidence.schema.json",
+               "oracle/**/*", "data/**/*", "*.sh", "gisel:tests/artifacts/**/*"],
+}
+
 GATES = {
     "python3 -m unittest discover -q -s tests": {
         "repo": "gisel",
@@ -90,12 +97,10 @@ GATES = {
         "inputs": ["pin/**/*"],
         "expand": "make-base",
     },
-    "ab/verify-evidence.sh": {
-        "repo": "ab",
-        "command": "./verify-evidence.sh",
-        "inputs": ["EVIDENCE.json", "evidence.py", "evidence.schema.json",
-                   "oracle/**/*", "data/**/*", "*.sh", "gisel:tests/artifacts/**/*"],
-    },
+    # r5 names the harness by its repository name; r4 and earlier manifests
+    # said `ab/verify-evidence.sh`.  Both point at the same gate.
+    "gisel-ab/verify-evidence.sh": VERIFY_EVIDENCE,
+    "ab/verify-evidence.sh": VERIFY_EVIDENCE,
 }
 
 # Gates the workbench runs on itself but does not put in RELEASE.json: the

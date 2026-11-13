@@ -7,7 +7,7 @@
 三根柱子：
 
 1. **gisel**：`.gisel` → `inc`；`.gisel` → 无答案查询（`domain`、`cases`）。
-2. **upstream-source**：从 pin 的上游规则区域出题（`U`、`U-full`）。
+2. **gisel-anchor**：从 pin 的上游规则区域出题（`U`、`U-full`）。
 3. **ab**：两侧跑同一份查询，证明答案一致（`G` 证明 gisel 侧，`U` 证明上游侧）。
 
 ## 1 覆盖矩阵
@@ -36,7 +36,7 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 |---|---|---|
 | C1 | `gisel` CI 从 2026-11-11 起是红的：`test_packaging_reads_the_package_version` 在 3.11/3.12 上报 `KeyError: 'version'`（3.10 走正则路径，所以本地绿） | `6b1d763` 修测试；顺手把 CI 的 lint / `gen --emit={inc,check,core}` 从 3 个语料扩到 `tests/corpus/*.gisel` |
 | C2 | L3 只在日志里、没进 `EVIDENCE.json` | `1edf867`：`l3.py` + `kind: "lit"`，逐条 `(status, expected)`，80,596 条，0 变化 |
-| C3 | upstream-source 没有 CI | `ada7db3`：`import-tests`（80 passed）与 `import-check`（pin 的 partial clone，7 MB，九目标 `--check` 16 s）两个 job；run `43146080543` 绿 |
+| C3 | gisel-anchor 没有 CI | `ada7db3`：`import-tests`（80 passed）与 `import-check`（pin 的 partial clone，7 MB，九目标 `--check` 16 s）两个 job；run `43146080543` 绿 |
 | C4 | `graph` 的闭包审计默认不成立 | `gisel f1472b2`：`--check-closure` 改为默认开启（`--no-check-closure` 显式退出）；四个大 target 默认 rc=1，`--refine` 后 rc=0。spec/README/REPORT 同步 |
 | C5 | ours 构建在已打补丁的树上跑 `check-pin.sh`，x86/a64/riscv 的 G 路径在内容冻结后失效 | `ab.py` 改为打补丁前校验还原树，`build_swap_runner(..., skip_pin=True)` 只跳过 ours；官方侧校验没有放宽 |
 | C6 | 改 `.gisel` 后没有 frozen 回放命令（原 O3） | `replay-frozen.py`：九 target × G/U 共 18 个方向逐条一致；见 `docs/REPLAY-FROZEN.md` |
@@ -44,7 +44,7 @@ PPC 的 L1 只有一条 `legalize-ret.mir`，文件里没有 generic 指令，�
 | C8 | U-full 的展开题面没有冻结，容易被读成丢文件 | `verify-evidence.sh` 在跑 U-full 时打印 NOTE：只冻结 universe + expand 命令，展开文件按需生成 |
 | C9 | `run-x86-end-to-end.sh` 在打补丁后建 ours runner，同样被 `check-pin.sh` 拒绝 | ours 的 build 设 `GIT_DSL_SKIP_PIN_CHECK=1`；official build 仍在还原树上校验。实测整条脚本 rc=0、3,014 条 agree |
 | C10 | O1：MIR/llc 层只覆盖 7/9，arm/mips 缺 L2，m68k/wasm/spirv 没有 MIR | 2026-11-12 补齐：arm 1,141、mips 1,311、m68k 25、wasm 588、spirv 2,625 条，diff 全 0，负控全部抓到；`VERIFY_FROZEN=1 ./verify-evidence.sh MIR` 22/22 |
-| C11 | O6：pin 漂移没有政策 | `upstream-source` 明确“只跟 pin”：`README.md` + `PIN.json` 的 comment 写死四步显式迁移；不建自动同步 job（见该仓库 README「pin 政策」） |
+| C11 | O6：pin 漂移没有政策 | `gisel-anchor` 明确“只跟 pin”：`README.md` + `PIN.json` 的 comment 写死四步显式迁移；不建自动同步 job（见该仓库 README「pin 政策」） |
 | C12 | 采用分支不存在：L3 只是“换了再还原”，fork 里没有一处真的是 gisel 的规则 | 三个 L4 target 都有采用分支：`explore/{x86,aarch64,riscv}-adopt`（`4b8a026249c2` / `a355d055cf28` / `0feeca6a2b68`），构造函数体换成 `#include "<T>LegalizerInfo.inc"`。每个分支：inc sha 与 `EVIDENCE.json` 绑定值逐位相同；构建出的 CodeGen 库 sha 与 MIR-L3 “swapped” 记录逐位相同；80,596 条 lit 逐条一致；冻结 G/U 回放 x86 3,014/10,027、aarch64 12,559/29,608、riscv 6,086/20,445，disagree 全 0。决定与回滚见 `docs/ADOPT.md` |
 
 ## 3 还缺的

@@ -376,7 +376,7 @@ LLVM ERROR: unable to legalize instruction: %1:_(<4 x s32>) = G_CTPOP %0:_(<4 x 
   VPOPCNTDQ 的 128/256 位向量 CTPOP，而我们的 `.inc` 仍要求 VLX。
   这正是 L3 要抓的“L1/L2 的 MIR 语料碰不到”的下游差异。
 - 修法：按 PR 235976 重写语料里的 `X_G_CTPOP`（VPOPCNTDQ 全宽度 +
-  BITALG 的字节/半字向量），同步重写 `upstream-source` 的
+  BITALG 的字节/半字向量），同步重写 `gisel-anchor` 的
   `deviation_x86_ctpop`。`x86.inc` 从 `93f5d025…` 变为 `38b278dd…`，
   X86 查询从 3,019 变为 3,014（`x86-features.json` 新增
   `Subtarget.hasBITALG(): false`，保持旧行为，分母仍可比较）。

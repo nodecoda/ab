@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/nodecoda/ab/targets/schema.json",
+  "$id": "https://github.com/nodecoda/gisel-ab/targets/schema.json",
   "title": "ab target registry entry",
   "description": "One file per adapter. Every field must have a consumer in ab/; the W2 tests fail on an orphan field. Strategy-specific requirements are in allOf at the bottom.",
   "type": "object",

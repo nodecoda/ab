@@ -1,4 +1,4 @@
-# CONTRACTS：ab 的输入、输出与 runner 协议
+# CONTRACTS：gisel-ab 的输入、输出与 runner 协议
 
 状态：WP0 草案。规范版本：query/answer JSONL = `cases-format v0.1`（下称
 **schema v1**）。canonical 副本在 gisel 仓库 `spec/cases-format.md`。

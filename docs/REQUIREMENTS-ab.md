@@ -1,17 +1,17 @@
 > 迁移说明（2026-11-10）：本文件原在 gisel 仓库的 `docs/` 下；文中的
-> `tools/ab/` 指本仓库根目录（`ab/`）。命令里的 `<gisel>` 是相邻的
+> `gisel-ab/` 指本仓库根目录。命令里的 `<gisel>` 是相邻的
 > gisel checkout（可用 `GISEL_SRC` 覆盖）。
 
 # 需求：LLVM legalizer 差分对拍工作台（AB harness）
 
 状态：需求草案 v0.1。**这是工作台需求，不是 gisel 产品需求**；边界见
-`docs/SCOPE.md`。实现对现有 `tools/ab/` 的归纳与缺口清单，不改变 gisel 的
+`docs/SCOPE.md`。实现对现有 `gisel-ab/` 的归纳与缺口清单，不改变 gisel 的
 两个功能。
 
 ## 0 名称
 
 - 中文叫“对拍”或“差分测试”；英文是 **differential testing**。
-- 本仓库的工作台叫 **AB harness**（`tools/ab/`）。不要叫 `gisel diff`：
+- 本仓库的工作台叫 **AB harness**（`gisel-ab/`）。不要叫 `gisel diff`：
   对拍动词已经移出产品 CLI。
 
 ## 1 目标

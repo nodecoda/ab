@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          # `ab` is a local checkout alias, not the repository name.  The
+          # repository is nodecoda/gisel-ab; scripts still resolve the
+          # pre-rename sibling name during the transition.
           path: ab
           # The release-manifest test walks RELEASE.json's history, and the
           # verification test resolves the cohort tag.

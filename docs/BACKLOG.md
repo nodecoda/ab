@@ -13,12 +13,12 @@ only at a real cut (release, claim change, adoption update).
 | SPIR-V graph | `--max-states 200000` 下 `G_FLDEXP` 报 `unsupported_scale`，rc=2 | `gisel/docs/REPORT-graph.md` §SPIR-V | 需要按 opcode 剪枝，不是加时间上限 |
 | 其余六个 target 的 L3 | 只有 x86 / aarch64 / riscv 跑过整套 `check-llvm` | `SCOPE.md` §7；`docs/REPORT-mir.md` §6 | 每轮全量 lit 成本高，先按 target 授予 |
 | `run-u --drop-opcode` 包装脚本分支 | 分类器已测；包装器需要真实构建树 | `tests/README.md`；`tests/test_negative_scripts.py` | 要重构 builder 注入点，超出本 cohort |
-| `import-cxx` 初稿漂移 | 每轮 `import --check` 证明与 pin 一致；pin 变化必须显式迁移 | `upstream-source/README.md`「pin 政策」；`pin/PIN.json` | 自动跟随上游会把“权威”换成“最新 main” |
+| `import-cxx` 初稿漂移 | 每轮 `import --check` 证明与 pin 一致；pin 变化必须显式迁移 | `gisel-anchor/README.md`「pin 政策」；`pin/PIN.json` | 自动跟随上游会把“权威”换成“最新 main” |
 
 ## 引用规则
 
 - “0 diff / 0 环 / 已覆盖”必须带命令和输入；没有输入指纹的结论只写成
   “当时快照”。
 - 引用覆盖范围时按层说：L0 / D / U / U-full / MIR L1/L2/L3 的分母不同。
-- 上游缺陷进 `upstream-source/docs/UPSTREAM-ISSUES.json`，规则遮蔽/未覆盖进
-  `upstream-source/oracle/known-gaps/`，两者不混。
+- 上游缺陷进 `gisel-anchor/docs/UPSTREAM-ISSUES.json`，规则遮蔽/未覆盖进
+  `gisel-anchor/oracle/known-gaps/`，两者不混。
