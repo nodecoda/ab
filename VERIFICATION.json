@@ -1,5 +1,29 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43447622416
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43446051591
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43447512176
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43446062169
+    }
+  },
+  "ci_notes": [
+    "r8 tag commits: gisel e5610768 (run 43446051591) and gisel-anchor 1fbdec9 (run 43446062169) are green; nightly 43447512176 was dispatched against the gisel r8 tag; no publish run was triggered.",
+    "The gisel-ab tag commit a392533 shows a red cohort job by construction: the tag still carries the r7 VERIFICATION.json, because the record commit is its child. `ab.py cohort check` now prints `record is ...; skipping` and exits 0 in that state. The record commit 772216f (run 43446081213), the skip commit a98f591 (run 43447100639) and the final ab commit 77e7bff (run 43447622416) are green."
+  ],
   "cohort": "cohort-2026-11-13-r8",
   "commits": {
     "ab": "a392533d5e4c8af67255a7a2abbfe930078d67d0",
