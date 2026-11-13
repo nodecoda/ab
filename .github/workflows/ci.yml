@@ -25,6 +25,9 @@ jobs:
         with:
           repository: nodecoda/gisel
           path: gisel
+          # The release-manifest test checks that the recorded cohort commit
+          # is an ancestor of this checkout, so the history must be present.
+          fetch-depth: 0
           # The tests and the offline suites need the gisel that resolves
           # p0:* per configuration (6671815).  The evidence *record* still
           # names a2005d2: moving that needs a new VERIFICATION.json and
