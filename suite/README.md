@@ -54,5 +54,6 @@ python3 suite.py check --all --json
 3. `python3 suite.py check --target <target>` 必须 0 差异；有差异说明语料
    和这份官方答案不属于同一个 pin，先查清再入库。
 
-大 target 的答案是分钟级到小时级的一次性成本；`x86`（3,014 条）、
-`aarch64`（9,632 条）、`riscv`（19,512 条）还没入库。
+已入库：`m68k`（35 条）、`riscv`（6,086 条，rv32/rv64 六个配置）。
+还没入库：`x86`（3,014 条）、`aarch64`（9,632 条）、以及 arm/mips/ppc/wasm/spirv。
+答案是分钟级到小时级的一次性成本，按上面的命令生成即可。

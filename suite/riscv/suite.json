@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "target": "riscv",
+  "pin": "9bfc850b9940566bef17a34601826775349ba0e6",
+  "official_base": "700e551714ccb7357a191fd41837ff1b4784abf2",
+  "corpus": "../../../gisel/tests/corpus/RISCVLegalizerInfo.gisel",
+  "features": "../../../gisel/tests/cases/riscv-features.json",
+  "corpus_sha256": "3293f26167ee694b688297852dea3abe3305179b9e1baf1bb2d050991d12dd33",
+  "features_sha256": "38967ab10a020b3c69c4fa4940b257f248588419b16a507dc1317c6398075ecf",
+  "queries": "queries.jsonl",
+  "queries_sha256": "4f027ac85ffdf778ed9a5942df8d68b6f746b177d7fd3bf32b4166d6e12ba4b6",
+  "answers": "official.answers.jsonl",
+  "answers_sha256": "677adb99675445653f67b170e9ce8a39efb711fc441001a320e5ee56ba56356d",
+  "query_count": 6086,
+  "configs": [
+    "default"
+  ],
+  "allow_unanswerable": 0,
+  "generated_by": "gisel cases --corpus riscv; ab.py run --target riscv",
+  "source_run": {
+    "artifacts": "/tmp/riscv-ab",
+    "command": "python3 ab.py run --target riscv --tree <AB_TREE> --build <AB_BUILD> --queries <cases> --out /tmp/riscv-ab --state /tmp/riscv-ab-state"
+  }
+}
