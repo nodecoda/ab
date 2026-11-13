@@ -56,7 +56,7 @@ aarch64 / riscv 在独立重链后 `.so` 字节不同（`e49c03ec…` / `f32be74
 ## 2 命令与结果
 
 ```sh
-cd /home/ubuntu/llvm/ab
+cd /home/ubuntu/llvm/gisel-ab
 python3 mir-replay.py --layer upstream --target x86 --target aarch64 --target riscv \
   --tree /home/ubuntu/llvm/trees/explore --build /home/ubuntu/llvm/builds/explore \
   --out /tmp/mir-l1-final5 --prepare --json
@@ -290,7 +290,7 @@ AArch64 `legalize-load-store-vector.mir` 的第一条 RUN 写成
 ### 6.1 命令
 
 ```sh
-cd /home/ubuntu/llvm/ab
+cd /home/ubuntu/llvm/gisel-ab
 python3 l3.py run --out /tmp/l3-final3
 python3 l3.py compare /tmp/l3-final3 --json /tmp/l3-final3/l3-summary.json
 ```

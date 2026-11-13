@@ -75,7 +75,7 @@ riscv   /tmp/riscv-adopt/runner/runner.official
 一键漂移检测（会 fetch 三个分支，需要网络）：
 
 ```sh
-cd /home/ubuntu/llvm/ab && ./adopt-check.sh
+cd /home/ubuntu/llvm/gisel-ab && ./adopt-check.sh
 ```
 
 它比较分支内 `.inc` 的 sha 与 `gisel/tests/artifacts/<t>.inc`，并核对
