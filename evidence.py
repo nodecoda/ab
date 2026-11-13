@@ -199,12 +199,26 @@ class Verifier:
                                  % (name, got[:16], expected[:16]))
         return bad
 
+    @staticmethod
+    def _exists(path) -> bool:
+        """`exists` for a path that may sit under a directory we cannot enter.
+
+        EVIDENCE.json records absolute paths on the machine that produced it.
+        A CI runner may have `/home/ubuntu` but no permission to enter it;
+        `Path.exists()` raises PermissionError there.  That is "not present"
+        for this check, not a reason to abort the whole verification.
+        """
+        try:
+            return path.exists()
+        except OSError:
+            return False
+
     def check_runtime(self, entry) -> None:
         runtime = entry.get("runtime")
         if not runtime:
             return
         path = pathlib.Path(runtime["path"])
-        if not path.exists():
+        if not self._exists(path):
             print("WARN %-20s runtime missing: %s" % (entry["id"], path))
             return
         got = sha256(path.read_bytes())
@@ -541,13 +555,13 @@ class Verifier:
             self.skipped += 1
             return 0
         root = pathlib.Path(build["path"])
-        if not root.exists():
+        if not self._exists(root):
             print("FAIL official_build  %s is not present" % root)
             return 1
         bad = 0
         for target, want in sorted(build["libs"].items()):
             lib = root / "lib" / ("libLLVM%sCodeGen.so.24.0git" % target)
-            if not lib.exists():
+            if not self._exists(lib):
                 print("FAIL official_build  missing %s" % lib)
                 bad += 1
                 continue
