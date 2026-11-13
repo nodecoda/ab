@@ -8,7 +8,7 @@ env:
   # The evidence cohort's gisel; `verify-evidence` is content-addressed, so
   # this pin only decides which gisel answers the offline suites.  Keep the
   # value in one place: every job below inherits it.
-  GISEL_REF: 982eb8d21710e3f19746186480637ed0d9c62755
+  GISEL_REF: 08347e12996b3d6f9ee17ad1340a2ebbe62f7afc
   ANCHOR_REF: ac290bb80e46405ea58491328f75877905c4b1ba
 
 jobs:
