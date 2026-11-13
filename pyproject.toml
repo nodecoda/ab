@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gisel-ab"
-version = "0.8.0"
+version = "0.8.1"
 description = "A/B workbench for LLVM GlobalISel legalizer rules"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -15,9 +15,10 @@ classifiers = [
   "Topic :: Software Development :: Compilers",
   "Topic :: Software Development :: Testing",
 ]
-# Deliberately empty: the harness imports only the standard library and
-# `gisel`, which is a sibling checkout (or its own install).
-dependencies = []
+# `gisel` is first-party but it is still a dependency: the wheel ships the
+# suite snapshots, not the compiler that answers them.  A checkout can keep
+# using `python3 ab.py` without installing this package.
+dependencies = ["gisel>=0.3,<0.4"]
 
 [project.scripts]
 gisel-ab = "gisel_ab.cli:main"

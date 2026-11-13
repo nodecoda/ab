@@ -63,7 +63,19 @@ INTERNALS = {
 
 
 def _version() -> str:
-    """The installed version, or the one the checkout declares."""
+    """The checkout's version when there is one, else the installed metadata.
+
+    The source wins so `python3 ab.py --version` reflects the tree being
+    edited, even when a stale editable install is still on the path.
+    """
+    pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    try:
+        text = pyproject.read_text()
+    except OSError:
+        text = ""
+    match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.M)
+    if match:
+        return match.group(1)
     try:
         from importlib.metadata import PackageNotFoundError, version
         try:
@@ -72,13 +84,7 @@ def _version() -> str:
             pass
     except ImportError:
         pass
-    pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
-    try:
-        text = pyproject.read_text()
-    except OSError:
-        return "unknown"
-    match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.M)
-    return match.group(1) if match else "unknown"
+    return "unknown"
 
 
 def _usage() -> str:
