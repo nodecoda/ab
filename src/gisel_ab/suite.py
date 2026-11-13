@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -42,9 +43,9 @@ from pathlib import Path
 
 PKG = Path(__file__).resolve().parent
 AB_ROOT = PKG.parents[1]
-GISEL = Path(os.environ.get("GISEL_SRC", AB_ROOT.parent / "gisel")).resolve()
 SUITE = PKG / "data" / "suite"
 
+from gisel_ab import gisel_data, gisel_src  # noqa: E402
 from gisel_ab.l0 import diff as differ  # noqa: E402
 
 POINTER_WILDCARD = re.compile(r"p(\d+):\*")
@@ -89,11 +90,42 @@ def _check_sha(directory: Path, doc: dict, key: str, relative: str) -> Path:
     return path
 
 
+def _is_installed(path: Path) -> bool:
+    """Is ``path`` a site directory, rather than a checkout?
+
+    ``sys.path`` and ``importlib.metadata`` both see the sibling checkout,
+    because the modules around this one add it at import time; the directory
+    name is the one signal that survives that.
+    """
+    return any(part in ("site-packages", "dist-packages")
+               for part in Path(path).parts)
+
+
+def _gisel_env(env=None) -> dict:
+    """The environment a ``python3 -m gisel`` child needs.
+
+    An installed gisel needs nothing: the child runs the same interpreter.
+    ``GISEL_SRC`` still wins so a checkout can shadow an install; otherwise
+    a sibling checkout is used when there is one.
+    """
+    out = dict(os.environ if env is None else env)
+    entry = None
+    explicit = out.get("GISEL_SRC")
+    if explicit:
+        entry = str(Path(explicit).expanduser().resolve())
+    else:
+        root = gisel_src()
+        if (root / "gisel" / "__init__.py").is_file() and not _is_installed(root):
+            entry = str(root)
+    if entry:
+        parts = [p for p in out.get("PYTHONPATH", "").split(os.pathsep) if p]
+        if entry not in parts:
+            out["PYTHONPATH"] = os.pathsep.join([entry, *parts])
+    return out
+
+
 def _gisel(*args: str, cwd: Path) -> None:
-    env = dict(os.environ)
-    parts = [p for p in env.get("PYTHONPATH", "").split(os.pathsep) if p]
-    if str(GISEL) not in parts:
-        env["PYTHONPATH"] = os.pathsep.join([str(GISEL), *parts])
+    env = _gisel_env()
     done = subprocess.run([sys.executable, "-m", "gisel", *args],
                           cwd=str(cwd), env=env, capture_output=True,
                           text=True)
@@ -202,19 +234,27 @@ def _validate_pointer_widths(doc: dict, rows: list[dict],
 def _gisel_path(directory: Path, recorded: str) -> Path:
     """The corpus/features a snapshot was taken from.
 
-    Snapshots record a path relative to their own directory.  That was
-    ``../../../gisel/...`` when suite/ sat at the repository root; the data
-    moved under ``src/gisel_ab/data/suite`` and the same spelling now resolves
-    inside the package.  The file name is the part that identifies the input,
-    so fall back to the gisel checkout by name.
+    Snapshots record a path relative to their own directory (``../../../gisel/
+    tests/corpus/...``).  The file name is the part that identifies the input,
+    so fall back to the ``gisel`` checkout by name -- and to the copies the
+    wheel ships (``gisel/data/corpus``, ``gisel/data/cases``) when there is no
+    checkout at all.
     """
     path = (directory / recorded).resolve()
     if path.is_file():
         return path
-    marker = recorded.replace("\\", "/")
-    if "gisel/" in marker:
-        return (GISEL / marker.split("gisel/", 1)[1]).resolve()
-    return (GISEL / "tests" / "corpus" / Path(recorded).name).resolve()
+    name = Path(recorded).name
+    order = ("corpus", "cases") if name.endswith(".gisel") else ("cases", "corpus")
+    fallback = None
+    for kind in order:
+        root = gisel_data(kind)
+        if root is None:
+            continue
+        candidate = (root / name).resolve()
+        if candidate.is_file():
+            return candidate
+        fallback = fallback or candidate
+    return fallback or path
 
 
 def check(target: str, verbose: bool = False) -> dict:

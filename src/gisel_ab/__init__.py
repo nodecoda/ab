@@ -18,6 +18,7 @@ raising a FileNotFoundError three levels down.
 
 from __future__ import annotations
 
+import importlib.util
 import os
 import sys
 from pathlib import Path
@@ -31,15 +32,61 @@ SCRIPTS = AB_ROOT / "scripts"
 EVIDENCE = AB_ROOT / "evidence"
 
 
-def gisel_src(explicit=None) -> Path:
-    """The gisel checkout that produces inc/queries.
+def _gisel_package_dir() -> Path | None:
+    """The installed ``gisel`` package directory, when it is importable."""
+    try:
+        spec = importlib.util.find_spec("gisel")
+    except (ImportError, ValueError):
+        return None
+    if spec is None or not spec.submodule_search_locations:
+        return None
+    return Path(next(iter(spec.submodule_search_locations))).resolve()
 
-    ``GISEL_SRC`` wins; otherwise the sibling ``gisel`` next to this checkout.
+
+def gisel_src(explicit=None) -> Path:
+    """A directory that makes ``import gisel`` work.
+
+    ``GISEL_SRC`` wins; then a sibling checkout; then the installed package,
+    whose parent is the directory that belongs on ``sys.path``.  A path is
+    returned even when nothing is found, so the caller's error names the
+    place it looked.
     """
     value = explicit or os.environ.get("GISEL_SRC")
     if value:
         return Path(value).expanduser().resolve()
-    return (AB_ROOT.parent / "gisel").resolve()
+    sibling = (AB_ROOT.parent / "gisel").resolve()
+    if (sibling / "gisel" / "__init__.py").is_file():
+        return sibling
+    package = _gisel_package_dir()
+    if package is not None:
+        return package.parent
+    return sibling
+
+
+def gisel_package() -> Path | None:
+    """The ``gisel`` package directory, from a checkout or an install."""
+    root = gisel_src()
+    for candidate in (root / "gisel", root):
+        if (candidate / "__init__.py").is_file():
+            return candidate
+    return _gisel_package_dir()
+
+
+def gisel_data(name: str) -> Path | None:
+    """The ``corpus``/``cases`` directory, checkout first, wheel second.
+
+    The wheel ships byte-identical copies under ``gisel/data``; the checkout
+    keeps the canonical copies under ``tests/``.
+    """
+    package = gisel_package()
+    roots = [package.parent, package] if package is not None else [gisel_src()]
+    for root in roots:
+        for candidate in (root / "tests" / name,
+                          root / "gisel" / "data" / name,
+                          root / "data" / name):
+            if candidate.is_dir():
+                return candidate.resolve()
+    return None
 
 
 def gisel_path_entry() -> str:

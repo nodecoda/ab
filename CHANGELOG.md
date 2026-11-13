@@ -27,6 +27,10 @@ which are generated and must not be hand-edited.
   evidence tree is repository-only.
 - CI gains a packaging job (install the wheel, run `--help` and the offline
   suite, assert `evidence/` is absent) and a cohort check job.
+- Installed state: `suite` resolves `gisel` and its `data/corpus`/`data/cases`
+  without a sibling checkout, `doctor` falls back to the pin the
+  `gisel-anchor` wheel ships, and `gisel-ab --version` exists.  The packaging
+  smoke no longer sets `GISEL_SRC`, so the install-only path is what CI tests.
 - `cohort check` treats a record that names an older cohort as "not written
   yet" (rc=0, one line saying so) instead of drift.  The record commit is a
   child of the tag, so at the tag the manifest is already the new cohort while

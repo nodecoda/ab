@@ -53,13 +53,28 @@ def _git(path: Path, *args: str) -> str | None:
     return done.stdout.strip() if done.returncode == 0 else None
 
 
+def _installed_pin() -> Path | None:
+    """The pin the ``gisel-anchor`` wheel ships, when it is installed."""
+    try:
+        import gisel_anchor
+    except ImportError:
+        return None
+    return Path(gisel_anchor.__file__).resolve().parent / "importer" / "data" / "PIN.json"
+
+
 def _pin_path() -> Path:
     explicit = os.environ.get("GS_PIN")
     if explicit:
         return Path(explicit).expanduser()
-    return (paths.sibling(AB_ROOT.parent, "UPSTREAM_SOURCE",
-                          "gisel-anchor", "upstream-source")
-            / "pin" / "PIN.json")
+    checkout = (paths.sibling(AB_ROOT.parent, "UPSTREAM_SOURCE",
+                              "gisel-anchor", "upstream-source")
+                / "pin" / "PIN.json")
+    if checkout.is_file():
+        return checkout
+    installed = _installed_pin()
+    if installed is not None and installed.is_file():
+        return installed
+    return checkout
 
 
 def _python() -> Check:

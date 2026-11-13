@@ -12,7 +12,9 @@ message; nothing here reads the tree.
 from __future__ import annotations
 
 import importlib
+import re
 import sys
+from pathlib import Path
 
 # verb -> (module, callable, prepend the verb to argv)
 #
@@ -60,6 +62,25 @@ INTERNALS = {
 }
 
 
+def _version() -> str:
+    """The installed version, or the one the checkout declares."""
+    try:
+        from importlib.metadata import PackageNotFoundError, version
+        try:
+            return version("gisel-ab")
+        except PackageNotFoundError:
+            pass
+    except ImportError:
+        pass
+    pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    try:
+        text = pyproject.read_text()
+    except OSError:
+        return "unknown"
+    match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.M)
+    return match.group(1) if match else "unknown"
+
+
 def _usage() -> str:
     width = max(len(name) for name in VERBS)
     lines = ["  %-*s  %s" % (width, name, desc)
@@ -78,6 +99,9 @@ def _usage() -> str:
 
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] in ("-V", "--version"):
+        print("gisel-ab %s" % _version())
+        return 0
     if not argv or argv[0] in ("-h", "--help", "help"):
         print(_usage(), end="")
         return 0 if argv else 2

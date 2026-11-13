@@ -93,6 +93,11 @@ jobs:
           repository: nodecoda/gisel
           path: gisel
           ref: ${{ env.GISEL_REF }}
+      - uses: actions/checkout@v7
+        with:
+          repository: nodecoda/gisel-anchor
+          path: gisel-anchor
+          ref: ${{ env.ANCHOR_REF }}
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -110,12 +115,28 @@ jobs:
         working-directory: ab
         run: |
           python3 -m venv "$RUNNER_TEMP/venv"
-          "$RUNNER_TEMP/venv/bin/pip" install -q dist/*.whl
+          # Install the siblings the way a user would: from their sources, so
+          # the smoke does not depend on PyPI having the release yet.
+          "$RUNNER_TEMP/venv/bin/pip" install -q dist/*.whl \
+            "$GITHUB_WORKSPACE/gisel" "$GITHUB_WORKSPACE/gisel-anchor"
+          "$RUNNER_TEMP/venv/bin/gisel-ab" --version
           "$RUNNER_TEMP/venv/bin/gisel-ab" --help
-          GISEL_SRC="$GITHUB_WORKSPACE/gisel" \
-            "$RUNNER_TEMP/venv/bin/gisel-ab" suite check --target m68k
-          # doctor must fail with an actionable rc=2, not a traceback
-          if "$RUNNER_TEMP/venv/bin/gisel-ab" doctor; then exit 1; fi
+          # The installed state must find its gisel, corpus and pin by itself:
+          # no GISEL_SRC, no sibling checkout on the path.
+          env -u GISEL_SRC "$RUNNER_TEMP/venv/bin/gisel-ab" \
+            suite check --target m68k
+          # doctor must fail with an actionable rc=2, not a traceback, and
+          # only the LLVM tree/build may be missing.
+          if env -u GISEL_SRC "$RUNNER_TEMP/venv/bin/gisel-ab" doctor \
+              > "$RUNNER_TEMP/doctor.txt"; then
+            echo "doctor should fail without LLVM"
+            exit 1
+          fi
+          cat "$RUNNER_TEMP/doctor.txt"
+          grep -qE '^gisel +ok' "$RUNNER_TEMP/doctor.txt"
+          grep -qE '^pin +ok' "$RUNNER_TEMP/doctor.txt"
+          grep -qE '^tree +fail' "$RUNNER_TEMP/doctor.txt"
+          grep -qE '^build +fail' "$RUNNER_TEMP/doctor.txt"
 
   cohort:
     # Fingerprints only: no gate is re-run.  A tracked input that changed
