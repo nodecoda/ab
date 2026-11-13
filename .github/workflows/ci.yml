@@ -35,7 +35,7 @@ jobs:
           # p0:* per configuration and re-records the RISC-V goldens.  This
           # is the commit r4 names; verify-evidence is content-addressed, so
           # it checks the artifacts, not this pin.
-          ref: 2a7b9d47bd54efe6ce87ee0e738d324a25177fe5
+          ref: d194df4813197b4d50efd519a0ef0f32a454eaf8
       - name: show the gisel pin
         run: git -C gisel rev-parse HEAD
       - uses: actions/setup-python@v7
@@ -77,7 +77,7 @@ jobs:
         with:
           repository: nodecoda/gisel
           path: gisel
-          ref: 2a7b9d47bd54efe6ce87ee0e738d324a25177fe5
+          ref: d194df4813197b4d50efd519a0ef0f32a454eaf8
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
