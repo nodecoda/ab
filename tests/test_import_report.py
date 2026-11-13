@@ -18,7 +18,7 @@ class ImportReportTest(unittest.TestCase):
     def setUp(self):
         self.assertTrue(
             REPORT.is_file(),
-            "%s is missing; run `upstream-source/import/import-cxx.py --all`"
+            "%s is missing; run `upstream-source/importer/import-cxx.py --all`"
             % REPORT)
         self.report = json.loads(REPORT.read_text())
 

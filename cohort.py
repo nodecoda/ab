@@ -79,9 +79,9 @@ GATES = {
         "repo": "gisel",
         "inputs": ["docs/**/*.md", "gisel/**/*.py", "tools/**/*", "spec/**/*"],
     },
-    "python3 import/import-cxx.py --all --pin pin/PIN.json --check": {
+    "python3 importer/import-cxx.py --all --pin pin/PIN.json --check": {
         "repo": "upstream_source",
-        "inputs": ["import/**/*", "pin/**/*", "oracle/**/*",
+        "inputs": ["importer/**/*", "pin/**/*", "oracle/**/*",
                    "gisel:tests/corpus/*.gisel"],
         "expand": "import-check",
     },
