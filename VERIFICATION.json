@@ -1,5 +1,28 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43377378272
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43377387484
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43378025064
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43377395054
+    }
+  },
+  "ci_notes": [
+    "nightly has no tag trigger (schedule + workflow_dispatch); run 43378025064 was dispatched against the r4 tag.  The other four runs are the tag-commit runs, all green."
+  ],
   "cohort": "cohort-2026-11-13-r4",
   "commits": {
     "ab": "72d32a13497b6267929572b17dfa4f3809434f54",
