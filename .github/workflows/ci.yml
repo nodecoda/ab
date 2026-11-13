@@ -9,7 +9,7 @@ env:
   # this pin only decides which gisel answers the offline suites.  Keep the
   # value in one place: every job below inherits it.
   GISEL_REF: e5610768e86d6aac3ffad5902d44937d5286c230
-  ANCHOR_REF: 518779ca9a23bf8ea5a615d887cce6dc30d80417
+  ANCHOR_REF: 1fbdec96695e3790509eda8a0c2e79504363ef06
 
 jobs:
   test:
