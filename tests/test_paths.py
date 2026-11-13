@@ -154,5 +154,36 @@ class ScriptsRefuseMissingRoots(unittest.TestCase):
         self.assertIn("AB_BUILD", done.stderr)
 
 
+class Sibling(unittest.TestCase):
+    def test_new_name_wins_when_both_exist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "gisel-anchor").mkdir()
+            (root / "upstream-source").mkdir()
+            self.assertEqual(
+                paths.sibling(root, "NO_SUCH_ENV_FOR_TEST",
+                              "gisel-anchor", "upstream-source"),
+                root / "gisel-anchor")
+
+    def test_old_name_is_the_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "upstream-source").mkdir()
+            self.assertEqual(
+                paths.sibling(root, "NO_SUCH_ENV_FOR_TEST",
+                              "gisel-anchor", "upstream-source"),
+                root / "upstream-source")
+
+    def test_env_override_wins(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "gisel-anchor").mkdir()
+            with mock.patch.dict(os.environ, {"UPSTREAM_SOURCE": "/somewhere"}):
+                self.assertEqual(
+                    paths.sibling(root, "UPSTREAM_SOURCE",
+                                  "gisel-anchor", "upstream-source"),
+                    Path("/somewhere"))
+
+
 if __name__ == "__main__":
     unittest.main()

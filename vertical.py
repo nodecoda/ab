@@ -399,7 +399,9 @@ def _git_head(path: Path) -> str:
 
 def _pin_line() -> str:
     try:
-        doc = load(ROOT.parent / "upstream-source" / "pin" / "PIN.json")
+        doc = load(paths.sibling(ROOT.parent, "UPSTREAM_SOURCE",
+                                 "gisel-anchor", "upstream-source")
+                   / "pin" / "PIN.json")
     except OSError:
         return "unknown"
     patches = doc.get("patches") or []
@@ -579,7 +581,7 @@ def main(argv=None, default_target="riscv"):
     if not u_queries.exists():
         raise SystemExit(
             "U queries missing: %s\nGenerate them with:\n"
-            "  cd ${UPSTREAM_SOURCE:-../upstream-source}\n"
+            "  cd ${UPSTREAM_SOURCE:-../gisel-anchor}\n"
             "  ./oracle/scripts/gen-u.sh %s /tmp/u-gen/%s"
             % (u_queries, args.target, spec["u_prefix"]))
 

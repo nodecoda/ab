@@ -7,7 +7,7 @@
     cohort.py record-ci --file CI.json
     cohort.py check [--worktree] [--json]
 
-A cohort is three commits (gisel, upstream-source, ab) and a set of gates.
+A cohort is three commits (gisel, gisel-anchor, gisel-ab) and a set of gates.
 `RELEASE.json` names the commits and the gate commands; this file adds what
 the manifest deliberately does not carry: which repo each gate runs in, which
 files are its inputs, and a fingerprint over those files.
@@ -39,8 +39,8 @@ import paths
 
 AB = pathlib.Path(__file__).resolve().parent
 GISEL = pathlib.Path(os.environ.get("GISEL_SRC", AB.parent / "gisel"))
-UPSTREAM = pathlib.Path(os.environ.get(
-    "UPSTREAM_SOURCE", AB.parent / "upstream-source"))
+UPSTREAM = paths.sibling(AB.parent, "UPSTREAM_SOURCE",
+                         "gisel-anchor", "upstream-source")
 MANIFEST = AB / "RELEASE.json"
 VERIFICATION = AB / "VERIFICATION.json"
 
@@ -427,7 +427,7 @@ def cmd_tag(args):
     if head(GISEL) != manifest["repos"]["gisel"]:
         return fail("gisel HEAD is not the manifest commit")
     if head(UPSTREAM) != manifest["repos"]["upstream_source"]:
-        return fail("upstream-source HEAD is not the manifest commit")
+        return fail("gisel-anchor HEAD is not the manifest commit")
     if head(AB) != manifest["repos"]["ab"]:
         manifest_edit = git(AB, "log", "-1", "--format=%H", "--", "RELEASE.json")
         if manifest_edit.stdout.strip() != head(AB):

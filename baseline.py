@@ -21,9 +21,12 @@ import sys
 from datetime import date
 from pathlib import Path
 
+import paths
+
 AB = Path(__file__).resolve().parent
 GISEL = Path(__import__("os").environ.get("GISEL_SRC", AB.parent / "gisel"))
-UPSTREAM = AB.parent / "upstream-source"
+UPSTREAM = paths.sibling(AB.parent, "UPSTREAM_SOURCE",
+                         "gisel-anchor", "upstream-source")
 
 
 def sha256(path: Path) -> str:

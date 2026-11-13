@@ -24,7 +24,14 @@ set -euo pipefail
 
 TREE=${1:?usage: check-pin.sh TREE [PIN]}
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-PIN=${2:-${GS_PIN:-$ROOT/../upstream-source/pin/PIN.json}}
+if [ $# -ge 2 ]; then
+  PIN=$2
+elif [ -n "${GS_PIN:-}" ]; then
+  PIN=$GS_PIN
+else
+  PIN=$ROOT/../gisel-anchor/pin/PIN.json
+  [ -f "$PIN" ] || PIN=$ROOT/../upstream-source/pin/PIN.json
+fi
 
 if [ "${GIT_DSL_SKIP_PIN_CHECK:-}" = "1" ]; then
   echo "pin check: skipped by GIT_DSL_SKIP_PIN_CHECK=1" >&2

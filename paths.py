@@ -21,6 +21,23 @@ BUILD_ENVS = ("AB_BUILD",)
 LLVM_ENVS = ("COHORT_LLVM", "AB_LLVM_REPO")
 
 
+def sibling(root, env, *names) -> Path:
+    """A sibling checkout: explicit env var first, then each name in order.
+
+    The repository rename (upstream-source -> gisel-anchor, ab -> gisel-ab)
+    changes directory names before every script is updated.  Callers pass the
+    new name first and the pre-rename name second so both layouts work.
+    """
+    value = os.environ.get(env)
+    if value:
+        return Path(value).expanduser()
+    for name in names:
+        path = Path(root) / name
+        if path.is_dir():
+            return path
+    return Path(root) / names[0]
+
+
 def _from_env(envs):
     for name in envs:
         value = os.environ.get(name)

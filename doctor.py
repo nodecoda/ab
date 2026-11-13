@@ -22,6 +22,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+import paths
+
 AB_ROOT = Path(__file__).resolve().parent
 OK, WARN, FAIL = "ok", "warn", "fail"
 
@@ -53,7 +55,9 @@ def _pin_path() -> Path:
     explicit = os.environ.get("GS_PIN")
     if explicit:
         return Path(explicit).expanduser()
-    return AB_ROOT.parent / "upstream-source" / "pin" / "PIN.json"
+    return (paths.sibling(AB_ROOT.parent, "UPSTREAM_SOURCE",
+                          "gisel-anchor", "upstream-source")
+            / "pin" / "PIN.json")
 
 
 def _python() -> Check:
@@ -90,15 +94,15 @@ def _pin() -> Check:
         doc = json.loads(path.read_text())
     except FileNotFoundError:
         return Check("pin", FAIL, "missing: %s" % path,
-                     "clone upstream-source next to ab, or export "
-                     "GS_PIN=<upstream-source>/pin/PIN.json")
+                     "clone gisel-anchor next to gisel-ab, or export "
+                     "GS_PIN=<gisel-anchor>/pin/PIN.json")
     except json.JSONDecodeError as exc:
         return Check("pin", FAIL, "bad JSON in %s: %s" % (path, exc),
-                     "restore pin/PIN.json from upstream-source")
+                     "restore pin/PIN.json from gisel-anchor")
     commit = str(doc.get("commit", ""))
     if len(commit) != 40:
         return Check("pin", FAIL, "no 40-hex commit in %s" % path,
-                     "restore pin/PIN.json from upstream-source")
+                     "restore pin/PIN.json from gisel-anchor")
     return Check("pin", OK, "%s commit %s" % (path.name, commit[:12]))
 
 
