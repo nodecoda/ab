@@ -1,5 +1,32 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43483086672,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43483086672"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43483094835,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43483094835"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43484783691,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43484783691"
+      },
+      "run": 43483094943,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43483094943"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43483091421,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43483091421"
+    }
+  },
+  "ci_notes": "r15 CI: all three tagged runs and the ab main run after the verification record are green.  r15 fixes the setup resolver key and the run/mir/verify fallback found by V3; r14 remains reproducible.",
   "cohort": "cohort-2026-11-14-r15",
   "commits": {
     "ab": "ec08cd3bb902eac6059bf68a89ce38bcabd9a6f4",
