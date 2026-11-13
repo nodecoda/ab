@@ -82,23 +82,32 @@ class TreeMustMatchThePinByContent(unittest.TestCase):
 
 
 class TheRealMachine(unittest.TestCase):
-    """"The dev machine passes" is the acceptance criterion for A3."""
+    """"The dev machine passes" is the acceptance criterion for A3.
 
-    TREE = Path("/home/ubuntu/llvm/trees/explore")
-    BUILD = Path("/home/ubuntu/llvm/builds/explore")
+    The paths come from AB_TREE/AB_BUILD, not from guessing a developer's
+    layout.  A cohort clone inherits neither, so this acceptance check skips
+    instead of failing on whatever tree happens to sit beside it.
+    """
 
-    @unittest.skipUnless(_is_dir(TREE / "llvm")
+    TREE = Path(os.environ["AB_TREE"]) if os.environ.get("AB_TREE") else None
+    BUILD = Path(os.environ["AB_BUILD"]) if os.environ.get("AB_BUILD") else None
+
+    @unittest.skipUnless(TREE is not None and BUILD is not None
+                         and _is_dir(TREE / "llvm")
                          and _is_file(BUILD / "build.ninja"),
-                         "needs the pinned tree and build")
+                         "set AB_TREE and AB_BUILD to the dev machine's tree "
+                         "and build")
     def test_dev_machine_is_healthy(self):
         done = run(env={"AB_TREE": str(self.TREE),
                         "AB_BUILD": str(self.BUILD)})
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertIn("0 failed", done.stdout)
 
-    @unittest.skipUnless(_is_dir(TREE / "llvm")
+    @unittest.skipUnless(TREE is not None and BUILD is not None
+                         and _is_dir(TREE / "llvm")
                          and _is_file(BUILD / "build.ninja"),
-                         "needs the pinned tree and build")
+                         "set AB_TREE and AB_BUILD to the dev machine's tree "
+                         "and build")
     def test_json_reports_the_same_verdict(self):
         doc = json.loads(run("--json", env={
             "AB_TREE": str(self.TREE), "AB_BUILD": str(self.BUILD)}).stdout)
