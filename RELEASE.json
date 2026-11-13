@@ -10,7 +10,7 @@
     "wasm.cases.jsonl": "3442ddeedad10e38d7a9e958e46bdcd90bce581097261a993338a460801a798c",
     "x86.cases.jsonl": "f6923a396fd430388d6acbed2cccf718ac8fb1540980c3ee00c592347f1b86f6"
   },
-  "cohort": "cohort-2026-11-14-r12",
+  "cohort": "cohort-2026-11-14-r13",
   "corpus_sha256": {
     "AArch64LegalizerInfo.gisel": "704183bad381b8973628a45ff3bf74589e0bf057533b80f528367e577b035fac",
     "ARMLegalizerInfo.gisel": "b8b68a01f9058d00ed5ff0db570847c61847237562a64c4d496ecf4528448844",
@@ -71,9 +71,9 @@
     }
   },
   "repos": {
-    "ab": "722726e5c0a8e6ff7274c0e4d19661a031c2cf8a",
-    "gisel": "1155560f416d805197b76e31e0724e8b028b5799",
-    "upstream_source": "ac290bb80e46405ea58491328f75877905c4b1ba"
+    "ab": "c8aab367e00b921ea5da64010f9dc4b5df7642b5",
+    "gisel": "982eb8d21710e3f19746186480637ed0d9c62755",
+    "upstream_source": "8045c398b5ee32b49f76025944e39fe5136fcad7"
   },
   "schema": 1,
   "version": "0.3.0"
