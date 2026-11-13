@@ -17,6 +17,14 @@ finish while the kettle boils.
 answers which question (L0 `ab.py run`, MIR replay, L3 `check-llvm`), what
 each costs, and what a green result does and does not prove.
 
+## Offline check
+
+`suite.py check --all` compares our answers with a frozen official snapshot
+per target -- no LLVM, no build, no network.  It is the cheapest way to ask
+"do the rules still say what the official legalizer said?" and it refuses to
+run when the snapshot's shas no longer match the corpus.  Format and how to
+add a target: `suite/README.md`.
+
 ## Two layers
 
 - **L0 (`ab.py run` / `diff.py`)** compares `getAction()` for one query:

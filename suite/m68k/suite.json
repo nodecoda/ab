@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "target": "m68k",
+  "pin": "9bfc850b9940566bef17a34601826775349ba0e6",
+  "official_base": "700e551714ccb7357a191fd41837ff1b4784abf2",
+  "corpus": "../../../gisel/tests/corpus/M68kLegalizerInfo.gisel",
+  "features": "../../../gisel/tests/cases/m68k-features.json",
+  "corpus_sha256": "c9cd4a22344b2da99d3ca62a7ddee9cd09d328098c8f99b8e1a0af713007780c",
+  "features_sha256": "deb84dc7339b02bd525595e81b0f5fc7aaf15e5d87a8bec14ad8e5d9e195bf4c",
+  "queries": "queries.jsonl",
+  "queries_sha256": "e765e396ca57cd3f179bb3e44235705674e9f33cfa30ce9ac7dda23684be8e3f",
+  "answers": "official.answers.jsonl",
+  "answers_sha256": "ce9753b4cda082083bf3b4f464cf0ed077c9e6c66cc03fba8ec920aa51cd863b",
+  "query_count": 35,
+  "configs": [
+    "default"
+  ],
+  "allow_unanswerable": 0,
+  "generated_by": "pytest-free: gisel cases --corpus m68k; ab.py run --target m68k",
+  "source_run": {
+    "artifacts": "/tmp/tut-ab",
+    "command": "python3 ab.py run --target m68k --tree <AB_TREE> --build <AB_BUILD> --queries <cases> --out /tmp/tut-ab --state /tmp/tut-ab-state"
+  }
+}

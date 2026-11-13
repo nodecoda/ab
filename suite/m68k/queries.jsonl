@@ -1,0 +1,35 @@
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_ADD", "reason": "first match for rule 0", "rule": 0, "ruleset": "M68k_G_ADD", "types": ["s16"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_ADD", "reason": "first match for rule 1", "rule": 1, "ruleset": "M68k_G_ADD", "types": ["s7"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_ADD", "reason": "first match for rule 2", "rule": 2, "ruleset": "M68k_G_ADD", "types": ["s33"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_ADD", "reason": "first match for rule 3", "rule": 3, "ruleset": "M68k_G_ADD", "types": ["s15"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": null, "name": "G_ADD", "reason": "bits 8 -> 9", "rule": 0, "ruleset": "M68k_G_ADD", "types": ["s9"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": null, "name": "G_ADD", "reason": "bits 16 -> 17", "rule": 0, "ruleset": "M68k_G_ADD", "types": ["s17"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": null, "name": "G_ADD", "reason": "bits 32 -> 31", "rule": 0, "ruleset": "M68k_G_ADD", "types": ["s31"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_ADD", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_ADD", "types": ["v4s32"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_ADD", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_ADD", "types": ["v2s64"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_CONSTANT", "reason": "first match for rule 0", "rule": 0, "ruleset": "M68k_G_CONSTANT", "types": ["s32"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_CONSTANT", "reason": "first match for rule 1", "rule": 1, "ruleset": "M68k_G_CONSTANT", "types": ["s31"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_CONSTANT", "reason": "first match for rule 2", "rule": 2, "ruleset": "M68k_G_CONSTANT", "types": ["s33"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_CONSTANT", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_CONSTANT", "types": ["v4s32"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_CONSTANT", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_CONSTANT", "types": ["v2s64"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_FRAME_INDEX", "reason": "first match for rule 0", "rule": 0, "ruleset": "M68k_G_FRAME_INDEX", "types": ["p0:32"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_FRAME_INDEX", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_FRAME_INDEX", "types": ["s32"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_FRAME_INDEX", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_FRAME_INDEX", "types": ["s64"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": ["s32", 4], "name": "G_STORE", "reason": "first match for rule 0 (mem)", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": ["s16", 4], "name": "G_STORE", "reason": "first match for rule 0 (mem)", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": ["s8", 4], "name": "G_STORE", "reason": "first match for rule 0 (mem)", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": ["s16", 2], "name": "G_STORE", "reason": "first match for rule 0 (mem)", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s16", "p0:32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": ["s31", 4], "name": "G_STORE", "reason": "mem bits 32 -> 31", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": ["s15", 4], "name": "G_STORE", "reason": "mem bits 16 -> 15", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": ["s17", 4], "name": "G_STORE", "reason": "mem bits 16 -> 17", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": ["s7", 4], "name": "G_STORE", "reason": "mem bits 8 -> 7", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": ["s9", 4], "name": "G_STORE", "reason": "mem bits 8 -> 9", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s32", "p0:32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": ["s15", 2], "name": "G_STORE", "reason": "mem bits 16 -> 15", "rule": 0, "ruleset": "M68k_G_STORE", "types": ["s16", "p0:32"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": ["s32", 4], "name": "G_STORE", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_STORE", "types": ["s32", "s32"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": ["s32", 4], "name": "G_STORE", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_STORE", "types": ["s32", "s64"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_PTR_ADD", "reason": "first match for rule 0", "rule": 0, "ruleset": "M68k_G_PTR_ADD", "types": ["p0:32", "s32"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": null, "name": "G_PTR_ADD", "reason": "bits 32 -> 31", "rule": 0, "ruleset": "M68k_G_PTR_ADD", "types": ["p0:32", "s31"]}
+{"config": "default", "imms": [], "kind": "boundary", "mem": null, "name": "G_PTR_ADD", "reason": "bits 32 -> 33", "rule": 0, "ruleset": "M68k_G_PTR_ADD", "types": ["p0:32", "s33"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_PTR_ADD", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_PTR_ADD", "types": ["p0:32", "s64"]}
+{"config": "default", "imms": [], "kind": "outside", "mem": null, "name": "G_PTR_ADD", "reason": "no rule fires", "rule": null, "ruleset": "M68k_G_PTR_ADD", "types": ["p0:32", "s8"]}
+{"config": "default", "imms": [], "kind": "equivalence", "mem": null, "name": "G_TRUNC", "reason": "first match for rule 0", "rule": 0, "ruleset": "M68k_G_TRUNC", "types": ["s32"]}
