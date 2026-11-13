@@ -19,6 +19,16 @@ which are generated and must not be hand-edited.
   `RELEASE.json` version.  A site-packages mismatch fails with the exact
   `pip install gisel==...` line; a checkout mismatch only warns.
 - `gisel graph` is unchanged in this cohort.
+- `gisel-ab bug-report [--out FILE]` collects the three versions, the cohort
+  record, the doctor verdict and the last run's ledger line into one small
+  JSON file (no evidence tree), so an issue can carry the facts.
+- Distribution: a composite action (`lint` + `cases` + `suite check`), a
+  pre-commit hook in gisel (`gisel-lint`), and
+  `scripts/time-to-first-answer.sh` (fresh venv -> installed tools -> an
+  answer, 300 s limit) wired into CI.
+- The landing page and the eight-task cookbook live in gisel
+  (`docs/OVERVIEW-zh.md`, `docs/COOKBOOK-zh.md`, `docs/GLOSSARY-zh.md`);
+  this README links to them instead of duplicating the story.
 
 ## Unreleased — productization (cohorts r8, r9)
 

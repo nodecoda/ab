@@ -17,8 +17,8 @@ evidence/                   frozen artifacts; repo-only, never in the wheel
 tests/  docs/               the suite and the write-ups
 ```
 
-`ab.py --help` is the verb table: `doctor setup run mir verify diff l3 suite
-vertical cohort evidence plan`.  Each verb keeps its own parser and its own
+`ab.py --help` is the verb table: `doctor setup bug-report run mir verify diff l3
+suite vertical cohort evidence plan`.  Each verb keeps its own parser and its own
 exit codes; `ab.py` only routes.  `pip install .` gives the same table as
 `gisel-ab`, and the installed wheel carries the code, the target registry,
 the suite snapshots and the C++ runner sources -- but not `evidence/`, which
@@ -28,6 +28,15 @@ The internals stay addressable for reproduction: `ab.py closure`,
 `ab.py attribute`, `ab.py queries`, `ab.py swap`, `ab.py inject`,
 `ab.py baseline`, `ab.py replay-frozen`, `ab.py refresh-counts`,
 `ab.py mir-from-query`, `ab.py mir-replay`, `ab.py mir-config-check`.
+
+## Start here
+
+The toolchain is three repositories: `gisel` (DSL + questions), `gisel-anchor`
+(pinned upstream facts), and this one (differential harness).  The Chinese
+landing page is
+[gisel/docs/OVERVIEW-zh.md](https://github.com/nodecoda/gisel/blob/main/docs/OVERVIEW-zh.md);
+eight copy-paste tasks are in
+[gisel/docs/COOKBOOK-zh.md](https://github.com/nodecoda/gisel/blob/main/docs/COOKBOOK-zh.md).
 
 ## Ten minutes
 

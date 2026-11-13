@@ -23,6 +23,8 @@ from pathlib import Path
 VERBS = {
     "doctor": (("gisel_ab.doctor", "main", False),
                "check tree/build/gisel/state before a run (read-only)"),
+    "bug-report": (("gisel_ab.bugreport", "main", False),
+                   "collect versions, cohort and doctor into one JSON"),
     "setup": (("gisel_ab.setup", "main", False),
               "record the LLVM tree/build/evidence paths (no export)"),
     "run": (("gisel_ab.l0.run", "main", True),
