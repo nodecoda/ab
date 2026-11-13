@@ -71,30 +71,59 @@ class ReleaseManifest(unittest.TestCase):
                         "a `v*` cohort tag would publish to PyPI")
         self.assertNotIn(" ", self.data["cohort"])
 
-    def test_corpus_hashes_match_the_checkout(self):
+    def _gisel_bytes(self, path):
+        """Bytes of a file at the gisel commit RELEASE.json names.
+
+        RELEASE.json is frozen after its manifest commit.  Reading the
+        recorded commit, not the worktree, is what makes these checks mean
+        "the corpus that shipped": gisel may legitimately move ahead, and
+        `cohort.py check --worktree` is the separate gate that reports that.
+        """
+        commit = self.data["repos"]["gisel"]
+        found = subprocess.run(
+            ["git", "-C", str(GISEL), "show", "%s:%s" % (commit, path)],
+            capture_output=True)
+        self.assertEqual(
+            found.returncode, 0,
+            "gisel %s does not contain %s: %s"
+            % (commit[:12], path, found.stderr.decode(errors="replace")))
+        return found.stdout
+
+    def test_corpus_hashes_match_the_recorded_commit(self):
         self.assertEqual(len(self.data["corpus_sha256"]), 9)
         for name, want in self.data["corpus_sha256"].items():
-            data = (CORPUS / name).read_bytes()
+            if os.environ.get("GISEL_CORPUS"):
+                data = (CORPUS / name).read_bytes()
+            else:
+                data = self._gisel_bytes("tests/corpus/" + name)
             self.assertEqual(hashlib.sha256(data).hexdigest(), want, name)
 
     def test_hash_copies_match_the_artifact_manifests(self):
         """RELEASE.json copies hashes; the artifact SHA files are the source.
 
-        A copy is allowed, but editing either side alone must fail here.
+        A copy is allowed, but editing either side alone must fail here.  The
+        source is the recorded gisel commit, so a golden that moved after the
+        cohort does not rewrite the cohort's own record.
         """
-        cases = GISEL / "tests" / "artifacts" / "cases" / "SHA256"
-        nightly = GISEL / "tests" / "artifacts" / "graph" / "nightly" / "SHA256"
-        for path, key in ((cases, "cases_sha256"),
-                          (nightly, "nightly_graphs_sha256")):
+        for path, key in (("tests/artifacts/cases/SHA256", "cases_sha256"),
+                          ("tests/artifacts/graph/nightly/SHA256",
+                           "nightly_graphs_sha256")):
             rows = {}
-            for line in path.read_text().splitlines():
+            for line in self._gisel_bytes(path).decode().splitlines():
                 digest, name = line.split()
                 rows[name] = digest
-            self.assertEqual(self.data[key], rows, str(path))
+            self.assertEqual(self.data[key], rows, path)
 
+        listing = subprocess.run(
+            ["git", "-C", str(GISEL), "ls-tree", "--name-only",
+             "%s:tests/artifacts/graph" % self.data["repos"]["gisel"]],
+            capture_output=True, text=True)
+        self.assertEqual(listing.returncode, 0, listing.stderr)
         goldens = {}
-        for path in sorted((GISEL / "tests" / "artifacts" / "graph").glob("*.json")):
-            goldens[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+        for name in sorted(listing.stdout.split()):
+            if name.endswith(".json"):
+                goldens[name] = hashlib.sha256(
+                    self._gisel_bytes("tests/artifacts/graph/" + name)).hexdigest()
         self.assertEqual(self.data["graph_goldens_sha256"], goldens)
 
     def test_the_golden_manifests_are_named(self):
