@@ -4,7 +4,7 @@ This file records shape changes to the workbench, not results.  Counts,
 commits and gate outcomes live in `RELEASE.json` and `VERIFICATION.json`,
 which are generated and must not be hand-edited.
 
-## Unreleased — productization (cohort r8)
+## Unreleased — productization (cohorts r8, r9)
 
 - One entry point: `python3 ab.py <verb>` (or `gisel-ab` after
   `pip install .`).  The verb table is `doctor run mir verify diff l3 suite
@@ -32,6 +32,8 @@ which are generated and must not be hand-edited.
   child of the tag, so at the tag the manifest is already the new cohort while
   `VERIFICATION.json` still names the previous one.  `--worktree` keeps
   failing in that state: a drift check needs a record for this cohort.
+  `r9` is the cohort that carries this fix and the refreshed anchor pin; its
+  evidence tree is byte-identical to `r8`.
 
 ## Earlier
 
