@@ -1,5 +1,32 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43476518664,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43476518664"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43476530120,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43476530120"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43478172311,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43478172311"
+      },
+      "run": 43476530479,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43476530479"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43476524892,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43476524892"
+    }
+  },
+  "ci_notes": "r13 CI: all three tagged runs are green; the ab main run that follows the verification record is also green.  r12 anchor CI failed on a stale 0.1.0 wheel assertion; r13 fixes it and does not rewrite the r12 tag.",
   "cohort": "cohort-2026-11-14-r13",
   "commits": {
     "ab": "c35b3bb92104cf8dd720412386c266b37a7c1cf9",
