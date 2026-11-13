@@ -1,40 +1,13 @@
 {
-  "ci": {
-    "gisel": {
-      "conclusion": "success",
-      "run": 43479031437,
-      "url": "https://github.com/nodecoda/gisel/actions/runs/43479031437"
-    },
-    "gisel-ab": {
-      "conclusion": "success",
-      "evidence": {
-        "conclusion": "success",
-        "run": 43479042593,
-        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43479042593"
-      },
-      "main_after_record": {
-        "conclusion": "success",
-        "run": 43480809810,
-        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43480809810"
-      },
-      "run": 43479042694,
-      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43479042694"
-    },
-    "gisel-anchor": {
-      "conclusion": "success",
-      "run": 43479036492,
-      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43479036492"
-    }
-  },
-  "ci_notes": "r14 CI: all three tagged runs green, including the first-answer job; the ab main run that follows the verification record is green.  r13 is superseded because its cookbook fix landed after the tag and `check-claims` treats docs as gate input.",
-  "cohort": "cohort-2026-11-14-r14",
+  "ci": {},
+  "cohort": "cohort-2026-11-14-r15",
   "commits": {
-    "ab": "0c7c3e0661ce77d3108862eb5f940708dbdca54e",
+    "ab": "ec08cd3bb902eac6059bf68a89ce38bcabd9a6f4",
     "gisel": "08347e12996b3d6f9ee17ad1340a2ebbe62f7afc",
     "upstream_source": "d2f245875cd73879a5f02870b992076c1e366ab3"
   },
   "gate_commits": {
-    "ab": "0c7c3e0661ce77d3108862eb5f940708dbdca54e",
+    "ab": "ec08cd3bb902eac6059bf68a89ce38bcabd9a6f4",
     "gisel": "08347e12996b3d6f9ee17ad1340a2ebbe62f7afc",
     "upstream_source": "d2f245875cd73879a5f02870b992076c1e366ab3"
   },
@@ -159,10 +132,10 @@
         "gisel:tests/test_scope.py": "1904edbcaed829c9726a3a1cd9ad6c2780a71508"
       },
       "command": "python3 -m unittest discover -q -s tests",
-      "duration_s": 209.8,
+      "duration_s": 205.8,
       "evidence": "rules=2 witnessed=1 shadowed=0 unexercised=3",
       "fingerprint": "14f1b99292cbe1984b34bbc3be06645aca0634b002ee87fe0d09f1ba03ff4838",
-      "log": "/tmp/cohort-r14/record/python3 -m unittest discover -q -s tests.log",
+      "log": "/tmp/cohort-r15/record/python3 -m unittest discover -q -s tests.log",
       "manifest_command": "python3 -m unittest discover -q -s tests",
       "name": "python3 -m unittest discover -q -s tests",
       "rc": 0,
@@ -243,10 +216,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-nine-corpora.sh",
-      "duration_s": 4.9,
+      "duration_s": 5.1,
       "evidence": "nine corpora: 9 targets byte-identical",
       "fingerprint": "e0c065717ecc8afe65a3cf1465dd488d11426deecf2c17b6c396e6f809cef26a",
-      "log": "/tmp/cohort-r14/record/bash tools_check-nine-corpora.sh.log",
+      "log": "/tmp/cohort-r15/record/bash tools_check-nine-corpora.sh.log",
       "manifest_command": "bash tools/check-nine-corpora.sh",
       "name": "bash tools/check-nine-corpora.sh",
       "rc": 0,
@@ -325,10 +298,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-graph-golden.sh",
-      "duration_s": 253.5,
+      "duration_s": 249.0,
       "evidence": "graph goldens: 5 configurations byte-identical (3 default, 2 refined)",
       "fingerprint": "936bf771d43cc62c4f7340b788dd304be25cabe03b3a9ede4d162719ba9b4c6f",
-      "log": "/tmp/cohort-r14/record/bash tools_check-graph-golden.sh.log",
+      "log": "/tmp/cohort-r15/record/bash tools_check-graph-golden.sh.log",
       "manifest_command": "bash tools/check-graph-golden.sh",
       "name": "bash tools/check-graph-golden.sh",
       "rc": 0,
@@ -400,10 +373,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-cases-golden.sh",
-      "duration_s": 433.2,
+      "duration_s": 426.0,
       "evidence": "cases spirv: 583af2c0019af248b597963119fcbbb0084046924a0f028e75b709127e559c53 matches",
       "fingerprint": "a71095b6d2003f67a14bb12a50535d1a0a09e3b42482e1d58410a7bd13870fb1",
-      "log": "/tmp/cohort-r14/record/bash tools_check-cases-golden.sh.log",
+      "log": "/tmp/cohort-r15/record/bash tools_check-cases-golden.sh.log",
       "manifest_command": "bash tools/check-cases-golden.sh",
       "name": "bash tools/check-cases-golden.sh",
       "rc": 0,
@@ -481,10 +454,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-nightly-graphs.sh",
-      "duration_s": 580.4,
+      "duration_s": 574.2,
       "evidence": "nightly wasm32: 8e01df0f4c6539ecd43deef9be0871380738becae1e790e1b2e50e447ff4ddef matches",
       "fingerprint": "036e7439518389cb27d41d3bf9829606decda56a50d644e6932a4dacfdca9112",
-      "log": "/tmp/cohort-r14/record/bash tools_check-nightly-graphs.sh.log",
+      "log": "/tmp/cohort-r15/record/bash tools_check-nightly-graphs.sh.log",
       "manifest_command": "bash tools/check-nightly-graphs.sh",
       "name": "bash tools/check-nightly-graphs.sh",
       "rc": 0,
@@ -576,7 +549,7 @@
       "duration_s": 0.0,
       "evidence": "check-claims: 15 claims, every cited path exists",
       "fingerprint": "686f8c89ddd43039d54b48ce4d97804640600b6c2d97cf8d767cb4fc27cb2583",
-      "log": "/tmp/cohort-r14/record/python3 tools_check-claims.py.log",
+      "log": "/tmp/cohort-r15/record/python3 tools_check-claims.py.log",
       "manifest_command": "python3 tools/check-claims.py",
       "name": "python3 tools/check-claims.py",
       "rc": 0,
@@ -650,9 +623,9 @@
       },
       "command": "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check --git-repo /home/ubuntu/llvm/llvm-project",
       "duration_s": 2.1,
-      "evidence": "/tmp/cohort-r14/gisel/tests/corpus/import-report.json: matches",
+      "evidence": "/tmp/cohort-r15/gisel/tests/corpus/import-report.json: matches",
       "fingerprint": "45653f9931de844d5de03aad5fa57fdf6b3f8175e9d1513ac17b4cdbf04d3eff",
-      "log": "/tmp/cohort-r14/record/python3 scripts_import-cxx.py --all --pin pin_PIN.json --check.log",
+      "log": "/tmp/cohort-r15/record/python3 scripts_import-cxx.py --all --pin pin_PIN.json --check.log",
       "manifest_command": "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check",
       "name": "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check",
       "rc": 0,
@@ -668,11 +641,11 @@
         "upstream_source:scripts/pin/recipe.py": "ef58ff1f5a2fe37629e2d44fd63e66d14d422625",
         "upstream_source:scripts/pin/verify-base.py": "20499cd9fe7ece3f9229aea697d2b8927ad62088"
       },
-      "command": "scripts/pin/make-base.sh /home/ubuntu/llvm/trees/explore /tmp/cohort-r14/record/pin-base --verify",
-      "duration_s": 18.0,
+      "command": "scripts/pin/make-base.sh /home/ubuntu/llvm/trees/explore /tmp/cohort-r15/record/pin-base --verify",
+      "duration_s": 19.1,
       "evidence": "verify-base: verified 12 file(s)",
       "fingerprint": "102b3f9f3760da540d46da7a494560ccf136270123c5c6bc248cbcccb2ebff0f",
-      "log": "/tmp/cohort-r14/record/scripts_pin_make-base.sh TREE DEST --verify.log",
+      "log": "/tmp/cohort-r15/record/scripts_pin_make-base.sh TREE DEST --verify.log",
       "manifest_command": "scripts/pin/make-base.sh TREE DEST --verify",
       "name": "scripts/pin/make-base.sh TREE DEST --verify",
       "rc": 0,
@@ -1047,10 +1020,10 @@
         "gisel:tests/artifacts/x86.inc": "f14e0a0ad4a25a759374f85b002aa42b7662e306"
       },
       "command": "./scripts/verify-evidence.sh",
-      "duration_s": 10.4,
+      "duration_s": 10.3,
       "evidence": "NOTE U-full/*: only `universe.jsonl` and the expand command are frozen; the expanded query file is regenerated on demand.",
       "fingerprint": "3d1e3ac748e51b76722a06e0224c42f0100ee59a245f918bbd428f446c5e7112",
-      "log": "/tmp/cohort-r14/record/._scripts_verify-evidence.sh.log",
+      "log": "/tmp/cohort-r15/record/._scripts_verify-evidence.sh.log",
       "manifest_command": "gisel-ab/scripts/verify-evidence.sh",
       "name": "./scripts/verify-evidence.sh",
       "rc": 0,
@@ -1436,7 +1409,7 @@
         "ab:src/gisel_ab/l0/inject_opcode.py": "58c14bbea0d6308a08b7c450f879cc51de80181b",
         "ab:src/gisel_ab/l0/inject_predicate.py": "7a786c8784698316f99a8da570f9fd1d2965024c",
         "ab:src/gisel_ab/l0/queries.py": "0ba3e6d6931962c6eab2dc696692344e4f6bf924",
-        "ab:src/gisel_ab/l0/run.py": "f1d2caf2418a4262d61e08a67e92d24a1ef967cd",
+        "ab:src/gisel_ab/l0/run.py": "b8b79dcbe945ddcf2df786e9869d3b08dc991610",
         "ab:src/gisel_ab/l0/swap.py": "8dde508f0401c811a856d95d978c2edaa8760ad3",
         "ab:src/gisel_ab/l0/u_attribution.py": "0ffd0ff9ab3e0422ea9dd66623fc28ed377f93a7",
         "ab:src/gisel_ab/l3.py": "26cff9548fecfdc4ef0af7ed744ae796856cdc1f",
@@ -1445,7 +1418,7 @@
         "ab:src/gisel_ab/mir/from_query.py": "2aac5bfe59a710b1061170935160f125d284eeb4",
         "ab:src/gisel_ab/mir/libs.py": "a7ce390108584d6b39ed3fca1875a41b8a51c09f",
         "ab:src/gisel_ab/mir/replay.py": "b86b91653459708fc00719d2a074e46c99407254",
-        "ab:src/gisel_ab/paths.py": "6f83798f835794b27c78c4edc7f6da6713686348",
+        "ab:src/gisel_ab/paths.py": "b69c4a92e85b05cfb2e45aa88aab5fbee3b3e5a3",
         "ab:src/gisel_ab/refresh_counts.py": "e5153a0d6c694d13ecb1c301d7ca1b16dd748c28",
         "ab:src/gisel_ab/replay_frozen.py": "d78f977c61f22911fbdb094f57503e6db0ea1a25",
         "ab:src/gisel_ab/setup.py": "01fd5a4bf3b7c6dc461c80d65a5ce111f44a760f",
@@ -1461,7 +1434,7 @@
         "ab:tests/test_bug_report.py": "699ea766d0b80ec92a2ccbe73f0625576c131744",
         "ab:tests/test_closure.py": "f1d04aa4dd4db997bad36bce1cdeaa1574fee46d",
         "ab:tests/test_cohort.py": "dadd6e44117383114ee61f563451466c77a78c29",
-        "ab:tests/test_config.py": "1dcf5900420914dd92077b5e6f29e1e0ad8615b4",
+        "ab:tests/test_config.py": "991c4d3897d5dafe5126545f4eed908f5dbd3375",
         "ab:tests/test_diff.py": "88c5db35463bf76089c2c6326ec0e6b034d0d966",
         "ab:tests/test_distribution.py": "9631d8e5727914d39288e80fbca149603446d9bf",
         "ab:tests/test_doctor.py": "2892b7d60d109c180af1781b4c56f461254da079",
@@ -1497,10 +1470,10 @@
         "ab:tests/test_vertical_config_check.py": "05b8fbddb23d8909689178e435ec67ff9c3bec2a"
       },
       "command": "python3 -m pytest tests -q",
-      "duration_s": 16.2,
-      "evidence": "313 passed, 19 skipped, 64 subtests passed in 15.92s",
-      "fingerprint": "b004ab6b4cb3678f0eefe1574be48097c421aa6804867e2bdb8fcfd2f5a07754",
-      "log": "/tmp/cohort-r14/record/python3 -m pytest tests -q.log",
+      "duration_s": 16.3,
+      "evidence": "313 passed, 19 skipped, 64 subtests passed in 16.03s",
+      "fingerprint": "90fb0db150679c02f8b8b8f58185c6ce4921d748a654fbe8a3200d62b2c1c3a6",
+      "log": "/tmp/cohort-r15/record/python3 -m pytest tests -q.log",
       "manifest_command": null,
       "name": "python3 -m pytest tests -q",
       "rc": 0,
@@ -1508,16 +1481,16 @@
     }
   ],
   "history": [],
-  "manifest_commit": "0c7c3e0661ce77d3108862eb5f940708dbdca54e",
+  "manifest_commit": "ec08cd3bb902eac6059bf68a89ce38bcabd9a6f4",
   "online_gates": [],
   "recorded_at": "2026-11-14",
   "schema": 2,
-  "supersedes": "cohort-2026-11-14-r13",
-  "supersedes_reason": "r14 carries the cookbook/install correction that r13 left after the tag. The docs are an input to `tools/check-claims.py`, so leaving them out made `cohort check --worktree` report STALE.  r14 re-runs the ten gates at gisel 08347e1, updates the consumer pins, and keeps corpora and evidence bytes unchanged.  No comparison semantics or exit codes change.",
-  "tag": "cohort-2026-11-14-r14",
+  "supersedes": "cohort-2026-11-14-r14",
+  "supersedes_reason": "r15 closes the setup gap found by the V3 acceptance check: `setup` wrote the key `llvm` while the resolver read `tree`, and `run`/`mir`/`verify` still required `--tree`/`--build` in argparse.  The config key is now read, and the three verbs fall back to flag > env > config; explicit flags keep their old behaviour.  Corpora, evidence bytes, comparison semantics and exit codes are unchanged; the ten gates are re-run.",
+  "tag": "cohort-2026-11-14-r15",
   "tags": {
-    "ab": "cohort-2026-11-14-r14",
-    "gisel": "cohort-2026-11-14-r14",
-    "upstream_source": "cohort-2026-11-14-r14"
+    "ab": "cohort-2026-11-14-r15",
+    "gisel": "cohort-2026-11-14-r15",
+    "upstream_source": "cohort-2026-11-14-r15"
   }
 }

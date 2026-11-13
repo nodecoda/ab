@@ -10,6 +10,11 @@ which are generated and must not be hand-edited.
   `$XDG_CONFIG_HOME/gisel-ab/config.json` (or `~/.config/...`; `GISEL_AB_CONFIG`
   moves it), so a shell no longer needs `export AB_TREE=... AB_BUILD=...`.
   Resolution is unchanged at the bottom: flag > environment > config > sibling.
+- `setup` writes `llvm` and the resolver reads the same key; `run`, `mir` and
+  `verify` now accept an omitted `--tree`/`--build` and fall back to the
+  config (an explicit flag still wins, and keeps the old no-shape-check
+  behaviour).  This closes the gap where `setup` only helped `vertical` and
+  `doctor`.
 - `doctor` prints where each path came from (`(from AB_TREE)`, `(from
   /path/config.json)`) and its fix line now names `gisel-ab setup` first.
   Failures with nothing configured stay rc=2.
