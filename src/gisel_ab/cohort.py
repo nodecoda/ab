@@ -593,6 +593,11 @@ def cmd_verify(args):
 def cmd_record_ci(args):
     record = json.loads(VERIFICATION.read_text())
     update = json.loads(pathlib.Path(args.file).read_text())
+    # `notes` explains the runs next to them; everything else is one entry
+    # per repository (or `publish`).
+    notes = update.pop("notes", None)
+    if notes is not None:
+        record["ci_notes"] = notes
     record.setdefault("ci", {}).update(update)
     tmp = VERIFICATION.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")

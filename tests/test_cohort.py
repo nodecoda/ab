@@ -195,6 +195,39 @@ class CheckSkip(unittest.TestCase):
         self.assertNotIn("skipping", out)
 
 
+class RecordCi(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.record = Path(self.tmp.name) / "VERIFICATION.json"
+        self.update = Path(self.tmp.name) / "CI.json"
+        self.record.write_text(json.dumps({"schema": 2, "cohort": "c",
+                                           "ci": {}}) + "\n")
+        self.patch = mock.patch.object(cohort, "VERIFICATION", self.record)
+        self.patch.start()
+
+    def tearDown(self):
+        self.patch.stop()
+        self.tmp.cleanup()
+
+    def record_ci(self, payload):
+        self.update.write_text(json.dumps(payload))
+        args = mock.Mock()
+        args.file = str(self.update)
+        return cohort.cmd_record_ci(args)
+
+    def test_notes_land_beside_the_runs(self):
+        self.assertEqual(self.record_ci({
+            "ab": {"conclusion": "success", "run": 1},
+            "publish": {"runs": 0},
+            "notes": ["the tag commit predates its record"],
+        }), 0)
+        written = json.loads(self.record.read_text())
+        self.assertEqual(written["ci"]["ab"]["run"], 1)
+        self.assertNotIn("notes", written["ci"])
+        self.assertEqual(written["ci_notes"],
+                         ["the tag commit predates its record"])
+
+
 class Tagging(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
