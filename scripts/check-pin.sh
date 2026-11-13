@@ -84,6 +84,9 @@ if base_map is None:
 
 # One hashing implementation, shared with pin/make-base.sh --verify.
 verifier = Path(pin_path).with_name("verify-base.py")
+if not verifier.exists():
+    # The anchor keeps its pin tooling under scripts/pin/ since r7.
+    verifier = Path(pin_path).parent.parent / "scripts" / "pin" / "verify-base.py"
 hashes = subprocess.run([sys.executable, str(verifier), tree, pin_path,
                          "--emit-json"], capture_output=True, text=True)
 if hashes.returncode != 0:
