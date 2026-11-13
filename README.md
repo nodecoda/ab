@@ -21,12 +21,27 @@ covers multi-step legalization, custom actions and the downstream verifier.
 A pass in one is not a pass in the other; the contracts are `SCOPE.md` §3 and
 §6, the report schema is `CONTRACTS.md` §8.
 
+## Roots
+
+There is no default checkout: a default pointing at the machine the harness
+was written on either fails obscurely or swaps files in someone else's tree.
+Export the pin-compatible LLVM tree and its build, or pass `--tree`/`--build`
+on every command:
+
+```sh
+export AB_TREE=/path/to/llvm-project      # pin-compatible checkout
+export AB_BUILD=/path/to/build            # its ninja build
+```
+
+`cohort.py` additionally accepts `COHORT_TREE` and `COHORT_LLVM`.  A missing
+root is an input error (rc=2) with the exact `export` line to run.
+
 ## One command
 
 ```sh
 python3 ab.py run --target x86-ctor \
-  --tree /home/ubuntu/llvm/trees/explore \
-  --build /home/ubuntu/llvm/builds/explore \
+  --tree "$AB_TREE" \
+  --build "$AB_BUILD" \
   --queries /tmp/x86.domain.jsonl \
   --out /tmp/ab-x86 --state /tmp/ab-state-x86 \
   --compare full

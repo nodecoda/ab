@@ -33,10 +33,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 GISEL = Path(__file__).resolve().parent.parent / "gisel"
-DEFAULT_TREE = Path("/home/ubuntu/llvm/trees/explore")
-DEFAULT_BUILD = Path("/home/ubuntu/llvm/builds/explore")
 
 sys.path.insert(0, str(ROOT))
+import paths  # noqa: E402
 import targets as target_registry  # noqa: E402
 
 
@@ -522,8 +521,10 @@ def build_contract(target: str, out: Path, u_queries: Path, tree: Path) -> dict:
 def main(argv=None, default_target="riscv"):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--target", default=default_target)
-    ap.add_argument("--tree", default=str(DEFAULT_TREE))
-    ap.add_argument("--build", default=str(DEFAULT_BUILD))
+    ap.add_argument("--tree", default=None,
+                    help="LLVM checkout (default: $AB_TREE)")
+    ap.add_argument("--build", default=None,
+                    help="LLVM build directory (default: $AB_BUILD)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--u-queries", default=None)
     ap.add_argument("--l3", action="store_true",
@@ -548,8 +549,6 @@ def main(argv=None, default_target="riscv"):
             % (args.target, args.target))
     spec = TARGETS[args.target]
     out = Path(args.out).resolve()
-    tree = Path(args.tree).resolve()
-    build = Path(args.build).resolve()
     contract = ROOT / spec["contract"]
     inc = GISEL / "tests" / "artifacts" / spec["inc"]
     u_queries = Path(args.u_queries) if args.u_queries else Path(
@@ -564,6 +563,8 @@ def main(argv=None, default_target="riscv"):
         return verify(out, load(contract), u_queries, args.target, contract,
                       l3_required=args.l3)
 
+    tree = paths.require_tree(args.tree)
+    build = paths.require_build(args.build)
     if contract.exists() and not args.record:
         c = load(contract)
         require_sha(inc, c["snapshot"]["inc_sha256"], "inc")
@@ -578,7 +579,7 @@ def main(argv=None, default_target="riscv"):
     if not u_queries.exists():
         raise SystemExit(
             "U queries missing: %s\nGenerate them with:\n"
-            "  cd /home/ubuntu/llvm/upstream-source\n"
+            "  cd ${UPSTREAM_SOURCE:-../upstream-source}\n"
             "  ./oracle/scripts/gen-u.sh %s /tmp/u-gen/%s"
             % (u_queries, args.target, spec["u_prefix"]))
 

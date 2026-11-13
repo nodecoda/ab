@@ -17,8 +17,9 @@ OUT=${4:?}
 RULE=${5:--1}
 
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-TREE=${AB_TREE:-/home/ubuntu/llvm/trees/explore}
-BUILD=${AB_BUILD:-/home/ubuntu/llvm/builds/explore}
+TREE=${AB_TREE:-}
+BUILD=${AB_BUILD:-}
+require_roots "$TREE" "$BUILD" || exit 2
 
 if ! python3 "$ROOT/targets.py" env "$TARGET" >/dev/null 2>&1; then
   echo "unsupported target: $TARGET" >&2

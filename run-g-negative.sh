@@ -26,8 +26,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 . "$(cd "$(dirname "$0")" && pwd)/env.sh"
-TREE=${TREE_ARG:-${AB_TREE:-/home/ubuntu/llvm/trees/explore}}
-BUILD=${BUILD_ARG:-${AB_BUILD:-/home/ubuntu/llvm/builds/explore}}
+TREE=${TREE_ARG:-${AB_TREE:-}}
+BUILD=${BUILD_ARG:-${AB_BUILD:-}}
+require_roots "$TREE" "$BUILD" || exit 2
 
 if ! python3 "$ROOT/targets.py" env "$TARGET" >/dev/null 2>&1; then
   echo "unsupported target: $TARGET" >&2

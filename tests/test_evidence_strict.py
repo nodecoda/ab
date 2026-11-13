@@ -118,7 +118,7 @@ class AdoptEvidence(unittest.TestCase):
         return {
             "id": "adopt/x86", "kind": "adopt", "direction": "adopt",
             "target": "x86", "command": "make-adopt",
-            "dir": "/home/ubuntu/llvm/gisel/tests/artifacts",
+            "dir": "/tmp/gisel-artifacts",
             "artifacts": {},
             "expect": {
                 "branch": "explore/x86-adopt",

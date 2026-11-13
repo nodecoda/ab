@@ -26,3 +26,29 @@ classify_negative_rc() {
        return 2 ;;
   esac
 }
+
+# require_roots TREE BUILD
+# Fail with rc=2 and an actionable message when the LLVM checkout/build are
+# not given.  There is deliberately no default: a default points at the
+# machine the harness was written on and can swap files in someone else's
+# tree.
+require_roots() {
+  local tree=${1:-} build=${2:-}
+  local missing=()
+  [[ -n $tree ]] || missing+=("AB_TREE (or --tree DIR)")
+  [[ -n $build ]] || missing+=("AB_BUILD (or --build DIR)")
+  if ((${#missing[@]})); then
+    echo "input error: LLVM roots not set: ${missing[*]}" >&2
+    echo "  export AB_TREE=/path/to/llvm-project   # pin-compatible checkout" >&2
+    echo "  export AB_BUILD=/path/to/build          # its ninja build" >&2
+    return 2
+  fi
+  if [[ ! -d $tree/llvm/include/llvm ]]; then
+    echo "input error: AB_TREE does not look like an llvm-project checkout: $tree" >&2
+    return 2
+  fi
+  if [[ ! -f $build/build.ninja && ! -f $build/CMakeCache.txt ]]; then
+    echo "input error: AB_BUILD does not look like an LLVM build: $build" >&2
+    return 2
+  fi
+}

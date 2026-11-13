@@ -34,11 +34,10 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_TREE = Path("/home/ubuntu/llvm/trees/explore")
-DEFAULT_BUILD = Path("/home/ubuntu/llvm/builds/explore")
 GISEL = Path(os.environ.get("GISEL_SRC", HERE.parent / "gisel")).resolve()
 SWAP = HERE / "swap-source-ctor.py"
 sys.path.insert(0, str(HERE))
+import paths  # noqa: E402
 import targets as target_registry  # noqa: E402
 
 _SPECS = {name: target_registry.load(name)
@@ -89,7 +88,9 @@ def lit(build: Path, out: Path, tag: str) -> dict:
 
 
 def run(args) -> int:
-    tree, build, out = args.tree, args.build, args.out
+    tree = paths.require_tree(args.tree)
+    build = paths.require_build(args.build)
+    out = args.out
     out.mkdir(parents=True, exist_ok=True)
 
     head = git(tree, "rev-parse", "HEAD")
@@ -252,8 +253,10 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="mode", required=True)
     go = sub.add_parser("run", help="baseline + combined + restore")
     go.add_argument("--out", type=Path, required=True)
-    go.add_argument("--tree", type=Path, default=DEFAULT_TREE)
-    go.add_argument("--build", type=Path, default=DEFAULT_BUILD)
+    go.add_argument("--tree", type=Path, default=None,
+                    help="LLVM checkout (default: $AB_TREE)")
+    go.add_argument("--build", type=Path, default=None,
+                    help="LLVM build directory (default: $AB_BUILD)")
     go.add_argument("--jobs", type=int, default=min(32, os.cpu_count() or 4))
     go.set_defaults(func=run)
     cmp_ = sub.add_parser("compare", help="compare the two rounds")

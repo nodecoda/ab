@@ -42,6 +42,11 @@ class ULegProvenance(unittest.TestCase):
             path = self.dir / name
             path.write_text(body)
             path.chmod(0o755)
+        self.tree = self.dir / "tree"
+        (self.tree / "llvm" / "include" / "llvm").mkdir(parents=True)
+        self.build = self.dir / "build"
+        self.build.mkdir()
+        (self.build / "build.ninja").write_text("")
         self.queries = self.dir / "queries.jsonl"
         self.queries.write_text('{"config": "C0"}\n')
         self.inc = self.dir / "X86LegalizerInfo.inc"
@@ -54,11 +59,11 @@ class ULegProvenance(unittest.TestCase):
         proc = subprocess.run(
             ["bash", str(self.dir / "run-u-end-to-end.sh"), "x86",
              str(self.queries), str(self.dir / "out"),
-             "--tree", "/tmp/tree-A", "--build", "/tmp/build-B"],
+             "--tree", str(self.tree), "--build", str(self.build)],
             cwd=self.dir, env=env, capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(self.record.read_text().strip(),
-                         "/tmp/tree-A|/tmp/build-B")
+                         "%s|%s" % (self.tree, self.build))
 
 
 if __name__ == "__main__":

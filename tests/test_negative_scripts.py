@@ -53,12 +53,18 @@ class NegativeScripts(unittest.TestCase):
             link(ROOT / name, self.dir / name)
         (self.dir / "run-x86-end-to-end.sh").write_text(fake_end_to_end())
         (self.dir / "run-x86-end-to-end.sh").chmod(0o755)
+        self.tree = self.dir / "tree"
+        (self.tree / "llvm" / "include" / "llvm").mkdir(parents=True)
+        self.build = self.dir / "build"
+        self.build.mkdir()
+        (self.build / "build.ninja").write_text("")
 
     def run_g(self, mode):
         env = dict(os.environ, GISEL_SRC=str(GISEL), FAKE_NEG_MODE=mode)
         return subprocess.run(
             ["bash", str(self.dir / "run-g-negative.sh"), "x86", "G_ADD",
-             str(self.dir / "out")],
+             str(self.dir / "out"), "--tree", str(self.tree),
+             "--build", str(self.build)],
             cwd=self.dir, env=env, capture_output=True, text=True)
 
     def test_explicit_tree_and_build_reach_the_e2e_script(self):
@@ -67,12 +73,12 @@ class NegativeScripts(unittest.TestCase):
                    FAKE_RECORD=str(record))
         proc = subprocess.run(
             ["bash", str(self.dir / "run-g-negative.sh"), "x86", "G_ADD",
-             str(self.dir / "out"), "--tree", "/tmp/tree-A",
-             "--build", "/tmp/build-B"],
+             str(self.dir / "out"), "--tree", str(self.tree),
+             "--build", str(self.build)],
             cwd=self.dir, env=env, capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertEqual(record.read_text().strip(),
-                         "/tmp/tree-A|/tmp/build-B")
+                         "%s|%s" % (self.tree, self.build))
 
     def test_blind_is_exit_one(self):
         proc = self.run_g("blind")

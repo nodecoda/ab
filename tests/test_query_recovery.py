@@ -14,8 +14,16 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = Path(os.environ.get("AB_LLVM_BUILD", "/home/ubuntu/llvm/builds/explore"))
-TREE = Path(os.environ.get("AB_LLVM_TREE", "/home/ubuntu/llvm/trees/explore"))
+def _root(*names):
+    for name in names:
+        value = os.environ.get(name)
+        if value:
+            return Path(value)
+    return None
+
+
+BUILD = _root("AB_BUILD", "AB_LLVM_BUILD")
+TREE = _root("AB_TREE", "AB_LLVM_TREE")
 
 PROGRAM = r'''
 #include "query-recovery.h"
@@ -52,6 +60,8 @@ int main() {
 
 
 def toolchain():
+    if BUILD is None or TREE is None:
+        return None
     cxx = shutil.which(os.environ.get("CXX", "g++"))
     support = BUILD / "lib" / "libLLVMSupport.so"
     if not any((BUILD / "lib").glob("libLLVMSupport.so*")):

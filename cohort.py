@@ -35,6 +35,8 @@ import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 
+import paths
+
 AB = pathlib.Path(__file__).resolve().parent
 GISEL = pathlib.Path(os.environ.get("GISEL_SRC", AB.parent / "gisel"))
 UPSTREAM = pathlib.Path(os.environ.get(
@@ -319,14 +321,15 @@ def changed_inputs(gate, record, worktree=True):
 def _expand_command(gate, clone_root, out_dir):
     command = gate["command"]
     if gate.get("expand") == "make-base":
-        tree = os.environ.get("COHORT_TREE", "/home/ubuntu/llvm/trees/explore")
+        tree = paths.require_tree()
         dest = pathlib.Path(out_dir) / "pin-base"
         if dest.exists():
             shutil.rmtree(dest)
         command = "pin/make-base.sh %s %s --verify" % (tree, dest)
     elif gate.get("expand") == "import-check":
-        llvm = os.environ.get("COHORT_LLVM",
-                              "/home/ubuntu/llvm/llvm-project")
+        llvm = paths.llvm_repo(
+            fallback=os.environ.get("COHORT_TREE")
+            or os.environ.get("AB_TREE"))
         command = command + " --git-repo %s" % llvm
     return command
 
@@ -363,7 +366,7 @@ def _run_one(gate, clones, out_dir, timeout):
         stderr = "timeout after %ss" % timeout
     elapsed = round(time.time() - started, 1)
     if gate.get("expand") == "make-base":
-        tree = os.environ.get("COHORT_TREE", "/home/ubuntu/llvm/trees/explore")
+        tree = paths.require_tree()
         dest = pathlib.Path(out_dir) / "pin-base"
         subprocess.run(["git", "-C", tree, "worktree", "remove", "--force",
                         str(dest)], capture_output=True, text=True)
