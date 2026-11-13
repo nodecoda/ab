@@ -25,9 +25,13 @@ jobs:
         with:
           repository: nodecoda/gisel
           path: gisel
-          # Pinned on purpose: the evidence names the gisel it was built
-          # with.  Bump this and RELEASE.json together.
-          ref: a2005d24fd54e44e105a7f132c5f876d9ac6c13e
+          # The tests and the offline suites need the gisel that resolves
+          # p0:* per configuration (6671815).  The evidence *record* still
+          # names a2005d2: moving that needs a new VERIFICATION.json and
+          # cohort tag.  verify-evidence is content-addressed and passes at
+          # 6671815; this pin is what the code is checked against, not the
+          # historical cohort.
+          ref: 6671815aa6799b66943c1760deacff47d3a37bde
       - name: show the gisel pin
         run: git -C gisel rev-parse HEAD
       - uses: actions/setup-python@v7
