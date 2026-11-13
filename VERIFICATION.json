@@ -1,5 +1,29 @@
 {
-  "ci": {},
+  "ci": {
+    "ab": {
+      "conclusion": "success",
+      "run": 43453247777
+    },
+    "gisel": {
+      "conclusion": "success",
+      "run": 43451459353
+    },
+    "nightly": {
+      "conclusion": "success",
+      "run": 43453303771
+    },
+    "publish": {
+      "runs": 0
+    },
+    "upstream_source": {
+      "conclusion": "success",
+      "run": 43451466379
+    }
+  },
+  "ci_notes": [
+    "r9 tag commits: gisel e5610768 (run 43451459353) and gisel-anchor 1fbdec9 (run 43451466379) are green; nightly 43453303771 was dispatched against the gisel r9 tag; no publish run was triggered.",
+    "The gisel-ab r9 tag commit 78ec2bb is fully green: run 43451473660 (tag push) and 43451502063 (main push) both pass, including the cohort job, which now skips because the tag still carries the r8 record. The record commit 771e548 is run 43453247777."
+  ],
   "cohort": "cohort-2026-11-13-r9",
   "commits": {
     "ab": "78ec2bbd61e5981f10c16631d9743998606ac889",
