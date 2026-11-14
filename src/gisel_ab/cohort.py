@@ -560,6 +560,7 @@ def cmd_verify(args):
     payload = {
         "schema": 2,
         "cohort": manifest["cohort"],
+        "tag": manifest["cohort"],
         "manifest_commit": manifest_commit,
         "tags": {name: manifest["cohort"]
                  for name in ("gisel", "upstream_source", "ab")},
