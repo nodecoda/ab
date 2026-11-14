@@ -1,5 +1,32 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43532187430,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43532187430"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43532193114,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43532193114"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43534521150,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43534521150"
+      },
+      "run": 43532193035,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43532193035"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43532189817,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43532189817"
+    }
+  },
+  "ci_notes": "r16 CI: all three tagged runs and the ab main run after the verification record are green.  r16 publishes gisel-anchor 0.2.0 and gisel-ab 0.9.0 to PyPI and rewrites the install docs to `pip install gisel gisel-anchor gisel-ab`; no gate command or rule changed.",
   "cohort": "cohort-2026-11-14-r16",
   "commits": {
     "ab": "a3c0135602fa85bc57442e45d566e39a35ae8234",
