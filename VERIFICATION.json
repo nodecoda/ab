@@ -1,5 +1,32 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43549029018,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43549029018"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43549034603,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43549034603"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43549688995,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43549688995"
+      },
+      "run": 43549034522,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43549034522"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43549031904,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43549031904"
+    }
+  },
+  "ci_notes": "r19 CI: all three tagged runs, the ab release-evidence run and the ab main run after the r19 verification record are green. r19 adds gisel graph --jobs (fork-based parallel evaluation and closure audit, gated by _JOBS_MIN_STATES and falling back to serial where fork is unavailable), replaces per-member json.dumps in the class partition with a hashable signature so AArch64 baseline --refine drops from 576 s to 69.9 s, and declares multiprocessing the single allowed import exception in spec/cli.md. Comparison semantics, exit codes, gates and evidence are unchanged.",
   "cohort": "cohort-2026-11-14-r19",
   "commits": {
     "ab": "c190f9f3a2a0249c666d4699f1f4688bbcfddb72",
