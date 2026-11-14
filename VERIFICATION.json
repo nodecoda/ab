@@ -1,5 +1,32 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43543869535,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43543869535"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43543875631,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43543875631"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43544834455,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43544834455"
+      },
+      "run": 43543875682,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43543875682"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43543872290,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43543872290"
+    }
+  },
+  "ci_notes": "r18 CI: all three tagged runs and the ab main run after the verification record are green.  r18 fixes only the two manifest hash maps that r17 missed after the graph goldens were re-recorded with the new verdict field; gate commands, rules and evidence are unchanged.",
   "cohort": "cohort-2026-11-14-r18",
   "commits": {
     "ab": "780e0d6d04b35eb73951211cffb3e7201663e4c0",
