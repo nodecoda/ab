@@ -1,46 +1,14 @@
 {
-  "ci": {
-    "gisel": {
-      "conclusion": "success",
-      "run": 43575351990,
-      "url": "https://github.com/nodecoda/gisel/actions/runs/43575351990"
-    },
-    "gisel-ab": {
-      "conclusion": "success",
-      "evidence": {
-        "conclusion": "success",
-        "run": 43575358413,
-        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43575358413"
-      },
-      "main_after_record": {
-        "conclusion": "success",
-        "run": 43576318962,
-        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43576318962"
-      },
-      "run": 43575358337,
-      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43575358337"
-    },
-    "gisel-anchor": {
-      "conclusion": "success",
-      "run": 43575355513,
-      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43575355513"
-    },
-    "gisel-install": {
-      "conclusion": "success",
-      "run": 43575352008,
-      "url": "https://github.com/nodecoda/gisel/actions/runs/43575352008"
-    }
-  },
-  "ci_notes": "r26 CI: cohort tag runs on gisel (ci + install), gisel-anchor and gisel-ab (ci + release-evidence) are green, and so is the gisel-ab main run after the record.  Documentation-only cohort; no publish tag was created.",
-  "cohort": "cohort-2026-11-14-r26",
+  "ci": {},
+  "cohort": "cohort-2026-11-14-r27",
   "commits": {
-    "ab": "30f1c36d35e8239af9492696012adb8b0471caf6",
-    "gisel": "a07a9d5f7dce384edc3efdd57accf0eadd906c27",
+    "ab": "d35b5b852d6255d43b293eb215790f40b77f0bb3",
+    "gisel": "7a2dafd630e84834ff0d1268c0d87a8d0876e584",
     "upstream_source": "c6a8aa3137fb59fc5036add81946e12daaa196ed"
   },
   "gate_commits": {
-    "ab": "30f1c36d35e8239af9492696012adb8b0471caf6",
-    "gisel": "a07a9d5f7dce384edc3efdd57accf0eadd906c27",
+    "ab": "d35b5b852d6255d43b293eb215790f40b77f0bb3",
+    "gisel": "7a2dafd630e84834ff0d1268c0d87a8d0876e584",
     "upstream_source": "c6a8aa3137fb59fc5036add81946e12daaa196ed"
   },
   "gates": [
@@ -164,10 +132,10 @@
         "gisel:tests/test_scope.py": "ae63fc337c0252425c24bc0950b32b21d01d9403"
       },
       "command": "python3 -m unittest discover -q -s tests",
-      "duration_s": 207.7,
+      "duration_s": 202.0,
       "evidence": "rules=2 witnessed=1 shadowed=0 unexercised=3",
       "fingerprint": "652b511c965b05cf9b51a2f34e88e80863a5e3887b5f6e735f610360d2909f69",
-      "log": "/tmp/cohort-r26-out/python3 -m unittest discover -q -s tests.log",
+      "log": "/tmp/cohort-r27-out/python3 -m unittest discover -q -s tests.log",
       "manifest_command": "python3 -m unittest discover -q -s tests",
       "name": "python3 -m unittest discover -q -s tests",
       "rc": 0,
@@ -249,10 +217,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-nine-corpora.sh",
-      "duration_s": 4.7,
+      "duration_s": 4.6,
       "evidence": "nine corpora: 9 targets byte-identical",
       "fingerprint": "e157b9b328fe55ee2fc8ed01484118278c11954670649782af38cb2dd7aa87e7",
-      "log": "/tmp/cohort-r26-out/bash tools_check-nine-corpora.sh.log",
+      "log": "/tmp/cohort-r27-out/bash tools_check-nine-corpora.sh.log",
       "manifest_command": "bash tools/check-nine-corpora.sh",
       "name": "bash tools/check-nine-corpora.sh",
       "rc": 0,
@@ -332,10 +300,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-graph-golden.sh",
-      "duration_s": 168.3,
+      "duration_s": 168.6,
       "evidence": "graph goldens: 5 configurations byte-identical (3 default, 2 refined)",
       "fingerprint": "0ef32bcb5c1a1f67ea6df8619bacfc283a5af9ab04faec3d22973687d6f1d622",
-      "log": "/tmp/cohort-r26-out/bash tools_check-graph-golden.sh.log",
+      "log": "/tmp/cohort-r27-out/bash tools_check-graph-golden.sh.log",
       "manifest_command": "bash tools/check-graph-golden.sh",
       "name": "bash tools/check-graph-golden.sh",
       "rc": 0,
@@ -408,10 +376,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-cases-golden.sh",
-      "duration_s": 420.9,
+      "duration_s": 429.4,
       "evidence": "cases spirv: 583af2c0019af248b597963119fcbbb0084046924a0f028e75b709127e559c53 matches",
       "fingerprint": "c84201f888ca5ac1df6059b7964f59201ed3cf7ca98ae5a5753957fb62317c20",
-      "log": "/tmp/cohort-r26-out/bash tools_check-cases-golden.sh.log",
+      "log": "/tmp/cohort-r27-out/bash tools_check-cases-golden.sh.log",
       "manifest_command": "bash tools/check-cases-golden.sh",
       "name": "bash tools/check-cases-golden.sh",
       "rc": 0,
@@ -490,10 +458,10 @@
         "gisel:tools/sync-package-data.py": "8d773f7dcd3f072bb43f2861c5fa90530ccf662b"
       },
       "command": "bash tools/check-nightly-graphs.sh",
-      "duration_s": 261.2,
+      "duration_s": 259.9,
       "evidence": "nightly wasm32: e6e9b52f3f17a25e6314f2d029249e1fb4981c29dfb3650d77c27a2ff2a01818 matches",
       "fingerprint": "4d072686c826e9d5a61e598a823aed2c2ec2b1b9e4c5bdb2b2fc36d7ebe4aedc",
-      "log": "/tmp/cohort-r26-out/bash tools_check-nightly-graphs.sh.log",
+      "log": "/tmp/cohort-r27-out/bash tools_check-nightly-graphs.sh.log",
       "manifest_command": "bash tools/check-nightly-graphs.sh",
       "name": "bash tools/check-nightly-graphs.sh",
       "rc": 0,
@@ -507,7 +475,7 @@
         "gisel:docs/CORPORA.md": "7c1672b8a54f8ea85466c500f8e849a55e81fe0e",
         "gisel:docs/DESIGN-graph.md": "e40aade9e271058e97de3ab13a2436d5ca506cb4",
         "gisel:docs/GLOSSARY-zh.md": "434433fdf651cbc587c38c4126611d622b258cbc",
-        "gisel:docs/KNOWN-LIMITATIONS.md": "1902265b1a2680b1e6361937711b745e286440e7",
+        "gisel:docs/KNOWN-LIMITATIONS.md": "0a9a35bd1631ce9e2b0c4f3d438e16ffcd72ef61",
         "gisel:docs/LOOP.md": "36dccbdfbe31c503c10455b300aeb63fc7e8652b",
         "gisel:docs/OVERVIEW-zh.md": "8df4e5033832ef0abe8f3c91576a8e13450c563f",
         "gisel:docs/PLAN-internal-authority.md": "1bbfadb810ae61c59fd8467e8ac6c6e972246196",
@@ -580,8 +548,8 @@
       "command": "python3 tools/check-claims.py",
       "duration_s": 0.0,
       "evidence": "check-claims: 16 claims, every cited path exists",
-      "fingerprint": "0fa1762142f4a39c3e1fb01a80047e58373c34c61afe824d57a3adbc92f6e1f2",
-      "log": "/tmp/cohort-r26-out/python3 tools_check-claims.py.log",
+      "fingerprint": "4b3413cca63c68a5283fc670c04a17a9915b2d20f14d478d7bf958cea9fb2a17",
+      "log": "/tmp/cohort-r27-out/python3 tools_check-claims.py.log",
       "manifest_command": "python3 tools/check-claims.py",
       "name": "python3 tools/check-claims.py",
       "rc": 0,
@@ -655,9 +623,9 @@
       },
       "command": "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check --git-repo /home/ubuntu/llvm/llvm-project",
       "duration_s": 2.1,
-      "evidence": "/tmp/cohort-r26/gisel/tests/corpus/import-report.json: matches",
+      "evidence": "/tmp/cohort-r27/gisel/tests/corpus/import-report.json: matches",
       "fingerprint": "45653f9931de844d5de03aad5fa57fdf6b3f8175e9d1513ac17b4cdbf04d3eff",
-      "log": "/tmp/cohort-r26-out/python3 scripts_import-cxx.py --all --pin pin_PIN.json --check.log",
+      "log": "/tmp/cohort-r27-out/python3 scripts_import-cxx.py --all --pin pin_PIN.json --check.log",
       "manifest_command": "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check",
       "name": "python3 scripts/import-cxx.py --all --pin pin/PIN.json --check",
       "rc": 0,
@@ -673,11 +641,11 @@
         "upstream_source:scripts/pin/recipe.py": "ef58ff1f5a2fe37629e2d44fd63e66d14d422625",
         "upstream_source:scripts/pin/verify-base.py": "20499cd9fe7ece3f9229aea697d2b8927ad62088"
       },
-      "command": "scripts/pin/make-base.sh /home/ubuntu/llvm/trees/explore /tmp/cohort-r26-out/pin-base --verify",
-      "duration_s": 19.0,
+      "command": "scripts/pin/make-base.sh /home/ubuntu/llvm/trees/explore /tmp/cohort-r27-out/pin-base --verify",
+      "duration_s": 17.3,
       "evidence": "verify-base: verified 12 file(s)",
       "fingerprint": "102b3f9f3760da540d46da7a494560ccf136270123c5c6bc248cbcccb2ebff0f",
-      "log": "/tmp/cohort-r26-out/scripts_pin_make-base.sh TREE DEST --verify.log",
+      "log": "/tmp/cohort-r27-out/scripts_pin_make-base.sh TREE DEST --verify.log",
       "manifest_command": "scripts/pin/make-base.sh TREE DEST --verify",
       "name": "scripts/pin/make-base.sh TREE DEST --verify",
       "rc": 0,
@@ -1052,10 +1020,10 @@
         "gisel:tests/artifacts/x86.inc": "f14e0a0ad4a25a759374f85b002aa42b7662e306"
       },
       "command": "./scripts/verify-evidence.sh",
-      "duration_s": 10.2,
+      "duration_s": 10.1,
       "evidence": "NOTE U-full/*: only `universe.jsonl` and the expand command are frozen; the expanded query file is regenerated on demand.",
       "fingerprint": "b5b7405b70990e8e6645f739c7e6d687eb2b3904be56f0a8e1da1b2f6648fbd2",
-      "log": "/tmp/cohort-r26-out/._scripts_verify-evidence.sh.log",
+      "log": "/tmp/cohort-r27-out/._scripts_verify-evidence.sh.log",
       "manifest_command": "gisel-ab/scripts/verify-evidence.sh",
       "name": "./scripts/verify-evidence.sh",
       "rc": 0,
@@ -1360,7 +1328,7 @@
         "ab:src/gisel_ab/baseline.py": "875b9df11892ecca15d648df58af189daf55c3ad",
         "ab:src/gisel_ab/bugreport.py": "d305d619c416ef90987e406f51636b32ddb0cdde",
         "ab:src/gisel_ab/cli.py": "d58574ef0d0b39cfa8d13aed5732bd9482d6594d",
-        "ab:src/gisel_ab/cohort.py": "5dbed682a4fc36b1e66607509ed4a05e27d8da44",
+        "ab:src/gisel_ab/cohort.py": "adfca421181635addb1bedaeee319ee01c3f060b",
         "ab:src/gisel_ab/cpp/aarch64_generated_ctor.cpp": "f9323ed7513a144a4b728041efa0ebfbc397e7d5",
         "ab:src/gisel_ab/cpp/aarch64_query_runner.cpp": "48db2d5c887b93c1561ab785897533c46218b40a",
         "ab:src/gisel_ab/cpp/arm_generated_ctor.cpp": "d71e381b1e726e33afda52cef0039ad80105745a",
@@ -1504,9 +1472,9 @@
       },
       "command": "python3 -m pytest tests -q",
       "duration_s": 16.0,
-      "evidence": "316 passed, 19 skipped, 64 subtests passed in 15.74s",
-      "fingerprint": "f4aa0d5d9808bd7720155130e8cc0e2ebae8aec52c9f55f2b1a68eb094474988",
-      "log": "/tmp/cohort-r26-out/python3 -m pytest tests -q.log",
+      "evidence": "316 passed, 19 skipped, 64 subtests passed in 15.69s",
+      "fingerprint": "373863be48dc9ea6b20249a01dd90be795c549e29c57b07221d982cdc191a627",
+      "log": "/tmp/cohort-r27-out/python3 -m pytest tests -q.log",
       "manifest_command": null,
       "name": "python3 -m pytest tests -q",
       "rc": 0,
@@ -1514,16 +1482,16 @@
     }
   ],
   "history": [],
-  "manifest_commit": "30f1c36d35e8239af9492696012adb8b0471caf6",
+  "manifest_commit": "d35b5b852d6255d43b293eb215790f40b77f0bb3",
   "online_gates": [],
   "recorded_at": "2026-11-14",
   "schema": 2,
-  "supersedes": "cohort-2026-11-14-r25",
-  "supersedes_reason": "r26 is a documentation-only cohort: it deletes the removal/migration history (the .td renderer log, PLAN-architecture, pointer stubs) and makes the docs state only current facts. No corpus, artifact, graph golden or evidence blob changed.",
-  "tag": "cohort-2026-11-14-r26",
+  "supersedes": "cohort-2026-11-14-r26",
+  "supersedes_reason": "r27 fixes the published-version line in KNOWN-LIMITATIONS (gisel 0.3.2 / gisel-ab 0.9.1) and teaches `cohort verify` to put the cohort tag in its draft, so the record no longer needs a manual patch. No corpus, artifact, graph golden or evidence blob changed.",
+  "tag": "cohort-2026-11-14-r27",
   "tags": {
-    "ab": "cohort-2026-11-14-r26",
-    "gisel": "cohort-2026-11-14-r26",
-    "upstream_source": "cohort-2026-11-14-r26"
+    "ab": "cohort-2026-11-14-r27",
+    "gisel": "cohort-2026-11-14-r27",
+    "upstream_source": "cohort-2026-11-14-r27"
   }
 }
