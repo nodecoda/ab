@@ -4,6 +4,20 @@ This file records shape changes to the workbench, not results.  Counts,
 commits and gate outcomes live in `RELEASE.json` and `VERIFICATION.json`,
 which are generated and must not be hand-edited.
 
+## 0.9.1 — cohort tooling
+
+- `cohort diff NEW OLD [--json]` compares two recorded cohorts without
+  re-running them: `RELEASE.json.repos`, gate blobs and `EVIDENCE.json` counts,
+  reported as changed / unchanged / added / removed.  A missing tag is rc=2.
+- `cohort verify --jobs N` runs the gates' slow legs in parallel; the record
+  keeps the serial order, so the draft is byte-identical.
+- `cohort record-ci` accepts extra top-level keys (for example
+  `gisel-install`), so a new consuming CI can be recorded without changing the
+  tool.
+- Tests read the pinned gisel version from `RELEASE.json` (and, where present,
+  from `repos.gisel`'s own `__init__.py`) instead of hardcoding it, so a gisel
+  patch release no longer turns an ab build red.
+
 ## Unreleased — usability (cohort r12)
 
 - `gisel-ab setup --llvm DIR --build DIR [--evidence DIR]` records the paths in
