@@ -1,6 +1,37 @@
 {
-  "ci": {},
-  "ci_notes": "",
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43569777549,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43569777549"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43569782417,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43569782417"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43570675462,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43570675462"
+      },
+      "run": 43569782368,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43569782368"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43569780372,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43569780372"
+    },
+    "gisel-install": {
+      "conclusion": "success",
+      "run": 43569777627,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43569777627"
+    }
+  },
+  "ci_notes": "r24 CI: the cohort tag runs on gisel (ci + install), gisel-anchor and gisel-ab (ci + release-evidence) are green, and so is the gisel-ab main run after the record.  gisel 0.3.3 is a source bump only; no publish tag was created, so there is no PyPI run for it.",
   "cohort": "cohort-2026-11-14-r24",
   "commits": {
     "ab": "26a363b8c551aa3601efb60327776ce4f4e14613",
