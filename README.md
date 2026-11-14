@@ -129,13 +129,14 @@ the body, then `diff.json`.
 
 ## Cohort
 
-`ab.py cohort` turns a release cut into four verbs:
+`ab.py cohort` turns a release cut into five verbs:
 
 ```sh
 python3 ab.py cohort plan                 # gates, repos, inputs, online gates
 python3 ab.py cohort tag cohort-YYYY-MM-DD-rN
 python3 ab.py cohort verify --clone /tmp/cohort --jobs 2
 python3 ab.py cohort check [--worktree]   # FRESH / STALE per gate, no re-run
+python3 ab.py cohort diff NEW OLD         # repos, frozen hashes, gate blobs, evidence
 ```
 
 `RELEASE.json` names the commits and gate commands.  `ab.py cohort` adds the

@@ -55,6 +55,15 @@ jobs:
       - name: single-entry help needs no LLVM
         working-directory: ab
         run: python3 ab.py --help
+      - name: collect diagnostics on failure
+        if: failure()
+        working-directory: ab
+        run: python3 ab.py bug-report --out "$RUNNER_TEMP/bug-report.json" || true
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: bug-report-${{ matrix.python }}
+          path: ${{ runner.temp }}/bug-report.json
       - name: shellcheck the shell entry points
         run: |
           sudo apt-get -qq update

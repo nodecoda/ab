@@ -6,6 +6,7 @@
     cohort.py verify --clone DIR [--out DIR] [--only NAME,...] [--jobs N]
     cohort.py record-ci --file CI.json
     cohort.py check [--worktree] [--json]
+    cohort.py diff NEW OLD [--json] [--root DIR]
 
 A cohort is three commits (gisel, gisel-anchor, gisel-ab) and a set of gates.
 `RELEASE.json` names the commits and the gate commands; this file adds what
@@ -665,6 +666,209 @@ def cmd_check(args):
     return 1 if stale else 0
 
 
+class DiffError(Exception):
+    """A cohort tag or a manifest is missing; not a difference."""
+
+
+def _git_at(root, *args):
+    return subprocess.run(["git", "-C", str(root), *args],
+                          capture_output=True, text=True)
+
+
+def _show_json(root, rev, name):
+    found = _git_at(root, "show", "%s:%s" % (rev, name))
+    if found.returncode:
+        return None
+    try:
+        return json.loads(found.stdout)
+    except ValueError:
+        return None
+
+
+def _record_for(root, cohort, limit=400):
+    """The newest commit whose VERIFICATION.json names `cohort`."""
+    found = _git_at(root, "log", "--format=%H", "-n", str(limit),
+                    "--", "VERIFICATION.json")
+    if found.returncode:
+        return None
+    for commit in found.stdout.split():
+        record = _show_json(root, commit, "VERIFICATION.json")
+        if record and record.get("cohort") == cohort:
+            return commit
+    return None
+
+
+def _delta(old, new):
+    old = old or {}
+    new = new or {}
+    added = sorted(set(new) - set(old))
+    removed = sorted(set(old) - set(new))
+    changed = sorted(k for k in set(old) & set(new) if old[k] != new[k])
+    return {
+        "added": added,
+        "removed": removed,
+        "changed": {k: {"old": old[k], "new": new[k]} for k in changed},
+        "count": len(added) + len(removed) + len(changed),
+    }
+
+
+def _evidence_index(evidence):
+    index = {}
+    for entry in (evidence or {}).get("entries", []):
+        if "id" in entry:
+            index[entry["id"]] = json.dumps(entry.get("artifacts") or {},
+                                            sort_keys=True)
+    return index
+
+
+def _gate_index(record):
+    return {gate["name"]: gate for gate in (record or {}).get("gates", [])}
+
+
+def _blobs(record):
+    out = {}
+    for gate in (record or {}).get("gates", []):
+        out.update(gate.get("blobs") or {})
+    return out
+
+
+HASH_KEYS = ("corpus_sha256", "cases_sha256", "graph_goldens_sha256",
+             "nightly_graphs_sha256")
+
+
+def diff_cohorts(new_tag, old_tag, root=AB):
+    """Compare two cohort tags without changing anything.
+
+    Two sources are used on purpose: the tag commit carries RELEASE.json and
+    EVIDENCE.json (frozen before the tag), while the gate fingerprints live in
+    the record commit, which is a child of the tag.  A record that is missing
+    is reported as `None`, not treated as "no difference".
+    """
+    data = {"new": new_tag, "old": old_tag}
+    for label, tag in (("new", new_tag), ("old", old_tag)):
+        found = _git_at(root, "rev-parse", "--verify", tag + "^{commit}")
+        if found.returncode:
+            raise DiffError("unknown tag %r in %s" % (tag, root))
+        release = _show_json(root, tag, "RELEASE.json")
+        if release is None:
+            raise DiffError("%s has no RELEASE.json" % tag)
+        data[label] = {
+            "tag": tag,
+            "commit": found.stdout.strip(),
+            "release": release,
+            "evidence": _show_json(root, tag, "EVIDENCE.json"),
+        }
+        data[label]["record_commit"] = _record_for(root, tag)
+        data[label]["record"] = (
+            _show_json(root, data[label]["record_commit"], "VERIFICATION.json")
+            if data[label]["record_commit"] else None)
+
+    new, old = data["new"], data["old"]
+    data["commits"] = _delta(old["release"].get("repos"),
+                             new["release"].get("repos"))
+    data["version"] = {
+        "old": old["release"].get("version"),
+        "new": new["release"].get("version"),
+        "changed": old["release"].get("version") !=
+                   new["release"].get("version"),
+    }
+    data["pin"] = {
+        "old": old["release"].get("pin"),
+        "new": new["release"].get("pin"),
+        "changed": old["release"].get("pin") != new["release"].get("pin"),
+    }
+    data["hashes"] = {key: _delta(old["release"].get(key),
+                                  new["release"].get(key))
+                      for key in HASH_KEYS}
+
+    old_gates, new_gates = _gate_index(old["record"]), _gate_index(new["record"])
+    rc_changed = []
+    command_changed = []
+    for name in sorted(set(old_gates) & set(new_gates)):
+        if old_gates[name].get("rc") != new_gates[name].get("rc"):
+            rc_changed.append({"name": name,
+                               "old": old_gates[name].get("rc"),
+                               "new": new_gates[name].get("rc")})
+        old_command = (old_gates[name].get("manifest_command")
+                       or old_gates[name].get("command"))
+        new_command = (new_gates[name].get("manifest_command")
+                       or new_gates[name].get("command"))
+        if old_command != new_command:
+            command_changed.append(name)
+    data["gates"] = {
+        "old": len(old_gates),
+        "new": len(new_gates),
+        "added": sorted(set(new_gates) - set(old_gates)),
+        "removed": sorted(set(old_gates) - set(new_gates)),
+        "rc_changed": rc_changed,
+        "command_changed": command_changed,
+    }
+    data["blobs"] = _delta(_blobs(old["record"]), _blobs(new["record"]))
+    data["evidence"] = _delta(_evidence_index(old["evidence"]),
+                              _evidence_index(new["evidence"]))
+    return data
+
+
+def cmd_diff(args):
+    try:
+        data = diff_cohorts(args.new, args.old, pathlib.Path(args.root))
+    except DiffError as exc:
+        print("cohort diff: %s" % exc, file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(data, indent=2, sort_keys=True))
+        return 0
+    print("cohort diff: %s -> %s" % (args.old, args.new))
+    for name, item in sorted(data["commits"]["changed"].items()):
+        print("  repo %-8s %s -> %s" % (name, item["old"][:12],
+                                        item["new"][:12]))
+    for name in data["commits"]["added"]:
+        print("  repo %-8s (added)" % name)
+    for name in data["commits"]["removed"]:
+        print("  repo %-8s (removed)" % name)
+    version = data["version"]
+    print("  version       %s%s" % (version["new"],
+                                    "" if not version["changed"]
+                                    else " (was %s)" % version["old"]))
+    pin = data["pin"]
+    print("  pin           %s" % ("same" if not pin["changed"]
+                                    else "%s -> %s" % (pin["old"], pin["new"])))
+    for key, label in (("corpus_sha256", "corpus"),
+                       ("cases_sha256", "cases"),
+                       ("graph_goldens_sha256", "graph"),
+                       ("nightly_graphs_sha256", "nightly")):
+        item = data["hashes"][key]
+        print("  %-13s %d added, %d removed, %d changed"
+              % (label, len(item["added"]), len(item["removed"]),
+                 len(item["changed"])))
+        for name in list(item["changed"])[:5]:
+            print("    changed: %s" % name)
+    gates = data["gates"]
+    print("  gates         %d -> %d, %d rc change(s), %d command change(s)"
+          % (gates["old"], gates["new"], len(gates["rc_changed"]),
+             len(gates["command_changed"])))
+    for item in gates["rc_changed"]:
+        print("    rc: %s %s -> %s" % (item["name"], item["old"], item["new"]))
+    for name in gates["added"]:
+        print("    added gate: %s" % name)
+    for name in gates["removed"]:
+        print("    removed gate: %s" % name)
+    blobs = data["blobs"]
+    print("  blobs         %d added, %d removed, %d changed"
+          % (len(blobs["added"]), len(blobs["removed"]),
+             len(blobs["changed"])))
+    for name in list(blobs["changed"])[:8]:
+        print("    changed: %s" % name)
+    evidence = data["evidence"]
+    print("  evidence      %d added, %d removed, %d changed"
+          % (len(evidence["added"]), len(evidence["removed"]),
+             len(evidence["changed"])))
+    for label, side in (("old", data["old"]), ("new", data["new"])):
+        if side["record"] is None:
+            print("  record        %s: not found (tag-only comparison)" % label)
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -695,6 +899,14 @@ def main(argv=None):
     check.add_argument("--worktree", action="store_true")
     check.add_argument("--json", action="store_true")
     check.set_defaults(func=cmd_check)
+
+    diff = sub.add_parser("diff")
+    diff.add_argument("new")
+    diff.add_argument("old")
+    diff.add_argument("--json", action="store_true")
+    diff.add_argument("--root", default=str(AB),
+                      help="repository to read (default: this checkout)")
+    diff.set_defaults(func=cmd_diff)
 
     args = parser.parse_args(argv)
     return args.func(args)
