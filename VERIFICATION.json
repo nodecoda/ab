@@ -1,5 +1,37 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43560242555,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43560242555"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43560248080,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43560248080"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43560855095,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43560855095"
+      },
+      "run": 43560248023,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43560248023"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43560244674,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43560244674"
+    },
+    "gisel-install": {
+      "conclusion": "success",
+      "run": 43560242498,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43560242498"
+    }
+  },
+  "ci_notes": "r23 CI: gisel tag run, install workflow, anchor, ab, ab release-evidence and the ab main run after the record are green.  The tag also carries the v0.3.2 / v0.9.1 release runs (gisel publish + ci, ab publish + ci).  Doctor's new install line was verified against a real PyPI install (`install ok pypi 0.3.2`), and install.sh pulled gisel 0.3.2 / ab 0.9.1 / anchor 0.2.0 in one run.",
   "cohort": "cohort-2026-11-14-r23",
   "commits": {
     "ab": "2201fff2b00cd2956b84c1bd95e60a0bf3436bb4",
