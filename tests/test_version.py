@@ -1,5 +1,6 @@
 """doctor's gisel-pin check: match, installed mismatch, checkout mismatch."""
 
+import json
 import sys
 import tempfile
 import types
@@ -8,6 +9,9 @@ from pathlib import Path
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
+# The cohort's gisel version lives in one place; a fixture that hardcodes it
+# turns every gisel release into a red ab build.
+PINNED = json.loads((ROOT / "RELEASE.json").read_text())["version"]
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
@@ -25,7 +29,7 @@ def _fake(version: str, location: Path) -> types.ModuleType:
 class GiselPin(unittest.TestCase):
     def test_a_matching_version_is_ok(self):
         with tempfile.TemporaryDirectory() as d:
-            fake = _fake("0.3.0", Path(d) / "site-packages" / "gisel" / "__init__.py")
+            fake = _fake(PINNED, Path(d) / "site-packages" / "gisel" / "__init__.py")
             with mock.patch.dict(sys.modules, {"gisel": fake}):
                 check = doctor._gisel_compat()
         self.assertEqual(check.name, "gisel-pin")

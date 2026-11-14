@@ -59,7 +59,9 @@ class ReleaseManifest(unittest.TestCase):
                              "gisel checkout does not contain %s" % commit[:12])
 
     def test_version_matches_the_package(self):
-        self.assertEqual(self.data["version"], "0.3.0")
+        # The version is bumped on gisel releases; pinning the literal here
+        # made that bump fail in the ab repo instead of proving agreement.
+        self.assertRegex(self.data["version"], r"^\d+\.\d+\.\d+$")
         init = GISEL / "gisel" / "__init__.py"
         if init.exists():
             match = re.search(r'__version__ = "([^"]+)"', init.read_text())
