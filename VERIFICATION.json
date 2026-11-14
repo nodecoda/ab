@@ -1488,6 +1488,7 @@
   "schema": 2,
   "supersedes": "cohort-2026-11-14-r25",
   "supersedes_reason": "r26 is a documentation-only cohort: it deletes the removal/migration history (the .td renderer log, PLAN-architecture, pointer stubs) and makes the docs state only current facts. No corpus, artifact, graph golden or evidence blob changed.",
+  "tag": "cohort-2026-11-14-r26",
   "tags": {
     "ab": "cohort-2026-11-14-r26",
     "gisel": "cohort-2026-11-14-r26",
