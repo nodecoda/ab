@@ -1498,6 +1498,7 @@
   "schema": 2,
   "supersedes": "cohort-2026-11-14-r20",
   "supersedes_reason": "r20 was tagged but never recorded: its pytest gate went red because two ab tests hardcoded `gisel 0.3.0` in their fixtures, which the gisel 0.3.1 release (the one that adds `gisel demo`) turned into a mismatch.  r21 reads the pinned version from RELEASE.json instead, and re-freezes the same product commits.  The release itself is additive: `gisel demo` runs lint -> gen --emit=inc -> cases -> graph --refine on the bundled x86 corpus in ~23 s, `scripts/install.sh` installs the three tools with pipx/uv/venv, and `install.yml` proves it on a machine with no checkout.  No rule, corpus, golden, query or exit code changed; gates are 10/10.",
+  "tag": "cohort-2026-11-14-r21",
   "tags": {
     "ab": "cohort-2026-11-14-r21",
     "gisel": "cohort-2026-11-14-r21",

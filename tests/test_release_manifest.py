@@ -59,14 +59,21 @@ class ReleaseManifest(unittest.TestCase):
                              "gisel checkout does not contain %s" % commit[:12])
 
     def test_version_matches_the_package(self):
-        # The version is bumped on gisel releases; pinning the literal here
-        # made that bump fail in the ab repo instead of proving agreement.
+        # Compare against the commit RELEASE.json names, not against whatever
+        # this checkout is: ab CI checks out the evidence ref, which can be
+        # older than the pin, and a version bump would then read as drift.
         self.assertRegex(self.data["version"], r"^\d+\.\d+\.\d+$")
-        init = GISEL / "gisel" / "__init__.py"
-        if init.exists():
-            match = re.search(r'__version__ = "([^"]+)"', init.read_text())
-            self.assertIsNotNone(match)
-            self.assertEqual(self.data["version"], match.group(1))
+        if not (GISEL / ".git").exists():
+            return
+        commit = self.data["repos"]["gisel"]
+        found = subprocess.run(
+            ["git", "-C", str(GISEL), "show", "%s:gisel/__init__.py" % commit],
+            capture_output=True, text=True)
+        if found.returncode:
+            return                      # shallow clone without the pin
+        match = re.search(r'__version__ = "([^"]+)"', found.stdout)
+        self.assertIsNotNone(match)
+        self.assertEqual(self.data["version"], match.group(1))
 
     def test_cohort_is_a_freeze_tag(self):
         self.assertTrue(self.data["cohort"].startswith("cohort-"),
