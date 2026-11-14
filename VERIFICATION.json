@@ -1,6 +1,37 @@
 {
-  "ci": {},
-  "ci_notes": "",
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43571871304,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43571871304"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43571875983,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43571875983"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43572644652,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43572644652"
+      },
+      "run": 43571876007,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43571876007"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43571873959,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43571873959"
+    },
+    "gisel-install": {
+      "conclusion": "success",
+      "run": 43571871465,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43571871465"
+    }
+  },
+  "ci_notes": "r25 CI: cohort tag runs on gisel (ci + install), gisel-anchor and gisel-ab (ci + release-evidence) are green, and so is the gisel-ab main run after the record.  Documentation-only cohort; no publish tag was created.",
   "cohort": "cohort-2026-11-14-r25",
   "commits": {
     "ab": "35a5a27f97b31d413b6efd170bcc22c622198f11",
