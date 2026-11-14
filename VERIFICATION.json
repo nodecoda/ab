@@ -1,5 +1,37 @@
 {
-  "ci": {},
+  "ci": {
+    "gisel": {
+      "conclusion": "success",
+      "run": 43555565261,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43555565261"
+    },
+    "gisel-ab": {
+      "conclusion": "success",
+      "evidence": {
+        "conclusion": "success",
+        "run": 43555571165,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43555571165"
+      },
+      "main_after_record": {
+        "conclusion": "success",
+        "run": 43556208316,
+        "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43556208316"
+      },
+      "run": 43555571264,
+      "url": "https://github.com/nodecoda/gisel-ab/actions/runs/43555571264"
+    },
+    "gisel-anchor": {
+      "conclusion": "success",
+      "run": 43555568445,
+      "url": "https://github.com/nodecoda/gisel-anchor/actions/runs/43555568445"
+    },
+    "gisel-install": {
+      "conclusion": "success",
+      "run": 43555565311,
+      "url": "https://github.com/nodecoda/gisel/actions/runs/43555565311"
+    }
+  },
+  "ci_notes": "r22 CI: gisel tag run, the new install workflow (three modes, no checkout), anchor, ab, ab release-evidence and the ab main run after the record are all green.  r20 and r21 froze the same commits and were superseded before recording (ab test fixtures hardcoded gisel 0.3.0; then the version test compared against the evidence ref; then the r21 record lacked its tag field).  r22's only product change over r19 is gisel 0.3.1: the demo command, the one-command install script, the no-checkout install workflow and the GHCR image.",
   "cohort": "cohort-2026-11-14-r22",
   "commits": {
     "ab": "fb9b6d6cc5eda378c286fbd955f47a9073073d8d",
