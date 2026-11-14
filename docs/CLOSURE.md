@@ -165,7 +165,8 @@ spirv 的 `D` 种子 3,472,080 条，一轮 ~2 分钟；六 target 合计约 9 �
 3. **MIR 层的副作用**。这条链只谈 `getAction` 循环；生成的指令、寄存器、CSE、
    死代码删除在 L1/L2/L3。
 4. **分区闭包**（`graph --check-closure` 那条）仍然不成立（未 refine 时
-   X86 277 / AArch64 2,671 / RISCV 2,864 / Wasm 302）。closure 绕开了“同一类里
+   X86 272 / AArch64 1,985 / RISCV 1,607 / Wasm 272；归因见
+   `gisel/docs/REPORT-closure-why.md`）。closure 绕开了“同一类里
    不同成员会不会有不同后继”的问题，直接问具体状态；两者回答的是不同问题，不能互相替代。
 
 ## 6 和 `graph` 的关系

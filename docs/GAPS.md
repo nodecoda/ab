@@ -113,7 +113,8 @@ aarch64 的 1,696 条单边断言沿用 domain 的钉数（`--allow-ref-asserts 
 - `Custom` 动作体是手写 C++，动作名一致不等于里面的类型改写一致。
 - MIR 层副作用由 L1/L2/L3 覆盖，那条链的形状仍来自上游测试。
 - 分区闭包（`graph --check-closure`）与后继闭包是两个问题：未 refine 时
-  X86 277 / AArch64 2,671 / RISC-V 2,864 / Wasm 302 的类内不封闭仍然存在，
+  X86 272 / AArch64 1,985 / RISC-V 1,607 / Wasm 272 的类内不封闭仍然存在，
+  逐条归因见 `gisel/docs/REPORT-closure-why.md`，
   closure 不替它回答。
 
 ## 4 按级别的结论
