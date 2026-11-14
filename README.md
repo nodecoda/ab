@@ -19,8 +19,8 @@ tests/  docs/               the suite and the write-ups
 
 `ab.py --help` is the verb table: `doctor setup bug-report run mir verify diff l3
 suite vertical cohort evidence plan`.  Each verb keeps its own parser and its own
-exit codes; `ab.py` only routes.  `pip install .` gives the same table as
-`gisel-ab`, and the installed wheel carries the code, the target registry,
+exit codes; `ab.py` only routes.  `pip install gisel-ab` (or `pip install .`
+from a checkout) gives the same table, and the installed wheel carries the code, the target registry,
 the suite snapshots and the C++ runner sources -- but not `evidence/`, which
 a verifier must be able to see in a checkout.
 
